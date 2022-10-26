@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Abonne;
 use Illuminate\Database\Seeder;
 
 class AbonneSeeder extends Seeder
