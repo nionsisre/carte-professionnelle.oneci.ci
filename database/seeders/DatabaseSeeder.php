@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         $this->call(AbonneSeeder::class);
         $this->call(AbonnesNumeroSeeder::class);
-        $this->call(AbonnesOperateurSeeder::class);
-        $this->call(AbonnesStatutSeeder::class);
-        $this->call(AbonnesTypePieceSeeder::class);
+//        $this->call(AbonnesOperateurSeeder::class);
+//        $this->call(AbonnesStatutSeeder::class);
+//        $this->call(AbonnesTypePieceSeeder::class);
     }
 }

@@ -18,7 +18,7 @@ class AbonneFactory extends Factory
             'nom' => $this->faker->lastName(),
             'nom_epouse' => "",
             'prenoms' => $this->faker->firstName(),
-            'date_de_naissance' => $this->faker->date(['d/m/Y'],'-10 years'),
+            'date_de_naissance' => date('d/m/Y', time()),
             'lieu_de_naissance' => $this->faker->streetName(),
             'genre' => $this->faker->randomElement(["M", "F"]),
             'domicile' => $this->faker->streetName(),
