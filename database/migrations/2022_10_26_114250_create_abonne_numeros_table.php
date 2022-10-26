@@ -15,6 +15,9 @@ class CreateAbonneNumerosTable extends Migration
     {
         Schema::create('abonne_numeros', function (Blueprint $table) {
             $table->id();
+            $table->integer('abonne_id');
+            $table->integer('operateur_id');
+            $table->string('numero_de_telephone');
             $table->timestamps();
         });
     }

@@ -15,6 +15,8 @@ class CreateAbonnesStatutsTable extends Migration
     {
         Schema::create('abonnes_statuts', function (Blueprint $table) {
             $table->id();
+            $table->string('code_statut');
+            $table->string('libelle_statut');
             $table->timestamps();
         });
     }

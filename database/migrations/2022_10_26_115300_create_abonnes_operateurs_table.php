@@ -15,6 +15,7 @@ class CreateAbonnesOperateursTable extends Migration
     {
         Schema::create('abonnes_operateurs', function (Blueprint $table) {
             $table->id();
+            $table->string('libelle_operateur');
             $table->timestamps();
         });
     }
