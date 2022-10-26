@@ -15,6 +15,20 @@ class CreateAbonnesTable extends Migration
     {
         Schema::create('abonnes', function (Blueprint $table) {
             $table->id();
+            $table->string('numero_dossier');
+            $table->string('nom');
+            $table->string('nom_epouse');
+            $table->string('prenoms');
+            $table->string('date_de_naissance');
+            $table->string('lieu_de_naissance');
+            $table->string('genre');
+            $table->string('domicile');
+            $table->string('profession');
+            $table->string('nationalite');
+            $table->string('email');
+            $table->string('type_piece_id');
+            $table->string('document_justificatif');
+            $table->integer('statut_id')->default(1);
             $table->timestamps();
         });
     }

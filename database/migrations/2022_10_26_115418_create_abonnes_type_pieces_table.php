@@ -15,6 +15,8 @@ class CreateAbonnesTypePiecesTable extends Migration
     {
         Schema::create('abonnes_type_pieces', function (Blueprint $table) {
             $table->id();
+            $table->string('code_type_piece');
+            $table->string('libelle_piece');
             $table->timestamps();
         });
     }
