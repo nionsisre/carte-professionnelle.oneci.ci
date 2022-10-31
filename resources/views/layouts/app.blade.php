@@ -32,111 +32,111 @@
     <!-- End Google Analytics -->
 
     <!-- Begin All size Favicons for all pages -->
-    <!-- OLD ONE <link href="<?php echo $SUBSTR_URL . "/"; ?>assets/images/favicons/favicon.ico" type="image/x-icon" rel="shortcut icon"> -->
+    <link href="{{ URL::asset('assets/images/favicons/favicon.ico') }}" type="image/x-icon" rel="shortcut icon">
     <link rel="apple-touch-icon-precomposed" sizes="57x57"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-57x57.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-57x57.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="114x114"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-114x114.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-114x114.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="72x72"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-72x72.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-72x72.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="144x144"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-144x144.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-144x144.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="60x60"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-60x60.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-60x60.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="120x120"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-120x120.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-120x120.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="76x76"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-76x76.png"/>
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-76x76.png') }}"/>
     <link rel="apple-touch-icon-precomposed" sizes="152x152"
-          href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/apple-touch-icon-152x152.png"/>
-    <link rel="icon" type="image/png" href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/favicon-196x196.png"
+          href="{{ URL::asset('assets/images/favicons/apple-touch-icon-152x152.png') }}"/>
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favicons/favicon-196x196.png') }}"
           sizes="196x196"/>
-    <link rel="icon" type="image/png" href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/favicon-96x96.png"
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favicons/favicon-96x96.png') }}"
           sizes="96x96"/>
-    <link rel="icon" type="image/png" href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/favicon-32x32.png"
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favicons/favicon-32x32.png') }}"
           sizes="32x32"/>
-    <link rel="icon" type="image/png" href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/favicon-16x16.png"
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favicons/favicon-16x16.png') }}"
           sizes="16x16"/>
-    <link rel="icon" type="image/png" href="<?php echo $SUBSTR_URL."/"; ?>assets/images/favicons/favicon-128.png"
+    <link rel="icon" type="image/png" href="{{ URL::asset('assets/images/favicons/favicon-128.png') }}"
           sizes="128x128"/>
     <meta name="application-name" content="&nbsp;"/>
     <meta name="msapplication-TileColor" content="#FFFFFF"/>
-    <meta name="msapplication-TileImage" content="mstile-144x144.png"/>
-    <meta name="msapplication-square70x70logo" content="mstile-70x70.png"/>
-    <meta name="msapplication-square150x150logo" content="mstile-150x150.png"/>
-    <meta name="msapplication-wide310x150logo" content="mstile-310x150.png"/>
-    <meta name="msapplication-square310x310logo" content="mstile-310x310.png"/>
+    <meta name="msapplication-TileImage" content="{{ URL::asset('assets/images/favicons/mstile-144x144.png') }}"/>
+    <meta name="msapplication-square70x70logo" content="{{ URL::asset('assets/images/favicons/mstile-70x70.png') }}"/>
+    <meta name="msapplication-square150x150logo" content="{{ URL::asset('assets/images/favicons/mstile-150x150.png') }}"/>
+    <meta name="msapplication-wide310x150logo" content="{{ URL::asset('assets/images/favicons/mstile-310x150.png') }}"/>
+    <meta name="msapplication-square310x310logo" content="{{ URL::asset('assets/images/favicons/mstile-310x310.png') }}"/>
     <!-- End All size Favicons for all pages -->
 
     <!-- Begin Template CSS for all pages -->
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/style-2.1.0.css" type="text/css" rel="stylesheet"
+    <link href="{{ URL::asset('assets/css/style-2.1.0.css') }}" type="text/css" rel="stylesheet"
           id="main-style">
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/responsive.css" type="text/css" rel="stylesheet">
+    <link href="{{ URL::asset('assets/css/responsive.css') }}" type="text/css" rel="stylesheet">
     <!--[if IE]>
-    <link href="assets/css/ie.css" type="text/css" rel="stylesheet"> <![endif]-->
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/colors/oneci-green-theme.css" type="text/css" rel="stylesheet"
+    <link href="{{ URL::asset('assets/css/ie.css') }}" type="text/css" rel="stylesheet"> <![endif]-->
+    <link href="{{ URL::asset('assets/css/colors/oneci-green-theme.css') }}" type="text/css" rel="stylesheet"
           id="color-style">
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ URL::asset('assets/css/font-awesome.min.css') }}" rel="stylesheet">
     <!-- End Template CSS for all pages -->
 
     <!-- BEGIN MODERN NAVBAR CSS SETTINGS -->
-    <!--<link rel="stylesheet" href="<?php echo $SUBSTR_URL . "/"; ?>assets/css/modern-navbar.css">-->
-    <link rel="stylesheet" href="<?php echo $SUBSTR_URL."/"; ?>assets/css/modern-navbar-custom-1.0.1.css">
+    <!--<link rel="stylesheet" href="{{ URL::asset('assets/css/modern-navbar.css') }}">-->
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/modern-navbar-custom-1.0.1.css') }}">
     <!-- END MODERN NAVBAR CSS SETTINGS -->
 
     <!-- begin JS for all pages -->
-    <!--<script src="<?php echo $SUBSTR_URL . "/"; ?>assets/js/index.js" type="text/javascript"></script>-->
+    <!--<script src="{{ URL::asset('assets/js/index.js') }}" type="text/javascript"></script>-->
     <!-- npm -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery-3.6.1.min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery-3.6.1.min.js') }}" type="text/javascript"></script>
     <!-- jQuery -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery-migrate-1.4.1.min.js"></script>
+    <script src="{{ URL::asset('assets/js/jquery-migrate-1.4.1.min.js') }}"></script>
     <script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/modernizr.custom.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/modernizr.custom.js') }}" type="text/javascript"></script>
     <!-- Modernizr -->
     <!--[if IE 8]>
-            <script src="<?php echo $SUBSTR_URL . "/"; ?>assets/js/respond.min.js" type="text/javascript"></script>
-            <script src="<?php echo $SUBSTR_URL . "/"; ?>assets/js/selectivizr-min.js" type="text/javascript"></script>
+            <script src="{{ URL::asset('assets/js/respond.min.js') }}" type="text/javascript"></script>
+            <script src="{{ URL::asset('assets/js/selectivizr-min.js') }}" type="text/javascript"></script>
     <![endif]-->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/ddlevelsmenu.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/ddlevelsmenu.js') }}" type="text/javascript"></script>
     <!-- drop-down menu -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/tinynav.min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/tinynav.min.js') }}" type="text/javascript"></script>
     <!-- tiny nav -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.validate.min.js') }}" type="text/javascript"></script>
     <!-- form validation -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.easing.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.easing.js') }}" type="text/javascript"></script>
     <!-- jQuery easing -->
-    <!--<script src="<?php echo $SUBSTR_URL . "/"; ?>assets/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>-->
+    <!--<script src="{{ URL::asset('assets/js/jquery-ui-1.10.1.custom.min.js') }}" type="text/javascript"></script>-->
     <!-- tabs, toggles, accordion -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.flexslider-min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.flexslider-min.js') }}" type="text/javascript"></script>
     <!-- slider -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.jcarousel.min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.jcarousel.min.js') }}" type="text/javascript"></script>
     <!-- carousel -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.ui.totop.min.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.ui.totop.min.js') }}" type="text/javascript"></script>
     <!-- scroll to top -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.fitvids.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.fitvids.js') }}" type="text/javascript"></script>
     <!-- responsive video embeds -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.tweet.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.tweet.js') }}" type="text/javascript"></script>
     <!-- Twitter widget -->
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.tipsy.js" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.tipsy.js') }}" type="text/javascript"></script>
     <!-- tooltips -->
     <!-- End JS for all pages -->
 
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/select2.min.css" rel='stylesheet' type='text/css'>
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.min.js"></script>
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.modal.min.js"></script>
-    <link rel="stylesheet" href="<?php echo $SUBSTR_URL."/"; ?>assets/css/jquery.modal.min.css"/>
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/jquery-ui.min.css" rel="stylesheet">
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/jquery.mask.js" type="text/javascript"></script>
+    <link href="{{ URL::asset('assets/css/select2.min.css') }}" rel='stylesheet' type='text/css'>
+    <script src="{{ URL::asset('assets/js/jquery.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/jquery.modal.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/jquery.modal.min.css') }}"/>
+    <link href="{{ URL::asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
+    <script src="{{ URL::asset('assets/js/jquery-ui.min.js') }}" type="text/javascript"></script>
+    <script src="{{ URL::asset('assets/js/jquery.mask.js') }}" type="text/javascript"></script>
     <!-- Core Stylesheet -->
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/smart-wizard/smart_wizard.min.css" rel="stylesheet"/>
+    <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard.min.css') }}" rel="stylesheet"/>
     <!-- Optional SmartWizard themes -->
     <!--<link href="<?php echo $SUBSTR_URL . "/"; ?>assets/css/smart-wizard/smart_wizard_arrows.min.css" rel="stylesheet">
         <link href="<?php echo $SUBSTR_URL . "/"; ?>assets/css/smart-wizard/smart_wizard_dots.min.css" rel="stylesheet">
         <link href="<?php echo $SUBSTR_URL . "/"; ?>assets/css/smart-wizard/smart_wizard_round.min.css" rel="stylesheet">
         <link href="<?php echo $SUBSTR_URL . "/"; ?>assets/css/smart-wizard/smart_wizard_square.min.css" rel="stylesheet">-->
     <!-- All In One -->
-    <link href="<?php echo $SUBSTR_URL."/"; ?>assets/css/smart-wizard/smart_wizard_all.css" rel="stylesheet"/>
+    <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard_all.css') }}" rel="stylesheet"/>
     <style>
         :root {
             --sw-border-color: #eeeeee;
@@ -170,13 +170,19 @@
 
 <body>
 
+<?php
+    $routes[1] = "nos-services";
+    $routes[2] = "retrait-par-procuration";
+?>
+
 <div id="fb-root"></div>
+
 
 <div class="main-wrapper" style="margin: -5px 0;">
     <nav class="navbar">
         <div class="brand-and-icon">
             <h1><a href="<?php echo $SUBSTR_URL; ?>" class="navbar-brand"><img
-                        src="<?php echo $SUBSTR_URL_SLASH; ?>assets/images/oneci_logo.svg"
+                        src="{{ URL::asset('assets/images/oneci_logo.svg') }}"
                         style="width: 2.7em; margin-top: 0.4em"/></a></h1>
             <button type="button" class="navbar-toggler">
                 <i class="fas fa-bars"></i>
@@ -1308,7 +1314,7 @@
 </div>
 <!-- end container -->
 <?php if ($routes[1] == "accueil") { ?>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/jquery.flipper-responsive.js"></script>
+<script src="{{ URL::asset('assets/js/jquery.flipper-responsive.js') }}"></script>
 <script>
     jQuery(function ($) {
         jQuery('#myFlipper').flipper('init');
@@ -1317,7 +1323,7 @@
 </script>
 <?php } ?>
 <?php if (isset($routes[2]) && ($routes[2] != "suivi-de-statut" || $routes[2] != "temporary23092020" || $routes[2] == "enrolement-vip" || $routes[2] == "service-vip-cni" || $routes[2] == "rechercher-cni-perdue" || $routes[2] == "demande-de-nni" || $routes[2] == "retard-de-production" || $routes[2] == "commande-de-tvi")) { ?>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/select2.min.js" type='text/javascript'></script>
+<script src="{{ URL::asset('assets/js/select2.min.js') }}" type='text/javascript'></script>
 <script>
     function count($this) {
         var current = parseInt($this.html(), 10);
@@ -1341,8 +1347,8 @@
 <?php } ?>
 <?php if (isset($routes[2]) && ($routes[2] == "retrait-par-procuration" || $routes[2] == "retrait-de-cni-defunt" || $routes[2] == "retrait-de-cni-pour-personnes-vulnerables")) { ?>
 <script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/select2.min.js" type='text/javascript'></script>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/smart-wizard/jquery.smartWizard.min.js"></script>
+<script src="{{ URL::asset('assets/js/select2.min.js') }}" type='text/javascript'></script>
+<script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
 <script>
     jQuery('#smartwizard').smartWizard({
         selected: 0, /* Initial selected step, 0 = first step*/
@@ -1462,8 +1468,8 @@
 <?php } ?>
 <?php if ($routes[1] == "" || $routes[1] == "accueil") { ?>
 <script src='https://www.google.com/recaptcha/api.js' async defer></script>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/jquery.counterup.min.js" type='text/javascript'></script>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/waypoints.min.js" type='text/javascript'></script>
+<script src="{{ URL::asset('assets/js/jquery.counterup.min.js') }}" type='text/javascript'></script>
+<script src="{{ URL::asset('assets/js/waypoints.min.js') }}" type='text/javascript'></script>
 <?php } elseif ($routes[1] == "" || $routes[1] == "l-oneci-vous-ecoute" || ($routes[1] == "carte-identite") || ($routes[1] == "carte-resident") || ($routes[1] == "nos-services")) { ?>
     <?php if (isset($routes[2]) && ($routes[2] == "suivi-de-statut" || ($routes[2] == "service-vip-cni") || ($routes[2] == "service-vip-cr")) || ($routes[2] == "rechercher-cni-perdue") || ($routes[2] == "demande-de-nni") || ($routes[2] == "retard-de-production" || $routes[2] == "commande-de-tvi")) { ?>
 <script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
@@ -1498,7 +1504,7 @@
 </script>
 <?php } ?>
 <?php } if (isset($routes[2]) && ($routes[2] == "service-vip-cr")) { ?>
-<script src="<?php echo $SUBSTR_URL_SLASH; ?>assets/js/countrySelectCEDEAO.js" type='text/javascript'></script>
+<script src="{{ URL::asset('assets/js/countrySelectCEDEAO.js') }}" type='text/javascript'></script>
 <script language="JavaScript">
     jQuery("#country_selector").countrySelect({
         // defaultCountry: "jp",
@@ -2233,6 +2239,6 @@
 
     });
 </script>
-<script src="<?php echo $SUBSTR_URL."/"; ?>assets/js/modern-navbar.js"></script>
+<script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>
 </body>
 </html>
