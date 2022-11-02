@@ -3,7 +3,7 @@
 <!--[if IE 8]>
 <html class="ie8 no-js"> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<html class="no-js"> <!--<![endif]-->
+<html class="no-js" lang="{{ str_replace('_', '-', app()->getLocale()) }}"> <!--<![endif]-->
     <head>
         @include('sections.head')
     </head>

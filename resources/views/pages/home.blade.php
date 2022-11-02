@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Identification Abonné mobile')
+
 @section('home')
 <!-- begin page title -->
 <section id="page-title">

@@ -144,5 +144,5 @@
     }
 </style>
 <!-- end JS -->
-<title>ONECI | Office National de l'Etat Civil et de l'Identification</title>
+<title>ONECI | @yield("title") </title>
 <meta name="google-site-verification" content="HwJVTaGHHVbOC9VrYiz__okc1_1pDRBL-SzpDdhBpZM"/>
