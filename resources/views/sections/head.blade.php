@@ -119,6 +119,7 @@
     <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard_square.min.css') }}" rel="stylesheet">-->
 <!-- All In One -->
 <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard_all.css') }}" rel="stylesheet"/>
+<link href="{{ URL::asset('assets/css/select2.min.css') }}" rel='stylesheet' type='text/css'>
 <style>
     :root {
         --sw-border-color: #eeeeee;
@@ -143,6 +144,7 @@
         --sw-loader-background-wrapper-color: rgba(255, 255, 255, 0.7);
     }
 </style>
+<script src="{{ URL::asset('assets/js/jquery.mask.js') }}" type="text/javascript"></script>
 <!-- end JS -->
 <title>ONECI | @yield("title") </title>
 <meta name="google-site-verification" content="HwJVTaGHHVbOC9VrYiz__okc1_1pDRBL-SzpDdhBpZM"/>

@@ -12,6 +12,9 @@
             });
     });
 
+    jQuery("#msisdn-input").mask('99 99 99 99 99');
+    jQuery("#birth-place-input").select2();
+
     jQuery('#smartwizard').smartWizard({
         selected: 0, /* Initial selected step, 0 = first step*/
         theme: 'arrows', /* theme for the wizard, related css need to include for other than default theme*/
@@ -58,46 +61,7 @@
         hiddenSteps: [], /* Hidden steps*/
         getContent: null /* Callback function for content loading*/
     });
-    /*
-    jQuery('#smartwizard').smartWizard({
-        // Initial selected step, 0 = first step
-        selected: 0,
-        // 'arrows', 'square', 'round', 'dots'
-        theme: 'arrows',
-        // lang
-        lang: {
-            next:'Suivant >',
-            previous:'< Précédent'
-        },
-        // Nav menu justification. true/false
-        justified: true,
-        // Automatically adjust content height
-        autoAdjustHeight: true,
-        // Show url hash based on step
-        enableURLhash: true,
-        // Enable the back button support
-        backButtonSupport: true,
-        // <a href="https://www.jqueryscript.net/animation/">Animation</a> options
-        transition: {
-            // Animation effect on navigation, none|fade|slideHorizontal|slideVertical|slideSwing|css(Animation CSS class also need to specify)
-            animation:'slideHorizontal',
-            // Animation speed. Not used if animation is 'css'
-            speed:'400',
-            // Animation easing. Not supported without a jQuery easing plugin. Not used if animation is 'css'
-            easing:'',
-            // Only used if animation is 'css'. Animation CSS prefix
-            prefixCss:'',
-            // Only used if animation is 'css'. Step show Animation CSS on forward direction
-            fwdShowCss:'',
-            // Only used if animation is 'css'. Step hide Animation CSS on forward direction
-            fwdHideCss:'',
-            // Only used if animation is 'css'. Step show Animation CSS on backward direction
-            bckShowCss:'',
-            // Only used if animation is 'css'. Step hide Animation CSS on backward direction
-            bckHideCss:'',
-        }
-    });
-    */
+
     jQuery('.inputfile').each(function () {
         var $input = jQuery(this),
             $label = $input.next('label'),

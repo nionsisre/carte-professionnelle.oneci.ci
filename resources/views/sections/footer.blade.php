@@ -1,49 +1,7 @@
 <?php if (!$MOBILE_HEADER_ENABLED) { ?>
     <!-- begin footer -->
 <footer id="footer">
-        <?php if ($routes[1] == "" || $routes[1] == "accueil") { ?>
-        <!-- begin footer featured -->
-    <div id="footer-featured" style="background-color: #F78E0C;">
-        <div class="container clearfix">
-            <div align="center">
-                <h1 style="font-size: 1.5em;">Restez en contact avec nous en nous suivant sur les réseaux sociaux
-                    :</h1>
-                <div style="margin-top: 3em">
-                    <div class="one-fourth atcl" style="margin-right: 0em"><a href="https://twitter.com/Oneci_ci"
-                                                                              title="Twitter" target="_blank"><img
-                                src="<?php echo $SUBSTR_URL; ?>/assets/images/social-media/social_btn_twitter.svg"
-                                alt="Icone Twitter"
-                                style="box-shadow:0 0 10px rgba(60,72,88,0.35) !important; width: 5em; border-radius: 3em; margin-bottom: 3em"></a>
-                    </div>
-                    <div class="one-fourth atcl" style="margin-right: 0em"><a
-                            href="https://www.facebook.com/oneciofficiel" title="Facebook" target="_blank"><img
-                                src="<?php echo $SUBSTR_URL; ?>/assets/images/social-media/social_btn_facebook.svg"
-                                alt="Icone Facebook"
-                                style="box-shadow:0 0 10px rgba(60,72,88,0.35) !important; width: 5em; border-radius: 3em; margin-bottom: 3em"></a>
-                    </div>
-                    <div class="one-fourth atcl" style="margin-right: 0em"><a
-                            href="https://www.linkedin.com/company/office-national-d-identification-c-i/"
-                            title="LinkedIn" target="_blank"><img
-                                src="<?php echo $SUBSTR_URL; ?>/assets/images/social-media/social_btn_linkedin.svg"
-                                alt="Icone LinkedIn"
-                                style="box-shadow:0 0 10px rgba(60,72,88,0.35) !important; border-radius: 3em; width: 5em; margin-bottom: 3em"></a>
-                    </div>
-                    <div class="one-fourth atcl" style="margin-right: 0em"><a
-                            href="https://www.youtube.com/channel/UCXfkjZr4KdlTn_tnzvn30VQ" title="YouTube"
-                            target="_blank"><img
-                                src="<?php echo $SUBSTR_URL; ?>/assets/images/social-media/social_btn_youtube.svg"
-                                alt="Icone Youtube"
-                                style="box-shadow:0 0 10px rgba(60,72,88,0.35) !important; border-radius: 3em; width: 5em; margin-bottom: 3em"></i>
-                        </a></div>
-                    <br/>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end footer featured -->
-    <?php } ?>
-
-        <!-- begin footer top -->
+    <!-- begin footer top -->
     <div id="footer-top">
         <div class="container clearfix">
             <h2 id="plan-site">PLAN DU SITE</h2>
@@ -52,31 +10,31 @@
                     <h3>Nos Produits</h3>
                     <h6>Carte nationale d'identité</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/documents-a-fournir" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/documents-a-fournir" ?>"
                            class="text-white">> Liste des documents à fournir</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."nos-produits/procedure-de-retrait-special-de-cni" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/nos-produits/procedure-de-retrait-special-de-cni" ?>"
                            class="text-white">> Procédure de retrait spécial de CNI</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/liste-centres-correction" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/liste-centres-correction" ?>"
                            class="text-white">> Liste des centres de correction</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/liste-centres-enrolement" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/liste-centres-enrolement" ?>"
                            class="text-white">> Liste des centres d'enrôlement</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/liste-centres-distribution" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/liste-centres-distribution" ?>"
                            class="text-white">> Liste des centres de retrait</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/liste-centres-enrolement-et-distribution" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/liste-centres-enrolement-et-distribution" ?>"
                            class="text-white">> Liste des centres mixtes (enrôlement + retrait)</a><br/>
                     </p>
                     <h6>Attestation d'identité</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."attestation-identite" ?>" class="text-white">> Liste
+                        <a href="<?php echo "https://www.oneci.ci/attestation-identite" ?>" class="text-white">> Liste
                             des documents à fournir</a><br/>
                     </p>
                     <h6>Carte de résident</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-resident/documents-a-fournir" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-resident/documents-a-fournir" ?>"
                            class="text-white">> Liste des documents à fournir</a><br/>
                     </p>
                     <h6>Etat Civil</h6>
-                    <p><a href="<?php echo $SUBSTR_URL_SLASH."etat-civil" ?>" class="text-white">> Informations sur
+                    <p><a href="<?php echo "https://www.oneci.ci/etat-civil" ?>" class="text-white">> Informations sur
                             l'Etat civil</a></p>
                 </div>
             </div>
@@ -87,14 +45,14 @@
                     <h3>Nos services</h3>
                     <h6>Identité</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."service-vip" ?>" class="text-white">> Service VIP</a><br/>
+                        <a href="<?php echo "https://www.oneci.ci/service-vip" ?>" class="text-white">> Service VIP</a><br/>
                         <a href="https://rnpp.ci/voucher/index" class="text-white">> Achat du timbre
                             d'enrôlement</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/suivi-de-statut" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/suivi-de-statut" ?>"
                            class="text-white">> Suivi du statut de la CNI</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/rechercher-cni-perdue" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/rechercher-cni-perdue" ?>"
                            class="text-white">> Rechercher une CNI perdue</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."carte-identite/declarer-cni-retrouvee" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/carte-identite/declarer-cni-retrouvee" ?>"
                            class="text-white">> Déclarer une CNI retrouvée</a><br/>
                         <a href="https://statut.oneci.ci/numero-de-demande" class="text-white">> Je n'ai pas mon
                             numéro de demande</a><br/>
@@ -103,18 +61,18 @@
                     </p>
                     <h6>Authentification</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."nos-services/service-authentification" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/nos-services/service-authentification" ?>"
                            class="text-white">> Service Authentification</a><br/>
                         <a href="https://identite.oneci.ci/nni" class="text-white">> Initier une demande de numéro
                             NNI</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."nos-services/commande-de-tvi" ?>" class="text-white">>
+                        <a href="<?php echo "https://www.oneci.ci/nos-services/commande-de-tvi" ?>" class="text-white">>
                             Commander mon Terminal TVI</a><br/>
                     </p>
                     <h6>Réclamation</h6>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."nos-services/service-reclamation" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/nos-services/service-reclamation" ?>"
                            class="text-white">> Service Réclamation</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."nos-services/retard-de-production" ?>"
+                        <a href="<?php echo "https://www.oneci.ci/nos-services/retard-de-production" ?>"
                            class="text-white">> Faire une réclamation de votre titre</a>
                     </p>
                 </div>
@@ -123,23 +81,23 @@
                 <div class="widget">
                     <h3>Qui sommes-nous ?</h3>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."accueil" ?>" class="text-white">> Page
+                        <a href="<?php echo "https://www.oneci.ci/accueil" ?>" class="text-white">> Page
                             d'accueil</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."qui-sommes-nous" ?>" class="text-white">>
+                        <a href="<?php echo "https://www.oneci.ci/qui-sommes-nous" ?>" class="text-white">>
                             Présentation de l'ONECI</a>
                     </p>
                 </div>
                 <div class="widget">
                     <h3>Divers</h3>
                     <p>
-                        <a href="<?php echo $SUBSTR_URL_SLASH; ?>"
+                        <a href="<?php echo "https://www.oneci.ci"; ?>"
                            class="text-white">> Actualités</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."documentation" ?>" class="text-white">>
+                        <a href="<?php echo "https://www.oneci.ci/documentation" ?>" class="text-white">>
                             Documentation</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."oneci-carriere" ?>" class="text-white">> ONECI
+                        <a href="<?php echo "https://www.oneci.ci/oneci-carriere" ?>" class="text-white">> ONECI
                             Carrière</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."mediatheque" ?>" class="text-white">> Médiathèque</a><br/>
-                        <a href="<?php echo $SUBSTR_URL_SLASH."l-oneci-vous-ecoute" ?>" class="text-white">> L'ONECI
+                        <a href="<?php echo "https://www.oneci.ci/mediatheque" ?>" class="text-white">> Médiathèque</a><br/>
+                        <a href="<?php echo "https://www.oneci.ci/l-oneci-vous-ecoute" ?>" class="text-white">> L'ONECI
                             vous écoute</a>
                     </p>
                 </div>
