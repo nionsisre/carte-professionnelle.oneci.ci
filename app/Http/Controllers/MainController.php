@@ -80,7 +80,7 @@ class MainController extends Controller
             }
         }
 
-        return view('layouts.app', [
+        return view('pages.home', [
             'SUBSTR_URL' => $SUBSTR_URL,
             'routes' => $routes,
             'SUBSTR_URL_SLASH' => $SUBSTR_URL_SLASH,
