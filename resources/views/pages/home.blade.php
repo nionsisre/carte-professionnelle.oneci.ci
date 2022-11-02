@@ -120,11 +120,11 @@
                                     <li>
                                         <a class="nav-link" href="#step-1"><i
                                                 class="fa fa-info-circle text-white"></i> &nbsp; Etape 1 :
-                                            Informations sur le Mandataire</a>
+                                            Numéro(s) à identifier</a>
                                     </li>
                                     <li>
                                         <a class="nav-link" href="#step-2"><i class="fa fa-id-card text-white"></i>
-                                            &nbsp; Etape 2 : Informations sur la Carte Nationale d'Identité</a>
+                                            &nbsp; Etape 2 : Informations sur l'abonné</a>
                                     </li>
                                     <li>
                                         <a class="nav-link" href="#step-3"><i class="fa fa-copy text-white"></i>
@@ -134,15 +134,6 @@
                                         <a class="nav-link" href="#step-4"><i class="fa fa-eye text-white"></i>
                                             &nbsp; Etape 4 : Récapitulatif</a>
                                     </li>
-                                    <li>
-                                        <a class="nav-link" href="#step-5"><i
-                                                class="fa fa-credit-card text-white"></i> &nbsp; Etape 5 : Paiement
-                                            des Frais de services</a>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link" href="#step-6"><i class="fa fa-check text-white"></i>
-                                            &nbsp; Etape 6 : Notification de prise en compte de la requête</a>
-                                    </li>
                                 </ul>
                                 <div class="tab-content">
                                     <div id="step-1" class="tab-pane" role="tabpanel">
@@ -151,81 +142,6 @@
                                         <input type="hidden" name="context" value="WITHDRAWAL_WITH_PROCURATION"/>
                                         <input type="hidden" name="token"
                                                value=""/>
-                                        <div class="container clearfix">
-                                            <div class="form-group one-half column-last" id="first-name-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Entrez votre nom<span style="color: #d9534f">*</span> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="delegate-first-name-input"
-                                                           name="delegate-first-name"
-                                                           placeholder="Nom ou Nom de l'époux..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"] . '"';
-                                                           } ?> maxlength="25" required="required"
-                                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                </div>
-                                                <br/>
-                                            </div>
-                                            <div class="form-group one-half column-last" id="last-name-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Entrez votre prénom<span style="color: #d9534f">*</span> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="delegate-last-name-input"
-                                                           name="delegate-last-name" placeholder="Prénom(s)..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
-                                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                </div>
-                                                <br/>
-                                            </div>
-                                        </div>
-                                        <div class="container clearfix">
-                                            <div class="form-group one-half column-last" id="birth-date-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Entrez votre date de naissance<span
-                                                        style="color: #d9534f">*</span> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="date" id="delegate-birth-date-input"
-                                                           name="delegate-birth-date"
-                                                           placeholder="Date de Naissance"
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["birth_date"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["birth_date"] . '"';
-                                                           } ?>  required="required"
-                                                           style="width: 17.5em; text-align: center"/>
-                                                </div>
-                                                <br/>
-                                            </div>
-                                                <?php if (isset($result) && is_array($result)) { ?>
-                                            <div class="form-group one-half column-last" id="birth-place-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Entrez votre lieu de naissance<span
-                                                        style="color: #d9534f">*</span> :
-                                                </label>
-                                                <span style="display: none" id="err-toast"></span>
-                                                <div class="col-sm-10">
-                                                    <select class="form-control good-select"
-                                                            id="delegate-birth-place-input"
-                                                            name="delegate-birth-place"
-                                                            placeholder="Lieu de naissance" required="required"
-                                                            style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                        <option value="" selected disabled>Choisir le lieu de
-                                                            naissance
-                                                        </option>
-                                                            <?php foreach ($result as $ec) { ?>
-                                                        <option
-                                                            value="<?php echo $ec["civil_status_center_id"]; ?>" <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]) && $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["birth_place"] == $ec["civil_status_center_id"]) {
-                                                            echo 'selected';
-                                                        } ?>><?php echo $ec["civil_status_center_label"]; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <?php } ?>
-                                        </div>
                                         <br/>
                                         <div class="container clearfix">
                                             <div class="form-group one-half column-last" id="birth-place-field">
@@ -252,19 +168,21 @@
                                                 </div>
                                             </div>
                                             <div class="form-group one-half column-last" id="last-name-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Lieu de résidence<span style="color: #d9534f">*</span> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="delegate-residence-input"
-                                                           name="delegate-residence"
-                                                           placeholder="Lieu de résidence..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
-                                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                <div class="col-sm-12">
+                                                    <label class="col-sm-2 control-label">
+                                                        Entrez votre numéro de téléphone mobile<span
+                                                            style="color: #d9534f">*</span> :
+                                                    </label>
+                                                    <span style="display: none" id="err-toast"></span>
+                                                    <div class="col-sm-10"><span style="width: 2em">+ 225</span> &nbsp;
+                                                        <input type="text" class="form-control good-select"
+                                                               id="delegate-msisdn-input" name="delegate-msisdn"
+                                                               placeholder="__ __ __ __ __" maxlength="14"
+                                                               style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
+                                                               <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"]) && !empty($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"])) {
+                                                                   echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"] . '"';
+                                                               } ?> required="required"/></div>
                                                 </div>
-                                                <br/>
                                             </div>
                                         </div>
                                         <div class="form-group" id="form-number-field">
@@ -300,79 +218,21 @@
                                                     } ?> /></div>
                                                 <br/>
                                             </div>
-                                            <div class="form-group" id="comment-field">
-                                                <label class="col-sm-2 control-label">
-                                                    <em>Commentaire(s) / Observation(s) complémentaires :</em>
-                                                </label>
-                                                <div class="col-sm-10">
-                                                        <textarea type="text" id="comment-input" name="comment"
-                                                                  placeholder="Commentaire(s) ou Observation(s)..."
-                                                                  <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["comment"])) {
-                                                                      echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["comment"] . '"';
-                                                                  } ?> maxlength="400"
-                                                                  style="width: 21.5em; height: 4em; text-align: center; resize: none;"></textarea>
-                                                </div>
-                                                <br/>
-                                            </div>
                                         </div>
                                     </div>
                                     <div id="step-2" class="tab-pane" role="tabpanel">
                                         <br/><br/>
-                                        <h2>Informations sur le titulaire de la Carte Nationale d'Identité :</h2>
+                                        <h2>Informations sur l'abonné :</h2>
                                         <br/>
-                                        <div class="form-group" id="form-number-field">
-                                            <label class="col-sm-2 control-label">
-                                                Numéro du récépissé d'enrôlement :
-                                            </label>
-                                            <div class="col-sm-10">
-                                                <input type="text" id="form-number-input" name="form-number"
-                                                       placeholder="Numéro de demande..."
-                                                       <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["recepisse_number"])) {
-                                                           echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["recepisse_number"] . '"';
-                                                       } ?> maxlength="11"
-                                                       style="width: 17.4em; text-align: center"/>
-                                            </div>
-                                            <br/>
-                                        </div>
                                         <div class="container clearfix">
-                                            <div class="form-group one-half column-last" id="first-name-field">
+                                            <div class="form-group one-third column-last" id="first-name-field">
                                                 <label class="col-sm-2 control-label">
-                                                    <em>Numéro de BL (présent dans le SMS de retrait)</em> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="bl-number-input" name="bl-number"
-                                                           placeholder="Numéro de BL (faculatif)..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"] . '"';
-                                                           } ?> maxlength="25" required="required"
-                                                           style="width: 17.4em; text-align: center"/>
-                                                </div>
-                                                <br/>
-                                            </div>
-                                            <div class="form-group one-half column-last" id="last-name-field">
-                                                <label class="col-sm-2 control-label">
-                                                    <em>ID du paquet (présent dans le SMS de retrait)</em> :
-                                                </label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="paquet-id-input" name="paquet-id"
-                                                           placeholder="ID du paquet (faculatif)..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
-                                                           style="width: 17.4em; text-align: center"/>
-                                                </div>
-                                                <br/>
-                                            </div>
-                                        </div>
-                                        <div class="container clearfix">
-                                            <div class="form-group one-half column-last" id="first-name-field">
-                                                <label class="col-sm-2 control-label">
-                                                    Nom du titulaire de la CNI<span style="color: #d9534f">*</span>
+                                                    Nom de l'abonné<span style="color: #d9534f">*</span>
                                                     :
                                                 </label>
                                                 <div class="col-sm-10">
                                                     <input type="text" id="first-name-input" name="first-name"
-                                                           placeholder="Nom ou Nom de l'époux..."
+                                                           placeholder="Nom de l'abonné..."
                                                            <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"])) {
                                                                echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["first_name"] . '"';
                                                            } ?> maxlength="25" required="required"
@@ -380,14 +240,29 @@
                                                 </div>
                                                 <br/>
                                             </div>
-                                            <div class="form-group one-half column-last" id="last-name-field">
+                                            <div class="form-group one-third column-last" id="last-name-field">
                                                 <label class="col-sm-2 control-label">
-                                                    Prénom du titulaire de la CNI<span
+                                                    Nom d'épouse<span
                                                         style="color: #d9534f">*</span> :
                                                 </label>
                                                 <div class="col-sm-10">
                                                     <input type="text" id="last-name-input" name="last-name"
-                                                           placeholder="Prénom(s) du titulaire..."
+                                                           placeholder="Nom d'épouse..."
+                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
+                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
+                                                           } ?> maxlength="70" required="required"
+                                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                </div>
+                                                <br/>
+                                            </div>
+                                            <div class="form-group one-third column-last" id="last-name-field">
+                                                <label class="col-sm-2 control-label">
+                                                    Prénom(s) de l'abonné<span
+                                                        style="color: #d9534f">*</span> :
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" id="last-name-input" name="last-name"
+                                                           placeholder="Prénom(s) de l'abonné..."
                                                            <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
                                                                echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
                                                            } ?> maxlength="70" required="required"
@@ -399,7 +274,7 @@
                                         <div class="container clearfix">
                                             <div class="form-group one-half column-last" id="birth-date-field">
                                                 <label class="col-sm-2 control-label">
-                                                    Date de naissance du titulaire de la CNI<span
+                                                    Date de naissance de l'abonné<span
                                                         style="color: #d9534f">*</span> :
                                                 </label>
                                                 <div class="col-sm-10">
@@ -415,7 +290,7 @@
                                                 <?php if (isset($result) && is_array($result)) { ?>
                                             <div class="form-group one-half column-last" id="birth-place-field">
                                                 <label class="col-sm-4 control-label">
-                                                    Lieu de naissance du titulaire de la CNI<span
+                                                    Lieu de naissance de l'abonné<span
                                                         style="color: #d9534f">*</span> :
                                                 </label>
                                                 <span style="display: none" id="err-toast"></span>
@@ -441,7 +316,7 @@
                                         <br/>
                                         <div class="form-group column-last" id="last-name-field">
                                             <label class="col-sm-2 control-label">
-                                                Lieu de résidence du titulaire de CNI<span
+                                                Lieu de résidence de l'abonné<span
                                                     style="color: #d9534f">*</span> :
                                             </label>
                                             <div class="col-sm-10">
@@ -453,72 +328,54 @@
                                                        style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                             </div>
                                         </div>
-                                        <br/>
-                                        <div class="form-group" id="form-number-field">
-                                            <div class="col-sm-12">
-                                                <label class="col-sm-4 control-label">
-                                                    Numéro de téléphone du titulaire de la CNI<span
-                                                        style="color: #d9534f">*</span> :
-                                                </label>
-                                                <span style="display: none" id="err-toast"></span>
-                                                <div class="col-sm-10"><input type="text"
-                                                                              class="form-control good-select"
-                                                                              id="msisdn-input" name="msisdn"
-                                                                              placeholder="Numéro de téléphone"
-                                                                              maxlength="24"
-                                                                              style="width: 17.4em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                              <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"]) && !empty($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"])) {
-                                                                                  echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["msisdn"] . '"';
-                                                                              } ?> required="required"/></div>
-                                            </div>
+                                        <div class="col-sm-12">
+                                            <label class="col-sm-2 control-label">
+                                                <em>Entrez votre adresse mail pour recevoir toute notification
+                                                    relative à votre requête :</em>
+                                            </label>
+                                            <span style="display: none" id="err-mail-toast"></span>
+                                            <div><input type="email" class="form-control good-select"
+                                                        id="email-input" name="email"
+                                                        placeholder="Adresse Mail..." maxlength="150"
+                                                        style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
+                                                <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"]) && !empty($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"])) {
+                                                    echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"] . '"';
+                                                } ?> /></div>
                                             <br/>
                                         </div>
+
+                                        <div class="form-group column-last" id="last-name-field">
+                                            <label class="col-sm-2 control-label">
+                                                Profession de l'abonné<span
+                                                    style="color: #d9534f">*</span> :
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="residence-input" name="residence"
+                                                       placeholder="Profession..."
+                                                       <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
+                                                           echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
+                                                       } ?> maxlength="70" required="required"
+                                                       style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group column-last" id="last-name-field">
+                                            <label class="col-sm-2 control-label">
+                                                Nationalité de l'abonné<span
+                                                    style="color: #d9534f">*</span> :
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="text" id="residence-input" name="residence"
+                                                       placeholder="Nationalité..."
+                                                       <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
+                                                           echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
+                                                       } ?> maxlength="70" required="required"
+                                                       style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                            </div>
+                                        </div>
+                                        <br/>
                                     </div>
                                     <div id="step-3" class="tab-pane" role="tabpanel">
                                         <br/><br/>
-                                        <h2>Courrier de demande adressé au Directeur Général de l’ONECI :</h2>
-                                        <label for="document-input" class="col-sm-2 control-label">
-                                            <em>Le document scanné à charger doit être en <b>*.jpg</b> ou en <b>*.pdf</b>
-                                                et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                excéder <b>800 Ko</b>.</em>
-                                        </label>
-                                        <div class="form-group" id="form-number-field">
-                                            <div class="col-sm-10">
-                                                <div class="box">
-                                                    <input type="file" name="documents[]" id="document-0-input"
-                                                           class="inputfile" accept="application/pdf, image/jpeg"
-                                                           style="display: none">
-                                                    <label for="document-0-input" class="atcl-inv hoverable"
-                                                           style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
-                                                            class="fad fa-file-upload fa-3x mr10"
-                                                            style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
-                                                </div>
-                                            </div>
-                                            <br/>
-                                        </div>
-                                        <br/>
-                                        <h2>Procuration légalisée de la mairie, aux fins de retrait de la CNI,
-                                            datant de moins de 3 mois :</h2>
-                                        <label for="document-input" class="col-sm-2 control-label">
-                                            <em>Le document scanné à charger doit être en <b>*.jpg</b> ou en <b>*.pdf</b>
-                                                et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                excéder <b>800 Ko</b>.</em>
-                                        </label>
-                                        <div class="form-group" id="form-number-field">
-                                            <div class="col-sm-10">
-                                                <div class="box">
-                                                    <input type="file" name="documents[]" id="document-1-input"
-                                                           class="inputfile" accept="application/pdf, image/jpeg"
-                                                           style="display: none">
-                                                    <label for="document-1-input" class="atcl-inv hoverable"
-                                                           style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
-                                                            class="fad fa-file-upload fa-3x mr10"
-                                                            style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
-                                                </div>
-                                            </div>
-                                            <br/>
-                                        </div>
-                                        <br/>
                                         <h2>Photocopie de la pièce d'identité du mandataire en cours de validité
                                             :</h2>
                                         <label for="document-input" class="col-sm-2 control-label">
@@ -546,51 +403,6 @@
                                             <br/>
                                         </div>
                                         <br/>
-                                        <h2>Justificatif de résidence à l’étranger du titulaire de la CNI :</h2>
-                                        <label for="document-input" class="col-sm-2 control-label">
-                                            <em>Le document scanné à charger doit être en <b>*.jpg</b> ou en <b>*.pdf</b>
-                                                et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                excéder <b>800 Ko</b>.</em>
-                                        </label>
-                                        <div class="form-group" id="form-number-field">
-                                            <label for="document-input" class="col-sm-2 control-label">
-                                                <b><i class="fa fa-file"></i>&nbsp; Document accepté : <br>
-                                                    <span>(Carte d’étudiant, Permis d’étude, Carte consulaire, Facture d’eau ou d’électricité)</span></b>
-                                            </label>
-                                            <div class="col-sm-10">
-                                                <div class="box">
-                                                    <input type="file" name="documents[]" id="document-3-input"
-                                                           class="inputfile" accept="application/pdf, image/jpeg"
-                                                           style="display: none">
-                                                    <label for="document-3-input" class="atcl-inv hoverable"
-                                                           style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
-                                                            class="fad fa-file-upload fa-3x mr10"
-                                                            style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
-                                                </div>
-                                            </div>
-                                            <br/>
-                                        </div>
-                                        <br/>
-                                        <h2>Récépissé d’enrôlement de la CNI à retirer :</h2>
-                                        <label for="document-input" class="col-sm-2 control-label">
-                                            <em>Le document scanné à charger doit être en <b>*.jpg</b> ou en <b>*.pdf</b>
-                                                et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                excéder <b>800 Ko</b>.</em>
-                                        </label>
-                                        <div class="form-group" id="form-number-field">
-                                            <div class="col-sm-10">
-                                                <div class="box">
-                                                    <input type="file" name="documents[]" id="document-4-input"
-                                                           class="inputfile" accept="application/pdf, image/jpeg"
-                                                           style="display: none">
-                                                    <label for="document-4-input" class="atcl-inv hoverable"
-                                                           style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
-                                                            class="fad fa-file-upload fa-3x mr10"
-                                                            style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
-                                                </div>
-                                            </div>
-                                            <br/>
-                                        </div>
                                     </div>
                                     <div id="step-4" class="tab-pane" role="tabpanel">
                                         <br/><br/>
@@ -601,12 +413,6 @@
                                                     class="fa fa-credit-card"></i> &nbsp; Procéder au paiement
                                             </button>
                                         </div>
-                                    </div>
-                                    <div id="step-5" class="tab-pane" role="tabpanel">
-                                        Step 5
-                                    </div>
-                                    <div id="step-6" class="tab-pane" role="tabpanel">
-                                        Step 6
                                     </div>
                                 </div>
                             </div>
