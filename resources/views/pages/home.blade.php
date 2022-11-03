@@ -8,7 +8,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li><a href="<?php echo 'https://www.oneci.ci' ?>">Accueil</a> &rsaquo;</li>
+                    <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo;</li>
                     <li>Nos services &rsaquo;</li>
                     <li>Retrait par procuration</li>
                 </ul>
@@ -30,7 +30,7 @@
                     <center>
                         <div id="tvi-preorder-container">
                             <form id="ctptch-frm-id" class="content-form" method="post"
-                                  action="https://www.oneci.ci/signaler-retard-de-production"; ?>">
+                                  action="https://www.oneci.ci/signaler-retard-de-production"; ?>
                                 <?php
                                 // --------------------------------------------------------------------------
                                 // Everything is ok so getting data using REST-API Micro service
@@ -214,10 +214,7 @@
                                                 </label>
                                                 <div class="col-sm-10">
                                                     <input type="text" id="residence-input" name="residence"
-                                                           placeholder="Lieu de résidence..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
+                                                           placeholder="Lieu de résidence..." maxlength="70" required="required"
                                                            style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                 </div>
                                             </div>
@@ -229,10 +226,7 @@
                                                 </label>
                                                 <div class="col-sm-10">
                                                     <input type="text" id="country-input" name="country"
-                                                           placeholder="Nationalité..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
+                                                           placeholder="Nationalité..." maxlength="70" required="required"
                                                            style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                 </div>
                                             </div>
@@ -244,10 +238,7 @@
                                                 </label>
                                                 <div class="col-sm-10">
                                                     <input type="text" id="profession-input" name="profession"
-                                                           placeholder="Profession..."
-                                                           <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"])) {
-                                                               echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["last_name"] . '"';
-                                                           } ?> maxlength="70" required="required"
+                                                           placeholder="Profession..." maxlength="70" required="required"
                                                            style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                 </div>
                                             </div>
@@ -261,10 +252,7 @@
                                                 <div><input type="email" class="form-control good-select"
                                                             id="email-input" name="email"
                                                             placeholder="Adresse Mail..." maxlength="150"
-                                                            style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                        <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"]) && !empty($_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"])) {
-                                                            echo 'value="' . $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["email"] . '"';
-                                                        } ?> /></div>
+                                                            style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" /></div>
                                                 <br/>
                                             </div>
                                         </div>
