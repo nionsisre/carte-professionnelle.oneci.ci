@@ -110,6 +110,7 @@
 <link href="{{ URL::asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
 <script src="{{ URL::asset('assets/js/jquery-ui.min.js') }}" type="text/javascript"></script>
 <script src="{{ URL::asset('assets/js/jquery.mask.js') }}" type="text/javascript"></script>
+<link href="{{ URL::asset('assets/css/countrySelect.css') }}" rel='stylesheet' type='text/css'>
 <!-- Core Stylesheet -->
 <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard.min.css') }}" rel="stylesheet"/>
 <!-- Optional SmartWizard themes -->
@@ -119,7 +120,6 @@
     <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard_square.min.css') }}" rel="stylesheet">-->
 <!-- All In One -->
 <link href="{{ URL::asset('assets/css/smart-wizard/smart_wizard_all.css') }}" rel="stylesheet"/>
-<link href="{{ URL::asset('assets/css/select2.min.css') }}" rel='stylesheet' type='text/css'>
 <style>
     :root {
         --sw-border-color: #eeeeee;

@@ -32,6 +32,8 @@
                             <form id="ctptch-frm-id" class="content-form" method="post"
                                   action="https://www.oneci.ci/signaler-retard-de-production"; ?>
 
+                                <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+
                                 <div id="smartwizard">
                                     <ul class="nav">
                                         <li><a class="nav-link" href="#step-1"><i class="fa fa-sim-card text-white"></i>
@@ -65,9 +67,9 @@
                                                                     placeholder="Opérateur téléphonique" required="required"
                                                                     style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Opérateur téléphonique</option>
-                                                                <option value="1">Orange CI</option>
-                                                                <option value="2">MTN CI</option>
-                                                                <option value="3">Moov Africa</option>
+                                                                @foreach($abonnes_operateurs as $abonnes_operateur)
+                                                                    <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -109,13 +111,11 @@
                                                 </div>
                                                 <div class="form-group one-third column-last" id="spouse-name-field">
                                                     <label class="col-sm-2 control-label">
-                                                        Nom d'épouse<span
-                                                            style="color: #d9534f">*</span> :
+                                                        <em>Nom d'épouse :</em>
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="spouse-name-input" name="spouse-name"
                                                                placeholder="Nom d'épouse..." maxlength="70"
-                                                               required="required"
                                                                style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                     </div>
                                                     <br/>
@@ -160,7 +160,9 @@
                                                             <option value="" selected disabled>Choisir le lieu de
                                                                 naissance
                                                             </option>
-                                                            <option value="test>">test</option>
+                                                            @foreach($civil_status_center as $csc)
+                                                                <option value="{{ $csc->civil_status_center_id }}">{{ $csc->civil_status_center_label }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>

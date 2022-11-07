@@ -15,7 +15,7 @@
         if (idx_msisdn > 1) {
             $('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`, ' + (idx_msisdn) + ')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
         }
-        $('#content').height( $("#content").height() - 90);
+        $('#content').height( $("#content").height() - 130);
     }
     $("#add-msisdn").click(function () {
         if(idx_msisdn < max_msisdn) {
@@ -31,9 +31,9 @@
                                 <div class="col-sm-10">\n\
                                     <select class="form-control good-select" id="telco-input-'+(idx_msisdn+1)+'" name="telco[]" required="required"\n\
                                             style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">\n\
-                                        <option value="1">Orange CI</option>\n\
-                                        <option value="2">MTN CI</option>\n\
-                                        <option value="3">Moov Africa</option>\n\
+                                        @foreach($abonnes_operateurs as $abonnes_operateur)
+                                        <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>\n\
+                                        @endforeach
                                     </select>\n\
                                 </div>\n\
                             </div>\n\
@@ -54,8 +54,9 @@
                         <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-'+(idx_msisdn+1)+'`, '+(idx_msisdn+1)+')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>\n\
                     </div>';
             $('#msisdn-container').append(html);
-            $('#content').height( $("#content").height() + 90);
+            $('#content').height( $("#content").height() + 130);
             idx_msisdn++;
+            jQuery(".msisdn").mask('99 99 99 99 99');
             jQuery(".good-select").select2();
             if(idx_msisdn === max_msisdn) $("#add-msisdn").attr("disabled", "disabled");
         } else {
