@@ -14,6 +14,17 @@ class AbonnesStatutSeeder extends Seeder
      */
     public function run()
     {
-        AbonnesStatut::Factory()->count(10)->create();
+        AbonnesStatut::create([
+            'code_statut' => 'IAT',
+            'libelle_statut' => 'Identification en attente de traitement',
+        ]);
+        AbonnesStatut::create([
+            'code_statut' => 'IDV',
+            'libelle_statut' => 'Identification validée',
+        ]);
+        AbonnesStatut::create([
+            'code_statut' => 'IDR',
+            'libelle_statut' => 'Identification refusée',
+        ]);
     }
 }

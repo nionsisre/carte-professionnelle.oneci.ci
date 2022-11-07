@@ -14,6 +14,6 @@ class AbonneSeeder extends Seeder
      */
     public function run()
     {
-        Abonne::Factory()->count(10)->create();
+        Abonne::Factory()->count(50)->create();
     }
 }

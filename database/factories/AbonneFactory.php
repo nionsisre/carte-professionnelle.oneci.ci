@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
+use App\Models\AbonnesStatut;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AbonneFactory extends Factory
-{
+class AbonneFactory extends Factory {
+
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             'numero_dossier' => $this->faker->unique()->numerify("##########"),
             'nom' => $this->faker->lastName(),
@@ -25,9 +25,10 @@ class AbonneFactory extends Factory
             'profession' => $this->faker->jobTitle(),
             'nationalite' => "Ivoirienne",
             'email' => $this->faker->unique()->safeEmail(),
-            'type_piece_id' => $this->faker->randomElement([1, 2, 3]),
+            'abonnes_type_piece_id' => $this->faker->randomElement([1, 2, 3]),
             'document_justificatif' => $this->faker->unique()->numerify("##########"),
-            'statut_id' => 1
+            'abonnes_statut_id' => AbonnesStatut::inRandomOrder()->first()->id
         ];
     }
+
 }

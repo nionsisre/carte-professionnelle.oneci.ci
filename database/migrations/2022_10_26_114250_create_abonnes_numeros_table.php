@@ -16,9 +16,12 @@ class CreateAbonnesNumerosTable extends Migration
         Schema::create('abonnes_numeros', function (Blueprint $table) {
             $table->id();
             $table->integer('abonne_id');
-            $table->integer('operateur_id');
+            $table->integer('abonnes_operateur_id');
             $table->string('numero_de_telephone');
             $table->timestamps();
+
+            /*$table->foreign('abonne_id')->references('id')->on('abonnes');
+            $table->foreign('abonnes_operateur_id')->references('id')->on('abonnes_operateurs');*/
         });
     }
 
@@ -29,6 +32,6 @@ class CreateAbonnesNumerosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('abonne_numeros');
+        Schema::dropIfExists('abonnes_numeros');
     }
 }

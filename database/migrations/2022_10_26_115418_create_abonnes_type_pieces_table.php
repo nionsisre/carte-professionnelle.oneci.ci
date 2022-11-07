@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAbonnesTypePiecesTable extends Migration
-{
+class CreateAbonnesTypePiecesTable extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('abonnes_type_pieces', function (Blueprint $table) {
             $table->id();
             $table->string('code_type_piece');
@@ -26,8 +25,8 @@ class CreateAbonnesTypePiecesTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('abonnes_type_pieces');
     }
+
 }

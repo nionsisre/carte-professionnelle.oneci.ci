@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAbonnesTable extends Migration
-{
+class CreateAbonnesTable extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('abonnes', function (Blueprint $table) {
             $table->id();
             $table->string('numero_dossier');
@@ -26,9 +25,9 @@ class CreateAbonnesTable extends Migration
             $table->string('profession');
             $table->string('nationalite');
             $table->string('email');
-            $table->string('type_piece_id');
+            $table->string('abonnes_type_piece_id');
             $table->string('document_justificatif');
-            $table->integer('statut_id')->default(1);
+            $table->integer('abonnes_statut_id')->default(1);
             $table->timestamps();
         });
     }
@@ -38,8 +37,8 @@ class CreateAbonnesTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('abonnes');
     }
+
 }

@@ -10,7 +10,7 @@
                 <ul>
                     <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo;</li>
                     <li>Nos services &rsaquo;</li>
-                    <li>Retrait par procuration</li>
+                    <li>Identification Abonné Mobile</li>
                 </ul>
             </nav>
         </div>
@@ -31,42 +31,7 @@
                         <div id="tvi-preorder-container">
                             <form id="ctptch-frm-id" class="content-form" method="post"
                                   action="https://www.oneci.ci/signaler-retard-de-production"; ?>
-                                <?php
-                                // --------------------------------------------------------------------------
-                                // Everything is ok so getting data using REST-API Micro service
-                                // --------------------------------------------------------------------------
-                                $get_parameters = array(
-                                    "instruction" => "GET_CIVIL_STATUS_CENTRES_LIST",
-                                    "client" => "KERNEL"
-                                );
-                                $url = 'https://kernel.oneci.ci/get-info?API_KEY=123&' . http_build_query($get_parameters);
-                                $contents = file_get_contents($url);
-                                // --------------------------------------------------------------------------
-                                // REST-API Micro service feedback processing
-                                // --------------------------------------------------------------------------
-                                if (isset($contents) && !empty($contents)) {
-                                    // --------------------------------------------------------------------------
-                                    // JSON Clean
-                                    // --------------------------------------------------------------------------
-                                    for ($i = 0; $i <= 31; ++$i) $contents = str_replace(chr($i), "", $contents);
-                                    $contents = str_replace(chr(127), "", $contents);
-                                    if (0 === strpos(bin2hex($contents), 'efbbbf')) $contents = substr($contents, 3);
-                                    // --------------------------------------------------------------------------
-                                    // Result USE Cases
-                                    // --------------------------------------------------------------------------
-                                    try {
-                                        $result = json_decode($contents, true); // Decoding serialized json into an array
-                                        //var_dump($result);
-                                        if (isset($result["error"]) && !$result["error"]) {
-                                            $result = $result["data"];
-                                        }
-                                    } catch (Exception $e) {
-                                        $flag = true;
-                                    }
-                                }
-                                /*echo $url."<br/>";
-                                var_dump($contents);*/
-                                ?>
+
                                 <div id="smartwizard">
                                     <ul class="nav">
                                         <li><a class="nav-link" href="#step-1"><i class="fa fa-sim-card text-white"></i>
@@ -86,43 +51,83 @@
                                             <input type="hidden" name="context" value="WITHDRAWAL_WITH_PROCURATION"/>
                                             <input type="hidden" name="token" value=""/>
                                             <br/>
-                                            <div class="container clearfix">
-                                                <div class="form-group one-half column-last" id="birth-place-field">
-                                                    <label class="col-sm-2 control-label">
-                                                        Opérateur téléphonique<span style="color: #d9534f">*</span> :
-                                                    </label>
-                                                    <span style="display: none" id="err-toast"></span>
-                                                    <div class="col-sm-10">
-                                                        <select class="form-control good-select"
-                                                                id="telco-input" name="telco"
-                                                                placeholder="Lien de parenté" required="required"
-                                                                style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                            <option value="" selected disabled>Opérateur téléphonique
-                                                            </option>
-                                                            <option value="1">Orange</option>
-                                                            <option value="2">MTN</option>
-                                                            <option value="3">Moov Africa</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group one-half column-last" id="msisdn-field">
-                                                    <div class="col-sm-12">
+                                            <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
+                                            <div id="msisdn-container">
+                                                <div class="container clearfix" style="background-color: #ccc; padding: 2em 2em">
+                                                    <div class="form-group one-half column-last" id="birth-place-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Entrez votre numéro de téléphone mobile<span
-                                                                style="color: #d9534f">*</span> :
+                                                            Opérateur téléphonique<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10"><span style="width: 2em">+ 225</span>
-                                                            &nbsp;
-                                                            <input type="text" class="form-control good-select"
-                                                                   id="msisdn-input" name="msisdn"
-                                                                   placeholder="__ __ __ __ __" maxlength="14"
-                                                                   style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                   required="required"/></div>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control good-select"
+                                                                    id="telco-input" name="telco"
+                                                                    placeholder="Lien de parenté" required="required"
+                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Opérateur téléphonique
+                                                                </option>
+                                                                <option value="1">Orange CI</option>
+                                                                <option value="2">MTN CI</option>
+                                                                <option value="3">Moov Africa</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group one-half column-last" id="msisdn-field">
+                                                        <div class="col-sm-12">
+                                                            <label class="col-sm-2 control-label">
+                                                                Numéro de téléphone<span
+                                                                    style="color: #d9534f">*</span> :
+                                                            </label>
+                                                            <span style="display: none" id="err-toast"></span>
+                                                            <div class="col-sm-10"><span style="width: 2em">+ 225</span>
+                                                                &nbsp;
+                                                                <input type="text" class="form-control good-select msisdn"
+                                                                       id="msisdn-input" name="msisdn"
+                                                                       placeholder="__ __ __ __ __" maxlength="14"
+                                                                       style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
+                                                                       required="required"/></div>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <br/>
+                                                <div class="container clearfix" style="background-color: #ccc; padding: 2em 2em">
+                                                    <div class="three-fourths">
+                                                        <div class="form-group one-half column-last" id="birth-place-field">
+                                                            <label class="col-sm-2 control-label">
+                                                                Opérateur téléphonique<span style="color: #d9534f">*</span> :
+                                                            </label>
+                                                            <span style="display: none" id="err-toast"></span>
+                                                            <div class="col-sm-10">
+                                                                <select class="form-control good-select"
+                                                                        id="telco-input" name="telco"
+                                                                        placeholder="Lien de parenté" required="required"
+                                                                        style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                    <!--<option value="" selected disabled>Opérateur téléphonique</option>-->
+                                                                    <option value="1">Orange CI</option>
+                                                                    <option value="2">MTN CI</option>
+                                                                    <option value="3">Moov Africa</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group one-half column-last" id="msisdn-field">
+                                                            <div class="col-sm-12">
+                                                                <label class="col-sm-2 control-label">
+                                                                    Numéro de téléphone<span
+                                                                        style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <span style="display: none" id="err-toast"></span>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control good-select msisdn"
+                                                                           id="msisdn-input" name="msisdn"
+                                                                           placeholder="__ __ __ __ __" maxlength="14"
+                                                                           style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
+                                                                           required="required"/></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>
+                                                </div>
                                             </div>
-                                            <br/><br/>
                                         </div>
                                         <div id="step-2" class="tab-pane" role="tabpanel">
                                             <br/><br/>
@@ -180,7 +185,6 @@
                                                                style="width: 17.5em; text-align: center"/>
                                                     </div>
                                                 </div>
-                                                <?php if (isset($result) && is_array($result)) { ?>
                                                 <div class="form-group one-half column-last" id="birth-place-field">
                                                     <label class="col-sm-4 control-label">
                                                         Lieu de naissance de l'abonné<span
@@ -195,16 +199,10 @@
                                                             <option value="" selected disabled>Choisir le lieu de
                                                                 naissance
                                                             </option>
-                                                                <?php foreach ($result as $ec) { ?>
-                                                            <option
-                                                                value="<?php echo $ec["civil_status_center_id"]; ?>" <?php if (isset($_SESSION["WITHDRAWAL_WITH_PROCURATION"]) && $_SESSION["WITHDRAWAL_WITH_PROCURATION"]["birth_place"] == $ec["civil_status_center_id"]) {
-                                                                echo 'selected';
-                                                            } ?>><?php echo $ec["civil_status_center_label"]; ?></option>
-                                                            <?php } ?>
+                                                            <option value="test>">test</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <?php } ?>
                                             </div>
                                             <br/>
                                             <div class="form-group column-last" id="residence-field">

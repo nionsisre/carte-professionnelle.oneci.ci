@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Abonne;
+use App\Models\AbonnesOperateur;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AbonnesNumeroFactory extends Factory
@@ -14,8 +16,8 @@ class AbonnesNumeroFactory extends Factory
     public function definition()
     {
         return [
-            'abonne_id' => $this->faker->numerify("#"),
-            'operateur_id' => $this->faker->randomElement([1, 2, 3]),
+            'abonne_id' =>  Abonne::inRandomOrder()->first()->id,
+            'abonnes_operateur_id' => AbonnesOperateur::inRandomOrder()->first()->id,
             'numero_de_telephone' => $this->faker->randomElement([
                 $this->faker->numerify("01 ## ## ## ##"),
                 $this->faker->numerify("05 ## ## ## ##"),

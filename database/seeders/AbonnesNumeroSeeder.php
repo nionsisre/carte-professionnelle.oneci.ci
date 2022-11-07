@@ -14,6 +14,6 @@ class AbonnesNumeroSeeder extends Seeder
      */
     public function run()
     {
-        AbonnesNumero::Factory()->count(10)->create();
+        AbonnesNumero::Factory()->count(100)->create();
     }
 }
