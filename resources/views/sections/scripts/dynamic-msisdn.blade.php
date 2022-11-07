@@ -29,7 +29,7 @@
                                 </label>\n\
                                 <span style="display: none" id="err-toast"></span>\n\
                                 <div class="col-sm-10">\n\
-                                    <select class="form-control good-select" id="telco-input-'+(idx_msisdn+1)+'" name="telco[]" placeholder="Opérateur téléphonique" required="required"\n\
+                                    <select class="form-control good-select" id="telco-input-'+(idx_msisdn+1)+'" name="telco[]" required="required"\n\
                                             style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">\n\
                                         <option value="1">Orange CI</option>\n\
                                         <option value="2">MTN CI</option>\n\
@@ -57,7 +57,7 @@
             $('#content').height( $("#content").height() + 90);
             idx_msisdn++;
             jQuery(".good-select").select2();
-            if(idx_msisdn == max_msisdn) $("#add-msisdn").attr("disabled", "disabled");
+            if(idx_msisdn === max_msisdn) $("#add-msisdn").attr("disabled", "disabled");
         } else {
             $("#add-msisdn").attr("disabled", "disabled");
         }

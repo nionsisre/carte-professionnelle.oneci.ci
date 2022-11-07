@@ -73,7 +73,7 @@
 <script src="{{ URL::asset('assets/js/jquery-3.6.1.min.js') }}" type="text/javascript"></script>
 <!-- jQuery -->
 <script src="{{ URL::asset('assets/js/jquery-migrate-1.4.1.min.js') }}"></script>
-<script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
+<script src="{{ URL::asset('assets/js/jquery-migrate-3.4.0.js') }}"></script>
 <script src="{{ URL::asset('assets/js/modernizr.custom.js') }}" type="text/javascript"></script>
 <!-- Modernizr -->
 <!--[if IE 8]>
@@ -146,5 +146,4 @@
 </style>
 <script src="{{ URL::asset('assets/js/jquery.mask.js') }}" type="text/javascript"></script>
 <!-- end JS -->
-<title>ONECI | @yield("title") </title>
 <meta name="google-site-verification" content="HwJVTaGHHVbOC9VrYiz__okc1_1pDRBL-SzpDdhBpZM"/>
