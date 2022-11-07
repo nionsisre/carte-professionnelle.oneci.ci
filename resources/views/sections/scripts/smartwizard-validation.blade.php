@@ -45,7 +45,7 @@
                                 clickClose: false,
                                 showClose: false
                             });
-                            jQuery('.blocker').css('z-index','2');
+                            jQuery('.blocker').css('z-index','2');/*test*/
                             $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
                         }
