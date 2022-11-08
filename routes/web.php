@@ -14,3 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [App\Http\Controllers\MainController::class, 'index'])->name('accueil');
+Route::post('/soumettre-identification', [App\Http\Controllers\IdentificationController::class, 'submit']);
+

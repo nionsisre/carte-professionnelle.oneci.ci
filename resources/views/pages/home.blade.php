@@ -30,10 +30,9 @@
                     <center>
                         <div id="tvi-preorder-container">
                             <form id="ctptch-frm-id" class="content-form" method="post"
-                                  action="https://www.oneci.ci/signaler-retard-de-production"; ?>
-
+                                  action="{{ URL::to('/') }}/soumettre-identification" enctype="multipart/form-data">
+                                {{ csrf_field() }}
                                 <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
-
                                 <div id="smartwizard">
                                     <ul class="nav">
                                         <li><a class="nav-link" href="#step-1"><i class="fa fa-sim-card text-white"></i>
@@ -42,7 +41,7 @@
                                                     class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
                                                 Informations sur l'abonné</a></li>
                                         <li><a class="nav-link" href="#step-3"><i class="fa fa-id-card text-white"></i>
-                                                &nbsp; Etape 3 : Documents justificatifs</a></li>
+                                                &nbsp; Etape 3 : Document justificatif</a></li>
                                         <li><a class="nav-link" href="#step-4"><i class="fa fa-eye text-white"></i>
                                                 &nbsp; Etape 4 : Récapitulatif</a></li>
                                     </ul>
@@ -50,8 +49,6 @@
                                         <div id="step-1" class="tab-pane" role="tabpanel">
                                             <br/><br/>
                                             <h2>Numéro(s) à identifier :</h2><br/>
-                                            <input type="hidden" name="context" value="WITHDRAWAL_WITH_PROCURATION"/>
-                                            <input type="hidden" name="token" value=""/>
                                             <br/>
                                             <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
                                             <div id="msisdn-container">
@@ -219,41 +216,84 @@
                                         </div>
                                         <div id="step-3" class="tab-pane" role="tabpanel">
                                             <br/><br/>
-                                            <h2>Photocopie de la pièce d'identité du mandataire en cours de validité
-                                                :</h2>
-                                            <label for="document-input" class="col-sm-2 control-label">
-                                                <em>Le document scanné à charger doit être en <b>*.jpg</b> ou en <b>*.pdf</b>
-                                                    et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                    excéder <b>800 Ko</b>.</em>
-                                            </label>
-                                            <div class="form-group" id="form-number-field">
-                                                <label for="document-input" class="col-sm-2 control-label">
-                                                    <b><i class="fa fa-id-card"></i>&nbsp; Pièce d'identité acceptée :
-                                                        <br>
-                                                        <span>(Carte Nationale d'Identité valide, Récépissé d’enrôlement ou l’Attestation d’Identité valide)</span></b>
+                                            <h2>Document justificatif :</h2>
+                                            <div class="form-group col-sm-12 column-last" id="doc-type-field">
+                                                <label class="col-sm-2 control-label">
+                                                    Type de document<span style="color: #d9534f">*</span> :
                                                 </label>
+                                                <span style="display: none" id="err-toast"></span>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control good-select"
+                                                            id="doc-type" name="doc-type" required="required"
+                                                            style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                        <option value="" selected disabled>Type de pièce d'identité</option>
+                                                        @foreach($abonnes_type_pieces as $abonnes_type_piece)
+                                                            <option value="{{ $abonnes_type_piece->id }}">{{ $abonnes_type_piece->libelle_piece }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div><br/><br/>
+                                            <div class="form-group" id="pdf-doc-field">
                                                 <div class="col-sm-10">
                                                     <div class="box">
-                                                        <input type="file" name="documents[]" id="document-2-input"
-                                                               class="inputfile" accept="application/pdf, image/jpeg"
+                                                        <input type="file" name="pdf_doc" id="pdf-doc-input"
+                                                               class="inputfile" accept="application/pdf"
                                                                style="display: none">
-                                                        <label for="document-2-input" class="atcl-inv hoverable"
+                                                        <label for="pdf-doc-input" class="atcl-inv hoverable"
                                                                style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
-                                                                class="fad fa-file-upload fa-3x mr10"
+                                                                class="fad fa-file-pdf fa-3x mr10"
                                                                 style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
                                                     </div>
-                                                </div>
+                                                </div><br/>
+                                                <label for="pdf-doc-input" class="col-sm-2 control-label">
+                                                    <em>Le document scanné à charger doit être en <b>*.pdf</b>
+                                                        et avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
+                                                        excéder <b>800 Ko</b>.</em>
+                                                </label>
                                                 <br/>
                                             </div>
                                             <br/>
                                         </div>
                                         <div id="step-4" class="tab-pane" role="tabpanel">
                                             <br/><br/>
+                                            <h2>Récapitulatif :</h2>
+                                            <div class="form-group col-sm-12 column-last" id="doc-type-field">
+                                                <label class="col-sm-2 control-label">
+                                                    Numéros à Identifier<span style="color: #d9534f">*</span> : <br/><b><span id="recap-msisdn"></span></b>
+                                                </label><br/>
+                                                <label class="col-sm-2 control-label">
+                                                    Nom : <b><span id="recap-first-name"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Prénom(s) : <b><span id="recap-last-name"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Date de naissance: <b><span id="recap-birth-date"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Lieu de naissance : <b><span id="recap-birth-place"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Lieu de résidence : <b><span id="recap-residence"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Nationalité : <b><span id="recap-country"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Profession : <b><span id="recap-profession"></span></b>
+                                                </label>
+                                                <label class="col-sm-2 control-label">
+                                                    Email : <b><span id="recap-email"></span></b>
+                                                </label><br/>
+                                                <label class="col-sm-2 control-label">
+                                                    Document justificatif : <b><i class="fa fa-file-pdf"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                </label>
+                                            </div><br/><br/>
                                             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                             <div class="col-sm-12">
                                                 <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
                                                         style="width: 100%;padding: 1em;"><i
-                                                        class="fa fa-sim-card"></i> &nbsp; Terminer son identification
+                                                        class="fa fa-sim-card"></i> &nbsp; Terminer et soumettre votre identification
                                                 </button>
                                             </div>
                                         </div>

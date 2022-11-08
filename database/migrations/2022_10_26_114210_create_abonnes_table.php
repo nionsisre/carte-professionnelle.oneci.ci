@@ -16,7 +16,7 @@ class CreateAbonnesTable extends Migration {
             $table->id();
             $table->string('numero_dossier');
             $table->string('nom');
-            $table->string('nom_epouse');
+            $table->string('nom_epouse')->nullable();
             $table->string('prenoms');
             $table->string('date_de_naissance');
             $table->string('lieu_de_naissance');

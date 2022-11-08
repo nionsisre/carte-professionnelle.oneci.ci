@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AbonnesOperateur;
+use App\Models\AbonnesTypePiece;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -84,8 +85,10 @@ class MainController extends Controller
 
         $abonnes_operateurs = AbonnesOperateur::all();
         $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
 
         return view('pages.home', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
             'abonnes_operateurs' => $abonnes_operateurs,
             'civil_status_center' => $civil_status_center,
             'SUBSTR_URL' => $SUBSTR_URL,
