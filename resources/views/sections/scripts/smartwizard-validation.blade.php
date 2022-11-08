@@ -5,7 +5,7 @@
     |--------------------------------------------------------------------------
     */
     /* Leave step event is used for validating the forms */
-    $("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
+    jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         /* Validate only on forward movement */
         if (stepDirection === 'forward') {
             switch (currentStepIdx) {
@@ -27,10 +27,10 @@
                                 showClose: false
                             });
                             jQuery('.blocker').css('z-index','2');
-                            $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
                         }
-                        $('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     }
                     for(let i=0; i<telco.length; i++) {
                         if(!jQuery(telco[i]).val()) {
@@ -45,11 +45,11 @@
                                 clickClose: false,
                                 showClose: false
                             });
-                            jQuery('.blocker').css('z-index','2');/*test*/
-                            $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
                         }
-                        $('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     }
                     break;
                 /* Step 2 */
@@ -77,7 +77,7 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
                     /* last_name */
@@ -94,7 +94,7 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
                     /* birth_date */
@@ -114,7 +114,7 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
                     /* birth_place */
@@ -131,7 +131,7 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
                     /* residence */
@@ -148,7 +148,7 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
                     /* profession */
@@ -165,10 +165,10 @@
                             showClose: false
                         });
                         jQuery('.blocker').css('z-index','2');
-                        $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    $('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 /* Step 3 */
                 case 2:
@@ -180,11 +180,11 @@
             /*if (form) {
                 if (!form.checkValidity()) {
                     form.classList.add('was-validated');
-                    $('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                    $("#smartwizard").smartWizard('fixHeight');
+                    jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                    jQuery("#smartwizard").smartWizard('fixHeight');
                     return false;
                 }
-                $('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
             }*/
         }
     });

@@ -7,19 +7,19 @@
     var max_msisdn = 6;
     var idx_msisdn = 1;
     function rmMsisdn(id, idx) {
-        $("#"+id).remove();
+        jQuery("#"+id).remove();
         idx_msisdn--;
         if (idx_msisdn <= max_msisdn) {
-            $('#rm-msisdn').removeAttr("disabled");
+            jQuery('#rm-msisdn').removeAttr("disabled");
         }
         if (idx_msisdn > 1) {
-            $('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`, ' + (idx_msisdn) + ')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
+            jQuery('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`, ' + (idx_msisdn) + ')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
         }
-        $('#content').height( $("#content").height() - 130);
+        jQuery('#content').height( jQuery("#content").height() - 130);
     }
-    $("#add-msisdn").click(function () {
+    jQuery("#add-msisdn").click(function () {
         if(idx_msisdn < max_msisdn) {
-            $("#rm-msisdn").remove();
+            jQuery("#rm-msisdn").remove();
             var html = '';
             html += '<div class="container clearfix" id="ct-msisdn-'+(idx_msisdn+1)+'" style="background-color: #ccc; padding: 2em 2em; margin-top: 1.2em">\n\
                         <div class="three-fourths">\n\
@@ -53,14 +53,14 @@
                         </div>\n\
                         <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-'+(idx_msisdn+1)+'`, '+(idx_msisdn+1)+')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>\n\
                     </div>';
-            $('#msisdn-container').append(html);
-            $('#content').height( $("#content").height() + 130);
+            jQuery('#msisdn-container').append(html);
+            jQuery('#content').height( jQuery("#content").height() + 130);
             idx_msisdn++;
             jQuery(".msisdn").mask('99 99 99 99 99');
             jQuery(".good-select").select2();
-            if(idx_msisdn === max_msisdn) $("#add-msisdn").attr("disabled", "disabled");
+            if(idx_msisdn === max_msisdn) jQuery("#add-msisdn").attr("disabled", "disabled");
         } else {
-            $("#add-msisdn").attr("disabled", "disabled");
+            jQuery("#add-msisdn").attr("disabled", "disabled");
         }
     });
 </script>

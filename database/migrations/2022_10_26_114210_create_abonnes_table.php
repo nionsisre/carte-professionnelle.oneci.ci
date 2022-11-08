@@ -25,10 +25,11 @@ class CreateAbonnesTable extends Migration {
             $table->string('profession');
             $table->string('nationalite');
             $table->string('email');
-            $table->string('abonnes_type_piece_id');
             $table->string('document_justificatif');
-            $table->integer('abonnes_statut_id')->default(1);
             $table->timestamps();
+
+            $table->foreignIdFor(\App\Models\AbonnesTypePiece::class)->nullable();
+            $table->foreignIdFor(\App\Models\AbonnesStatut::class)->nullable();
         });
     }
 
