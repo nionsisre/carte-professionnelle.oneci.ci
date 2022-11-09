@@ -1,8 +1,7 @@
 <?php if (!$MOBILE_HEADER_ENABLED) { ?>
     <!-- begin footer -->
 <footer id="footer">
-    <!-- begin footer top -->
-    <div id="footer-top">
+    <!--<div id="footer-top">
         <div class="container clearfix">
             <h2 id="plan-site">PLAN DU SITE</h2>
             <div class="one-fourth">
@@ -122,7 +121,6 @@
                         <button id="subscribe" class="button black" name="subscribe" style="width: 100%"><i
                                 class="fa fa-envelope text-white"></i> &nbsp; Souscrire à la newsletter
                         </button>
-                        <!--<input id="subscribe" class="button" type="submit" name="subscribe" value="Souscrire à la newsletter">-->
                     </form>
                 </div>
             </div>
@@ -145,9 +143,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- end footer top -->
-    <!-- begin footer bottom -->
+    </div>-->
     <div id="footer-bottom">
         <div class="container clearfix">
             <div class="three-fourths">
@@ -156,7 +152,6 @@
             </div>
         </div>
     </div>
-    <!-- end footer bottom -->
 </footer>
 <!-- end footer -->
 <?php } ?>
