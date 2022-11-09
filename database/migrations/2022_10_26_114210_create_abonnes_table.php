@@ -29,7 +29,6 @@ class CreateAbonnesTable extends Migration {
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\AbonnesTypePiece::class)->nullable();
-            $table->foreignIdFor(\App\Models\AbonnesStatut::class)->nullable();
         });
     }
 

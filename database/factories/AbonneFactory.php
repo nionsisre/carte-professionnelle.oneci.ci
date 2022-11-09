@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\AbonnesStatut;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AbonneFactory extends Factory {
@@ -14,20 +13,20 @@ class AbonneFactory extends Factory {
      */
     public function definition() {
         return [
-            'numero_dossier' => $this->faker->unique()->numerify("##########"),
+            'numero_dossier' => $this->faker->unique()->numerify('##########'),
             'nom' => $this->faker->lastName(),
             'nom_epouse' => "",
             'prenoms' => $this->faker->firstName(),
-            'date_de_naissance' => date('d/m/Y', time()),
+            'date_de_naissance' => $this->faker->dateTimeBetween('-90 years', '-10 years')->format('Y-m-d'),
+            /*'date_de_naissance' => date('Y-m-d', time()),*/
             'lieu_de_naissance' => $this->faker->streetName(),
-            'genre' => $this->faker->randomElement(["M", "F"]),
+            'genre' => $this->faker->randomElement(['M', 'F']),
             'domicile' => $this->faker->streetName(),
             'profession' => $this->faker->jobTitle(),
-            'nationalite' => "Ivoirienne",
+            'nationalite' => 'Ivoirienne',
             'email' => $this->faker->unique()->safeEmail(),
             'abonnes_type_piece_id' => $this->faker->randomElement([1, 2, 3]),
-            'document_justificatif' => $this->faker->unique()->numerify("##########"),
-            'abonnes_statut_id' => AbonnesStatut::inRandomOrder()->first()->id
+            'document_justificatif' => $this->faker->unique()->numerify('##########')
         ];
     }
 

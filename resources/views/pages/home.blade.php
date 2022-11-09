@@ -36,9 +36,9 @@
                                     L'ONECI vous remercie !
                                 </p>
                             </div>
-                            <a href="https://www.oneci.ci{{ /*route('accueil')*/ }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
-                    </div>
+                    </div><br/><br/><br/><br/><br/><br/>
                 @else
                     <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
                         téléphone(s) en ligne<br/></h5>

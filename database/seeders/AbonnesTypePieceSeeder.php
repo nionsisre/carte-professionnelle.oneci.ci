@@ -29,6 +29,10 @@ class AbonnesTypePieceSeeder extends Seeder {
             'code_type_piece' => 'PSP',
             'libelle_piece' => 'Passport'
         ]);
+        AbonnesTypePiece::create([
+            'code_type_piece' => 'PCO',
+            'libelle_piece' => 'Permis de conduire'
+        ]);
     }
 
 }
