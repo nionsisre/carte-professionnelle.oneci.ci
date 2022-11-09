@@ -157,8 +157,8 @@
                                                             <select class="form-control good-select" id="gender-input"
                                                                     name="gender"
                                                                     required="required"
-                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Selectionnez votre genre</option>
+                                                                    style="width: 11.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Choix du genre</option>
                                                                 <option value="M">Masculin</option>
                                                                 <option value="F">Feminin</option>
                                                             </select>
@@ -173,7 +173,7 @@
                                                             <input type="date" id="birth-date-input" name="birth-date"
                                                                    placeholder="Date de Naissance" required="required"
                                                                    max="{{ date('Y-m-d', strtotime('-10 years')) }}"
-                                                                   style="width: 17.5em; text-align: center"/>
+                                                                   style="width: 10.5em; text-align: center"/>
                                                         </div>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="birth-place-field">
@@ -207,7 +207,7 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="residence-input" name="residence"
                                                                    placeholder="Lieu de résidence..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="country-field">
@@ -218,7 +218,7 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="country-input" name="country"
                                                                    placeholder="Nationalité..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="profession-field">
@@ -229,7 +229,7 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="profession-input" name="profession"
                                                                    placeholder="Profession..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                     </div>
                                                 </div>
