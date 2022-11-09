@@ -26,6 +26,7 @@ class CreateAbonnesTable extends Migration {
             $table->string('nationalite');
             $table->string('email');
             $table->string('document_justificatif');
+            $table->date('date_enregistrement')->nullable();
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\AbonnesTypePiece::class)->nullable();

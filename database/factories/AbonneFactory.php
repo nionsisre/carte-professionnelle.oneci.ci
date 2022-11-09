@@ -26,7 +26,9 @@ class AbonneFactory extends Factory {
             'nationalite' => 'Ivoirienne',
             'email' => $this->faker->unique()->safeEmail(),
             'abonnes_type_piece_id' => $this->faker->randomElement([1, 2, 3]),
-            'document_justificatif' => $this->faker->unique()->numerify('##########')
+            'document_justificatif' => $this->faker->unique()->numerify('##########'),
+            'date_enregistrement' => $this->faker->date(),
+
         ];
     }
 

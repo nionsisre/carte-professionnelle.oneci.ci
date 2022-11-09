@@ -25,6 +25,7 @@ class AbonnesNumeroFactory extends Factory
                 $this->faker->numerify("05 ## ## ## ##"),
                 $this->faker->numerify("07 ## ## ## ##")
             ]),
+            'date_enregistrement' => $this->faker->date()
         ];
     }
 }

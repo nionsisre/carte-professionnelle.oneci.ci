@@ -17,6 +17,7 @@ class CreateAbonnesNumerosTable extends Migration
             $table->id();
             /*$table->unsignedBigInteger('abonnes_operateurs_id');*/
             $table->string('numero_de_telephone');
+            $table->date('date_enregistrement')->nullable();
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\Abonne::class)->nullable();

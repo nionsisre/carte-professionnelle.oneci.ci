@@ -38,7 +38,8 @@ class IdentificationController extends Controller {
             'nationalite' => $request->input('country'),
             'email' => $request->input('email'),
             'abonnes_type_piece_id' => $request->input('doc-type'),
-            'document_justificatif' => $document_justificatif
+            'document_justificatif' => $document_justificatif,
+            'date_enregistrement' => date('Y-m-d')
         ]);
         $operateurs = $request->input('telco');
         $numeros = $request->input('msisdn');
@@ -47,7 +48,8 @@ class IdentificationController extends Controller {
                 'abonne_id' => $abonnes->id,
                 'abonnes_operateur_id' => $operateurs[$i],
                 'abonnes_statut_id' => 1,
-                'numero_de_telephone' => $numeros[$i]
+                'numero_de_telephone' => $numeros[$i],
+                'date_enregistrement' => date('Y-m-d')
             ]);
         }
         /* @TODO: Retourner vue resultat */
