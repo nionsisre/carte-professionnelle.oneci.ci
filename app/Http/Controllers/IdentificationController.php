@@ -15,11 +15,11 @@ class IdentificationController extends Controller {
      */
     public function submit(Request $request) {
         /* @TODO: Valider variables du formulaire et recaptcha */
-        /*request()->validate([
+        request()->validate([
             'nom' => ['required', 'string', 'max:150'],
             'prenoms' => ['required', 'string', 'max:150'],
             'pdf_doc' => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
-        ]);*/
+        ]);
         /* @TODO: Stocker variables en base */
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
@@ -32,7 +32,7 @@ class IdentificationController extends Controller {
             'prenoms' => strtoupper($request->input('last-name')),
             'date_de_naissance' => $request->input('birth-date'),
             'lieu_de_naissance' => $civil_status_center,
-            'genre' => '',
+            'genre' => $request->input('gender'),
             'domicile' => strtoupper($request->input('residence')),
             'profession' => strtoupper($request->input('profession')),
             'nationalite' => $request->input('country'),

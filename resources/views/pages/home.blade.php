@@ -147,7 +147,24 @@
                                                     </div>
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-half column-last" id="birth-date-field">
+                                                    <div class="form-group one-third column-last" id="gender-field">
+                                                        <label class="col-sm-4 control-label">
+                                                            Genre<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <span style="display: none" id="err-toast"></span>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control good-select" id="gender-input"
+                                                                    name="gender"
+                                                                    required="required"
+                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Selectionnez votre genre</option>
+                                                                <option value="M">Masculin</option>
+                                                                <option value="F">Feminin</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="birth-date-field">
                                                         <label class="col-sm-2 control-label">
                                                             Date de naissance de l'abonné<span
                                                                 style="color: #d9534f">*</span> :
@@ -159,7 +176,7 @@
                                                                    style="width: 17.5em; text-align: center"/>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group one-half column-last" id="birth-place-field">
+                                                    <div class="form-group one-third column-last" id="birth-place-field">
                                                         <label class="col-sm-4 control-label">
                                                             Lieu de naissance de l'abonné<span
                                                                 style="color: #d9534f">*</span> :
@@ -180,42 +197,43 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <br/>
-                                                <div class="form-group column-last" id="residence-field">
-                                                    <label class="col-sm-2 control-label">
-                                                        Lieu de résidence de l'abonné<span
-                                                            style="color: #d9534f">*</span> :
-                                                    </label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" id="residence-input" name="residence"
-                                                               placeholder="Lieu de résidence..." maxlength="70" required="required"
-                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                <div class="container clearfix">
+                                                    <br/>
+                                                    <div class="form-group one-third column-last" id="residence-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Lieu de résidence de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="residence-input" name="residence"
+                                                                   placeholder="Lieu de résidence..." maxlength="70" required="required"
+                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="country-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Nationalité de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="country-input" name="country"
+                                                                   placeholder="Nationalité..." maxlength="70" required="required"
+                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="profession-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Profession de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="profession-input" name="profession"
+                                                                   placeholder="Profession..." maxlength="70" required="required"
+                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <br/>
-                                                <div class="form-group column-last" id="country-field">
-                                                    <label class="col-sm-2 control-label">
-                                                        Nationalité de l'abonné<span
-                                                            style="color: #d9534f">*</span> :
-                                                    </label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" id="country-input" name="country"
-                                                               placeholder="Nationalité..." maxlength="70" required="required"
-                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                    </div>
-                                                </div>
-                                                <br/>
-                                                <div class="form-group column-last" id="profession-field">
-                                                    <label class="col-sm-2 control-label">
-                                                        Profession de l'abonné<span
-                                                            style="color: #d9534f">*</span> :
-                                                    </label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" id="profession-input" name="profession"
-                                                               placeholder="Profession..." maxlength="70" required="required"
-                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                    </div>
-                                                </div>
+
                                                 <br/>
                                                 <div class="col-sm-12">
                                                     <label class="col-sm-2 control-label">
@@ -282,6 +300,9 @@
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Prénom(s) : <b><span id="recap-last-name"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Genre : <b><span id="recap-gender"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Date de naissance: <b><span id="recap-birth-date"></span></b>

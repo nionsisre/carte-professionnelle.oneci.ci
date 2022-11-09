@@ -5,7 +5,7 @@
     |--------------------------------------------------------------------------
     */
     /* Leave step event is used for validating the forms */
-    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="";
+    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="";
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         /* Validate only on forward movement */
         if (stepDirection === 'forward') {
@@ -61,6 +61,7 @@
                     birth_place = document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
+                    gender = document.querySelectorAll('[name="gender"]');
                     /* first_name */
                     if(!jQuery(first_name).val()) {
                         jQuery('#modalError').html(
@@ -83,6 +84,23 @@
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    /* gender */
+                    if(!jQuery(gender).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><h3>Veuillez correctement renseigner votre genre SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -230,13 +248,14 @@
                         jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase());
                     }
                     jQuery('#recap-last-name').text(jQuery(last_name).val().toUpperCase());
+                    jQuery('#recap-gender').text(jQuery(gender).select2('data')[0].text);
                     jQuery('#recap-birth-date').text(jQuery(birth_date).val());
                     jQuery('#recap-birth-place').text(jQuery(birth_place).select2('data')[0].text);
                     jQuery('#recap-residence').text(jQuery(residence).val().toUpperCase());
                     jQuery('#recap-country').text(country.toUpperCase());
                     jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());
                     jQuery('#recap-email').text(email);
-                    jQuery('#recap-pdf_doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
+                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
             }
