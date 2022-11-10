@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\DB;
 class IdentificationController extends Controller {
 
     /**
-     * Show the application dashboard.
-     *
+     *  Identification Form Submit
      */
     public function submit(Request $request) {
         /* @TODO: Valider variables du formulaire et recaptcha */
@@ -54,6 +53,27 @@ class IdentificationController extends Controller {
         /* @TODO: Retourner vue resultat */
         $numero_dossier = $abonnes->numero_dossier;
         return redirect()->route('accueil')->with('numero_dossier', $numero_dossier);
+    }
+
+    /**
+     * Identification Form Search
+     */
+    public function search(Request $request) {
+        /* @TODO: Valider variables du formulaire et recaptcha */
+        request()->validate([
+            'form-number' => ['required', 'number', 'max:10'],
+        ]);
+        /* @TODO: Requête variables en base */
+        $resultats_statut = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+            ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+            ->where('numero_dossier', '=', $request->input('form-number'))
+            ->get();
+        /* @TODO: Retourner vue resultat */
+        return redirect()->route('consulter_statut_identification')->with('resultats_statut', $resultats_statut);
+
     }
 
 }

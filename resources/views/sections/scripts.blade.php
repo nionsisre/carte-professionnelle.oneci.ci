@@ -8,10 +8,15 @@
     });
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
-@include('sections.scripts.recaptcha')
-@include('sections.scripts.form-masks')
-@include('sections.scripts.smartwizard')
-@include('sections.scripts.custom-input-file')
-@include('sections.scripts.dynamic-msisdn')
-@include('sections.scripts.smartwizard-validation')
+@if (Route::is('accueil'))
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.smartwizard')
+    @include('sections.scripts.custom-input-file')
+    @include('sections.scripts.dynamic-msisdn')
+    @include('sections.scripts.smartwizard-validation')
+@elseif (Route::is('consultation_statut_identification'))
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+@endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>

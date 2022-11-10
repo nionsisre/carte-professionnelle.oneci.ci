@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/* Routes Vues */
 Route::get('/', [App\Http\Controllers\MainController::class, 'index'])->name('accueil');
-Route::post('/soumettre-identification', [App\Http\Controllers\IdentificationController::class, 'submit']);
+Route::get('/consultation-statut-identification', [App\Http\Controllers\MainController::class, 'consultation'])->name('consultation_statut_identification');
+
+/* Routes Traitements */
+Route::post('/soumettre-identification', [App\Http\Controllers\IdentificationController::class, 'submit'])->name('soumettre_identification');
+Route::post('/consulter-statut-identification', [App\Http\Controllers\IdentificationController::class, 'search'])->name('consulter_statut_identification');;
 
