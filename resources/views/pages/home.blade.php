@@ -253,7 +253,7 @@
                                                 <h2>Document justificatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
                                                     <label class="col-sm-2 control-label">
-                                                        Type de document<span style="color: #d9534f">*</span> :
+                                                        Type de pièce d'identité<span style="color: #d9534f">*</span> :
                                                     </label>
                                                     <span style="display: none" id="err-toast"></span>
                                                     <div class="col-sm-10">
@@ -266,7 +266,18 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                </div><br/><br/>
+                                                </div><br/>
+                                                <div class="form-group column-last" id="document-number-field">
+                                                    <label class="col-sm-2 control-label">
+                                                        Numéro de la pièce d'identité<span
+                                                            style="color: #d9534f">*</span> :
+                                                    </label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="document-number-input" name="document-number"
+                                                               placeholder="Numéro pièce d'identité..." maxlength="70" required="required"
+                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                    </div>
+                                                </div><br/>
                                                 <div class="form-group" id="pdf-doc-field">
                                                     <div class="col-sm-10">
                                                         <div class="box">
@@ -324,7 +335,10 @@
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Document justificatif : <b><i class="fa fa-file-pdf"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
-                                                    </label>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Numéro du document : <b><span id="recap-document-number"></span></b>
+                                                    </label><br/>
                                                 </div><br/><br/>
                                                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                                 <div class="col-sm-12">

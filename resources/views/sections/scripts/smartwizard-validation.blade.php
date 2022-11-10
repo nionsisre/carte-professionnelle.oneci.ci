@@ -5,7 +5,7 @@
     |--------------------------------------------------------------------------
     */
     /* Leave step event is used for validating the forms */
-    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="";
+    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="";
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         /* Validate only on forward movement */
         if (stepDirection === 'forward') {
@@ -191,8 +191,9 @@
                 /* Step 3 */
                 case 2:
                     doc_type = document.querySelectorAll('[name="doc-type"]');
+                    document_number = document.querySelectorAll('[name="document-number"]');
                     pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
-                    /* last_name */
+                    /* doc_type */
                     if(!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -209,7 +210,24 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* last_name */
+                    /* document_number */
+                    if(!jQuery(document_number).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    /* pdf_doc */
                     if(!jQuery(pdf_doc).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -256,6 +274,7 @@
                     jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());
                     jQuery('#recap-email').text(email);
                     jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
+                    jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase());
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
             }

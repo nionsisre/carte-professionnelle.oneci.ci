@@ -15,11 +15,11 @@ class IdentificationController extends Controller {
      */
     public function submit(Request $request) {
         /* @TODO: Valider variables du formulaire et recaptcha */
-        request()->validate([
+        /*request()->validate([
             'nom' => ['required', 'string', 'max:150'],
             'prenoms' => ['required', 'string', 'max:150'],
             'pdf_doc' => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
-        ]);
+        ]);*/
         /* @TODO: Stocker variables en base */
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
@@ -39,7 +39,7 @@ class IdentificationController extends Controller {
             'email' => $request->input('email'),
             'abonnes_type_piece_id' => $request->input('doc-type'),
             'document_justificatif' => $document_justificatif,
-            'date_enregistrement' => date('Y-m-d')
+            'numero_document' => $request->input('document-number'),
         ]);
         $operateurs = $request->input('telco');
         $numeros = $request->input('msisdn');
@@ -48,8 +48,7 @@ class IdentificationController extends Controller {
                 'abonne_id' => $abonnes->id,
                 'abonnes_operateur_id' => $operateurs[$i],
                 'abonnes_statut_id' => 1,
-                'numero_de_telephone' => $numeros[$i],
-                'date_enregistrement' => date('Y-m-d')
+                'numero_de_telephone' => $numeros[$i]
             ]);
         }
         /* @TODO: Retourner vue resultat */
