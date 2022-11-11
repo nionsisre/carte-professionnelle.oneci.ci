@@ -26,6 +26,7 @@
                 </h2>
                 @if(session()->has('resultats_statut'))
                     @php($resultats_statut = session('resultats_statut')->all())
+                    @if(is_array($resultats_statut) && !empty($resultats_statut))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
@@ -46,6 +47,24 @@
                             <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
                     </div>
+                    @else
+                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                            <center><br/>
+                                <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
+                                <h4>Recherche effectuée !</h4>
+                                <br/><div>
+                                    <p style="padding: 0em 0em 4em">
+                                        <i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
+                                        <p style="padding: 0em 0em 2em">
+                                            Aucun résultat correspondant à votre recherche...<br/><br/>
+                                            L'ONECI vous remercie !
+                                        </p>
+                                    </p>
+                                </div>
+                                <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            </center>
+                        </div>
+                    @endif
                 @else
                     <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre identification<br/></h5>
 
