@@ -16,6 +16,7 @@ class CreateAbonnesStatutsTable extends Migration {
             $table->id();
             $table->string('code_statut');
             $table->string('libelle_statut');
+            $table->string('icone')->nullable();
             $table->timestamps();
         });
     }

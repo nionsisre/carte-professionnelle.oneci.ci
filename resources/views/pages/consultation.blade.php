@@ -24,22 +24,21 @@
             <div class="column-last">
                 <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de l'identification
                 </h2>
-                @if(!session()->has('$resultats_statut'))
+                @if(session()->has('resultats_statut'))
+                    @php($resultats_statut = session('resultats_statut')->all())
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
                             <h4>Recherche effectuée !</h4>
                             <br/><div>
                                 <p style="padding: 0em 0em 4em">
-                                    Numéro de dossier : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° XXXXXXXXXXX</b><br/><br/>
+                                    Numéro de dossier : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $resultats_statut[0]->numero_dossier }}</b><br/><br/>
                                     Numéros de téléphones identifiés : <br/>
-
-                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Orange : <b style="font-size: 1rem">07 01 01 01 01</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">Identification en attente de traitement</b><br/>
-                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Orange : <b style="font-size: 1rem">07 01 01 01 01</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">Identification en attente de traitement</b><br/>
-                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Orange : <b style="font-size: 1rem">07 01 01 01 01</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">Identification en attente de traitement</b><br/>
-
+                                    @foreach($resultats_statut as $resultat_statut)
+                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultat_statut->libelle_operateur }} : <b style="font-size: 1rem">{{ $resultat_statut->numero_de_telephone }}</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-{{ $resultat_statut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">{{ $resultat_statut->libelle_statut }}</b><br/>
+                                    @endforeach
                                     <br/>
-                                    Document justificatif : &nbsp; <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Carte Nationale d'Identité</b><br/>
+                                    Document justificatif : &nbsp; <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultats_statut[0]->libelle_piece }}</b><br/>
                                     <br/><br/>
                                     L'ONECI vous remercie !
                                 </p>
