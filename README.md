@@ -71,4 +71,4 @@ php artisan serve
 
 <br/>
 
-&copy; *Copyright Office National de l'Etat Civil et de l'Identification - ONECI - Projet Privé - Tous droits réservés*
+&copy; Copyright Office National de l'Etat Civil et de l'Identification - ONECI - Projet Privé - Tous droits réservés
