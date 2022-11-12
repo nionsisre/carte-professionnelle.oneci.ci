@@ -47,7 +47,7 @@ class IdentificationController extends Controller {
                 'abonne_id' => $abonnes->id,
                 'abonnes_operateur_id' => $operateurs[$i],
                 'abonnes_statut_id' => 1,
-                'numero_de_telephone' => $numeros[$i]
+                'numero_de_telephone' => str_replace(' ', '', $numeros[$i])
             ]);
         }
         /* @TODO: Retourner vue resultat */

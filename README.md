@@ -1,64 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<br/><br/><br/>
+<img src="https://www.oneci.ci/assets/images/oneci_logo.svg" width="100"/>
 
-## About Laravel
+# Projet d'identification des abonnés mobile ONECI
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Description
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Le **projet** a pour but de permettre à l'**ONECI** de pouvoir **identifier** les **abonnés** des **opérateurs télécoms** à travers un **formulaire** ayant pour but de **collecter les données** et un **Back office** permettant d'effectuer le **traitement** des **données collectées**.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```mermaid
+graph LR
+A((Abonne Mobile)) -- Renseigner --> B(Formulaire Front Office)
+B -- Stocker--> D[(Base de Donnees)]
+C[Back Office] -- Mettre a jour --> D
+D -- Importer et Traiter --> C
+```
 
-## Learning Laravel
+## Choix des technologies d'implémentation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+|         Spécifications        |FRONT END (Navigateur Client)|BACK END (Serveur ONECI)|
+|-------------------------------|-----------------------------|------------------------|
+|**Language de développement**  |`HTML` `CSS` `JavaScript`    |`PHP`                   |
+|**Framework**                  |`jQuery` `Vue.JS`            |`Laravel`               |
+|**Gestionnaire de dépendances**|`NPM`                        |`Composer`              |
+|**Base de données**            |`Cookies` `Cache`            |`MariaDB`               |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Pré-réquis
 
-## Laravel Sponsors
+Pour pouvoir exécuter le code source du projet, assurez vous de pouvoir disposer des outils suivants :
+- `PHP >=7.4.9`
+- [`Composer >=2.3.9`](https://getcomposer.org/download/)
+- [`NodeJS >=14.18.1`](https://nodejs.org/en/download/)
+- [`NPM >=6.14.15`](https://www.npmjs.com/)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Initialisation du projet
 
-### Premium Partners
+Ouvrir votre **terminal** ou **invite de commande** `cmd`, allez à la racine du projet et exécutez les commandes suivantes :
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+<br/>
 
-## Contributing
+- Installation toutes les dépendances PHP permettant au projet de pouvoir fonctionner convenablement :
+```console
+composer install
+```
+- Installation toutes les dépendances Javascript permettant au projet de pouvoir fonctionner convenablement :
+```console
+npm install
+```
+- Création du fichier `.env`
+> *Dupliquer le fichier `.env.example` présent dans la racine du projet et renommer le fichier dupliqué avec le nom `.env` puis renseigner ce fichier en spécifiant les **paramètres de votre base de données** locale du projet*.
+- Création des tables de la base de données du projet
+```console
+php artisan migrate
+```
+- Remplisage des tables de la base de données
+```console
+php artisan db:seed
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+<br/>
 
-## Code of Conduct
+- Démarrage du serveur
+```console
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+<br/>
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+&copy; Copyright Office National de l'Etat Civil et de l'Identification - ONECI - Projet Privé - Tous droits réservés

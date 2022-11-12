@@ -20,10 +20,15 @@ class AbonnesNumeroFactory extends Factory
             'abonne_id' =>  Abonne::inRandomOrder()->first()->id,
             'abonnes_operateur_id' => AbonnesOperateur::inRandomOrder()->first()->id,
             'abonnes_statut_id' => AbonnesStatut::inRandomOrder()->first()->id,
-            'numero_de_telephone' => $this->faker->randomElement([
+            /*'numero_de_telephone' => $this->faker->randomElement([
                 $this->faker->numerify("01 ## ## ## ##"),
                 $this->faker->numerify("05 ## ## ## ##"),
                 $this->faker->numerify("07 ## ## ## ##")
+            ]),*/
+            'numero_de_telephone' => $this->faker->randomElement([
+                $this->faker->numerify("01########"),
+                $this->faker->numerify("05########"),
+                $this->faker->numerify("07########")
             ])
         ];
     }

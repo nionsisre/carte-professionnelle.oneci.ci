@@ -54,9 +54,9 @@
                                 <h4>Recherche effectuée !</h4>
                                 <br/><div>
                                     <p style="padding: 0em 0em 4em">
-                                        <i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
+                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
                                         <p style="padding: 0em 0em 2em">
-                                            Aucun résultat correspondant à votre recherche...<br/><br/>
+                                            Aucune identification effectuée pour ce numéro...<br/><br/>
                                             L'ONECI vous remercie !
                                         </p>
                                     </p>
