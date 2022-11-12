@@ -1,12 +1,8 @@
 
 <br/><br/><br/>
-<p align="center"><img src="https://www.oneci.ci/assets/images/oneci_logo.svg" width="150"/></p>
-
-<br/>
+<img src="https://www.oneci.ci/assets/images/oneci_logo.svg" width="100" align="center"/>
 
 # Projet d'identification des abonnés mobile ONECI
-
-<br/>
 
 ## Description
 
@@ -32,7 +28,7 @@ D -- Importer et Traiter --> C
 ## Pré-réquis
 
 Pour pouvoir exécuter le code source du projet, assurez vous de pouvoir disposer des outils suivants :
-- [`PHP >=7.4.9`](https://www.php.net/downloads.php)
+- `PHP >=7.4.9`
 - [`Composer >=2.3.9`](https://getcomposer.org/download/)
 - [`NodeJS >=14.18.1`](https://nodejs.org/en/download/)
 - [`NPM >=6.14.15`](https://www.npmjs.com/)
