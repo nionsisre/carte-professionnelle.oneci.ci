@@ -31,7 +31,7 @@ D -- Importer et Traiter --> C
 
 ## Pré-réquis
 
-Pour pouvoir exécuter le code source du projet, assurez vous de pouvoir disposer des outils suivants :
+Pour pouvoir exécuter le code source du projet, assurez-vous de pouvoir disposer des outils suivants :
 - [`PHP >=7.4.9`](https://www.php.net/downloads.php)
 - [`Composer >=2.3.9`](https://getcomposer.org/download/)
 - [`NodeJS >=14.18.1`](https://nodejs.org/en/download/)
@@ -39,8 +39,7 @@ Pour pouvoir exécuter le code source du projet, assurez vous de pouvoir dispose
 
 ## Initialisation du projet
 
-Ouvrir votre **terminal** ou **invite de commande** `cmd`, allez à la racine du projet et exécutez les commandes suivantes :
-
+Ouvrir votre **terminal** ou **invite de commande** `cmd`, aller à la racine du projet et exécutez les commandes suivantes :
 <br/>
 
 - Installation toutes les dépendances PHP permettant au projet de pouvoir fonctionner convenablement :
@@ -53,6 +52,10 @@ npm install
 ```
 - Création du fichier `.env`
 > *Dupliquer le fichier `.env.example` présent dans la racine du projet et renommer le fichier dupliqué avec le nom `.env` puis renseigner ce fichier en spécifiant les **paramètres de votre base de données** locale du projet*.
+- Création d'une `APP_KEY`
+```console
+php artisan key:generate
+```
 - Création des tables de la base de données du projet
 ```console
 php artisan migrate
@@ -69,6 +72,8 @@ php artisan db:seed
 php artisan serve
 ```
 
-<br/>
+:blush: Enjoy !
+
+<br/><br/>
 
 *&copy; Copyright Office National de l'Etat Civil et de l'Identification - ONECI - Projet Privé - Tous droits réservés*
