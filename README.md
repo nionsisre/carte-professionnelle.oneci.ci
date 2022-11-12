@@ -1,6 +1,6 @@
 
 <br/><br/><br/>
-<img src="https://www.oneci.ci/assets/images/oneci_logo.svg" width="100" align="center"/>
+<center><img src="https://www.oneci.ci/assets/images/oneci_logo.svg" width="100"/></center>
 
 # Projet d'identification des abonnés mobile ONECI
 
