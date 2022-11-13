@@ -1,4 +1,15 @@
 <?php return array (
+  'dipeshsukhia/laravel-html-minify' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'DipeshSukhia\\LaravelHtmlMinify\\LaravelHtmlMinifyServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'LaravelHtmlMinify' => 'DipeshSukhia\\LaravelHtmlMinify\\LaravelHtmlMinifyFacade',
+    ),
+  ),
   'facade/ignition' => 
   array (
     'providers' => 

@@ -1,16 +1,16 @@
 <script>
-    /*
+    {{--
     |--------------------------------------------------------------------------
     | Validation étapes formulaire
     |--------------------------------------------------------------------------
-    */
-    /* Leave step event is used for validating the forms */
+    --}}
+    {{-- Leave step event is used for validating the forms --}}
     var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="";
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
-        /* Validate only on forward movement */
+        {{-- Validate only on forward movement --}}
         if (stepDirection === 'forward') {
             switch (currentStepIdx) {
-                /* Step 1 */
+                {{-- Step 1 --}}
                 case 0:
                     msisdn = document.querySelectorAll('[name="msisdn[]"]');
                     telco = document.querySelectorAll('[name="telco[]"]');
@@ -53,7 +53,7 @@
                         jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     }
                     break;
-                /* Step 2 */
+                {{-- Step 2 --}}
                 case 1:
                     first_name = document.querySelectorAll('[name="first-name"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
@@ -62,7 +62,7 @@
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
                     gender = document.querySelectorAll('[name="gender"]');
-                    /* first_name */
+                    {{-- first_name --}}
                     if(!jQuery(first_name).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -79,7 +79,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* last_name */
+                    {{-- last_name --}}
                     if(!jQuery(last_name).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -96,7 +96,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* gender */
+                    {{-- gender --}}
                     if(!jQuery(gender).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -113,7 +113,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* birth_date */
+                    {{-- birth_date --}}
                     var birthdateFormatted = new Date(jQuery(birth_date).val());
                     var maxdate = new Date();
                     var mindate = new Date();
@@ -135,7 +135,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* birth_place */
+                    {{-- birth_place --}}
                     if(!jQuery(birth_place).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -152,7 +152,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* residence */
+                    {{-- residence --}}
                     if(!jQuery(residence).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -169,7 +169,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* profession */
+                    {{-- profession --}}
                     if(!jQuery(profession).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -188,12 +188,12 @@
                     }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
-                /* Step 3 */
+                {{-- Step 3 --}}
                 case 2:
                     doc_type = document.querySelectorAll('[name="doc-type"]');
                     document_number = document.querySelectorAll('[name="document-number"]');
                     pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
-                    /* doc_type */
+                    {{-- doc_type --}}
                     if(!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -210,7 +210,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* document_number */
+                    {{-- document_number --}}
                     if(!jQuery(document_number).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -227,7 +227,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /* pdf_doc */
+                    {{-- pdf_doc --}}
                     if(!jQuery(pdf_doc).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
@@ -244,14 +244,14 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    /*msisdn = jQuery(document.querySelectorAll('[name="msisdn[]"]')).val();
+                    {{--msisdn = jQuery(document.querySelectorAll('[name="msisdn[]"]')).val();
                     telco = jQuery(document.querySelectorAll('[name="telco[]"]')).val();
                     first_name = jQuery(document.querySelectorAll('[name="first-name"]')).val();
                     last_name = jQuery(document.querySelectorAll('[name="last-name"]')).val();
                     birth_date = jQuery(document.querySelectorAll('[name="birth-date"]')).val();
                     birth_place = jQuery(document.querySelectorAll('[name="birth-place"]')).val();
                     residence = jQuery(document.querySelectorAll('[name="residence"]')).val();
-                    profession = jQuery(document.querySelectorAll('[name="profession"]')).val();*/
+                    profession = jQuery(document.querySelectorAll('[name="profession"]')).val();--}}
                     spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
                     country = jQuery(document.querySelectorAll('[name="country"]')).val();
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
