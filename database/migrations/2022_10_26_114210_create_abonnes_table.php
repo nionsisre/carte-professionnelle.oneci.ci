@@ -24,7 +24,7 @@ class CreateAbonnesTable extends Migration {
             $table->string('domicile');
             $table->string('profession');
             $table->string('nationalite');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('document_justificatif');
             $table->string('numero_document');
             $table->timestamps();
