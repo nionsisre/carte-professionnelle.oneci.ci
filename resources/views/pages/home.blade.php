@@ -176,6 +176,20 @@
                                                                    style="width: 10.5em; text-align: center"/>
                                                         </div>
                                                     </div>
+                                                    <div class="form-group one-third column-last" id="country-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Nationalité de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="country-input" name="country"
+                                                                   placeholder="Nationalité..." maxlength="70" required="required"
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="container clearfix">
+                                                    <br/>
                                                     <div class="form-group one-third column-last" id="birth-place-field">
                                                         <label class="col-sm-4 control-label">
                                                             Lieu de naissance de l'abonné<span
@@ -185,7 +199,6 @@
                                                         <div class="col-sm-10">
                                                             <select class="form-control good-select" id="birth-place-input"
                                                                     name="birth-place" placeholder="Lieu de naissance"
-                                                                    required="required"
                                                                     style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Choisir le lieu de
                                                                     naissance
@@ -196,9 +209,17 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="container clearfix">
-                                                    <br/>
+                                                    <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
+                                                        <label class="col-sm-2 control-label">
+                                                            Lieu de naissance de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="birth-place-input-2" name="birth-place-2"
+                                                                   placeholder="Lieu de naissance..." maxlength="70"
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
+                                                        </div>
+                                                    </div>
                                                     <div class="form-group one-third column-last" id="residence-field">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de résidence de l'abonné<span
@@ -207,17 +228,6 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="residence-input" name="residence"
                                                                    placeholder="Lieu de résidence..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="country-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Nationalité de l'abonné<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="country-input" name="country"
-                                                                   placeholder="Nationalité..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                     </div>
@@ -267,8 +277,26 @@
                                                         </select>
                                                     </div>
                                                 </div><br/>
+                                                <div class="form-group col-sm-12 column-last" id="cni-type-field" style="display: none">
+                                                    <span style="display: none" id="err-toast"></span>
+                                                    <div class="col-sm-10">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12">
+                                                                <div class="col-sm-6 ckbox ckbox-success" >
+                                                                    <input type="radio" name="id-card-type" id="old-format-card" value="CNI_2009" style="width: auto; box-shadow:none" />
+                                                                    <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Ancien Format)</em></label>
+                                                                </div>
+                                                                <div class="col-sm-6 ckbox ckbox-success">
+                                                                    <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" />
+                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></label>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div><br/>
                                                 <div class="form-group column-last" id="document-number-field">
-                                                    <label class="col-sm-2 control-label">
+                                                    <label class="col-sm-2 control-label" id="document-number-label">
                                                         Numéro de la pièce d'identité<span
                                                             style="color: #d9534f">*</span> :
                                                     </label>

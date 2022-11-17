@@ -4,8 +4,46 @@
     | Validation étapes formulaire
     |--------------------------------------------------------------------------
     --}}
-    {{-- Leave step event is used for validating the forms --}}
     var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="";
+    jQuery("#country-input").change(function () {
+        var selected_country = this.value;
+        if(selected_country !== "Côte d’Ivoire") {
+            jQuery("#birth-place-field").hide();
+            jQuery("#birth-place-field-2").show();
+        } else {
+            jQuery("#birth-place-field").show();
+            jQuery("#birth-place-field-2").hide();
+        }
+        {{--jQuery("#checkboxSuccess_1").prop('checked', false);--}}
+    });
+    jQuery("#doc-type").on("change", function (e) {
+        if(country === "Côte d’Ivoire") {
+            if (jQuery("#doc-type").val() === "2") {
+                jQuery("#cni-type-field").show();
+                if(jQuery('#new-format-card').is(':checked')) {
+                    jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
+                    jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
+                } else {
+                    jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+                    jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+                }
+            } else {
+                jQuery("#cni-type-field").hide();
+                jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+                jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+            }
+        }
+    });
+    jQuery('input[type="radio"]').click(function() {
+        if(jQuery('#new-format-card').is(':checked')) {
+            jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
+            jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
+        } else {
+            jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+            jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+        }
+    });
+    {{-- Leave step event is used for validating the forms --}}
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         {{-- Validate only on forward movement --}}
         if (stepDirection === 'forward') {
@@ -19,6 +57,22 @@
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
                                 <div class="modal-header"><h3>Veuillez remplir correctement les champs de tous vos numéros à identifier !</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        } else if (jQuery(msisdn[i]).val().length !== 14 ||
+                            (jQuery(msisdn[i]).val().length === 14 && jQuery(msisdn[i]).val().substring(0, 2) !== "01" && jQuery(msisdn[i]).val().substring(0, 2) !== "05" && jQuery(msisdn[i]).val().substring(0, 2) !== "07")) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><h3>Veuillez renseigner un numéro de téléphone valide !</h3></div>\n\
                                 </div><div class="modal-footer">\n\
                                 <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                             );
@@ -58,7 +112,9 @@
                     first_name = document.querySelectorAll('[name="first-name"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
                     birth_date = document.querySelectorAll('[name="birth-date"]');
-                    birth_place = document.querySelectorAll('[name="birth-place"]');
+                    country = jQuery(document.querySelectorAll('[name="country"]')).val();
+                    birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') :
+                        document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
                     gender = document.querySelectorAll('[name="gender"]');
@@ -186,6 +242,26 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    if(country === "Côte d’Ivoire") {
+                        if (jQuery("#doc-type").val() === "2") {
+                            jQuery("#cni-type-field").show();
+                            if(jQuery('#new-format-card').is(':checked')) {
+                                jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
+                                jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
+                            } else {
+                                jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+                                jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+                            }
+                        } else {
+                            jQuery("#cni-type-field").hide();
+                            jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+                            jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+                        }
+                    } else {
+                        jQuery("#cni-type-field").hide();
+                        jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
+                        jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
+                    }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 {{-- Step 3 --}}
@@ -253,7 +329,6 @@
                     residence = jQuery(document.querySelectorAll('[name="residence"]')).val();
                     profession = jQuery(document.querySelectorAll('[name="profession"]')).val();--}}
                     spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
-                    country = jQuery(document.querySelectorAll('[name="country"]')).val();
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     var msisdn_list = "";
                     for(let i=0; i<msisdn.length; i++) {
@@ -268,7 +343,11 @@
                     jQuery('#recap-last-name').text(jQuery(last_name).val().toUpperCase());
                     jQuery('#recap-gender').text(jQuery(gender).select2('data')[0].text);
                     jQuery('#recap-birth-date').text(jQuery(birth_date).val());
-                    jQuery('#recap-birth-place').text(jQuery(birth_place).select2('data')[0].text);
+                    if(country !== "Côte d’Ivoire") {
+                        jQuery('#recap-birth-place').text(jQuery(birth_place).val());
+                    } else {
+                        jQuery('#recap-birth-place').text(jQuery(birth_place).select2('data')[0].text);
+                    }
                     jQuery('#recap-residence').text(jQuery(residence).val().toUpperCase());
                     jQuery('#recap-country').text(country.toUpperCase());
                     jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());

@@ -31,6 +31,7 @@
                                 <div class="col-sm-10">\n\
                                     <select class="form-control good-select" id="telco-input-'+(idx_msisdn+1)+'" name="telco[]" required="required"\n\
                                             style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">\n\
+                                        <option value="" selected disabled>Choisir Opérateur</option>\n\
                                         @foreach($abonnes_operateurs as $abonnes_operateur)
                                         <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>\n\
                                         @endforeach

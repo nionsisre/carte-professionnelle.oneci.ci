@@ -23,7 +23,10 @@ class IdentificationController extends Controller {
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
         $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
-        $civil_status_center = DB::table('civil_status_center')->where('civil_status_center_id','=',$request->input('birth-place'))->get()[0]->civil_status_center_label;
+        $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
+            DB::table('civil_status_center')->where('civil_status_center_id','=',$request->input('birth-place'))->get()[0]->civil_status_center_label
+            : $request->input('birth-place-2');
+        $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
         $abonnes = Abonne::create([
             'numero_dossier' => $numero_dossier,
             'nom' => strtoupper($request->input('first-name')),
@@ -39,6 +42,7 @@ class IdentificationController extends Controller {
             'abonnes_type_piece_id' => $request->input('doc-type'),
             'document_justificatif' => $document_justificatif,
             'numero_document' => $request->input('document-number'),
+            'type_cni' => $type_cni
         ]);
         $operateurs = $request->input('telco');
         $numeros = $request->input('msisdn');
