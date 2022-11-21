@@ -15,17 +15,21 @@ class AbonnesTypePieceSeeder extends Seeder {
     public function run() {
         AbonnesTypePiece::create([
             'code_type_piece' => 'ATT',
-            'libelle_piece' => 'Attestation d\'Identité'
+            'libelle_piece' => 'Attestation d\'identité'
         ]);
         AbonnesTypePiece::create([
             'code_type_piece' => 'CNI',
-            'libelle_piece' => 'Carte Nationale d\'Identité'
+            'libelle_piece' => 'Carte nationale d\'identité'
         ]);
         AbonnesTypePiece::create([
             'code_type_piece' => 'CRE',
             'libelle_piece' => 'Carte de résident'
         ]);
         AbonnesTypePiece::create([
+            'code_type_piece' => 'AEB',
+            'libelle_piece' => 'Attestation d\'enrôlement biométrique'
+        ]);
+        /*AbonnesTypePiece::create([
             'code_type_piece' => 'PSP',
             'libelle_piece' => 'Passeport'
         ]);
@@ -40,7 +44,7 @@ class AbonnesTypePieceSeeder extends Seeder {
         AbonnesTypePiece::create([
             'code_type_piece' => 'CMU',
             'libelle_piece' => 'Couverture Maladie Universelle'
-        ]);
+        ]);*/
     }
 
 }

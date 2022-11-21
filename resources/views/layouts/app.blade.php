@@ -9,7 +9,10 @@
         <title>ONECI | @yield("title") </title>
     </head>
     <body>
-        <?php $routes[1] = 'nos-services'; $routes[2] = 'retrait-par-procuration'; ?>
+        @php
+            $routes[1] = 'nos-services';
+            $routes[2] = 'retrait-par-procuration';
+        @endphp
         <div id="fb-root"></div>
         <div class="main-wrapper" style="margin: -5px 0;">
             @include('sections.header')

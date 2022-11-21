@@ -8,8 +8,8 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo;</li>
-                    <li>Nos services &rsaquo;</li>
+                    <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo; </li>
+                    <li>Nos services &rsaquo; </li>
                     <li>Identification Abonné Mobile</li>
                 </ul>
             </nav>
@@ -49,6 +49,7 @@
                                       action="{{ URL::to('/') }}/soumettre-identification" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+                                    <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard">
                                         <ul class="nav">
                                             <li><a class="nav-link" href="#step-1"><i class="fa fa-sim-card text-white"></i>
@@ -64,28 +65,19 @@
                                         <div class="tab-content">
                                             <div id="step-1" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2>Numéro(s) à identifier :</h2><br/>
+                                                <h2>Numéro(s) à identifier :</h2>
+                                                <center>
+                                                    <div class="notification-box notification-box-info">
+                                                        <div class="modal-header">
+                                                            <h3><i class="fa fa-sim-card"></i> &nbsp; Merci de vous rassurer que le numéro est le votre et est accessible. <br/>Il sera utilisé pour les confirmations nécessaires.</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer"></div>
+                                                </center>
                                                 <br/>
                                                 <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
                                                 <div id="msisdn-container">
                                                     <div class="container clearfix" id="ct-msisdn-1" style="background-color: #ccc; padding: 2em 2em">
-                                                        <div class="form-group one-half column-last" id="telco-field-1">
-                                                            <label class="col-sm-2 control-label">
-                                                                Opérateur téléphonique<span style="color: #d9534f">*</span> :
-                                                            </label>
-                                                            <span style="display: none" id="err-toast"></span>
-                                                            <div class="col-sm-10">
-                                                                <select class="form-control good-select"
-                                                                        id="telco-input-1" name="telco[]"
-                                                                        placeholder="Opérateur téléphonique" required="required"
-                                                                        style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                    <option value="" selected disabled>Opérateur téléphonique</option>
-                                                                    @foreach($abonnes_operateurs as $abonnes_operateur)
-                                                                        <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
                                                         <div class="form-group one-half column-last" id="msisdn-field-1">
                                                             <div class="col-sm-12">
                                                                 <label class="col-sm-2 control-label">
@@ -99,7 +91,24 @@
                                                                            id="msisdn-input-1" name="msisdn[]"
                                                                            placeholder="__ __ __ __ __" maxlength="14"
                                                                            style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                           required="required"/></div>
+                                                                           required="required" autocomplete="off" /></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group one-half column-last" id="telco-field-1">
+                                                            <label class="col-sm-2 control-label">
+                                                                Opérateur téléphonique<span style="color: #d9534f">*</span> :
+                                                            </label>
+                                                            <span style="display: none" id="err-toast"></span>
+                                                            <div class="col-sm-10">
+                                                                <select class="form-control good-select"
+                                                                        id="telco-input-1" name="telco[]"
+                                                                        placeholder="Opérateur téléphonique" required="required" disabled="disabled"
+                                                                        style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                    <option value="" selected disabled>Opérateur téléphonique</option>
+                                                                    @foreach($abonnes_operateurs as $abonnes_operateur)
+                                                                        <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
+                                                                    @endforeach
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -163,6 +172,7 @@
                                                                 <option value="F">Feminin</option>
                                                             </select>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="birth-date-field">
                                                         <label class="col-sm-2 control-label">
@@ -175,6 +185,7 @@
                                                                    max="{{ date('Y-m-d', strtotime('-10 years')) }}"
                                                                    style="width: 10.5em; text-align: center"/>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="country-field">
                                                         <label class="col-sm-2 control-label">
@@ -186,10 +197,10 @@
                                                                    placeholder="Nationalité..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <br/>
                                                     <div class="form-group one-third column-last" id="birth-place-field">
                                                         <label class="col-sm-4 control-label">
                                                             Lieu de naissance de l'abonné<span
@@ -199,7 +210,7 @@
                                                         <div class="col-sm-10">
                                                             <select class="form-control good-select" id="birth-place-input"
                                                                     name="birth-place" placeholder="Lieu de naissance"
-                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                    style="width: 11.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Choisir le lieu de
                                                                     naissance
                                                                 </option>
@@ -208,6 +219,7 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
                                                         <label class="col-sm-2 control-label">
@@ -219,6 +231,7 @@
                                                                    placeholder="Lieu de naissance..." maxlength="70"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="residence-field">
                                                         <label class="col-sm-2 control-label">
@@ -230,6 +243,7 @@
                                                                    placeholder="Lieu de résidence..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                     <div class="form-group one-third column-last" id="profession-field">
                                                         <label class="col-sm-2 control-label">
@@ -241,14 +255,12 @@
                                                                    placeholder="Profession..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
+                                                        <br/>
                                                     </div>
                                                 </div>
-
-                                                <br/>
                                                 <div class="col-sm-12">
                                                     <label class="col-sm-2 control-label">
-                                                        <em>Entrez votre adresse mail pour recevoir toute notification
-                                                            relative à votre requête :</em>
+                                                        <em>Adresse email (facultatif) :</em>
                                                     </label>
                                                     <span style="display: none" id="err-mail-toast"></span>
                                                     <div><input type="email" class="form-control"
@@ -284,17 +296,29 @@
                                                             <div class="col-sm-12">
                                                                 <div class="col-sm-6 ckbox ckbox-success" >
                                                                     <input type="radio" name="id-card-type" id="old-format-card" value="CNI_2009" style="width: auto; box-shadow:none" />
-                                                                    <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Ancien Format)</em></label>
+                                                                    <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><!--<img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;">--> &nbsp; CNI <em>(ancien format valide)</em></label>
                                                                 </div>
                                                                 <div class="col-sm-6 ckbox ckbox-success">
                                                                     <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" />
-                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></label>
+                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label></label>
                                                                 </div>
                                                                 <br/>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div><br/>
+                                                </div>
+                                                <!--<center>
+                                                    <div class="notification-box notification-box-info">
+                                                        <div class="modal-header">
+                                                            <img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"><br/><br/>
+                                                            <h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte nationale d'identité.</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a>
+                                                    </div>
+                                                </center>
+                                                <br/>-->
                                                 <div class="form-group column-last" id="document-number-field">
                                                     <label class="col-sm-2 control-label" id="document-number-label">
                                                         Numéro de la pièce d'identité<span
@@ -302,7 +326,7 @@
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="document-number-input" name="document-number"
-                                                               placeholder="Numéro pièce d'identité..." maxlength="70" required="required"
+                                                               placeholder="Numéro pièce d'identité..." maxlength="11" required="required"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
                                                 </div><br/>
@@ -332,7 +356,7 @@
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
                                                     <label class="col-sm-2 control-label">
-                                                        Numéros à Identifier<span style="color: #d9534f">*</span> : <br/><b><span id="recap-msisdn"></span></b>
+                                                        Numéro(s) à Identifier<span style="color: #d9534f">*</span> : <br/><b><span id="recap-msisdn"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Nom : <b><span id="recap-first-name"></span></b>
@@ -382,7 +406,7 @@
                                 </form>
                             </div>
                         </center>
-                    </div>
+                    </div><br/><br/><br/><br/>
                 @endif
             </div>
         </section>
