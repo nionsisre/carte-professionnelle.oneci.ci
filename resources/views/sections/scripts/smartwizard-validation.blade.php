@@ -443,14 +443,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{--msisdn = jQuery(document.querySelectorAll('[name="msisdn[]"]')).val();
-                    telco = jQuery(document.querySelectorAll('[name="telco[]"]')).val();
-                    first_name = jQuery(document.querySelectorAll('[name="first-name"]')).val();
-                    last_name = jQuery(document.querySelectorAll('[name="last-name"]')).val();
-                    birth_date = jQuery(document.querySelectorAll('[name="birth-date"]')).val();
-                    birth_place = jQuery(document.querySelectorAll('[name="birth-place"]')).val();
-                    residence = jQuery(document.querySelectorAll('[name="residence"]')).val();
-                    profession = jQuery(document.querySelectorAll('[name="profession"]')).val();--}}
+                    {{-- RECAP --}}
                     spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     var msisdn_list = "";
@@ -477,6 +470,18 @@
                     jQuery('#recap-email').text(email);
                     jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
                     jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase());
+                    if(jQuery("#agreement-input").is(':checked')) {
+                        jQuery("#cptch-sbmt-btn").show();
+                    } else {
+                        jQuery("#cptch-sbmt-btn").hide();
+                    }
+                    jQuery("#agreement-input").change(function() {
+                        if(this.checked) {
+                            jQuery("#cptch-sbmt-btn").show();
+                        } else {
+                            jQuery("#cptch-sbmt-btn").hide();
+                        }
+                    });
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
             }

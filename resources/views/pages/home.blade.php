@@ -46,7 +46,7 @@
                         <center>
                             <div id="tvi-preorder-container">
                                 <form id="ctptch-frm-id" class="content-form" method="post"
-                                      action="{{ URL::to('/') }}/soumettre-identification" enctype="multipart/form-data">
+                                      action="{{ route('soumettre_identification') }}" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
@@ -102,7 +102,7 @@
                                                             <div class="col-sm-10">
                                                                 <select class="form-control good-select"
                                                                         id="telco-input-1" name="telco[]"
-                                                                        placeholder="Opérateur téléphonique" required="required" disabled="disabled"
+                                                                        placeholder="Opérateur téléphonique" required="required" readonly="readonly"
                                                                         style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                     <option value="" selected disabled>Opérateur téléphonique</option>
                                                                     @foreach($abonnes_operateurs as $abonnes_operateur)
@@ -299,8 +299,8 @@
                                                                     <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><!--<img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;">--> &nbsp; CNI <em>(ancien format valide)</em></label>
                                                                 </div>
                                                                 <div class="col-sm-6 ckbox ckbox-success">
-                                                                    <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" />
-                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label></label>
+                                                                    <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" checked="checked" />
+                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label>
                                                                 </div>
                                                                 <br/>
                                                             </div>
@@ -321,12 +321,11 @@
                                                 <br/>-->
                                                 <div class="form-group column-last" id="document-number-field">
                                                     <label class="col-sm-2 control-label" id="document-number-label">
-                                                        Numéro de la pièce d'identité<span
-                                                            style="color: #d9534f">*</span> :
+                                                        Numéro NNI<span style="color: #d9534f">*</span> :
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="document-number-input" name="document-number"
-                                                               placeholder="Numéro pièce d'identité..." maxlength="11" required="required"
+                                                               placeholder="___________" maxlength="11" required="required"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
                                                 </div><br/>
@@ -390,12 +389,21 @@
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
-                                                    </label><br/>
-                                                </div><br/><br/>
+                                                    </label><br/><br/>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12">
+                                                            <div class="col-sm-6 ckbox ckbox-success" style="border: solid 1px #333;padding: 1em; border-style: dashed; border-radius: 2em">
+                                                                <input type="checkbox" name="agreement" id="agreement-input" value="1" style="width: auto; box-shadow:none; margin-bottom: 0.65em;" required />
+                                                                <label for="agreement-input" style="display: inline-block;" class="col-sm-5"><b> &nbsp;&nbsp; Je certifie que les informations saisies sont correctes &nbsp; <i class="fad fa-award mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i></b></label>
+                                                            </div>
+                                                            <br/>
+                                                        </div>
+                                                    </div>
+                                                </div><br/>
                                                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
-                                                            style="width: 100%;padding: 1em;"><i
+                                                            style="width: 100%;padding: 1em; display: none"><i
                                                             class="fa fa-sim-card"></i> &nbsp; Terminer et soumettre votre identification
                                                     </button>
                                                 </div>

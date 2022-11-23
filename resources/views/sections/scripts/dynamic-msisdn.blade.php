@@ -6,14 +6,14 @@
     --}}
     var max_msisdn = 6;
     var idx_msisdn = 1;
-    function rmMsisdn(id, idx) {
+    function rmMsisdn(id) {
         jQuery("#"+id).remove();
         idx_msisdn--;
         if (idx_msisdn <= max_msisdn) {
             jQuery('#rm-msisdn').removeAttr("disabled");
         }
         if (idx_msisdn > 1) {
-            jQuery('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`, ' + (idx_msisdn) + ')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
+            jQuery('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`)" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
         }
         jQuery('#content').height( jQuery("#content").height() - 130);
     }
@@ -43,7 +43,7 @@
                                 <span style="display: none" id="err-toast"></span>\n\
                                 <div class="col-sm-10">\n\
                                     <select class="form-control good-select" id="telco-input-'+(idx_msisdn+1)+'" name="telco[]" required="required"\n\
-                                            style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" disabled="disabled">\n\
+                                            style="width: 11em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" readonly="readonly">\n\
                                         <option value="" selected disabled>Choisir Opérateur</option>\n\
                                         @foreach($abonnes_operateurs as $abonnes_operateur)
                                     <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>\n\
@@ -52,7 +52,7 @@
                                 </div>\n\
                             </div>\n\
                         </div>\n\
-                        <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-'+(idx_msisdn+1)+'`, '+(idx_msisdn+1)+')" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>\n\
+                        <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-'+(idx_msisdn+1)+'`)" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>\n\
                     </div>';
             jQuery('#msisdn-container').append(html);
             jQuery('#content').height( jQuery("#content").height() + 130);
@@ -60,7 +60,7 @@
             jQuery(".msisdn").mask('99 99 99 99 99');
             jQuery(".good-select").select2();
             {{-- Mise a jour de la Detection de l'operateur telephonique a la volee lors de la saisie du numero de telephone --}}
-            jQuery(document.querySelectorAll('[name="msisdn[]"]')).keypress(function(e) {
+            jQuery(document.querySelectorAll('[name="msisdn[]"]')).keypress(function() {
                 msisdn = document.querySelectorAll('[name="msisdn[]"]');
                 telco = document.querySelectorAll('[name="telco[]"]');
                 for(let i=0; i<msisdn.length; i++) {
