@@ -15,6 +15,7 @@
     @include('sections.scripts.custom-input-file')
     @include('sections.scripts.dynamic-msisdn')
     @include('sections.scripts.smartwizard-validation')
+    @include('sections.scripts.copy-to-clipboard')
 @elseif (Route::is('consultation_statut_identification'))
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')

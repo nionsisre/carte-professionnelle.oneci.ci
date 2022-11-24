@@ -29,13 +29,14 @@
                         <center>
                             <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
                             <br/><div>
-                                <p style="padding: 0em 0em 4em">
+                                <p style="padding: 0em 0em 3em">
                                     Votre demande d'identification a bien été soumise avec succès !<br/>
-                                    Numéro de dossier : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°{!! session('numero_dossier')  !!}</b><br/><br/>
+                                    Numéro de dossier : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{!! session('numero_dossier') !!}</span></b> &nbsp;<br/><br/>
                                     Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
                                     L'ONECI vous remercie !
                                 </p>
                             </div>
+                            <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
                             <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
                     </div><br/><br/><br/><br/><br/><br/>

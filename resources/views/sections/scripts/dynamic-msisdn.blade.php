@@ -65,7 +65,6 @@
                 telco = document.querySelectorAll('[name="telco[]"]');
                 for(let i=0; i<msisdn.length; i++) {
                     if (jQuery(msisdn[i]).val().length >= 2) {
-                        console.log(jQuery(msisdn[i]).val());
                         if (jQuery(msisdn[i]).val().substring(0, 2) === "07") {
                             jQuery(telco[i]).val("1");
                             jQuery(telco[i]).trigger('change');

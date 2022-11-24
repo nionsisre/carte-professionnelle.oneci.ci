@@ -104,6 +104,24 @@
                     jQuery("#document-number-input").attr('placeholder','__________');
                     jQuery("#document-number-input").mask('9999999999');
                 }
+            } else if (jQuery("#doc-type").val() === "3") {
+                jQuery("#cni-type-field").hide();
+                jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
+                jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
+                jQuery("#document-number-input").attr('placeholder','___________');
+                jQuery("#document-number-input").mask('99999999999');
+                jQuery('#modalInfo').html(
+                    '<center> <div class="notification-box notification-box-info">\n\
+                    <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte de résident.</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                );
+                jQuery('#modalInfo').modal({
+                    escapeClose: false,
+                    clickClose: false,
+                    showClose: false
+                });
+                jQuery('.blocker').css('z-index','2');
             } else {
                 jQuery("#cni-type-field").hide();
                 jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
@@ -348,10 +366,10 @@
                     if(country === "Côte d’Ivoire") {
                         if (jQuery("#doc-type").val() === "2") {
                             jQuery("#cni-type-field").show();
-                            if(jQuery('#new-format-card').is(':checked')) {
+                            if (jQuery('#new-format-card').is(':checked')) {
                                 jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-                                jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
-                                jQuery("#document-number-input").attr('placeholder','___________');
+                                jQuery("#document-number-input").attr('placeholder', 'Numéro NNI...');
+                                jQuery("#document-number-input").attr('placeholder', '___________');
                                 jQuery("#document-number-input").mask('99999999999');
                                 jQuery('#modalInfo').html(
                                     '<center> <div class="notification-box notification-box-info">\n\
@@ -364,13 +382,31 @@
                                     clickClose: false,
                                     showClose: false
                                 });
-                                jQuery('.blocker').css('z-index','2');
+                                jQuery('.blocker').css('z-index', '2');
                             } else {
                                 jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                                jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
-                                jQuery("#document-number-input").attr('placeholder','__________');
+                                jQuery("#document-number-input").attr('placeholder', 'Numéro pièce identité...');
+                                jQuery("#document-number-input").attr('placeholder', '__________');
                                 jQuery("#document-number-input").mask('9999999999');
                             }
+                        } else if (jQuery("#doc-type").val() === "3") {
+                            jQuery("#cni-type-field").hide();
+                            jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
+                            jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
+                            jQuery("#document-number-input").attr('placeholder','___________');
+                            jQuery("#document-number-input").mask('99999999999');
+                            jQuery('#modalInfo').html(
+                                '<center> <div class="notification-box notification-box-info">\n\
+                                <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte de résident.</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalInfo').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
                         } else {
                             jQuery("#cni-type-field").hide();
                             jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
