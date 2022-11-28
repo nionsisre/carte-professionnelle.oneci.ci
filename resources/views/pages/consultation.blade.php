@@ -67,20 +67,28 @@
                     @endif
                 @else
                     <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre identification<br/></h5>
-
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                        @if($errors->has('form-number') || $errors->has('msisdn'))
+                            <center>
+                                <div class="notification-box notification-box-error">
+                                    <div class="modal-header">
+                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
+                                    </div>
+                                </div>
+                            </center>
+                        @endif
                         <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('consulter_statut_identification') }}">
                             {{ csrf_field() }}
                             <input type="hidden" id="tsch-input" name="tsch" value="0"/>
                             <center>
-                                <br/><br/>
+                                <br/>
                                 <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
                                         Entrez le numéro du dossier reçu lors de votre identification<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="11" style="width: 23.4em; text-align: center" autocomplete="off" required="required"/>
+                                        <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="10" minlength="10" style="width: 23.4em; text-align: center" value="{{ old('form-number') }}" autocomplete="off" required="required"/>
                                     </div>
                                     <br/>
                                 </div>
@@ -90,7 +98,7 @@
                                         Entrez votre numéro de téléphone<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" style="width: 23.4em; text-align: center" autocomplete="off" />
+                                        <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" minlength="14" style="width: 23.4em; text-align: center" value="{{ old('msisdn') }}" autocomplete="off" />
                                     </div>
                                     <br/>
                                 </div>
@@ -107,7 +115,6 @@
                             </center>
                         </form>
                     </div>
-
                 @endif
                 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
             </div>

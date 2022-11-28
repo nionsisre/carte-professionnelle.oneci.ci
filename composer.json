@@ -8,10 +8,10 @@
         "php": "^7.3|^8.0",
         "dipeshsukhia/laravel-html-minify": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^8.75",
         "laravel/tinker": "^2.5",
-        "ext-http": "*"
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

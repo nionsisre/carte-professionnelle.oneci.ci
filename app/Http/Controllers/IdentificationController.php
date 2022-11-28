@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
 
 class IdentificationController extends Controller {
 
@@ -17,14 +20,14 @@ class IdentificationController extends Controller {
         /*request()->validate([
             'nom' => ['required', 'string', 'max:150'],
             'prenoms' => ['required', 'string', 'max:150'],
-            'pdf_doc' => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
+            'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
         ]);*/
         /* @TODO: Stocker variables en base */
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
         $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
         $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
-            DB::table('civil_status_center')->where('civil_status_center_id','=',$request->input('birth-place'))->get()[0]->civil_status_center_label
+            DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
             : $request->input('birth-place-2');
         $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
         $abonnes = Abonne::create([
@@ -64,35 +67,56 @@ class IdentificationController extends Controller {
      */
     public function search(Request $request) {
         $search_with_msisdn = $request->input('tsch');
-        /* @TODO: Valider variables du formulaire et recaptcha */
-        if($search_with_msisdn == "0") {
+        /* Google reCAPTCHA v3 Verification (Staging and Production only, not Local environment) */
+        if (App::environment(['staging', 'production'])) {
+            $client = new Client();
+            try {
+                $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                    'form_params' => [
+                        'secret' => env('RECAPTCHA_SECRET'), /* config('services.recaptcha.secret'), */
+                        'response' => $request->input('g-recaptcha-response'),
+                        'remoteip' => $request->ip()
+                    ]
+                ]);
+                $recaptcha_result = json_decode($response->getBody(), true);
+                if (!$recaptcha_result['success']) {
+                    return redirect()->route('consultation_statut_identification')->with([
+                        'error' => true,
+                        'error_message' => 'Le captcha n\'a pas été correctement renseigné ou le délai a expiré. Veuillez actualiser la page et réessayer SVP'
+                    ]);
+                }
+            } catch (GuzzleException $e) {
+                /* Moving here if something is wrong with reCAPTCHA server side service API */
+                // var_dump($e->getMessage());
+            }
+        }
+        if ($search_with_msisdn == '0') {
             request()->validate([
-                /*'form-number' => ['required', 'required|numeric', 'min:10', 'max:10'],*/
-                'form-number' => ['required'],
+                'form-number' => ['required', 'numeric', 'digits:10'],
             ]);
             $resultats_statut = DB::table('abonnes_numeros')
                 ->select('*')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces','abonnes_type_pieces.id','=','abonnes.abonnes_type_piece_id')
+                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                 ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
                 ->get();
         } else {
             request()->validate([
-                'msisdn' => ['required'],
+                'msisdn' => ['required', 'string', 'min:14', 'max:14'],
             ]);
             $resultats_statut = DB::table('abonnes_numeros')
                 ->select('*')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces','abonnes_type_pieces.id','=','abonnes.abonnes_type_piece_id')
+                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                 ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
                 ->get();
         }
         return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
-
     }
 
 }
