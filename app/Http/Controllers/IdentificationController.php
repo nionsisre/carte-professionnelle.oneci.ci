@@ -63,22 +63,34 @@ class IdentificationController extends Controller {
      * Identification Form Search
      */
     public function search(Request $request) {
+        $search_with_msisdn = $request->input('tsch');
         /* @TODO: Valider variables du formulaire et recaptcha */
-        request()->validate([
-            /*'form-number' => ['required', 'required|numeric', 'min:10', 'max:10'],*/
-            'form-number' => ['required'],
-        ]);
-        /* @TODO: Requête variables en base */
-        $resultats_statut = DB::table('abonnes_numeros')
-            ->select('*')
-            ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-            ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-            ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-            ->join('abonnes_type_pieces','abonnes_type_pieces.id','=','abonnes.abonnes_type_piece_id')
-            ->where('numero_dossier', '=', $request->input('form-number'))
-            ->get();
-        //dd($resultats_statut);
-        /* @TODO: Retourner vue resultat */
+        if($search_with_msisdn == "0") {
+            request()->validate([
+                /*'form-number' => ['required', 'required|numeric', 'min:10', 'max:10'],*/
+                'form-number' => ['required'],
+            ]);
+            $resultats_statut = DB::table('abonnes_numeros')
+                ->select('*')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces','abonnes_type_pieces.id','=','abonnes.abonnes_type_piece_id')
+                ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
+                ->get();
+        } else {
+            request()->validate([
+                'msisdn' => ['required'],
+            ]);
+            $resultats_statut = DB::table('abonnes_numeros')
+                ->select('*')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces','abonnes_type_pieces.id','=','abonnes.abonnes_type_piece_id')
+                ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
+                ->get();
+        }
         return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
 
     }

@@ -34,7 +34,7 @@
                             <br/><div>
                                 <p style="padding: 0em 0em 4em">
                                     Numéro de dossier : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $resultats_statut[0]->numero_dossier }}</b><br/><br/>
-                                    Numéros de téléphones identifiés : <br/>
+                                    Numéro(s) de téléphone identifié(s) : <br/>
                                     @foreach($resultats_statut as $resultat_statut)
                                         <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultat_statut->libelle_operateur }} : <b style="font-size: 1rem">{{ $resultat_statut->numero_de_telephone }}</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-{{ $resultat_statut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">{{ $resultat_statut->libelle_statut }}</b><br/>
                                     @endforeach
@@ -74,44 +74,26 @@
                             <input type="hidden" id="tsch-input" name="tsch" value="0"/>
                             <center>
                                 <br/><br/>
-                                <!-- Form Number -->
+                                <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
                                         Entrez le numéro du dossier reçu lors de votre identification<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="11" style="width: 23.4em; text-align: center" required="required"/>
+                                        <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="11" style="width: 23.4em; text-align: center" autocomplete="off" required="required"/>
                                     </div>
                                     <br/>
                                 </div>
-                                <!-- No Form Number -->
-                                <!--<div class="form-group" id="first-name-field" style="display: none">
+                                <!-- With MSISDN -->
+                                <div class="form-group" id="msisdn-field" style="display: none">
                                     <label class="col-sm-2 control-label">
-                                        Entrez votre nom<span style="color: #d9534f">*</span> :
+                                        Entrez votre numéro de téléphone<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="first-name-input" name="first-name" placeholder="Nom ou Nom de l'époux..." maxlength="25" style="width: 23.4em; text-align: center"/>
+                                        <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" style="width: 23.4em; text-align: center" autocomplete="off" />
                                     </div>
                                     <br/>
                                 </div>
-                                <div class="form-group" id="last-name-field" style="display: none">
-                                    <label class="col-sm-2 control-label">
-                                        Entrez votre prénom<span style="color: #d9534f">*</span> :
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <input type="text" id="last-name-input" name="last-name" placeholder="Prénom(s)..." maxlength="70" style="width: 23.4em; text-align: center"/>
-                                    </div>
-                                    <br/>
-                                </div>
-                                <div class="form-group" id="birth-date-field" style="display: none">
-                                    <label class="col-sm-2 control-label">
-                                        Entrez votre date de naissance<span style="color: #d9534f">*</span> :
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <input type="date" id="birth-date-input" name="birth-date" placeholder="Date de Naissance..." maxlength="10" style="width: 23.4em; text-align: center"/>
-                                    </div>
-                                    <br/>
-                                </div>-->
                                 <div id="no-form-number" style="margin-bottom: 2.5em;"><i class="fa fa-sim-card"></i> &nbsp; <span id="no-form-number-text" style="font-size: 1.1em; font-weight: bold; text-decoration: underline; cursor: pointer; font-style: italic;">Vérifier plutôt avec mon numéro de téléphone</span></div>
                                 <!-- Captcha and submit -->
                                 <br/><br/>

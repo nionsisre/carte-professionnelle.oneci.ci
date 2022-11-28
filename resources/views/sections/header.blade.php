@@ -16,11 +16,17 @@
                 <a href="https://www.oneci.ci/accueil">Accueil</a>
             </li>
             <li>
+                <a href="{{ route('accueil') }}">Identification</a>
+            </li>
+            <li>
+                <a href="{{ route('consultation_statut_identification') }}">Consultation</a>
+            </li>
+            <!--<li>
                 <a href="https://www.oneci.ci/qui-sommes-nous">Qui sommes-nous ?</a>
             </li>
             <li>
                 <a href="https://www.oneci.ci/contacts">Contacts</a>
-            </li>
+            </li>-->
         </ul>
     </div>
 </nav>
