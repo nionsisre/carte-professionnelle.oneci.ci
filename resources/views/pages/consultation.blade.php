@@ -68,6 +68,15 @@
                 @else
                     <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre identification<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                        @if(session()->has('error') && session()->get('error'))
+                            <center>
+                                <div class="notification-box notification-box-error">
+                                    <div class="modal-header">
+                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
+                                    </div>
+                                </div>
+                            </center>
+                        @endif
                         @if($errors->has('form-number') || $errors->has('msisdn'))
                             <center>
                                 <div class="notification-box notification-box-error">

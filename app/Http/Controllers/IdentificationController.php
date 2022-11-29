@@ -66,7 +66,6 @@ class IdentificationController extends Controller {
      * Identification Form Search
      */
     public function search(Request $request) {
-        $search_with_msisdn = $request->input('tsch');
         /* Google reCAPTCHA v3 Verification (Staging and Production only, not Local environment) */
         if (App::environment(['staging', 'production'])) {
             $client = new Client();
@@ -86,11 +85,18 @@ class IdentificationController extends Controller {
                         'error_message' => 'Le captcha n\'a pas été correctement renseigné ou le délai a expiré. Veuillez actualiser la page et réessayer SVP'
                     ]);
                 }
-            } catch (GuzzleException $e) {
-                /* Moving here if something is wrong with reCAPTCHA server side service API */
-                // var_dump($e->getMessage());
+            } catch (GuzzleException $guzzle_exception) {
+                /* Moving here if something is wrong with reCAPTCHA v3 on server side service API */
+                return redirect()->route('consultation_statut_identification')->with([
+                    'error' => true,
+                    'error_message' => 'Une erreur interne est survenue. Veuillez réessayer plus tard. ('
+                        .$guzzle_exception->getMessage()
+                        .' -- Code : '.$guzzle_exception->getCode().')'
+                ]);
             }
         }
+        /* Search with msisdn or form number */
+        $search_with_msisdn = $request->input('tsch');
         if ($search_with_msisdn == '0') {
             request()->validate([
                 'form-number' => ['required', 'numeric', 'digits:10'],
