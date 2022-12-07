@@ -4,11 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
+use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
+
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\Font\NotoSans;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Writer\PngWriter;
 
 class IdentificationController extends Controller {
 
@@ -66,7 +75,7 @@ class IdentificationController extends Controller {
      * Identification Form Search
      */
     public function search(Request $request) {
-        /* Google reCAPTCHA v3 Verification (Staging and Production only, not Local environment) */
+        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
         if (App::environment(['staging', 'production'])) {
             $client = new Client();
             try {
@@ -123,6 +132,74 @@ class IdentificationController extends Controller {
                 ->get();
         }
         return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
+    }
+
+    /**
+     * Identification Form print ticket
+     */
+    public function print(Request $request) {
+        /* Print PDF ticket according form-number */
+        /*$numero_dossier = $request->session()->get('numero_dossier');*/
+        $numero_dossier = $request->get('n');
+        $identification_resultats = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+            ->where('abonnes.numero_dossier', '=', $numero_dossier)
+            ->get();
+        for ($i = 0; $i < sizeof($identification_resultats); $i++) {
+            $msisdn[] = $identification_resultats[$i]->numero_de_telephone.' ('.$identification_resultats[$i]->libelle_operateur.') | ';
+        }
+        $identification_resultats = $identification_resultats[0];
+        /* QR CODE Server Generation */
+        $qrresult = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data($identification_resultats->numero_dossier)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(100)
+            ->margin(10)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->build();
+        /*->logoPath(URL::asset('assets/images/logo.png'))
+            ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
+            ->labelFont(new NotoSans(20))
+            ->labelAlignment(new LabelAlignmentCenter())*/
+        $qrdataUri_base64 = $qrresult->getDataUri();
+        /* PDF Download document generation */
+        $data = [
+            'title' => 'Reçu d\'identification',
+            'qrcode' => $qrdataUri_base64,
+            'numero_dossier' => $identification_resultats->numero_dossier,
+            'msisdn_list' => $msisdn,
+            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->prenoms,
+            'date_et_lieu_de_naissance' => $identification_resultats->date_de_naissance.' à '.$identification_resultats->lieu_de_naissance,
+            'lieu_de_residence' => $identification_resultats->lieu_de_naissance,
+            'nationalite' => $identification_resultats->nationalite,
+            'profession' => $identification_resultats->profession,
+            'email' => $identification_resultats->email,
+            'document_justificatif' => $identification_resultats->libelle_piece.' ('.$identification_resultats->numero_document.')',
+        ];
+        $filename = 'identification-'.$identification_resultats->prenoms.'-'.$identification_resultats->numero_dossier.'.pdf';
+        $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
+        /*$request->session()->remove('numero_dossier');*/
+        /*return view('layouts.recu-identification', [
+            'title' => 'Reçu d\'identification',
+            'qrcode' => $qrdataUri_base64,
+            'numero_dossier' => $identification_resultats->numero_dossier,
+            'msisdn_list' => $msisdn,
+            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->prenoms,
+            'date_et_lieu_de_naissance' => $identification_resultats->date_de_naissance.' à '.$identification_resultats->lieu_de_naissance,
+            'lieu_de_residence' => $identification_resultats->lieu_de_naissance,
+            'nationalite' => $identification_resultats->nationalite,
+            'profession' => $identification_resultats->profession,
+            'email' => $identification_resultats->email,
+            'document_justificatif' => $identification_resultats->libelle_piece.' ('.$identification_resultats->numero_document.')',
+        ]);*/
+        return $pdf_recu_identification->download($filename);
     }
 
 }

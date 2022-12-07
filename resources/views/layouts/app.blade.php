@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 
 <!--[if IE 8]>
-<html class="ie8 no-js" lang="fr"> <![endif]-->
+<html class="ie8 no-js" lang="{{ str_replace('_', '-', app()->getLocale()) }}"> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
 <html class="no-js" lang="{{ str_replace('_', '-', app()->getLocale()) }}"> <!--<![endif]-->
     <head>

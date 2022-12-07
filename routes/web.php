@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\IdentificationController;
+use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/* Routes Vues */
-Route::get('/', [App\Http\Controllers\MainController::class, 'index'])->name('accueil');
-Route::get('/consultation-statut-identification', [App\Http\Controllers\MainController::class, 'consultation'])->name('consultation_statut_identification');
+/* View Routes */
+Route::get('/', [MainController::class, 'index'])->name('accueil');
+Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
+Route::get('/imprimer-recu-identification', [IdentificationController::class, 'print'])->name('imprimer_recu_identification');
 
-/* Routes Traitements */
-Route::post('/soumettre-identification', [App\Http\Controllers\IdentificationController::class, 'submit'])->name('soumettre_identification');
-Route::post('/consulter-statut-identification', [App\Http\Controllers\IdentificationController::class, 'search'])->name('consulter_statut_identification');;
-
+/* Processing Routes */
+Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
+Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
