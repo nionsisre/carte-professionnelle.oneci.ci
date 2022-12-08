@@ -175,15 +175,15 @@ class IdentificationController extends Controller {
             'qrcode' => $qrdataUri_base64,
             'numero_dossier' => $identification_resultats->numero_dossier,
             'msisdn_list' => $msisdn,
-            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->prenoms,
+            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->nom.((!empty($identification_resultats->nom_epouse)) ? ' epse '.$identification_resultats->nom_epouse : ''),
             'date_et_lieu_de_naissance' => $identification_resultats->date_de_naissance.' à '.$identification_resultats->lieu_de_naissance,
-            'lieu_de_residence' => $identification_resultats->lieu_de_naissance,
+            'lieu_de_residence' => $identification_resultats->domicile,
             'nationalite' => $identification_resultats->nationalite,
             'profession' => $identification_resultats->profession,
             'email' => $identification_resultats->email,
             'document_justificatif' => $identification_resultats->libelle_piece.' ('.$identification_resultats->numero_document.')',
         ];
-        $filename = 'identification-'.$identification_resultats->prenoms.'-'.$identification_resultats->numero_dossier.'.pdf';
+        $filename = 'identification-'.$identification_resultats->nom.'-'.$identification_resultats->numero_dossier.'.pdf';
         $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
         /*$request->session()->remove('numero_dossier');*/
         /*return view('layouts.recu-identification', [
