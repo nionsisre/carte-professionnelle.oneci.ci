@@ -103,6 +103,18 @@
                     jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
                     jQuery("#document-number-input").attr('placeholder','__________');
                     jQuery("#document-number-input").mask('9999999999');
+                    jQuery('#modalInfo').html(
+                        '<center> <div class="notification-box notification-box-info">\n\
+                        <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
+                        </div><div class="modal-footer">\n\
+                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                    );
+                    jQuery('#modalInfo').modal({
+                        escapeClose: false,
+                        clickClose: false,
+                        showClose: false
+                    });
+                    jQuery('.blocker').css('z-index','2');
                 }
             } else if (jQuery("#doc-type").val() === "3") {
                 jQuery("#cni-type-field").hide();
@@ -142,6 +154,18 @@
             jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
             jQuery("#document-number-input").attr('placeholder','__________');
             jQuery("#document-number-input").mask('9999999999');
+            jQuery('#modalInfo').html(
+                '<center> <div class="notification-box notification-box-info">\n\
+                <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
+                        </div><div class="modal-footer">\n\
+                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+            );
+            jQuery('#modalInfo').modal({
+                escapeClose: false,
+                clickClose: false,
+                showClose: false
+            });
+            jQuery('.blocker').css('z-index','2');
         }
     });
     {{-- L'evenement "leaveStep" est utilise pour valider le formulaire --}}
