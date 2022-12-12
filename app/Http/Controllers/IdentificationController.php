@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MailONECI;
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -18,6 +19,7 @@ use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Facades\Mail;
 
 class IdentificationController extends Controller {
 
@@ -164,7 +166,7 @@ class IdentificationController extends Controller {
             ->margin(10)
             ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
             ->build();
-        /*->logoPath(URL::asset('assets/images/logo.png'))
+        /*  ->logoPath(URL::asset('assets/images/logo.png'))
             ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
             ->labelFont(new NotoSans(20))
             ->labelAlignment(new LabelAlignmentCenter())*/
@@ -176,7 +178,7 @@ class IdentificationController extends Controller {
             'numero_dossier' => $identification_resultats->numero_dossier,
             'msisdn_list' => $msisdn,
             'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->nom.((!empty($identification_resultats->nom_epouse)) ? ' epse '.$identification_resultats->nom_epouse : ''),
-            'date_et_lieu_de_naissance' => $identification_resultats->date_de_naissance.' à '.$identification_resultats->lieu_de_naissance,
+            'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)).' à '.$identification_resultats->lieu_de_naissance,
             'lieu_de_residence' => $identification_resultats->domicile,
             'nationalite' => $identification_resultats->nationalite,
             'profession' => $identification_resultats->profession,
@@ -185,20 +187,11 @@ class IdentificationController extends Controller {
         ];
         $filename = 'identification-'.$identification_resultats->nom.'-'.$identification_resultats->numero_dossier.'.pdf';
         $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
+        /* Envoi de mail */
+        if(!empty($identification_resultats->email)) {
+            Mail::to($identification_resultats->email)->queue(new MailONECI($data));
+        }
         /*$request->session()->remove('numero_dossier');*/
-        /*return view('layouts.recu-identification', [
-            'title' => 'Reçu d\'identification',
-            'qrcode' => $qrdataUri_base64,
-            'numero_dossier' => $identification_resultats->numero_dossier,
-            'msisdn_list' => $msisdn,
-            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->prenoms,
-            'date_et_lieu_de_naissance' => $identification_resultats->date_de_naissance.' à '.$identification_resultats->lieu_de_naissance,
-            'lieu_de_residence' => $identification_resultats->lieu_de_naissance,
-            'nationalite' => $identification_resultats->nationalite,
-            'profession' => $identification_resultats->profession,
-            'email' => $identification_resultats->email,
-            'document_justificatif' => $identification_resultats->libelle_piece.' ('.$identification_resultats->numero_document.')',
-        ]);*/
         return $pdf_recu_identification->download($filename);
     }
 
