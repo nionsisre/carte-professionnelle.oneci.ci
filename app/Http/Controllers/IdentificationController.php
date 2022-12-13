@@ -33,7 +33,7 @@ class IdentificationController extends Controller {
             'prenoms' => ['required', 'string', 'max:150'],
             'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
         ]);*/
-        /* @TODO: Stocker variables en base */
+        /* Stocker variables en base */
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
         $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
@@ -68,7 +68,7 @@ class IdentificationController extends Controller {
                 'numero_de_telephone' => str_replace(' ', '', $numeros[$i])
             ]);
         }
-        /* @TODO: Retourner vue resultat */
+        /* Retourner vue resultat */
         $numero_dossier = $abonnes->numero_dossier;
         return redirect()->route('accueil')->with('numero_dossier', $numero_dossier);
     }
@@ -140,8 +140,8 @@ class IdentificationController extends Controller {
      * Identification Form print ticket
      */
     public function print(Request $request) {
-        /* Print PDF ticket according form-number */
         /*$numero_dossier = $request->session()->get('numero_dossier');*/
+        /* Print PDF ticket according form-number */
         $numero_dossier = $request->get('n');
         $identification_resultats = DB::table('abonnes_numeros')
             ->select('*')
@@ -189,10 +189,50 @@ class IdentificationController extends Controller {
         $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
         /* Envoi de mail */
         if(!empty($identification_resultats->email)) {
-            Mail::to($identification_resultats->email)->queue(new MailONECI($data));
+            $data['is_email'] = true;
+            $data['qrcode'] = $qrresult->getString();
+            if (App::environment(['staging', 'production'])) {
+                $headers  = "From: ONECI <no-reply@oneci.ci>\r\n";
+                $headers .= "Reply-To: no-reply@oneci.ci\r\n";
+                /*$headers .= "CC: info@oneci.ci\r\n";*/
+                $headers .= "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                $to = $identification_resultats->email;
+                $subject = "Identification d'abonné mobile ONECI";
+                $content = view('layouts.recu-identification', $data);
+                mail($to, $subject, $content, $headers);
+                /*if (mail($to, $subject, $content, $headers)) {
+                    echo "The email has been sent successfully!";
+                } else {
+                    echo "Email did not leave correctly!";
+                }*/
+            } else {
+                Mail::to($identification_resultats->email)->queue(new MailONECI($data));
+            }
         }
         /*$request->session()->remove('numero_dossier');*/
         return $pdf_recu_identification->download($filename);
+    }
+
+    /**
+     * Identification QrCode Generator
+     */
+    public function generateQrCode(Request $request) {
+        $message = $request->get('m');
+        $qrresult = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data($message)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(100)
+            ->margin(10)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->build();
+        /* Directly output the QR code */
+        header('Content-Type: '.$qrresult->getMimeType());
+        echo $qrresult->getString();
+        return true;
     }
 
 }

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [MainController::class, 'index'])->name('accueil');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
 Route::get('/imprimer-recu-identification', [IdentificationController::class, 'print'])->name('imprimer_recu_identification');
+Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
 
 /* Processing Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
