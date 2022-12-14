@@ -27,12 +27,23 @@ class IdentificationController extends Controller {
      *  Identification Form Submit
      */
     public function submit(Request $request) {
-        /* @TODO: Valider variables du formulaire et recaptcha */
-        /*request()->validate([
-            'nom' => ['required', 'string', 'max:150'],
-            'prenoms' => ['required', 'string', 'max:150'],
+        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+        $this->verifyGoogleRecaptchaV3($request);
+        /* Valider variables du formulaire */
+        request()->validate([
+            'first-name' => ['required', 'string', 'max:70'],
+            'spouse-name' => ['nullable', 'string', 'max:70'],
+            'last-name' => ['required', 'string', 'max:70'],
+            'birth-date' => ['required', 'string', 'max:11'],
+            'residence' => ['required', 'string', 'max:70'],
+            'profession' => ['required', 'string', 'max:70'],
+            'country' => ['required', 'string', 'max:70'],
+            'email' => ['nullable', 'string', 'max:150'],
+            'doc-type' => ['required', 'string', 'max:150'],
             'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-        ]);*/
+            'document-number' => ['required', 'string', 'max:150'],
+            'document-expiry' => ['nullable', 'string', 'max:11'],
+        ]);
         /* Stocker variables en base */
         $numero_dossier = time();
         $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
@@ -55,6 +66,7 @@ class IdentificationController extends Controller {
             'email' => $request->input('email'),
             'abonnes_type_piece_id' => $request->input('doc-type'),
             'document_justificatif' => $document_justificatif,
+            'date_expiration_document' => $request->input('document-expiry'),
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni
         ]);
@@ -78,34 +90,7 @@ class IdentificationController extends Controller {
      */
     public function search(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        if (App::environment(['staging', 'production'])) {
-            $client = new Client();
-            try {
-                $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
-                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
-                    'form_params' => [
-                        'secret' => env('RECAPTCHA_SECRET'), /* config('services.recaptcha.secret'), */
-                        'response' => $request->input('g-recaptcha-response'),
-                        'remoteip' => $request->ip()
-                    ]
-                ]);
-                $recaptcha_result = json_decode($response->getBody(), true);
-                if (!$recaptcha_result['success']) {
-                    return redirect()->route('consultation_statut_identification')->with([
-                        'error' => true,
-                        'error_message' => 'Le captcha n\'a pas été correctement renseigné ou le délai a expiré. Veuillez actualiser la page et réessayer SVP'
-                    ]);
-                }
-            } catch (GuzzleException $guzzle_exception) {
-                /* Moving here if something is wrong with reCAPTCHA v3 on server side service API */
-                return redirect()->route('consultation_statut_identification')->with([
-                    'error' => true,
-                    'error_message' => 'Une erreur interne est survenue. Veuillez réessayer plus tard. ('
-                        .$guzzle_exception->getMessage()
-                        .' -- Code : '.$guzzle_exception->getCode().')'
-                ]);
-            }
-        }
+        $this->verifyGoogleRecaptchaV3($request);
         /* Search with msisdn or form number */
         $search_with_msisdn = $request->input('tsch');
         if ($search_with_msisdn == '0') {
@@ -151,71 +136,84 @@ class IdentificationController extends Controller {
             ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
             ->where('abonnes.numero_dossier', '=', $numero_dossier)
             ->get();
-        for ($i = 0; $i < sizeof($identification_resultats); $i++) {
-            $msisdn[] = $identification_resultats[$i]->numero_de_telephone.' ('.$identification_resultats[$i]->libelle_operateur.') | ';
-        }
-        $identification_resultats = $identification_resultats[0];
-        /* QR CODE Server Generation */
-        $qrresult = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data($identification_resultats->numero_dossier)
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size(100)
-            ->margin(10)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->build();
-        /*  ->logoPath(URL::asset('assets/images/logo.png'))
-            ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
-            ->labelFont(new NotoSans(20))
-            ->labelAlignment(new LabelAlignmentCenter())*/
-        $qrdataUri_base64 = $qrresult->getDataUri();
-        /* PDF Download document generation */
-        $data = [
-            'title' => 'Reçu d\'identification',
-            'qrcode' => $qrdataUri_base64,
-            'numero_dossier' => $identification_resultats->numero_dossier,
-            'msisdn_list' => $msisdn,
-            'nom_complet' => $identification_resultats->prenoms.' '.$identification_resultats->nom.((!empty($identification_resultats->nom_epouse)) ? ' epse '.$identification_resultats->nom_epouse : ''),
-            'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)).' à '.$identification_resultats->lieu_de_naissance,
-            'lieu_de_residence' => $identification_resultats->domicile,
-            'nationalite' => $identification_resultats->nationalite,
-            'profession' => $identification_resultats->profession,
-            'email' => $identification_resultats->email,
-            'document_justificatif' => $identification_resultats->libelle_piece.' ('.$identification_resultats->numero_document.')',
-        ];
-        $filename = 'identification-'.$identification_resultats->nom.'-'.$identification_resultats->numero_dossier.'.pdf';
-        $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
-        /* Envoi de mail */
-        if(!empty($identification_resultats->email)) {
-            $data['is_email'] = true;
-            $data['qrcode'] = $qrresult->getString();
-            if (App::environment(['staging', 'production'])) {
-                $headers  = "From: ONECI <no-reply@oneci.ci>\r\n";
-                $headers .= "Reply-To: no-reply@oneci.ci\r\n";
-                /*$headers .= "CC: info@oneci.ci\r\n";*/
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-                $to = $identification_resultats->email;
-                $subject = "Identification d'abonné mobile ONECI";
-                $content = view('layouts.recu-identification', $data);
-                mail($to, $subject, $content, $headers);
-                /*if (mail($to, $subject, $content, $headers)) {
-                    echo "The email has been sent successfully!";
-                } else {
-                    echo "Email did not leave correctly!";
-                }*/
-            } else {
-                Mail::to($identification_resultats->email)->queue(new MailONECI($data));
+        if (!empty($identification_resultats)) {
+            for ($i = 0; $i < sizeof($identification_resultats); $i++) {
+                $msisdn[] = $identification_resultats[$i]->numero_de_telephone . ' (' . $identification_resultats[$i]->libelle_operateur . ') | ';
             }
+            $identification_resultats = $identification_resultats[0];
+            /* QR CODE Server Generation */
+            $qrresult = Builder::create()
+                ->writer(new PngWriter())
+                ->writerOptions([])
+                ->data($identification_resultats->numero_dossier)
+                ->encoding(new Encoding('UTF-8'))
+                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+                ->size(100)
+                ->margin(10)
+                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->build();
+            /*  ->logoPath(URL::asset('assets/images/logo.png'))
+                ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
+                ->labelFont(new NotoSans(20))
+                ->labelAlignment(new LabelAlignmentCenter())*/
+            $qrdataUri_base64 = $qrresult->getDataUri();
+            /* PDF Download document generation */
+            $data = [
+                'title' => 'Reçu d\'identification',
+                'qrcode' => $qrdataUri_base64,
+                'numero_dossier' => $identification_resultats->numero_dossier,
+                'msisdn_list' => $msisdn,
+                'nom_complet' => $identification_resultats->prenoms . ' ' . $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
+                'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)) . ' à ' . $identification_resultats->lieu_de_naissance,
+                'lieu_de_residence' => $identification_resultats->domicile,
+                'nationalite' => $identification_resultats->nationalite,
+                'profession' => $identification_resultats->profession,
+                'email' => $identification_resultats->email,
+                'document_justificatif' => $identification_resultats->libelle_piece . ' (' . $identification_resultats->numero_document . ')',
+            ];
+            $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+            $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
+            /* Envoi de mail */
+            if (!empty($identification_resultats->email)) {
+                $data['is_email'] = true;
+                $data['qrcode'] = $qrresult->getString();
+                if (App::environment(['staging', 'production'])) {
+                    $headers = "From: ONECI <no-reply@oneci.ci>\r\n";
+                    $headers .= "Reply-To: no-reply@oneci.ci\r\n";
+                    /*$headers .= "CC: info@oneci.ci\r\n";*/
+                    $headers .= "MIME-Version: 1.0\r\n";
+                    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                    $to = $identification_resultats->email;
+                    $subject = "Identification d'abonné mobile ONECI";
+                    $content = view('layouts.recu-identification', $data);
+                    mail($to, $subject, $content, $headers);
+                    /*if (mail($to, $subject, $content, $headers)) {
+                        echo "The email has been sent successfully!";
+                    } else {
+                        echo "Email did not leave correctly!";
+                    }*/
+                } else {
+                    Mail::to($identification_resultats->email)->queue(new MailONECI($data));
+                }
+            }
+        } else {
+            return redirect()->route('accueil')->with([
+                'error' => true,
+                'error_message' => 'Erreur est survenue lors du téléchargement du formulaire d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+            ]);
         }
         /*$request->session()->remove('numero_dossier');*/
         return $pdf_recu_identification->download($filename);
     }
 
     /**
-     * Identification QrCode Generator
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * QrCode Raw Image Generator from Request Message<br/><br/>
+     * <b>void</b> generateQrCode(<b>Request</b> $request)<br/>
+     * @param Request $request <p>
+     * Client Request object.
+     * </p>
+     * @return bool Return true after displaying QrCode
      */
     public function generateQrCode(Request $request) {
         $message = $request->get('m');
@@ -233,6 +231,47 @@ class IdentificationController extends Controller {
         header('Content-Type: '.$qrresult->getMimeType());
         echo $qrresult->getString();
         return true;
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
+     * <b>void</b> verifyGoogleRecaptchaV3(<b>Request</b> $request)<br/>
+     * @param Request $request <p>
+     * Client Request object.
+     * </p>
+     * @return \Illuminate\Http\RedirectResponse Value of result
+     */
+    private function verifyGoogleRecaptchaV3(Request $request) {
+        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+        if (App::environment(['staging', 'production'])) {
+            $client = new Client();
+            try {
+                $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                    'form_params' => [
+                        'secret' => env('RECAPTCHA_SECRET'), /* config('services.recaptcha.secret'), */
+                        'response' => $request->input('g-recaptcha-response'),
+                        'remoteip' => $request->ip()
+                    ]
+                ]);
+                $recaptcha_result = json_decode($response->getBody(), true);
+                if (!$recaptcha_result['success']) {
+                    return redirect()->route('consultation_statut_identification')->with([
+                        'error' => true,
+                        'error_message' => 'Le captcha n\'a pas été correctement renseigné ou le délai a expiré. Veuillez actualiser la page et réessayer SVP'
+                    ]);
+                }
+            } catch (GuzzleException $guzzle_exception) {
+                /* Moving here if something is wrong with reCAPTCHA v3 on server side service API */
+                return redirect()->route('consultation_statut_identification')->with([
+                    'error' => true,
+                    'error_message' => 'Une erreur interne est survenue. Veuillez réessayer plus tard. ('
+                        .$guzzle_exception->getMessage()
+                        .' -- Code : '.$guzzle_exception->getCode().')'
+                ]);
+            }
+        }
     }
 
 }

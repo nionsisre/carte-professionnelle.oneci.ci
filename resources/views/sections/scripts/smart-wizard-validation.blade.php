@@ -17,7 +17,7 @@
     });
     jQuery('.blocker').css('z-index','2');
     {{-- Variables --}}
-    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="";
+    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Detection de l'operateur telephonique a la volee lors du copier/coller du numero de telephone --}}
     jQuery(document.querySelectorAll('[name="msisdn[]"]')).bind('paste', function(e) {
         {{-- var _this = this; --}}
@@ -451,6 +451,7 @@
                 case 2:
                     doc_type = document.querySelectorAll('[name="doc-type"]');
                     document_number = document.querySelectorAll('[name="document-number"]');
+                    document_expiry = document.querySelectorAll('[name="document-expiry"]');
                     pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
                     {{-- doc_type --}}
                     if(!jQuery(doc_type).val()) {
@@ -474,6 +475,28 @@
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- document_expiry --}}
+                    var documentExpiryFormatted = new Date(jQuery(document_expiry).val());
+                    var maxExpiryDate = new Date();
+                    var minExpiryDate = new Date();
+                    maxExpiryDate.setFullYear(maxExpiryDate.getFullYear()+20);
+                    minExpiryDate.setFullYear(minExpiryDate.getFullYear()-5);
+                    if( jQuery(document_expiry).val() && (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime()) ) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -529,7 +552,7 @@
                     jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());
                     jQuery('#recap-email').text(email);
                     jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
-                    jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase());
+                    jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
                     } else {

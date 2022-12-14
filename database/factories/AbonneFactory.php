@@ -27,7 +27,8 @@ class AbonneFactory extends Factory {
             'email' => $this->faker->unique()->safeEmail(),
             'abonnes_type_piece_id' => $this->faker->randomElement([1, 2, 3]),
             'document_justificatif' => 'media/identification_'.$this->faker->unique()->numerify('##########').'.pdf',
-            'numero_document' => $this->faker->unique()->numerify('##########')
+            'numero_document' => $this->faker->unique()->numerify('##########'),
+            'date_expiration_document' => $this->faker->dateTimeBetween('+1 years', '+10 years')->format('Y-m-d'),
         ];
     }
 

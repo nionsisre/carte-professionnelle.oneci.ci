@@ -24,6 +24,17 @@
             <div class="column-last">
                 <h2><i class="fa fa-sim-card text-black mr10"></i> &nbsp; Identification du numéro de téléphone en ligne
                 </h2>
+                @if($errors->has('first-name') || $errors->has('spouse-name') || $errors->has('last-name') || $errors->has('birth-date') ||
+                    $errors->has('residence') || $errors->has('profession') || $errors->has('country') || $errors->has('email') ||
+                    $errors->has('doc-type') || $errors->has('pdf_doc') || $errors->has('document-number') || $errors->has('document-expiry'))
+                    <center>
+                        <div class="notification-box notification-box-error">
+                            <div class="modal-header">
+                                <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
+                            </div>
+                        </div>
+                    </center>
+                @endif
                 @if(session()->has('numero_dossier'))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center>
@@ -127,7 +138,7 @@
                                                             Nom de l'abonné<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="first-name-input" name="first-name"
+                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
                                                                    placeholder="Nom de l'abonné..." maxlength="25"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 13.4em; text-align: center"/>
@@ -139,7 +150,7 @@
                                                             <em>Nom d'épouse :</em>
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="spouse-name-input" name="spouse-name"
+                                                            <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
                                                                    placeholder="Nom d'épouse..." maxlength="70"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
@@ -150,7 +161,7 @@
                                                             Prénom(s) de l'abonné<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="last-name-input" name="last-name"
+                                                            <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
                                                                    placeholder="Prénom(s) de l'abonné..." maxlength="70"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 17.4em; text-align: center"/>
@@ -183,7 +194,7 @@
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="date" id="birth-date-input" name="birth-date"
+                                                            <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
                                                                    placeholder="Date de Naissance" required="required"
                                                                    max="{{ date('Y-m-d', strtotime('-10 years')) }}"
                                                                    style="width: 10.5em; text-align: center"/>
@@ -230,7 +241,7 @@
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="birth-place-input-2" name="birth-place-2"
+                                                            <input type="text" id="birth-place-input-2" name="birth-place-2" value="{{ old('birth-place-2') }}"
                                                                    placeholder="Lieu de naissance..." maxlength="70"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
@@ -242,7 +253,7 @@
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="residence-input" name="residence"
+                                                            <input type="text" id="residence-input" name="residence" value="{{ old('residence') }}"
                                                                    placeholder="Lieu de résidence..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
@@ -254,7 +265,7 @@
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="profession-input" name="profession"
+                                                            <input type="text" id="profession-input" name="profession" value="{{ old('profession') }}"
                                                                    placeholder="Profession..." maxlength="70" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
@@ -266,7 +277,7 @@
                                                         <em>Adresse email (facultatif) :</em>
                                                     </label>
                                                     <span style="display: none" id="err-mail-toast"></span>
-                                                    <div><input type="email" class="form-control"
+                                                    <div><input type="email" class="form-control" value="{{ old('email') }}"
                                                                 id="email-input" name="email"
                                                                 placeholder="Adresse Mail..." maxlength="150"
                                                                 style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" /></div>
@@ -310,18 +321,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--<center>
-                                                    <div class="notification-box notification-box-info">
-                                                        <div class="modal-header">
-                                                            <img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"><br/><br/>
-                                                            <h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte nationale d'identité.</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a>
-                                                    </div>
-                                                </center>
-                                                <br/>-->
                                                 <div class="form-group column-last" id="document-number-field">
                                                     <label class="col-sm-2 control-label" id="document-number-label">
                                                         Numéro NNI<span style="color: #d9534f">*</span> :
@@ -330,6 +329,17 @@
                                                         <input type="text" id="document-number-input" name="document-number"
                                                                placeholder="___________" maxlength="11" required="required"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                    </div>
+                                                    <br/>
+                                                </div>
+                                                <div class="form-group column-last" id="document-expiry-field">
+                                                    <label class="col-sm-2 control-label" id="document-expiry-label">
+                                                        <em>Date d'expiration :</em>
+                                                    </label>
+                                                    <div class="col-sm-10">
+                                                        <input type="date" id="document-expiry-input" name="document-expiry" placeholder="__/__/____"
+                                                               max="{{ date('Y-m-d', strtotime('+20 years')) }}"
+                                                               min="{{ date('Y-m-d', strtotime('-5 years')) }}" style="width: 17.4em; text-align: center"/>
                                                     </div>
                                                 </div><br/>
                                                 <div class="form-group" id="pdf-doc-field">
@@ -345,9 +355,8 @@
                                                         </div>
                                                     </div><br/>
                                                     <label for="pdf-doc-input" class="col-sm-2 control-label">
-                                                        <em>Le document scanné à charger doit être en <b>*.pdf</b>, en <b>*.jpg</b> ou en <b>*.png</b>,
-                                                            avoir une résolution minimum de <b>150 dpi</b> et ne doit pas
-                                                            excéder <b>1 Mo</b>.</em>
+                                                        <em>Le document à charger doit être un scan <b>recto verso</b> du document <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,
+                                                            avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.</em>
                                                     </label>
                                                     <br/>
                                                 </div>

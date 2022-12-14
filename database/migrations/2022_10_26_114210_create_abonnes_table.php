@@ -27,6 +27,7 @@ class CreateAbonnesTable extends Migration {
             $table->string('email')->nullable();
             $table->string('document_justificatif');
             $table->string('numero_document');
+            $table->string('date_expiration_document')->nullable();
             $table->string('type_cni')->nullable();
             $table->timestamps();
 
