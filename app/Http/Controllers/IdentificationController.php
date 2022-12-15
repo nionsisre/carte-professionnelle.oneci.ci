@@ -136,7 +136,7 @@ class IdentificationController extends Controller {
             ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
             ->where('abonnes.numero_dossier', '=', $numero_dossier)
             ->get();
-        if (!empty($identification_resultats)) {
+        if (!empty($identification_resultats[0])) {
             for ($i = 0; $i < sizeof($identification_resultats); $i++) {
                 $msisdn[] = $identification_resultats[$i]->numero_de_telephone . ' (' . $identification_resultats[$i]->libelle_operateur . ') | ';
             }
