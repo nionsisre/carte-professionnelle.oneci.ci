@@ -28,7 +28,8 @@ class IdentificationController extends Controller {
      */
     public function submit(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        $this->verifyGoogleRecaptchaV3($request);
+        $this->verifyGoogleRecaptchaV3($request)['error'] ??
+            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
         /* Valider variables du formulaire */
         request()->validate([
             'first-name' => ['required', 'string', 'max:70'],
@@ -90,7 +91,8 @@ class IdentificationController extends Controller {
      */
     public function search(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        $this->verifyGoogleRecaptchaV3($request);
+        $this->verifyGoogleRecaptchaV3($request)['error'] ??
+            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
         /* Search with msisdn or form number */
         $search_with_msisdn = $request->input('tsch');
         if ($search_with_msisdn == '0') {
@@ -240,7 +242,7 @@ class IdentificationController extends Controller {
      * @param Request $request <p>
      * Client Request object.
      * </p>
-     * @return \Illuminate\Http\RedirectResponse Value of result
+     * @return array Value of result
      */
     private function verifyGoogleRecaptchaV3(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
@@ -257,21 +259,25 @@ class IdentificationController extends Controller {
                 ]);
                 $recaptcha_result = json_decode($response->getBody(), true);
                 if (!$recaptcha_result['success']) {
-                    return redirect()->route('consultation_statut_identification')->with([
+                    return [
                         'error' => true,
                         'error_message' => 'Le captcha n\'a pas été correctement renseigné ou le délai a expiré. Veuillez actualiser la page et réessayer SVP'
-                    ]);
+                    ];
                 }
             } catch (GuzzleException $guzzle_exception) {
                 /* Moving here if something is wrong with reCAPTCHA v3 on server side service API */
-                return redirect()->route('consultation_statut_identification')->with([
+                return [
                     'error' => true,
                     'error_message' => 'Une erreur interne est survenue. Veuillez réessayer plus tard. ('
                         .$guzzle_exception->getMessage()
                         .' -- Code : '.$guzzle_exception->getCode().')'
-                ]);
+                ];
             }
         }
+        return [
+            'error' => false,
+            'error_message' => 'reCAPTCHA sent is ok'
+        ];
     }
 
 }

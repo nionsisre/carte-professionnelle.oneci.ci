@@ -42,11 +42,11 @@ Pour pouvoir exécuter le code source du projet, assurez-vous de pouvoir dispose
 Ouvrir votre **terminal** ou **invite de commande** `cmd`, aller à la racine du projet et exécutez les commandes suivantes :
 <br/>
 
-- Installation toutes les dépendances PHP permettant au projet de pouvoir fonctionner convenablement :
+- Installation de toutes les dépendances PHP permettant au projet de pouvoir fonctionner convenablement :
 ```console
 composer install
 ```
-- Installation toutes les dépendances Javascript permettant au projet de pouvoir fonctionner convenablement :
+- Installation de toutes les dépendances Javascript permettant au projet de pouvoir fonctionner convenablement :
 ```console
 npm install
 ```
