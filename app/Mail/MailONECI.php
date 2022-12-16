@@ -10,14 +10,15 @@ use Illuminate\Queue\SerializesModels;
 class MailONECI extends Mailable {
 
     use Queueable, SerializesModels;
-    public $data;
+    public $view_layout_name, $data;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data) {
+    public function __construct($view_layout_name, $data) {
+        $this->view_layout_name = $view_layout_name;
         $this->data = $data;
     }
 
@@ -27,9 +28,9 @@ class MailONECI extends Mailable {
      * @return $this
      */
     public function build() {
-        return $this->from('no-reply@oneci.ci')
+        return $this->from(env('MAIL_USERNAME'))
                     ->subject("Votre fiche d'identification d'abonné mobile ONECI")
-                    ->view('layouts.recu-identification', $this->data);
+                    ->view($this->view_layout_name, $this->data);
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\MailONECI;
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
+use App\Models\AbonnesOperateur;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
@@ -21,10 +22,21 @@ use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * (PHP 5, PHP 7, PHP 8+)<br/>
+ * @package    identification-abonnes-mobile
+ * @subpackage Controller
+ * @author     ONECI-DEV <info@oneci.ci>
+ * @github     https://github.com/oneci-dev
+ */
 class IdentificationController extends Controller {
 
     /**
-     *  Identification Form Submit
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Soumission du formulaire d'identification par l'abonné<br/><br/>
+     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function submit(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
@@ -53,7 +65,7 @@ class IdentificationController extends Controller {
             DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
             : $request->input('birth-place-2');
         $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
-        $abonnes = Abonne::create([
+        $abonne = Abonne::create([
             'numero_dossier' => $numero_dossier,
             'nom' => strtoupper($request->input('first-name')),
             'nom_epouse' => strtoupper($request->input('spouse-name')),
@@ -71,23 +83,42 @@ class IdentificationController extends Controller {
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni
         ]);
-        $operateurs = $request->input('telco');
-        $numeros = $request->input('msisdn');
-        for ($i = 0; $i < sizeof($operateurs); $i++) {
+        $telco = $request->input('telco');
+        $msisdn = $request->input('msisdn');
+        for ($i = 0; $i < sizeof($telco); $i++) {
             AbonnesNumero::create([
-                'abonne_id' => $abonnes->id,
-                'abonnes_operateur_id' => $operateurs[$i],
+                'abonne_id' => $abonne->id,
+                'abonnes_operateur_id' => $telco[$i],
                 'abonnes_statut_id' => 1,
-                'numero_de_telephone' => str_replace(' ', '', $numeros[$i])
+                'numero_de_telephone' => str_replace(' ', '', $msisdn[$i])
             ]);
+            $msisdn[$i] = $msisdn[$i] . ' (' . AbonnesOperateur::find($telco[$i])->libelle_operateur . ') | ';
         }
+        /* Envoi de mail */
+        $this->sendMailTemplate('layouts.recu-identification', [
+            'title' => 'Reçu d\'identification',
+            'qrcode' => $this->generateQrBase64($abonne->numero_dossier),
+            'numero_dossier' => $abonne->numero_dossier,
+            'msisdn_list' => $msisdn,
+            'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
+            'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
+            'lieu_de_residence' => $abonne->domicile,
+            'nationalite' => $abonne->nationalite,
+            'profession' => $abonne->profession,
+            'email' => $abonne->email,
+            'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
+        ]);
         /* Retourner vue resultat */
-        $numero_dossier = $abonnes->numero_dossier;
+        $numero_dossier = $abonne->numero_dossier;
         return redirect()->route('accueil')->with('numero_dossier', $numero_dossier);
     }
 
     /**
-     * Identification Form Search
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Recherche d'une identification par l'abonné<br/><br/>
+     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function search(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
@@ -124,7 +155,10 @@ class IdentificationController extends Controller {
     }
 
     /**
-     * Identification Form print ticket
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Impression du reçu d'identification<br/><br/>
+     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
      */
     public function print(Request $request) {
         /*$numero_dossier = $request->session()->get('numero_dossier');*/
@@ -143,26 +177,10 @@ class IdentificationController extends Controller {
                 $msisdn[] = $identification_resultats[$i]->numero_de_telephone . ' (' . $identification_resultats[$i]->libelle_operateur . ') | ';
             }
             $identification_resultats = $identification_resultats[0];
-            /* QR CODE Server Generation */
-            $qrresult = Builder::create()
-                ->writer(new PngWriter())
-                ->writerOptions([])
-                ->data($identification_resultats->numero_dossier)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-                ->size(100)
-                ->margin(10)
-                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-                ->build();
-            /*  ->logoPath(URL::asset('assets/images/logo.png'))
-                ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
-                ->labelFont(new NotoSans(20))
-                ->labelAlignment(new LabelAlignmentCenter())*/
-            $qrdataUri_base64 = $qrresult->getDataUri();
             /* PDF Download document generation */
             $data = [
                 'title' => 'Reçu d\'identification',
-                'qrcode' => $qrdataUri_base64,
+                'qrcode' => $this->generateQrBase64($identification_resultats->numero_dossier),
                 'numero_dossier' => $identification_resultats->numero_dossier,
                 'msisdn_list' => $msisdn,
                 'nom_complet' => $identification_resultats->prenoms . ' ' . $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
@@ -177,44 +195,23 @@ class IdentificationController extends Controller {
             $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
             /* Envoi de mail */
             if (!empty($identification_resultats->email)) {
-                $data['is_email'] = true;
-                $data['qrcode'] = $qrresult->getString();
-                if (App::environment(['staging', 'production'])) {
-                    $headers = "From: ONECI <no-reply@oneci.ci>\r\n";
-                    $headers .= "Reply-To: no-reply@oneci.ci\r\n";
-                    /*$headers .= "CC: info@oneci.ci\r\n";*/
-                    $headers .= "MIME-Version: 1.0\r\n";
-                    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-                    $to = $identification_resultats->email;
-                    $subject = "Identification d'abonné mobile ONECI";
-                    $content = view('layouts.recu-identification', $data);
-                    mail($to, $subject, $content, $headers);
-                    /*if (mail($to, $subject, $content, $headers)) {
-                        echo "The email has been sent successfully!";
-                    } else {
-                        echo "Email did not leave correctly!";
-                    }*/
-                } else {
-                    Mail::to($identification_resultats->email)->queue(new MailONECI($data));
-                }
+                $this->sendMailTemplate('layouts.recu-identification', $data);
             }
+            /*$request->session()->remove('numero_dossier');*/
+            return $pdf_recu_identification->download($filename);
         } else {
             return redirect()->route('accueil')->with([
                 'error' => true,
                 'error_message' => 'Erreur est survenue lors du téléchargement du formulaire d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
             ]);
         }
-        /*$request->session()->remove('numero_dossier');*/
-        return $pdf_recu_identification->download($filename);
     }
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * QrCode Raw Image Generator from Request Message<br/><br/>
      * <b>void</b> generateQrCode(<b>Request</b> $request)<br/>
-     * @param Request $request <p>
-     * Client Request object.
-     * </p>
+     * @param Request $request <p>Client Request object.</p>
      * @return bool Return true after displaying QrCode
      */
     public function generateQrCode(Request $request) {
@@ -237,11 +234,68 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
+     * QrCode Base64 Image Generator from String Message<br/><br/>
+     * <b>void</b> generateQrBase64(<b>String</b> $message)<br/>
+     * @param String $message <p>QR Code message.</p>
+     * @return String Return QrCode Base64 value
+     */
+    private function generateQrBase64($message) {
+        $qrresult = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data($message)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size(100)
+            ->margin(10)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->build();
+            /*
+            ->logoPath(URL::asset('assets/images/logo.png'))
+            ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
+            ->labelFont(new NotoSans(20))
+            ->labelAlignment(new LabelAlignmentCenter())
+            */
+        return $qrresult->getDataUri();
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Send custom email using a blade view layout<br/><br/>
+     * <b>void</b> sendMailTemplate(<b>array</b> $data, <b>String</b> $blade_view_layout)<br/>
+     * @param String $blade_view_layout <p>Blade view layout path.</p>
+     * @param array $data <p>Blade view layout data</p>
+     * @return bool Return true if mail is sent successfully
+     */
+    private function sendMailTemplate($blade_view_layout, $data) {
+        $data['is_email'] = true;
+        if (App::environment(['staging', 'production'])) {
+            /* We use the method below because production server doesn't allow custom SMTP server */
+            $headers = 'From: ONECI <' .env('MAIL_USERNAME').">\r\n";
+            $headers .= 'Reply-To: ' .env('MAIL_USERNAME')."\r\n";
+            /*$headers .= "CC: info@oneci.ci\r\n";*/
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $to = $data['email'];
+            $subject = "Identification d'abonné mobile ONECI";
+            $content = view($blade_view_layout, $data);
+            mail($to, $subject, $content, $headers);
+            if (mail($to, $subject, $content, $headers)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            Mail::to($data['email'])->queue(new MailONECI($blade_view_layout, $data));
+            return true;
+        }
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
      * Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
      * <b>void</b> verifyGoogleRecaptchaV3(<b>Request</b> $request)<br/>
-     * @param Request $request <p>
-     * Client Request object.
-     * </p>
+     * @param Request $request <p>Client Request object.</p>
      * @return array Value of result
      */
     private function verifyGoogleRecaptchaV3(Request $request) {
