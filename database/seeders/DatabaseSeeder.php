@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AbonneSeeder::class);
         $this->call(AbonnesOperateurSeeder::class);
         $this->call(AbonnesNumeroSeeder::class);
+        $this->call(AbonnesNumerosOtpSeeder::class);
     }
 }

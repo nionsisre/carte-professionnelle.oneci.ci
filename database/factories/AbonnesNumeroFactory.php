@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Abonne;
-use App\Models\AbonnesOperateur;
 use App\Models\AbonnesStatut;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -32,16 +31,15 @@ class AbonnesNumeroFactory extends Factory
                 $telco_id = 3;
                 break;
         }
+        $statut_id = AbonnesStatut::inRandomOrder()->first()->id;
+        $otp_code = ($statut_id != "1") ? $this->faker->numerify("######") : '';
         return [
-            'abonne_id' =>  Abonne::inRandomOrder()->first()->id,
+            'abonne_id' => Abonne::inRandomOrder()->first()->id,
             'abonnes_operateur_id' => $telco_id,
-            'abonnes_statut_id' => AbonnesStatut::inRandomOrder()->first()->id,
-            /*'numero_de_telephone' => $this->faker->randomElement([
-                $this->faker->numerify("01 ## ## ## ##"),
-                $this->faker->numerify("05 ## ## ## ##"),
-                $this->faker->numerify("07 ## ## ## ##")
-            ]),*/
+            'abonnes_statut_id' => $statut_id,
             'numero_de_telephone' => $msisdn,
+            'otp_code' => $otp_code,
+            'otp_sms' => (!empty($otp_code)) ? 'Le code de vérification de votre numéro de téléphone est : '.$otp_code : '',
         ];
     }
 }

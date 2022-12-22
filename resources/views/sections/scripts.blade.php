@@ -16,9 +16,15 @@
     @include('sections.scripts.dynamic-msisdn')
     @include('sections.scripts.smart-wizard-validation')
     @include('sections.scripts.copy-to-clipboard')
+    @if(!session()->has('numero_dossier'))
+        @include('sections.scripts.otp-verification')
+    @endif
 @elseif (Route::is('consultation_statut_identification'))
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
+    @if(session()->has('resultats_statut'))
+        @include('sections.scripts.otp-verification')
+    @endif
 @endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>

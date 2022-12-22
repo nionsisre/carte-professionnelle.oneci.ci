@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\IdentificationController;
-use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\IdentificationController;
+use App\Http\Controllers\OTPVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,4 @@ Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name
 /* Processing Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
+Route::post('/send-otp-code', [OTPVerificationController::class, 'sendSMS'])->name('envoi_code_otp_par_sms');
