@@ -24,7 +24,7 @@ class AbonnesNumerosOtpFactory extends Factory {
             'msisdn' => $abonne_numero->numero_de_telephone,
             'form_number' => $form_number,
             'otp_code' => $otp_code,
-            'otp_sms_title' => $otp_sms_title,
+            'otp_sms_title' => 'Vérification de Numéro de téléphone',
             'otp_sms_message' => $otp_sms_message,
             'otp_verification_status' => $otp_verification_status,
         ];

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AbonnesNumerosOtp;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -18,7 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OTPVerificationController extends Controller {
 
-    private $max_attempts = 6;
+    private const MAX_ATTEMPTS = 5;
+    private const OTP_DIGITS = 6;
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -27,7 +31,7 @@ class OTPVerificationController extends Controller {
      * @param Request $request <p>Client Request object.</p>
      * @return Response $request <p>Server Response object.</p>
      */
-    public function sendSMS(Request $request) {
+    public function sendOTP(Request $request) {
         /* Valider variables du formulaire */
         request()->validate([
             'cli' => ['required', 'string', 'max:100'], // Url du client
@@ -47,10 +51,9 @@ class OTPVerificationController extends Controller {
             }
             if (!isset($is_token_correct)) {
                 return response([
-                    'error' => true,
-                    'error_message' => 'Forbidden',
-                    'remaining_sec' => '120'
-                ], Response::HTTP_FORBIDDEN);
+                    'has_error' => true,
+                    'message' => 'Invalid Token'
+                ], Response::HTTP_UNAUTHORIZED);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
                 $abonne_numeros = DB::table('abonnes_numeros')
@@ -62,155 +65,162 @@ class OTPVerificationController extends Controller {
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                     ->get();
                 /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
-                $msisdn = $abonne_numeros[$request->input('idx')]->numero_de_telephone;
+                $msisdn_infos = $abonne_numeros[$request->input('idx')];
                 /* Vérification de l'existence d'anciennes tentatives en base */
-                $otp_attempts = AbonnesNumerosOtp::get(['msisdn' => $msisdn])->all();
-                if (empty($otp_attempts)) { /* Aucun SMS précédemment envoyé pour ce numéro de téléphone */
-                    /* @TODO: Envoi de SMS */
-                } else if (sizeof($otp_attempts) <= $this->max_attempts) { /* Nombre de SMS précédemment envoyés et inférieurs au maximum journalier pour ce numéro */
-                    /* @TODO: Envoi de SMS */
+                $otp_attempts = AbonnesNumerosOtp::where('msisdn', '=', $msisdn_infos->numero_de_telephone)
+                    ->where('form_number', '=', $request->input('fn'))
+                    ->where('created_at', '>', Carbon::today())
+                    ->orderByDesc('id')
+                    ->get();
+                if (sizeof($otp_attempts) <= 0) { /* Aucun SMS précédemment envoyé pour ce numéro de téléphone ou quota journalier non atteint */
+                    /* SMS sending using MTN API */
+                    $sms_sent = $this->sendSMS($msisdn_infos);
+                    if ($sms_sent['has_error']) {
+                        return response([
+                            'has_error' => true,
+                            'message' => 'Une erreur est survenue lors de l\'envoi du SMS, veuillez actualiser la page et/ou réessayer plus tard SVP...',
+                            'message_service' => $sms_sent['message'],
+                            'remaining_sec' => '120'
+                        ], Response::HTTP_SERVICE_UNAVAILABLE);
+                    } else {
+                        return response([
+                            'has_error' => false,
+                            'message' => 'SMS envoyé avec succès !',
+                            'remaining_sec' => '120'
+                        ], Response::HTTP_OK);
+                    }
+                } elseif (sizeof($otp_attempts) <= $this::MAX_ATTEMPTS) {
+                    if ($otp_attempts[0]->otp_verification_status == 1) {
+                        $last_otp_date = strtotime($otp_attempts[0]->created_at);
+                        $current_date = time();
+                        if (($current_date - $last_otp_date)/60 > sizeof($otp_attempts) * 2) { // Check If Time interval reached (OTP sent after 2 minutes * number of attempts)
+                            /* SMS sending using MTN API */
+                            $sms_sent = $this->sendSMS($msisdn_infos);
+                            if ($sms_sent['has_error']) {
+                                return response([
+                                    'has_error' => true,
+                                    'message' => 'Une erreur est survenue lors de l\'envoi du SMS, veuillez actualiser la page et/ou réessayer plus tard SVP...',
+                                    'message_service' => $sms_sent['message'],
+                                    'remaining_sec' => '120'
+                                ], Response::HTTP_SERVICE_UNAVAILABLE);
+                            } else {
+                                return response([
+                                    'has_error' => false,
+                                    'message' => 'SMS envoyé avec succès !',
+                                    'remaining_sec' => '120'
+                                ], Response::HTTP_OK);
+                            }
+                        } else {
+                            /* Time interval between two OTP sent is not reached */
+                            return response([
+                                'has_error' => true,
+                                'message' => 'Temps d\'intervalle avant l\'envoi d\'un nouveau code non atteint...',
+                                'remaining_sec' => round(( (sizeof($otp_attempts) * 2) - (($current_date - $last_otp_date)/60) ) * 60)
+                            ], Response::HTTP_SERVICE_UNAVAILABLE);
+                        }
+                    } else {
+                        return response([
+                            'has_error' => true,
+                            'message' => 'Vous avez déjà vérifié ce numéro !',
+                            'remaining_sec' => '480'
+                        ], Response::HTTP_CONFLICT);
+                    }
                 } else { /* Nombre de SMS précédemment envoyés et supérieurs au maximum journalier pour ce numéro */
                     return response([
-                        'error' => true,
-                        'error_message' => 'Vous avez atteint votre quota de SMS de vérification, veuillez réessayer un autre jour SVP',
+                        'has_error' => true,
+                        'message' => 'Vous avez atteint votre quota de SMS de vérification, veuillez réessayer un autre jour SVP',
                         'remaining_sec' => '120'
                     ], Response::HTTP_TOO_MANY_REQUESTS);
                 }
-                /* Retour résultat JSON */
-                return response($abonne_numeros, Response::HTTP_OK);
             }
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
             return response([
-                'error' => true,
-                'error_message' => 'Forbidden',
-                'remaining_sec' => '120'
-            ], Response::HTTP_FORBIDDEN);
+                    'has_error' => true,
+                    'message' => 'Veuillez actualiser la page et/ou réessayer plus tard SVP',
+                    'remaining_sec' => '120'
+                ], Response::HTTP_UNAUTHORIZED);
         }
-        /*  */
-        /*
-        if(!empty($recepisse_number) && !empty($msisdn)) {
-            $sms_arr = $RequestUsers->getSMS(0, str_replace(" ", "", $msisdn));
-            if(!$sms_arr) { // Never sent OTP before for this recepisse number
-                // Generate OTP Code and send it via SMS
-                $otp_digits = 6; // Number of verification code digits
-                // Create SMS verification token
-                $otp_code["value"] = str_pad(rand(0, pow(10, $otp_digits)-1), $otp_digits, '0', STR_PAD_LEFT);
-                $otp_code['otp_verification_start_time'] = time();
-                $verification_code = $otp_code["value"];
-                // SMS Sender msisdn
-                $SMS_RECIPIENT_PHONE = "225".str_replace(" ", "", $msisdn);
-                // SMS Title message
-                $title = "Vérification de Numéro de téléphone";
-                // SMS Text message
-                $message = "Le code de vérification de votre numéro de téléphone est : ".$verification_code;
-                // Send SMS Text using MTN API
-                $data = array(
-                    's' => $message
-                );
-                $url = "https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms?customerID=".$SMS_CUSTOMER_ID."&userName=".$SMS_USERNAME."&userPassword=".$SMS_USER_PASSWORD."&originator=".$SMS_ORIGINATOR."&messageType=ArabicWithLatinNumbers&defDate=&blink=false&flash=false&Private=false&recipientPhone=".$SMS_RECIPIENT_PHONE."&smsText=". str_replace('s=','',http_build_query($data));
-                // ---------- FIRST WAY  ------------
-                // $contents = file_get_contents($url);
-                // ----------------------------------
-                $options = array(
-                    "ssl" => array(
-                        "verify_peer" => false,
-                        "verify_peer_name" => false
-                    ),
-                    'http' => array(
-                        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                        'method'  => 'GET'
-                    )
-                );
-                $context = stream_context_create($options);
-                $contents = file_get_contents($url, false, $context);
-                // ----------------------------------
-                // If $contents is not a boolean FALSE value.
-                if($contents !== false){
-                    // Save OTP if SMS is sent and return response
-                    $response = array(
-                        'error' => false,
-                        'data' => $RequestUsers->saveSMScode(RequestUsers::STANDARD, str_replace(" ", "", $msisdn), $recepisse_number, $title, $message, $verification_code, 1),
-                        'remaining_sec' => 120
-                    );
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * SMS sending using MTN API<br/><br/>
+     * <b>void</b> sendSMS(<b>object</b> $msisdn_infos)<br/>
+     * @param object $msisdn_infos <p>MSISDN User Infos.</p>
+     * @return array Value of result
+     */
+    public function sendSMS($msisdn_infos) {
+        /* OTP SMS rendering */
+        $otp_code = str_pad(rand(0, pow(10, $this::OTP_DIGITS)-1), $this::OTP_DIGITS, '0', STR_PAD_LEFT); // Generate random OTP Code
+        $sms_msisdn = "225".str_replace(" ", "", $msisdn_infos->numero_de_telephone); // SMS Sender msisdn
+        $sms_title = "Vérification de Numéro de téléphone"; // SMS Title message
+        $message = "Le code de vérification de votre numéro de téléphone est : ".$otp_code; // SMS Text message
+        /* SMS sending using MTN API */
+        $client = new Client();
+        try {
+            $response = $client->get('https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms', [
+                'verify' => false,
+                'stream' => true,
+                'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                'query' => [
+                    'customerID' => env('SMS_CUSTOMER_ID'),
+                    'userName' => env('SMS_USERNAME'),
+                    'userPassword' => env('SMS_PASSWORD'),
+                    'originator' => env('SMS_ORIGINATOR'),
+                    'messageType' => 'ArabicWithLatinNumbers',
+                    'defDate' => '',
+                    'blink' => 'false',
+                    'flash' => 'false',
+                    'Private' => 'false',
+                    'recipientPhone' => $sms_msisdn,
+                    'smsText' => $message
+                ]
+            ]);
+            // Read bytes off of the stream until the end of the stream is reached
+            $body = $response->getBody();
+            $contents = ''; while (!$body->eof()) $contents .= $body->read(1024);
+            // Parse stream content into a xml object
+            $xml = simplexml_load_string($contents);
+            if($xml){
+                //@TODO: Créer des colonnes pour sauvegarder aussi le retour XML en base
+                /*$xml->Result;
+                $xml->TransactionID;
+                $xml->NetPoints;*/
+                AbonnesNumerosOtp::create([
+                    'msisdn' => $msisdn_infos->numero_de_telephone,
+                    'form_number' => $msisdn_infos->numero_dossier,
+                    'otp_code' => $otp_code,
+                    'otp_sms_title' => $sms_title,
+                    'otp_sms_message' => $message,
+                    'otp_verification_status' => 1
+                ]);
+                if($xml->Result == 'OK') {
+                    return [
+                        'has_error' => false,
+                        'message' => 'SMS successfully sent !',
+                        'data' => $xml
+                    ];
                 } else {
-                    $response = array('tag' => $instruction, 'success' => 0, 'error' => true,
-                        'error_msg' => "Erreur interne",
-                        'remaining_sec' => "120");
-                }
-            } else if (is_array($sms_arr) && sizeof($sms_arr) <= 6) { // Already sent less than 6 OTP before for this recepisse number
-                $sms_arr2 = $RequestUsers->getSMS(0, str_replace(" ", "", $msisdn),0,0,0,2);
-                if (is_array($sms_arr2)) {
-                    $response = array('tag' => "STATUS_API", 'success' => 0, 'error' => true,
-                        'error_msg' => "Erreur d'envoi : Ce numéro a déjà été utilisé pour une vérification SMS",
-                        'remaining_sec' => "120");
-                } else {
-                    $last_otp_date = strtotime($sms_arr[0]["creation_date"]);
-                    $current_date = time();
-                    if (($current_date - $last_otp_date)/60 > sizeof($sms_arr) * 2) { // If OTP already sent before ( 2minutes * number of attempts )
-                        // Generate OTP Code and send it via SMS
-                        $otp_digits = 6; // Number of verification code digits
-                        // Create SMS verification token
-                        $otp_code["value"] = str_pad(rand(0, pow(10, $otp_digits)-1), $otp_digits, '0', STR_PAD_LEFT);
-                        $otp_code['otp_verification_start_time'] = time();
-                        $verification_code = $otp_code["value"];
-                        // SMS Sender msisdn
-                        $SMS_RECIPIENT_PHONE = "225".str_replace(" ", "", $msisdn);
-                        // SMS Title message
-                        $title = "Vérification de Numéro de téléphone";
-                        // SMS Text message
-                        $message = "Le code de vérification de votre numéro de téléphone est : ".$verification_code;
-                        // Send SMS Text using MTN API
-                        $data = array(
-                            's' => $message
-                        );
-                        $url = "https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms?customerID=".$SMS_CUSTOMER_ID."&userName=".$SMS_USERNAME."&userPassword=".$SMS_USER_PASSWORD."&originator=".$SMS_ORIGINATOR."&messageType=ArabicWithLatinNumbers&defDate=&blink=false&flash=false&Private=false&recipientPhone=".$SMS_RECIPIENT_PHONE."&smsText=". str_replace('s=','',http_build_query($data));
-                        // ---------- FIRST WAY  ------------
-                        // $contents = file_get_contents($url);
-                        // ----------------------------------
-                        $options = array(
-                            "ssl" => array(
-                                "verify_peer" => false,
-                                "verify_peer_name" => false
-                            ),
-                            'http' => array(
-                                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                                'method'  => 'GET'
-                            )
-                        );
-                        $context = stream_context_create($options);
-                        $contents = file_get_contents($url, false, $context);
-                        // ----------------------------------
-                        // If $contents is not a boolean FALSE value.
-                        if($contents !== false){
-                            // Save OTP if SMS is sent and return response
-                            $response = array(
-                                'error' => false,
-                                'data' => $RequestUsers->saveSMScode(RequestUsers::STANDARD, str_replace(" ", "", $msisdn), $recepisse_number, $title, $message, $verification_code, 1),
-                                'remaining_sec' => round( ((sizeof($sms_arr)+1) * 2)  * 60)
-                            );
-                        } else {
-                            $response = array('tag' => $instruction, 'success' => 0, 'error' => true,
-                                'error_msg' => "Erreur interne",
-                                'remaining_sec' => "120");
-                        }
-                    } else {
-                        // Interval between two OTP sent is not reached
-                        $response = array('tag' => "STATUS_API", 'success' => 0, 'error' => true,
-                            'error_msg' => "Temps d'intervalle avant l'envoi d'un nouveau code non atteint...",
-                            'remaining_sec' => round(( (sizeof($sms_arr) * 2) - (($current_date - $last_otp_date)/60) ) * 60)
-                        );
-                    }
+                    return [
+                        'has_error' => true,
+                        'message' => $xml->Result.' ['.$xml->TransactionID.']'
+                    ];
                 }
             } else {
-                $response = array('tag' => "STATUS_API", 'success' => 0, 'error' => true,
-                    'error_msg' => "Erreur d'envoi : Vous avez atteint votre quota de SMS, contactez le service technique de l'ONECI",
-                    'remaining_sec' => "120"
-                );
+                return [
+                    'has_error' => true,
+                    'message' => 'Empty response'
+                ];
             }
-        } else {
-            die(header("HTTP/1.1 400 Bad Request"));
+        } catch (GuzzleException $guzzle_exception) {
+            /* Moving here if something is wrong with MTN SMS API */
+            return [
+                'has_error' => true,
+                'message' => 'SMS client exception : ['
+                    .$guzzle_exception->getMessage()
+                    .' -- Code : '.$guzzle_exception->getCode().']'
+            ];
         }
-        */
     }
 
     /**
@@ -223,7 +233,6 @@ class OTPVerificationController extends Controller {
      * @return array Value of result
      */
     function createToken($expireTime) {
-        // $token["value"] = sha1(md5("\$@lty".bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM))."\$@lt")); // Mcrypt is deprecated in PHP 7
         $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
         $token['time'] = $expireTime;
         session()->put('token_time', time());

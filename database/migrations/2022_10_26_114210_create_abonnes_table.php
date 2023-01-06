@@ -29,6 +29,7 @@ class CreateAbonnesTable extends Migration {
             $table->string('numero_document');
             $table->string('date_expiration_document')->nullable();
             $table->string('type_cni')->nullable();
+            $table->string('uniqid')->nullable();
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\AbonnesTypePiece::class)->nullable();

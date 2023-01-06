@@ -44,6 +44,7 @@
                                     L'ONECI vous remercie !
                                 </p>
                             </div>
+                            <a href="{{ route('imprimer_recu_identification').'?n='.$resultats_statut[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
                             <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
                     </div>

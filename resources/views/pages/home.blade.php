@@ -68,7 +68,7 @@
                             ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                             ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                             ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                            ->where('abonnes.numero_dossier', '=', '2552807760')
+                            ->where('abonnes.numero_dossier', '=', '4944196381')
                             ->get();
                         for($i=0;$i<sizeof($resultats_statut);$i++) {
                             $otp_msisdn_tokens[$i] = createToken(0);

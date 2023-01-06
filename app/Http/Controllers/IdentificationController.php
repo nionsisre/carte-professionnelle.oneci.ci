@@ -81,7 +81,8 @@ class IdentificationController extends Controller {
             'document_justificatif' => $document_justificatif,
             'date_expiration_document' => $request->input('document-expiry'),
             'numero_document' => $request->input('document-number'),
-            'type_cni' => $type_cni
+            'type_cni' => $type_cni,
+            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
         ]);
         $telco = $request->input('telco');
         $msisdn = $request->input('msisdn');
@@ -97,8 +98,9 @@ class IdentificationController extends Controller {
         /* Envoi de mail */
         $this->sendMailTemplate('layouts.recu-identification', [
             'title' => 'Reçu d\'identification',
-            'qrcode' => $this->generateQrBase64($abonne->numero_dossier),
+            'qrcode' => $this->generateQrBase64(route('obtenir_info_abonne').'?f='.$abonne->numero_dossier.'&t='.$abonne->uniqid),
             'numero_dossier' => $abonne->numero_dossier,
+            'uniqid' => $abonne->uniqid,
             'msisdn_list' => $msisdn,
             'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
             'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
@@ -121,37 +123,55 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function search(Request $request) {
-        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        $this->verifyGoogleRecaptchaV3($request)['error'] ??
-            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
-        /* Search with msisdn or form number */
-        $search_with_msisdn = $request->input('tsch');
-        if ($search_with_msisdn == '0') {
-            request()->validate([
-                'form-number' => ['required', 'numeric', 'digits:10'],
-            ]);
+        /* Search according if it's a 'Form POST search' or a 'Url GET search' */
+        if($request->get('t') === null && $request->get('f') === null) {
+            /* Form POST search */
+            /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+                $this->verifyGoogleRecaptchaV3($request)['error'] ??
+                redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+            /* Search with msisdn or form number */
+            $search_with_msisdn = $request->input('tsch');
+            if ($search_with_msisdn == '0') {
+                request()->validate([
+                    'form-number' => ['required', 'numeric', 'digits:10'],
+                ]);
+                $resultats_statut = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
+                    ->get();
+            } else {
+                request()->validate([
+                    'msisdn' => ['required', 'string', 'min:14', 'max:14'],
+                ]);
+                $resultats_statut = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
+                    ->get();
+            }
+            return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
+        } elseif ($request->get('f') != null && $request->get('t') != null) {
+            /* Url GET search */
             $resultats_statut = DB::table('abonnes_numeros')
                 ->select('*')
                 ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                 ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                 ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
+                ->where('abonnes.numero_dossier', '=', $request->get('f'))
                 ->get();
-        } else {
-            request()->validate([
-                'msisdn' => ['required', 'string', 'min:14', 'max:14'],
-            ]);
-            $resultats_statut = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
-                ->get();
+            if ($resultats_statut[0]->uniqid === $request->get('t')) {
+                return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
+            }
         }
-        return redirect()->route('consultation_statut_identification')->with('resultats_statut', $resultats_statut);
+        return redirect()->route('consultation_statut_identification');
     }
 
     /**
@@ -180,8 +200,9 @@ class IdentificationController extends Controller {
             /* PDF Download document generation */
             $data = [
                 'title' => 'Reçu d\'identification',
-                'qrcode' => $this->generateQrBase64($identification_resultats->numero_dossier),
+                'qrcode' => $this->generateQrBase64(route('obtenir_info_abonne').'?f='.$identification_resultats->numero_dossier.'&t='.$identification_resultats->uniqid),
                 'numero_dossier' => $identification_resultats->numero_dossier,
+                'uniqid' => $identification_resultats->uniqid,
                 'msisdn_list' => $msisdn,
                 'nom_complet' => $identification_resultats->prenoms . ' ' . $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
                 'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)) . ' à ' . $identification_resultats->lieu_de_naissance,
@@ -194,9 +215,9 @@ class IdentificationController extends Controller {
             $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
             $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
             /* Envoi de mail */
-            if (!empty($identification_resultats->email)) {
+            /*if (!empty($identification_resultats->email)) {
                 $this->sendMailTemplate('layouts.recu-identification', $data);
-            }
+            }*/
             /*$request->session()->remove('numero_dossier');*/
             return $pdf_recu_identification->download($filename);
         } else {
@@ -222,7 +243,7 @@ class IdentificationController extends Controller {
             ->data($message)
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size(100)
+            ->size(300)
             ->margin(10)
             ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
             ->build();
@@ -246,7 +267,7 @@ class IdentificationController extends Controller {
             ->data($message)
             ->encoding(new Encoding('UTF-8'))
             ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size(100)
+            ->size(300)
             ->margin(10)
             ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
             ->build();

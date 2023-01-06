@@ -4,26 +4,21 @@
     | OTP SMS VERIFICATION
     |--------------------------------------------------------------------------
     --}}
-    var flagwrap = 0;
-    var rs = 0;
-    var animatedTimer;
-    var idx;
-    function updateTime(indx) {
-        if(rs <= 0) {
-            jQuery("#otp-send-link-"+indx).show();
-            clearInterval(animatedTimer);
+    @for($i=0;$i<sizeof($resultats_statut);$i++)
+    var rs{{ $i }} = 0;
+    var animatedTimer{{ $i }};
+    var idx{{ $i }};
+    function updateTime{{ $i }}() {
+        if(rs{{ $i }} <= 0) {
+            jQuery("#otp-send-counter-{{ $i }}").hide();
+            jQuery("#otp-send-link-{{ $i }}").show();
+            clearInterval(animatedTimer{{ $i }});
         } else {
-            rs--;
-            jQuery("#otp-send-counter-"+indx).text("SMS envoyé ! Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) ));
+            rs{{ $i }}--;
+            jQuery("#otp-send-counter-{{ $i }}").html("Réessayez dans "+Math.floor(rs{{ $i }}/60)+" : "+Math.floor(rs{{ $i }} - (Math.floor(rs{{ $i }}/60)*60) ));
         }
     }
-    @for($i=0;$i<sizeof($resultats_statut);$i++)
-    jQuery("#otp-send-link-"+{{ $i }}).click(function () {
-        /*jQuery("#otp-send-link-"+{{ $i }}).hide();
-        rs = parseInt('180');
-        idx = {{ $i }};
-        animatedTimer = setInterval(updateTime(idx), 1000);
-        jQuery("#otp-send-counter-"+{{ $i }}).text("SMS envoyé ! Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) )).show();*/
+    jQuery("#otp-send-link-{{ $i }}").click(function () {
         var cli = "{{ env('APP_URL') }}";
         var fn = "{{ $resultats_statut[0]->numero_dossier }}";
         var idx = {{ $i }};
@@ -40,86 +35,28 @@
             },
             dataType: "json",
             success: function (data) {
-                console.log("ok");
-                /*if (!data.error) {
-                    jQuery("#err-toast").text("SMS envoyé avec succès au +225 " + msisdn).attr("style", "color: green;font-style: italic;");
-                    setTimeout(function () {
-                        jQuery("#err-toast").attr("style", "display: none");
-                    }, 10000);
-                    rs = parseInt(data.remaining_sec);
-                    animatedTimer = setInterval(updateTime, 1000);
-                    jQuery("#form-send-authcode-link").text("Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) ));
-                } else {
-                    jQuery("#err-toast").text(data.error_msg).attr("style", "color: red;font-style: italic;");
-                    setTimeout(function () {
-                        jQuery("#err-toast").attr("style", "display: none");
-                    }, 3000);
-                    rs = parseInt(data.remaining_sec);
-                    animatedTimer = setInterval(updateTime, 1000);
-                    jQuery("#form-send-authcode-link").text("Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) ));
-                }*/
+
             },
-            error: function () {
-                jQuery("#err-toast").text("Impossible de joindre le serveur, vérifiez votre connexion ou réessayez plus tard...").attr("style", "color: red;font-style: italic;");
-                setTimeout(function () {
-                    jQuery("#err-toast").attr("style", "display: none");
-                }, 3000);
-            }
-        });
-        /*jQuery(this.id+':hidden').show();*/
-        /*if(jQuery("#form-send-authcode-link").text() == "Cliquez ici pour recevoir un code par SMS") {
-            var msisdn = jQuery("#form-msisdn-input").val();
-            if (msisdn.length < 11) {
-                jQuery("#err-toast").text("Veuillez saisir un numéro de téléphone correct SVP");
-                jQuery("#err-toast").attr("style", "color: red;font-style: italic;");
-                setTimeout(function () {
-                    jQuery("#err-toast").attr("style", "display: none");
-                }, 3000);
-            } else {
-                if (msisdn.substring(0, 2) == "01" || msisdn.substring(0, 2) == "05" || msisdn.substring(0, 2) == "07") {
-                    var cli = "ONECI.CI";
-                    var vtkn = jQuery("#vtkn").val();
-                    var rcp = jQuery("#rcp").val();
-                    var msisdn = jQuery("#form-msisdn-input").val();
-                    $.ajax({
-                        url: {{ Url::to('/') }} + "cni-status-checker",
-                        type: "POST",
-                        data: {cli: cli, tn: vtkn, ins: "SEND_VCODE", rcp: rcp, msisdn: msisdn},
-                        dataType: "json",
-                        success: function (data) {
-                            if (!data.error) {
-                                jQuery("#err-toast").text("SMS envoyé avec succès au +225 " + msisdn).attr("style", "color: green;font-style: italic;");
-                                setTimeout(function () {
-                                    jQuery("#err-toast").attr("style", "display: none");
-                                }, 10000);
-                                rs = parseInt(data.remaining_sec);
-                                animatedTimer = setInterval(updateTime, 1000);
-                                jQuery("#form-send-authcode-link").text("Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) ));
-                            } else {
-                                jQuery("#err-toast").text(data.error_msg).attr("style", "color: red;font-style: italic;");
-                                setTimeout(function () {
-                                    jQuery("#err-toast").attr("style", "display: none");
-                                }, 3000);
-                                rs = parseInt(data.remaining_sec);
-                                animatedTimer = setInterval(updateTime, 1000);
-                                jQuery("#form-send-authcode-link").text("Réessayez dans "+Math.floor(rs/60)+" : "+Math.floor(rs - (Math.floor(rs/60)*60) ));
-                            }
-                        },
-                        error: function () {
-                            jQuery("#err-toast").text("Impossible de joindre le serveur, vérifiez votre connexion ou réessayez plus tard...").attr("style", "color: red;font-style: italic;");
-                            setTimeout(function () {
-                                jQuery("#err-toast").attr("style", "display: none");
-                            }, 3000);
-                        }
+            error: function (data) {
+                if(data.responseJSON.has_error) {
+                    jQuery("#otp-send-link-{{ $i }}").hide();
+                    rs{{ $i }} = parseInt(data.responseJSON.remaining_sec);
+                    animatedTimer{{ $i }} = setInterval(updateTime{{ $i }}, 1000);
+                    jQuery("#otp-send-counter-{{ $i }}").text("Réessayez dans "+Math.floor(rs{{ $i }}/60)+" : "+Math.floor(rs{{ $i }} - (Math.floor(rs{{ $i }}/60)*60) )).show();
+                    jQuery('#modalError').html(
+                        '<center> <div class="notification-box notification-box-error">\n\
+                        <div class="modal-header"><h3>'+data.responseJSON.message+'</h3></div>\n\
+                        </div><div class="modal-footer">\n\
+                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                    ).modal({
+                        escapeClose: false,
+                        clickClose: false,
+                        showClose: false
                     });
-                } else {
-                    jQuery("#err-toast").text("Le numéro de téléphone saisi est invalide").attr("style", "color: red;font-style: italic;");
-                    setTimeout(function () {
-                        jQuery("#err-toast").attr("style", "display: none");
-                    }, 3000);
+                    jQuery('.blocker').css('z-index','2');
                 }
             }
-        }*/
+        });
     });
     @endfor
     jQuery("#form-msisdn-input").mask('99 99 99 99 99');

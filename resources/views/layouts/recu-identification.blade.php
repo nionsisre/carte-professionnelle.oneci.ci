@@ -279,9 +279,15 @@
                                         <tr>
                                             <td style="overflow-wrap:break-word;word-break:break-word;padding:2px 40px 25px;font-family:'Open Sans',sans-serif;" align="left">
                                                 @if(!isset($is_email))
-                                                    <center><img src="{{ $qrcode }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 100.44px;"/></center>
+                                                    <center><img src="{{ $qrcode }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 12em;"/></center>
                                                 @else
-                                                    <center><img src="{{ route('generate_qr_code').'?m='.$numero_dossier }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 100.44px;"/></center>
+                                                    <center>
+                                                        <img src="{{ route('generate_qr_code').'?'.
+                                                                http_build_query([
+                                                                    'm' => route('obtenir_info_abonne').'?f='.$numero_dossier.'&t='.$uniqid
+                                                                ])
+                                                            }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 12em;"/>
+                                                    </center>
                                                 @endif
                                                 <center><!--<div class="qrcode-number"></div><br/>--><b>Numéro de dossier : {{ $numero_dossier }}</b></center>
                                             </td>

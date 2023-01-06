@@ -29,6 +29,7 @@ class AbonneFactory extends Factory {
             'document_justificatif' => 'media/identification_'.$this->faker->unique()->numerify('##########').'.pdf',
             'numero_document' => $this->faker->unique()->numerify('##########'),
             'date_expiration_document' => $this->faker->dateTimeBetween('+1 years', '+10 years')->format('Y-m-d'),
+            'uniqid' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         ];
     }
 
