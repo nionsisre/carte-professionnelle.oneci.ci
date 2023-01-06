@@ -1,4 +1,4 @@
-@if (!$mobile_header_enabled)
+@if(!$mobile_header_enabled)
 <!-- begin footer -->
 <footer id="footer">
     <div id="footer-bottom">

@@ -17,9 +17,9 @@
         <div id="wrap">
             <div class="spacer">&nbsp;</div>
             <div class="spacer">&nbsp;</div>
-            @if (Route::is('accueil'))
+            @if(Route::is('accueil'))
                 @yield('home')
-            @elseif (Route::is('consultation_statut_identification'))
+            @elseif(Route::is('consultation_statut_identification'))
                 @yield('consultation')
             @endif
             @include('sections.footer')

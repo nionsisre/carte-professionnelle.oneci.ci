@@ -34,4 +34,8 @@ return [
         'secret' => env('RECAPTCHA_SECRET', '6Le0UkweAAAAADnzJbqGAOAiDvVraUShf0T5EXXl'),
     ],
 
+    'sms' => [
+        'enabled' => env('SMS_SERVICE_ENABLED', false),
+    ],
+
 ];

@@ -110,9 +110,25 @@ class IdentificationController extends Controller {
             'email' => $abonne->email,
             'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
         ]);
+        /* Obtention des informations sur l'abonné et ses numéros */
+        $abonne_numeros = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+            ->where('abonnes.numero_dossier', '=', $abonne->numero_dossier)
+            ->get();
+        /* Si le service d'envoi de SMS est actif */
+        if(config('services.sms.enabled')) {
+            /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+            for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                $otp_msisdn_tokens[$i] = $this->createToken(0);
+            }
+            session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+        }
         /* Retourner vue resultat */
-        $numero_dossier = $abonne->numero_dossier;
-        return redirect()->route('accueil')->with('numero_dossier', $numero_dossier);
+        return redirect()->route('accueil')->with('abonne_numeros', $abonne_numeros);
     }
 
     /**
@@ -353,6 +369,22 @@ class IdentificationController extends Controller {
             'error' => false,
             'error_message' => 'reCAPTCHA sent is ok'
         ];
+    }
+
+    /**
+     * (PHP 4, PHP 5, PHP 7)<br/>
+     * This function is useful to generate Token<br/><br/>
+     * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
+     * @param int $expireTime <p>
+     * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
+     * </p>
+     * @return array Value of result
+     */
+    private function createToken($expireTime) {
+        $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
+        $token['time'] = $expireTime;
+        session()->put('token_time', time());
+        return $token;
     }
 
 }

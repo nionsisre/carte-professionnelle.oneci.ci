@@ -26,7 +26,7 @@ class OTPVerificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Soumission d'une demande d'envoi de SMS<br/><br/>
+     * Soumission d'une demande d'envoi de code OTP par SMS<br/><br/>
      * <b>RedirectResponse</b> sendSMS(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return Response $request <p>Server Response object.</p>
@@ -144,6 +144,18 @@ class OTPVerificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Vérification du code OTP envoyé par SMS<br/><br/>
+     * <b>RedirectResponse</b> verifyOTP(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     */
+    public function verifyOTP(Request $request) {
+        dd('ok');
+        return redirect()->route('consultation_statut_identification');
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
      * SMS sending using MTN API<br/><br/>
      * <b>void</b> sendSMS(<b>object</b> $msisdn_infos)<br/>
      * @param object $msisdn_infos <p>MSISDN User Infos.</p>
@@ -232,7 +244,7 @@ class OTPVerificationController extends Controller {
      * </p>
      * @return array Value of result
      */
-    function createToken($expireTime) {
+    private function createToken($expireTime) {
         $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
         $token['time'] = $expireTime;
         session()->put('token_time', time());
@@ -251,7 +263,7 @@ class OTPVerificationController extends Controller {
      * </p>
      * @return bool Value of result
      */
-    function checkToken($token_received, $token_session){
+    private function checkToken($token_received, $token_session){
         try {
             $token_age = time() - session()->get('token_time', time());
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {

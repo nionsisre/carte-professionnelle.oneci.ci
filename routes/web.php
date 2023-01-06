@@ -27,3 +27,4 @@ Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
+Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');

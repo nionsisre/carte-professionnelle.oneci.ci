@@ -30,11 +30,11 @@
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
-                            <h4>Recherche effectuée !</h4>
+                            <h4><i class="fa fa-search text-black"></i> &nbsp; Recherche effectuée !</h4>
                             <br/><div>
                                 <p style="padding: 0em 0em 4em">
-                                    Numéro de dossier : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $resultats_statut[0]->numero_dossier }}</b><br/><br/>
-                                    Numéro(s) de téléphone identifié(s) : <br/>
+                                    Numéro de validation : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $resultats_statut[0]->numero_dossier }}</b><br/><br/>
+                                    Numéro(s) de téléphone : <br/>
                                     @foreach($resultats_statut as $resultat_statut)
                                         <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultat_statut->libelle_operateur }} : <b style="font-size: 1rem">{{ $resultat_statut->numero_de_telephone }}</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-{{ $resultat_statut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">{{ $resultat_statut->libelle_statut }}</b><br/>
                                     @endforeach

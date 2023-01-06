@@ -8,7 +8,7 @@
     });
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
-@if (Route::is('accueil'))
+@if(Route::is('accueil'))
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
@@ -16,8 +16,12 @@
     @include('sections.scripts.dynamic-msisdn')
     @include('sections.scripts.smart-wizard-validation')
     @include('sections.scripts.copy-to-clipboard')
-
-@elseif (Route::is('consultation_statut_identification'))
+    @if(config('services.sms.enabled'))
+        @if(session()->has('abonne_numeros'))
+            @include('sections.scripts.otp-verification')
+        @endif
+    @endif
+@elseif(Route::is('consultation_statut_identification'))
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')

@@ -1,4 +1,4 @@
-@if (!$mobile_header_enabled)
+@if(!$mobile_header_enabled)
 <nav class="navbar">
     <div class="brand-and-icon">
         <h1><a href="https://www.oneci.ci" class="navbar-brand"><img

@@ -44,118 +44,94 @@
                         </div>
                     </center>
                 @endif
-                @if(!session()->has('numero_dossier'))
-                    @php
-                        /**
-                         * (PHP 4, PHP 5, PHP 7)<br/>
-                         * This function is useful to generate Token<br/><br/>
-                         * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
-                         * @param int $expireTime <p>
-                         * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
-                         * </p>
-                         * @return array Value of result
-                         */
-                        function createToken($expireTime) {
-                            // $token["value"] = sha1(md5("\$@lty".bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM))."\$@lt")); // Mcrypt is deprecated in PHP 7
-                            $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
-                            $token['time'] = $expireTime;
-                            $_SESSION['token_time'] = time();
-                            return $token;
-                        }
-                        $resultats_statut = DB::table('abonnes_numeros')
-                            ->select('*')
-                            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                            ->where('abonnes.numero_dossier', '=', '2552807760')
-                            ->get();
-                        for($i=0;$i<sizeof($resultats_statut);$i++) {
-                            $otp_msisdn_tokens[$i] = createToken(0);
-                        }
-                        session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
-                    @endphp
-                    <!--<div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
-                        <center>
-                            <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
-                            <br/><div>
-                                <p style="padding: 0em 0em 3em">
-                                    Votre demande d'identification a bien été soumise avec succès !<br/>
-                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{!! session('numero_dossier') !!}</span></b> &nbsp;<br/><br/>
-                                    Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
-                                    L'ONECI vous remercie !
-                                </p>
-                            </div>
-                            <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                            <a href="{{ route('imprimer_recu_identification').'?n='.session('numero_dossier') }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
-                            <a href="{{ route('accueil') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
-                            <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
-                        </center>
-                    </div><br/><br/><br/><br/><br/><br/>-->
-                    <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
-                        <center>
-                            <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 8em;margin: 0.3em 0em 0.2em;"></i>
-                            <br/><div>
-                                <p>
-                                    Votre demande d'identification a bien été soumise avec succès !<br/>
-                                    Numéro de dossier : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{!! session('numero_dossier') !!}</span></b> &nbsp; <br/><br/><br/>
+                @if(session()->has('abonne_numeros'))
+                    @if(!config('services.sms.enabled'))
+                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                            <center>
+                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
+                                <br/><div>
+                                    <p style="padding: 0em 0em 3em">
+                                        Votre demande d'identification a bien été soumise avec succès !<br/><br/>
+                                        Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('abonne_numeros')[0]->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                        Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
+                                        L'ONECI vous remercie !
+                                    </p>
+                                </div>
+                                <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
+                                <a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
+                                <a href="{{ route('accueil') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            </center>
+                        </div><br/><br/><br/><br/><br/><br/>
+                    @else
+                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                            <center>
+                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 8em;margin: 0.3em 0em 0.2em;"></i>
+                                <br/>
+                                <div>
+                                    Votre demande d'identification a bien été soumise avec succès !<br/><br><br>
+                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('abonne_numeros')[0]->numero_dossier }}</span></b> &nbsp; <br/><br/><br/>
                                     <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                    Veuillez procéder à la vérification de vos numéros de téléphone ci-dessous afin que votre demande fasse l'objet d'une analyse par l'ONECI avant d'être validée :<br/>
+                                    Veuillez procéder à la vérification de vos numéros de téléphone ci-dessous afin que votre demande fasse l'objet d'une analyse par l'ONECI avant d'être validée :<br/><br>
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
                                         <thead>
                                         <tr style="font-size: 0.75em;">
-                                            <th scope="col">Numéro(s) à identifier</td>
+                                            <th scope="col">Numéro(s) de téléphone</td>
                                             <th scope="col">Statut de l'identification</td>
                                             <th scope="col">Vérification OTP</td>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @php($msisdn_count = 0)
-                                        @foreach($resultats_statut as $resultat_statut)
+                                        @for($i=0;$i<sizeof(session()->get('abonne_numeros'));$i++)
                                             <tr>
-                                                <td style="vertical-align: middle;"><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ $resultat_statut->numero_de_telephone }}</b> ({{ $resultat_statut->libelle_operateur }})</td>
-                                                <td style="vertical-align: middle;"><i class="fad fa-{{ $resultat_statut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ $resultat_statut->libelle_statut }}</b></td>
+                                                <td style="vertical-align: middle;"><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}</b> ({{ session()->get('abonne_numeros')[$i]->libelle_operateur }})</td>
+                                                <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
-                                                    @if($resultat_statut->abonnes_statut_id == 1)
+                                                    @if(session()->get('abonne_numeros')[$i]->abonnes_statut_id == 1)
                                                     <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
-                                                        <span id="otp-send-counter-{{ $msisdn_count }}" style="display: none">0:00</span>
-                                                        <a id="otp-send-link-{{ $msisdn_count }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
+                                                        <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
+                                                        <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
                                                     </div>
-                                                    <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
-                                                        <label class="col-sm-2 control-label">
-                                                            Code de vérification reçu
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                   placeholder="______" maxlength="6"
-                                                                   required="required"
-                                                                   style="width: 6em; text-align: center"/>
+                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                        {{ csrf_field() }}
+                                                        <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
+                                                        <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
+                                                        <input type="hidden" name="idx" value="{{ $i }}">
+                                                        <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
+                                                            <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
+                                                                Code de vérification reçu
+                                                            </label>
+                                                            <div class="col-sm-10">
+                                                                <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="one-third column-last">
-                                                        <a href="{{ route('imprimer_recu_identification').'?n='.session('numero_dossier') }}" class="button" style="margin-bottom: 0"><i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone</a>
-                                                    </div>
+                                                        <div class="one-third column-last">
+                                                            <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
+                                                                <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                     @else
                                                     <i class="fa fa-check"></i> &nbsp; Vérification effectuée
                                                     @endif
                                                 </td>
                                             </tr>
-                                            @php($msisdn_count++)
-                                        @endforeach
+                                        @endfor
                                         </tbody>
                                     </table>
                                     <br/>
-                                <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('consultation_statut_identification') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
-                                    <br/><br/><br/>
-                                    L'ONECI vous remercie !
-                                    <br/><br/><br/><br/>
-                                </p>
-                            </div>
-                            <!--<a href="{{ route('imprimer_recu_identification').'?n='.session('numero_dossier') }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>-->
-                            <a href="{{ route('accueil') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
-                            <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
-                        </center>
-                    </div><br/><br/><br/><br/><br/><br/>
+                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('consultation_statut_identification') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
+                                        <br/><br/><br/>
+                                        L'ONECI vous remercie !
+                                        <br/><br/><br/><br/>
+                                </div>
+                                <!--<a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>-->
+                                <a href="{{ route('accueil') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            </center>
+                        </div><br/><br/><br/><br/><br/><br/>
+                    @endif
+                    <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                 @else
                     <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
                         téléphone(s) en ligne<br/></h5>
@@ -506,7 +482,7 @@
                                                         Email : <b><span id="recap-email"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Document justificatif : <b><i class="fa fa-file-pdf"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                        Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
