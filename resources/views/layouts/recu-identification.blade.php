@@ -268,7 +268,7 @@
                                         <tr>
                                             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Open Sans',sans-serif;" align="left">
                                                 <div class="v-text-align" style="color: #47484b; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                                    <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px;"><strong><span style="line-height: 25.2px; font-size: 18px;">Fiche d'identification pour abonné mobile</span></strong></span></p>
+                                                    <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px;"><strong><span style="line-height: 25.2px; font-size: 18px;">Fiche de demande d'identification pour abonné mobile</span></strong></span></p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -289,7 +289,7 @@
                                                             }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 12em;"/>
                                                     </center>
                                                 @endif
-                                                <center><!--<div class="qrcode-number"></div><br/>--><b>Numéro de dossier : {{ $numero_dossier }}</b></center>
+                                                <center><!--<div class="qrcode-number"></div><br/>--><b>Numéro de validation : {{ $numero_dossier }}</b></center>
                                             </td>
                                         </tr>
                                         </tbody>

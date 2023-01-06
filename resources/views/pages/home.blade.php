@@ -68,7 +68,7 @@
                             ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                             ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                             ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                            ->where('abonnes.numero_dossier', '=', '4944196381')
+                            ->where('abonnes.numero_dossier', '=', '2552807760')
                             ->get();
                         for($i=0;$i<sizeof($resultats_statut);$i++) {
                             $otp_msisdn_tokens[$i] = createToken(0);
@@ -81,7 +81,7 @@
                             <br/><div>
                                 <p style="padding: 0em 0em 3em">
                                     Votre demande d'identification a bien été soumise avec succès !<br/>
-                                    Numéro de dossier : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{!! session('numero_dossier') !!}</span></b> &nbsp;<br/><br/>
+                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{!! session('numero_dossier') !!}</span></b> &nbsp;<br/><br/>
                                     Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
                                     L'ONECI vous remercie !
                                 </p>
@@ -192,7 +192,7 @@
                                                     <div class="modal-footer"></div>
                                                 </center>
                                                 <br/>
-                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
+                                                {{--                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>--}}
                                                 <div id="msisdn-container">
                                                     <div class="container clearfix" id="ct-msisdn-1" style="background-color: #ccc; padding: 2em 2em">
                                                         <div class="form-group one-half column-last" id="msisdn-field-1">
@@ -230,6 +230,7 @@
                                                         </div>
                                                     </div>
                                                 </div><br/><br/>
+                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
                                             </div>
                                             <div id="step-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
@@ -244,6 +245,7 @@
                                                             <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
                                                                    placeholder="Nom de l'abonné..." maxlength="25"
                                                                    required="required"
+                                                                   autocomplete="off"
                                                                    style="text-transform: uppercase; width: 13.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
@@ -255,6 +257,7 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
                                                                    placeholder="Nom d'épouse..." maxlength="70"
+                                                                   autocomplete="off"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
@@ -266,6 +269,7 @@
                                                         <div class="col-sm-10">
                                                             <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
                                                                    placeholder="Prénom(s) de l'abonné..." maxlength="70"
+                                                                   autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                         </div>
@@ -311,7 +315,8 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="country-input" name="country"
-                                                                   placeholder="Nationalité..." maxlength="70" required="required"
+                                                                   placeholder="Nationalité..." maxlength="70"
+                                                                   autocomplete="off" required="required"
                                                                    style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
@@ -382,6 +387,7 @@
                                                     <span style="display: none" id="err-mail-toast"></span>
                                                     <div><input type="email" class="form-control" value="{{ old('email') }}"
                                                                 id="email-input" name="email"
+                                                                autocomplete="off"
                                                                 placeholder="Adresse Mail..." maxlength="150"
                                                                 style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" /></div>
                                                     <br/>
