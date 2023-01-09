@@ -21,6 +21,9 @@ use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Mail;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -172,6 +175,10 @@ class IdentificationController extends Controller {
                     ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
                     ->get();
             }
+            /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
+            for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
+            session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+
             return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
         } elseif ($request->get('f') != null && $request->get('t') != null) {
             /* Url GET search */
@@ -184,10 +191,82 @@ class IdentificationController extends Controller {
                 ->where('abonnes.numero_dossier', '=', $request->get('f'))
                 ->get();
             if ($abonne_numeros[0]->uniqid === $request->get('t')) {
+                /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
+                for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
+                session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+
                 return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             }
         }
+
         return redirect()->route('consultation_statut_identification');
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Recherche d'une identification par l'abonné<br/><br/>
+     * <b>RedirectResponse</b> getCertificate(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function getPaymentLink(Request $request) {
+        /* Valider variables du formulaire */
+        request()->validate([
+            'cli' => ['required', 'string', 'max:100'], // Url du client
+            'tn' => ['required', 'string', 'max:100'], // Token du client
+            'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
+            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
+        ]);
+        /* Vérification du Token client */
+        try {
+            $client_certificate_msisdn_token = $request->input('tn');
+            $session_certificate_msisdn_tokens = session()->get('certificate_msisdn_tokens');
+            for ($i=0;$i<sizeof($session_certificate_msisdn_tokens);$i++) {
+                if ($this->checkToken($client_certificate_msisdn_token, $session_certificate_msisdn_tokens[$i])) {
+                    $is_token_correct = true;
+                    break;
+                }
+            }
+            if (!isset($is_token_correct)) {
+                return response([
+                    'has_error' => true,
+                    'message' => 'Token invalide ! Veuillez actualiser la page et/ou réessayer plus tard...'
+                ], Response::HTTP_UNAUTHORIZED);
+            } else {
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+                $abonne_numeros = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->get();
+                /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
+                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                /* Obtention du lien de paiement via l'API CinetPay */
+                $payment_link_obtained = $this->cinetPayAPI($abonne_numero);
+                if ($payment_link_obtained['has_error']) {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Une erreur est survenue lors de l\'obtention du lien de paiement. Veuillez actualiser la page et/ou réessayer plus tard...',
+                        'message_service' => $payment_link_obtained['message']
+                    ], Response::HTTP_SERVICE_UNAVAILABLE);
+                } else {
+                    sleep(5);
+                    return response([
+                        'has_error' => false,
+                        'message' => 'Procéder au paiement ici...',
+                        'message_service' => $payment_link_obtained['message']
+                    ], Response::HTTP_OK);
+                }
+            }
+        } catch (\Exception $e) {
+            return response([
+                'has_error' => true,
+                'message' => 'Veuillez actualiser la page et/ou réessayer plus tard SVP'. $e->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
+        }
     }
 
     /**
@@ -198,7 +277,27 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function getCertificate(Request $request) {
-        dd('En cours de développemnt...');
+//        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+//            $this->verifyGoogleRecaptchaV3($request)['error'] ??
+//            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+//        /* Valider variables du formulaire */
+//        request()->validate([
+//            'cli' => ['required', 'string', 'max:100'], // Url du client
+//            'tn' => ['required', 'string', 'max:100'], // Token du client
+//            'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
+//            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
+//        ]);
+//
+//        /*$identification_resultats = DB::table('abonnes_numeros')
+//            ->select('*')
+//            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+//            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+//            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+//            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+//            ->where('abonnes.numero_dossier', '=', $numero_dossier)
+//            ->get();*/
+
+        dd('getCertificate...');
     }
 
     /**
@@ -383,6 +482,71 @@ class IdentificationController extends Controller {
     }
 
     /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
+     * <b>void</b> verifyGoogleRecaptchaV3(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return array Value of result
+     */
+    private function cinetPayAPI($abonne_infos) {
+        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+        if (App::environment(['staging', 'production'])) {
+            $client = new Client();
+            try {
+                $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
+                    'headers' => ['Content-Type' =>  'application/json'],
+                    'form_params' => [
+                        'apikey' => '179990205162cc71d73e8804.22209231',
+                        'site_id' => '298376', /* env('RECAPTCHA_SECRET') config('services.recaptcha.secret'), */
+                        'transaction_id' => time(),
+                        'amount' => '100',
+                        'currency' => 'XOF',
+                        'alternative_currency' => '',
+                        'description' => 'Paiement Certificat Identification',
+                        'customer_id' => $abonne_infos->numero_dossier,
+                        'customer_name' => $abonne_infos->first_name,
+                        'customer_surname' => $abonne_infos->last_name,
+                        'customer_email' => $abonne_infos->email,
+                        'customer_phone_number' => $abonne_infos->numero_de_telephone,
+                        'customer_address' => 'Antananarivo',
+                        'customer_city' => 'Antananarivo',
+                        'customer_country' => 'CM',
+                        'customer_state' => 'CM',
+                        'customer_zip_code' => '065100',
+                        'channels' => 'ALL',
+                        'metadata' => 'user1',
+                        'lang' => 'FR',
+                        'invoice_data' => [
+                            'N° demande' => $abonne_infos->numero_dossier
+                        ],
+                    ]
+                ]);
+                $cinetpay_api_result = json_decode($response->getBody(), true);
+                dd($cinetpay_api_result);
+                if (!$cinetpay_api_result['success']) {
+                    return [
+                        'has_error' => true,
+                        'message' => 'Payment failed'
+                    ];
+                }
+            } catch (GuzzleException $guzzle_exception) {
+                /* Moving here if something is wrong with CinetPay API */
+                return [
+                    'has_error' => true,
+                    'message' => 'CinetPay API client exception : ['
+                        .$guzzle_exception->getMessage()
+                        .' -- Code : '.$guzzle_exception->getCode().']'
+                ];
+            }
+        } else {
+            return [
+                'has_error' => false,
+                'message' => 'Payment link successfully generated !'
+            ];
+        }
+    }
+
+    /**
      * (PHP 4, PHP 5, PHP 7)<br/>
      * This function is useful to generate Token<br/><br/>
      * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
@@ -396,6 +560,38 @@ class IdentificationController extends Controller {
         $token['time'] = $expireTime;
         session()->put('token_time', time());
         return $token;
+    }
+
+    /**
+     * (PHP 4, PHP 5, PHP 7)<br/>
+     * This function checks generated token<br/><br/>
+     * <b>bool</b> checkToken(<b>string</b> $token_received, <b>array</b> $token_session)<br/>
+     * @param string $token_received <p>
+     * Received token via post
+     * </p>
+     * @param array $token_session <p>
+     * Session token variable
+     * </p>
+     * @return bool Value of result
+     */
+    private function checkToken($token_received, $token_session){
+        try {
+            $token_age = time() - session()->get('token_time', time());
+        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            return FALSE;
+        }
+        if ( ($token_received===$token_session["value"]) && $token_session['time']<=0 ) {
+            return TRUE;
+        } elseif ( ($token_received===$token_session["value"]) && ($token_age<=$token_session['time']) ) {
+            return TRUE;
+        } elseif ( ($token_received===$token_session["value"]) && ($token_age>$token_session['time']) ) {
+            return FALSE;
+        } elseif ( ($token_received!==$token_session["value"]) && ($token_age<=$token_session['time']) ) {
+            return FALSE;
+        } elseif ( ($token_received!==$token_session["value"]) && ($token_age<=$token_session['time']) ) {
+            return FALSE;
+        }
+        return FALSE;
     }
 
 }

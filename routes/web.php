@@ -28,4 +28,5 @@ Route::post('/soumettre-identification', [IdentificationController::class, 'subm
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
 Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');
+Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLink'])->name('obtenir_lien_de_paiement');
 Route::post('/certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');

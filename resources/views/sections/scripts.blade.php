@@ -25,5 +25,8 @@
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
+    @if(session()->has('abonne_numeros'))
+        @include('sections.scripts.payment-processing')
+    @endif
 @endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>

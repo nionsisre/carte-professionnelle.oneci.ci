@@ -27,6 +27,7 @@
                 @if(session()->has('abonne_numeros'))
                     @php($abonne_numeros = session('abonne_numeros')->all())
                     @if(is_array($abonne_numeros) && !empty($abonne_numeros))
+                    <div id="modalBox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
@@ -50,7 +51,11 @@
                                                 <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
                                                     @if(session()->get('abonne_numeros')[$i]->code_statut==='NUI')
-                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('obtenir_certificat_identification') }}">
+                                                    <div id="certificate-get-payment-link-container" style="display: block;">
+                                                        <span id="certificate-get-payment-link-loader-{{ $i }}" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
+                                                        <a id="certificate-get-payment-link-{{ $i }}" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
+                                                    </div>
+                                                    <!--<form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('obtenir_certificat_identification') }}">
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
                                                         <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
@@ -60,7 +65,7 @@
                                                                 <i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone
                                                             </button>
                                                         </div>
-                                                    </form>
+                                                    </form>-->
                                                     @endif
                                                 </td>
                                             </tr>
