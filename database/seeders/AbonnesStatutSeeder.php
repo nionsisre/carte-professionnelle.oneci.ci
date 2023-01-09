@@ -27,7 +27,7 @@ class AbonnesStatutSeeder extends Seeder
         AbonnesStatut::create([
             'code_statut' => 'NUI',
             'libelle_statut' => 'Numéro identifié',
-            'icone' => 'double-check',
+            'icone' => 'check-double',
         ]);
         AbonnesStatut::create([
             'code_statut' => 'IDR',
