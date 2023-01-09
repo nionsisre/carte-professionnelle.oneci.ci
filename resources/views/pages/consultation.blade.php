@@ -24,27 +24,27 @@
             <div class="column-last">
                 <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de l'identification
                 </h2>
-                @if(session()->has('resultats_statut'))
-                    @php($resultats_statut = session('resultats_statut')->all())
-                    @if(is_array($resultats_statut) && !empty($resultats_statut))
+                @if(session()->has('abonne_numeros'))
+                    @php($abonne_numeros = session('abonne_numeros')->all())
+                    @if(is_array($abonne_numeros) && !empty($abonne_numeros))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
                             <h4><i class="fa fa-search text-black"></i> &nbsp; Recherche effectuée !</h4>
                             <br/><div>
                                 <p style="padding: 0em 0em 4em">
-                                    Numéro de validation : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $resultats_statut[0]->numero_dossier }}</b><br/><br/>
+                                    Numéro de validation : &nbsp; <b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $abonne_numeros[0]->numero_dossier }}</b><br/><br/>
                                     Numéro(s) de téléphone : <br/>
-                                    @foreach($resultats_statut as $resultat_statut)
+                                    @foreach($abonne_numeros as $resultat_statut)
                                         <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultat_statut->libelle_operateur }} : <b style="font-size: 1rem">{{ $resultat_statut->numero_de_telephone }}</b> &nbsp; | &nbsp; Statut : &nbsp; <i class="fad fa-{{ $resultat_statut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b style="font-size: 1rem">{{ $resultat_statut->libelle_statut }}</b><br/>
                                     @endforeach
                                     <br/>
-                                    Document justificatif : &nbsp; <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $resultats_statut[0]->libelle_piece }}</b><br/>
+                                    Document justificatif : &nbsp; <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $abonne_numeros[0]->libelle_piece }}</b><br/>
                                     <br/><br/>
                                     L'ONECI vous remercie !
                                 </p>
                             </div>
-                            <a href="{{ route('imprimer_recu_identification').'?n='.$resultats_statut[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
+                            <a href="{{ route('imprimer_recu_identification').'?n='.$abonne_numeros[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
                             <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
                     </div>
