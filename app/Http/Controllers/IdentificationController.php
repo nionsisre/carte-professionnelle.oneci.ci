@@ -192,6 +192,17 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Recherche d'une identification par l'abonné<br/><br/>
+     * <b>RedirectResponse</b> getCertificate(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     */
+    public function getCertificate(Request $request) {
+        dd('En cours de développemnt...');
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
      * Impression du reçu d'identification<br/><br/>
      * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>

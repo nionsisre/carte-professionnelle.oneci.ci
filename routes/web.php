@@ -23,8 +23,9 @@ Route::get('/consultation-statut-identification', [MainController::class, 'consu
 Route::get('/imprimer-recu-identification', [IdentificationController::class, 'print'])->name('imprimer_recu_identification');
 Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
 
-/* Processing Routes */
+/* Post Processing Only Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
 Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');
+Route::post('/certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');
