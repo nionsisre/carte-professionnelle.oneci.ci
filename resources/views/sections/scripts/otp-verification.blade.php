@@ -34,7 +34,6 @@
             },
             dataType: "json",
             success: function (data) {
-                console.log(data);
                 jQuery("#otp-send-link-{{ $i }}").hide();
                 rs{{ $i }} = parseInt(data.remaining_sec);
                 animatedTimer{{ $i }} = setInterval(updateTime{{ $i }}, 1000);

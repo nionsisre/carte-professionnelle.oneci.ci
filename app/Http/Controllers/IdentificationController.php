@@ -20,6 +20,7 @@ use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
 use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -242,7 +243,14 @@ class IdentificationController extends Controller {
                     ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                     ->get();
-                /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
+                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'What are doing ?'
+                    ], Response::HTTP_BAD_REQUEST);
+                }
+                /* Récupération du numéro de telephone valide */
                 $abonne_numero = $abonne_numeros[$request->input('idx')];
                 /* Obtention du lien de paiement via l'API CinetPay */
                 $payment_link_obtained = $this->cinetPayAPI($abonne_numero);
@@ -253,11 +261,11 @@ class IdentificationController extends Controller {
                         'message_service' => $payment_link_obtained['message']
                     ], Response::HTTP_SERVICE_UNAVAILABLE);
                 } else {
-                    sleep(5);
                     return response([
                         'has_error' => false,
-                        'message' => 'Procéder au paiement ici...',
-                        'message_service' => $payment_link_obtained['message']
+                        'message' => $payment_link_obtained['message'],
+                        'message_service' => 'OK',
+                        'transaction_id' => $payment_link_obtained['transaction_id']
                     ], Response::HTTP_OK);
                 }
             }
@@ -490,22 +498,25 @@ class IdentificationController extends Controller {
      */
     private function cinetPayAPI($abonne_infos) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        if (App::environment(['staging', 'production'])) {
+        /*if (App::environment(['staging', 'production'])) {*/
             $client = new Client();
             try {
+                /* env('RECAPTCHA_SECRET') config('services.recaptcha.secret'), */
+                $transaction_id = date('Y', time()).time();
                 $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
-                    'headers' => ['Content-Type' =>  'application/json'],
+                    'verify' => false,
+                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
                     'form_params' => [
                         'apikey' => '179990205162cc71d73e8804.22209231',
-                        'site_id' => '298376', /* env('RECAPTCHA_SECRET') config('services.recaptcha.secret'), */
-                        'transaction_id' => time(),
+                        'site_id' => '298376',
+                        'transaction_id' => $transaction_id,
                         'amount' => '100',
                         'currency' => 'XOF',
                         'alternative_currency' => '',
                         'description' => 'Paiement Certificat Identification',
                         'customer_id' => $abonne_infos->numero_dossier,
-                        'customer_name' => $abonne_infos->first_name,
-                        'customer_surname' => $abonne_infos->last_name,
+                        'customer_name' => $abonne_infos->nom,
+                        'customer_surname' => $abonne_infos->prenoms,
                         'customer_email' => $abonne_infos->email,
                         'customer_phone_number' => $abonne_infos->numero_de_telephone,
                         'customer_address' => 'Antananarivo',
@@ -517,13 +528,20 @@ class IdentificationController extends Controller {
                         'metadata' => 'user1',
                         'lang' => 'FR',
                         'invoice_data' => [
-                            'N° demande' => $abonne_infos->numero_dossier
+                            'Numéro de validation' => $abonne_infos->numero_dossier
                         ],
                     ]
                 ]);
                 $cinetpay_api_result = json_decode($response->getBody(), true);
-                dd($cinetpay_api_result);
-                if (!$cinetpay_api_result['success']) {
+                /**/
+                if ($cinetpay_api_result['code']=='201') {
+                    return [
+                        'has_error' => false,
+                        'message' => '<a id="payment-link" target="_blank" href="'.$cinetpay_api_result['data']['payment_url'].'" class="button payment-link" style="margin-bottom: 0"><i class="fa fa-sack-dollar text-white"></i> &nbsp; Procéder au paiement...</a>',
+                        'data' => $cinetpay_api_result['data'],
+                        'transaction_id' => $transaction_id
+                    ];
+                } else {
                     return [
                         'has_error' => true,
                         'message' => 'Payment failed'
@@ -538,12 +556,12 @@ class IdentificationController extends Controller {
                         .' -- Code : '.$guzzle_exception->getCode().']'
                 ];
             }
-        } else {
+        /*} else {
             return [
                 'has_error' => false,
                 'message' => 'Payment link successfully generated !'
             ];
-        }
+        }*/
     }
 
     /**
