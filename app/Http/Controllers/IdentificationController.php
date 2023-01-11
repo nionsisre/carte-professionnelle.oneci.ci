@@ -205,8 +205,8 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Recherche d'une identification par l'abonné<br/><br/>
-     * <b>RedirectResponse</b> getCertificate(<b>Request</b> $request)<br/>
+     * Obtention d'un lien de paiement<br/><br/>
+     * <b>RedirectResponse</b> getPaymentLink(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
@@ -253,7 +253,7 @@ class IdentificationController extends Controller {
                 /* Récupération du numéro de telephone valide */
                 $abonne_numero = $abonne_numeros[$request->input('idx')];
                 /* Obtention du lien de paiement via l'API CinetPay */
-                $payment_link_obtained = $this->cinetPayAPI($abonne_numero);
+                $payment_link_obtained = $this->getPaymentLinkCinetPayAPI($abonne_numero);
                 if ($payment_link_obtained['has_error']) {
                     return response([
                         'has_error' => true,
@@ -279,42 +279,69 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Recherche d'une identification par l'abonné<br/><br/>
+     * Obtention d'un certificat d'identification ONECI<br/><br/>
      * <b>RedirectResponse</b> getCertificate(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function getCertificate(Request $request) {
-//        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-//            $this->verifyGoogleRecaptchaV3($request)['error'] ??
-//            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
-//        /* Valider variables du formulaire */
-//        request()->validate([
-//            'cli' => ['required', 'string', 'max:100'], // Url du client
-//            'tn' => ['required', 'string', 'max:100'], // Token du client
-//            'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
-//            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
-//        ]);
-//
-//        /*$identification_resultats = DB::table('abonnes_numeros')
-//            ->select('*')
-//            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-//            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-//            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-//            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-//            ->where('abonnes.numero_dossier', '=', $numero_dossier)
-//            ->get();*/
+        /* Valider variables du formulaire */
+        request()->validate([
+            't' => ['required', 'string', 'max:100'], // Token generique
+            'ti' => ['nullable', 'string', 'max:100'], // ID de transaction @
+            'fn' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
+            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
+            'oid' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY) @
+            'ari' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY) @
+            'code' => ['required', 'string', 'max:70'], // Code (CinetPAY) @
+            'msg' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY @
+            'pm' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY @
+            'pd' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY @
+        ]);
+        /* Vérification du Token générique */
+        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
+            return redirect()->route('consultation_statut_identification');
+        } else {
+            /* Vérification de l'ID de transaction chez CinetPAY */
+            $payment_data = $this->verifyCinetPayAPI($request->input('ti'));
+            if($payment_data['has_error']) {
+                return redirect()->route('consultation_statut_identification');
+            } else {
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+                $abonne_numeros = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->get();
+                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
+                    return redirect()->route('consultation_statut_identification');
+                }
+                /* Récupération du numéro de telephone valide */
+                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                var_dump($abonne_numero);
+                var_dump($payment_data);
+                /* @TODO: Sauvegarder les informations de paiement en base de données */
+                //$abonnes_numero = AbonnesNumero::create([]);
+                /* @TODO: Générer lien de téléchargement de certificat d'identification */
 
-        dd('getCertificate...');
+                /* @TODO: Redirection sur page de consultation avec le bouton de téléchargement du certificat actif */
+                dd($request);
+                return redirect()->route('consultation_statut_identification')->with($payment_data);
+            }
+        }
     }
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * Impression du reçu d'identification<br/><br/>
-     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * <b>RedirectResponse</b> printRecu(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
-    public function print(Request $request) {
+    public function printRecu(Request $request) {
         /*$numero_dossier = $request->session()->get('numero_dossier');*/
         /* Print PDF ticket according form-number */
         $numero_dossier = $request->get('n');
@@ -492,25 +519,24 @@ class IdentificationController extends Controller {
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
-     * <b>void</b> verifyGoogleRecaptchaV3(<b>Request</b> $request)<br/>
-     * @param Request $request <p>Client Request object.</p>
+     * <b>void</b> cinetPayAPI(<b>Array</b> $abonne_infos)<br/>
+     * @param array $request <p>Client Request object.</p>
      * @return array Value of result
      */
-    private function cinetPayAPI($abonne_infos) {
-        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+    private function getPaymentLinkCinetPayAPI($abonne_infos) {
+        /* CinetPAY payment url generation (works in "Staging" and "Production" only, not "Local" environment) */
         /*if (App::environment(['staging', 'production'])) {*/
             $client = new Client();
             try {
-                /* env('RECAPTCHA_SECRET') config('services.recaptcha.secret'), */
                 $transaction_id = date('Y', time()).time();
                 $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
                     'verify' => false,
                     'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
                     'form_params' => [
-                        'apikey' => '179990205162cc71d73e8804.22209231',
-                        'site_id' => '298376',
+                        'apikey' => env('CINETPAY_API_KEY'),
+                        'site_id' => env('CINETPAY_SERVICE_KEY'),
                         'transaction_id' => $transaction_id,
-                        'amount' => '100',
+                        'amount' => env('CINETPAY_SERVICE_AMOUNT'),
                         'currency' => 'XOF',
                         'alternative_currency' => '',
                         'description' => 'Paiement Certificat Identification',
@@ -533,7 +559,7 @@ class IdentificationController extends Controller {
                     ]
                 ]);
                 $cinetpay_api_result = json_decode($response->getBody(), true);
-                /**/
+                /* Response check up */
                 if ($cinetpay_api_result['code']=='201') {
                     return [
                         'has_error' => false,
@@ -556,6 +582,61 @@ class IdentificationController extends Controller {
                         .' -- Code : '.$guzzle_exception->getCode().']'
                 ];
             }
+        /*} else {
+            return [
+                'has_error' => false,
+                'message' => 'Payment link successfully generated !'
+            ];
+        }*/
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * CinetPAY transaction ID Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
+     * <b>void</b> verifyCinetPayAPI(<b>Request</b> $request)<br/>
+     * @param String $transaction_id <p>Transaction ID.</p>
+     * @return array Value of result
+     */
+    private function verifyCinetPayAPI($transaction_id) {
+        /* CinetPAY transaction ID Verification (works in "Staging" and "Production" only, not "Local" environment) */
+        /*if (App::environment(['staging', 'production'])) {*/
+        $client = new Client();
+        try {
+            $response = $client->request('POST', env('CINETPAY_CHECK_URL'), [
+                'verify' => false,
+                'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                'form_params' => [
+                    'apikey' => env('CINETPAY_API_KEY'),
+                    'site_id' => env('CINETPAY_SERVICE_KEY'),
+                    'transaction_id' => $transaction_id,
+                ]
+            ]);
+            $cinetpay_api_result = json_decode($response->getBody(), true);
+            /* Response check up */
+            if ($cinetpay_api_result['data']['status']=='ACCEPTED') {
+                return [
+                    'has_error' => false,
+                    'message' => 'Payment done !',
+                    'data' => $cinetpay_api_result,
+                    'transaction_id' => $transaction_id
+                ];
+            } else {
+                return [
+                    'has_error' => true,
+                    'message' => 'Payment failed',
+                    'data' => $cinetpay_api_result,
+                    'transaction_id' => $transaction_id
+                ];
+            }
+        } catch (GuzzleException $guzzle_exception) {
+            /* Moving here if something is wrong with CinetPay API */
+            return [
+                'has_error' => true,
+                'message' => 'CinetPay API client exception : ['
+                    .$guzzle_exception->getMessage()
+                    .' -- Code : '.$guzzle_exception->getCode().']'
+            ];
+        }
         /*} else {
             return [
                 'has_error' => false,

@@ -20,7 +20,9 @@ use App\Http\Controllers\OTPVerificationController;
 Route::get('/', [MainController::class, 'index'])->name('accueil');
 Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
-Route::get('/imprimer-recu-identification', [IdentificationController::class, 'print'])->name('imprimer_recu_identification');
+Route::get('/imprimer-recu-identification', [IdentificationController::class, 'printRecu'])->name('imprimer_recu_identification');
+Route::get('/get-certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');
+Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
 Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
 
 /* Post Processing Only Routes */
@@ -29,4 +31,8 @@ Route::post('/consulter-statut-identification', [IdentificationController::class
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
 Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');
 Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLink'])->name('obtenir_lien_de_paiement');
-Route::post('/certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');
+
+/* CinetPAY notify routes */
+Route::post('/cinetpay/notify', [IdentificationController::class, 'cinetPayNotify'])->name('lien_cinetpay_paiement_effectue');
+Route::post('/cinetpay/return', [IdentificationController::class, 'cinetPayReturn'])->name('lien_cinetpay_paiement');
+Route::post('/cinetpay/cancel', [IdentificationController::class, 'cinetPayCancel'])->name('lien_cinetpay_paiement_annule');

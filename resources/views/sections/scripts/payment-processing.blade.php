@@ -5,31 +5,44 @@
     |--------------------------------------------------------------------------
     --}}
     @for($i=0;$i<sizeof(session()->get('abonne_numeros'));$i++)
-    var rs{{ $i }} = 0;
+    var ti{{ $i }} = 0;
     var animatedTimer{{ $i }};
     var idx{{ $i }};
-    function cp{{ $i }}(trans_id) {
-        let url = 'https://api-checkout-oneci.cinetpay.com/v2/payment/check';
+    function cp{{ $i }}() {
+        let url = '{{ env('CINETPAY_CHECK_URL') }}';
         $.post({
             type: 'POST',
             url: url,
             data: {
-                'apikey':  '179990205162cc71d73e8804.22209231',
-                'site_id': '298373',
-                'transaction_id': trans_id,
+                'apikey':  '{{ env('CINETPAY_API_KEY') }}',
+                'site_id': '{{ env('CINETPAY_SERVICE_KEY') }}',
+                'transaction_id': ti{{ $i }},
             },
-            success:function( res ){
-                console.log(res.message);
-                console.log(res.data.status);
+            success: function(res){
+                console.log(res);
                 if (res.data.status === 'ACCEPTED'){
-                    /*location.href = decodeURI(" ")*/
+                    location.href = decodeURI("{{ route('obtenir_certificat_identification').'?t='.md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt')) }}&ti="+ti{{ $i }}+
+                        "&fn={{ session()->get('abonne_numeros')[$i]->numero_dossier }}&idx={{ $i }}&oid="+res.data.operator_id+
+                        "&ari="+res.api_response_id+"&code="+res.code+"&msg="+res.message+"&pm="+res.data.payment_method+"&pd="+res.data.payment_date+
+                        "");
+                } else if (res.data.status === 'REFUSED') {
+                    jQuery('#modalBox').html(
+                        '<center> <div class="notification-box notification-box-error">\n\
+                        <div class="modal-header"><h3></h3></div>\n\
+                        </div><div class="modal-footer">\n\
+                        <a href="#" onclick="ccp{{ $i }}()" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                    ).modal({
+                        escapeClose: false,
+                        clickClose: false,
+                        showClose: false
+                    });
+                    jQuery('.blocker').css('z-index','2');
                 }
-                else{
-                    /*location.href = decodeURI(" ")*/
-                }
+            },
+            error: function(err){
+                console.log(err);
             }
         });
-        console.log('Check payment status...');
     }
     function ccp{{ $i }}() {
         clearInterval(animatedTimer{{ $i }});
@@ -56,6 +69,7 @@
                 jQuery("#certificate-get-payment-link-loader-{{ $i }}").show();
             },
             success: function (data) {
+                ti{{ $i }} = data.transaction_id;
                 animatedTimer{{ $i }} = setInterval(cp{{ $i }}, 1000);
                 jQuery('#modalBox').html(
                     '<center> <div class="notification-box notification-box-success">\n\
