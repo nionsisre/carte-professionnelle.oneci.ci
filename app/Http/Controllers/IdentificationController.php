@@ -320,11 +320,11 @@ class IdentificationController extends Controller {
                 if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
                     return redirect()->route('consultation_statut_identification');
                 }
-                /* Récupération du numéro de telephone valide */
-                $abonne_numero = $abonne_numeros[$request->input('idx')];
-                var_dump($abonne_numero);
-                var_dump($payment_data);
-                /* @TODO: Sauvegarder les informations de paiement en base de données */
+                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                /*$abonne_numero = $abonne_numeros[$request->input('idx')];
+                $abonne_numero->update($request->only([
+
+                ]));*/
                 //$abonnes_numero = AbonnesNumero::create([]);
                 /* @TODO: Générer lien de téléchargement de certificat d'identification */
 

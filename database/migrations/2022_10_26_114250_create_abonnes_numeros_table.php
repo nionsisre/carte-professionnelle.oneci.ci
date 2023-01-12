@@ -15,17 +15,14 @@ class CreateAbonnesNumerosTable extends Migration
     {
         Schema::create('abonnes_numeros', function (Blueprint $table) {
             $table->id();
-            /*$table->unsignedBigInteger('abonnes_operateurs_id');*/
             $table->string('numero_de_telephone');
             $table->string('otp_code')->nullable();
             $table->string('otp_sms')->nullable();
-
             $table->string('transaction_id')->nullable();
             $table->string('cinetpay_operator_id')->nullable();
             $table->string('cinetpay_api_response_id')->nullable();
             $table->string('cinetpay_code')->nullable();
             $table->string('cinetpay_message')->nullable();
-            $table->string('cinetpay_api_response_id')->nullable();
             $table->string('cinetpay_data_amount')->nullable();
             $table->string('cinetpay_data_currency')->nullable();
             $table->string('cinetpay_data_status')->nullable();
@@ -35,7 +32,6 @@ class CreateAbonnesNumerosTable extends Migration
             $table->string('cinetpay_data_operator_id')->nullable();
             $table->string('cinetpay_data_payment_date')->nullable();
             $table->string('certificate_download_link')->nullable();
-
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\Abonne::class)->nullable();
@@ -47,7 +43,6 @@ class CreateAbonnesNumerosTable extends Migration
             ->OnUpdate('cascade')
             ->OnDelete('set null');
             $table->engine('InnoDB');*/
-
         });
     }
 
