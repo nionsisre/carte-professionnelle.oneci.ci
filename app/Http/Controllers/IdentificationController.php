@@ -288,15 +288,15 @@ class IdentificationController extends Controller {
         /* Valider variables du formulaire */
         request()->validate([
             't' => ['required', 'string', 'max:100'], // Token generique
-            'ti' => ['nullable', 'string', 'max:100'], // ID de transaction @
+            'ti' => ['nullable', 'string', 'max:100'], // ID de transaction
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
-            'oid' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY) @
-            'ari' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY) @
-            'code' => ['required', 'string', 'max:70'], // Code (CinetPAY) @
-            'msg' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY @
-            'pm' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY @
-            'pd' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY @
+            'oid' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
+            'ari' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
+            'code' => ['required', 'string', 'max:70'], // Code (CinetPAY)
+            'msg' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
+            'pm' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
+            'pd' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
         ]);
         /* Vérification du Token générique */
         if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
