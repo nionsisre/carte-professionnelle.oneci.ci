@@ -19,7 +19,6 @@ class CreateAbonnesNumerosTable extends Migration
             $table->string('otp_code')->nullable();
             $table->string('otp_sms')->nullable();
             $table->string('transaction_id')->nullable();
-            $table->string('cinetpay_operator_id')->nullable();
             $table->string('cinetpay_api_response_id')->nullable();
             $table->string('cinetpay_code')->nullable();
             $table->string('cinetpay_message')->nullable();

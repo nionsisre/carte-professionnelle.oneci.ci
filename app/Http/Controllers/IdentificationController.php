@@ -177,10 +177,13 @@ class IdentificationController extends Controller {
                     ->get();
             }
             /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-            for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
-            session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
-
-            return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+            if(sizeof($abonne_numeros) !== 0) {
+                for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
+                session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+            } else {
+                return redirect()->route('consultation_statut_identification');
+            }
         } elseif ($request->get('f') != null && $request->get('t') != null) {
             /* Url GET search */
             $abonne_numeros = DB::table('abonnes_numeros')
@@ -321,16 +324,26 @@ class IdentificationController extends Controller {
                     return redirect()->route('consultation_statut_identification');
                 }
                 /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                /*$abonne_numero = $abonne_numeros[$request->input('idx')];
-                $abonne_numero->update($request->only([
-
-                ]));*/
-                //$abonnes_numero = AbonnesNumero::create([]);
-                /* @TODO: Générer lien de téléchargement de certificat d'identification */
-
-                /* @TODO: Redirection sur page de consultation avec le bouton de téléchargement du certificat actif */
-                dd($request);
-                return redirect()->route('consultation_statut_identification')->with($payment_data);
+                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                DB::table('abonnes_numeros')
+                    ->where('abonne_id','=', $abonne_numero->abonne_id)
+                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
+                    ->update([
+                        'transaction_id' => $payment_data['transaction_id'],
+                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+                        'cinetpay_code' => $payment_data['data']['code'],
+                        'cinetpay_message' => $payment_data['data']['message'],
+                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
+                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
+                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
+                    ]);
+                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             }
         }
     }
@@ -380,6 +393,59 @@ class IdentificationController extends Controller {
                 $this->sendMailTemplate('layouts.recu-identification', $data);
             }*/
             /*$request->session()->remove('numero_dossier');*/
+            return $pdf_recu_identification->download($filename);
+        } else {
+            return redirect()->route('accueil')->with([
+                'error' => true,
+                'error_message' => 'Erreur est survenue lors du téléchargement du formulaire d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+            ]);
+        }
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Impression du reçu d'identification<br/><br/>
+     * <b>RedirectResponse</b> printCertficate(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     */
+    public function printCertificate(Request $request) {
+        /*$numero_dossier = $request->session()->get('numero_dossier');*/
+        /* Print PDF ticket according form-number */
+        $certificate_download_link = $request->get('n');
+        $identification_resultats = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+            ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
+            ->get();
+        if (!empty($identification_resultats[0])) {
+            for ($i = 0; $i < sizeof($identification_resultats); $i++) {
+                $msisdn[] = $identification_resultats[$i]->numero_de_telephone . ' (' . $identification_resultats[$i]->libelle_operateur . ') | ';
+            }
+            $identification_resultats = $identification_resultats[0];
+            /* PDF Download document generation */
+            $data = [
+                'title' => 'Reçu d\'identification',
+                'qrcode' => $this->generateQrBase64(route('obtenir_info_abonne').'?f='.$identification_resultats->numero_dossier.'&t='.$identification_resultats->uniqid),
+                'numero_dossier' => $identification_resultats->numero_dossier,
+                'uniqid' => $identification_resultats->uniqid,
+                'msisdn_list' => $msisdn,
+                'nom_complet' => $identification_resultats->prenoms . ' ' . $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
+                'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)) . ' à ' . $identification_resultats->lieu_de_naissance,
+                'lieu_de_residence' => $identification_resultats->domicile,
+                'nationalite' => $identification_resultats->nationalite,
+                'profession' => $identification_resultats->profession,
+                'email' => $identification_resultats->email,
+                'document_justificatif' => $identification_resultats->libelle_piece . ' (' . $identification_resultats->numero_document . ')',
+            ];
+            $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+            $pdf_recu_identification = Pdf::loadView('layouts.certificat-identification', $data);
+            /* Envoi de mail */
+            /*if (!empty($identification_resultats->email)) {
+                $this->sendMailTemplate('layouts.certificat-identification', $data);
+            }*/
             return $pdf_recu_identification->download($filename);
         } else {
             return redirect()->route('accueil')->with([
@@ -599,7 +665,6 @@ class IdentificationController extends Controller {
      */
     private function verifyCinetPayAPI($transaction_id) {
         /* CinetPAY transaction ID Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        /*if (App::environment(['staging', 'production'])) {*/
         $client = new Client();
         try {
             $response = $client->request('POST', env('CINETPAY_CHECK_URL'), [
@@ -637,12 +702,6 @@ class IdentificationController extends Controller {
                     .' -- Code : '.$guzzle_exception->getCode().']'
             ];
         }
-        /*} else {
-            return [
-                'has_error' => false,
-                'message' => 'Payment link successfully generated !'
-            ];
-        }*/
     }
 
     /**

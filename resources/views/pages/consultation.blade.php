@@ -51,21 +51,14 @@
                                                 <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
                                                     @if(session()->get('abonne_numeros')[$i]->code_statut==='NUI')
-                                                    <div id="certificate-get-payment-link-container" style="display: block;">
-                                                        <span id="certificate-get-payment-link-loader-{{ $i }}" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
-                                                        <a id="certificate-get-payment-link-{{ $i }}" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
-                                                    </div>
-                                                    <!--<form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('obtenir_certificat_identification') }}">
-                                                        {{ csrf_field() }}
-                                                        <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
-                                                        <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
-                                                        <input type="hidden" name="idx" value="{{ $i }}">
-                                                        <div class="column-last">
-                                                            <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
-                                                                <i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone
-                                                            </button>
-                                                        </div>
-                                                    </form>-->
+                                                        @if(session()->get('abonne_numeros')[$i]->cinetpay_data_status==='ACCEPTED')
+                                                            <a href="{{ route('imprimer_certificat_identification').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                        @else
+                                                            <div id="certificate-get-payment-link-container" style="display: block;">
+                                                                <span id="certificate-get-payment-link-loader-{{ $i }}" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
+                                                                <a id="certificate-get-payment-link-{{ $i }}" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
+                                                            </div>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>

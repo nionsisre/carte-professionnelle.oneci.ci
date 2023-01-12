@@ -19,7 +19,6 @@
                 'transaction_id': ti{{ $i }},
             },
             success: function(res){
-                console.log(res);
                 if (res.data.status === 'ACCEPTED'){
                     location.href = decodeURI("{{ route('obtenir_certificat_identification').'?t='.md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt')) }}&ti="+ti{{ $i }}+
                         "&fn={{ session()->get('abonne_numeros')[$i]->numero_dossier }}&idx={{ $i }}&oid="+res.data.operator_id+
@@ -38,9 +37,6 @@
                     });
                     jQuery('.blocker').css('z-index','2');
                 }
-            },
-            error: function(err){
-                console.log(err);
             }
         });
     }
@@ -84,7 +80,6 @@
                 jQuery('.blocker').css('z-index','2');
             },
             error: function (data) {
-                console.log(data);
                 if(data.responseJSON.has_error) {
                     jQuery("#certificate-get-payment-link-loader-{{ $i }}").hide();
                     jQuery("#certificate-get-payment-link-{{ $i }}").show();
