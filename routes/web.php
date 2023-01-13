@@ -33,6 +33,8 @@ Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])
 Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLink'])->name('obtenir_lien_de_paiement');
 
 /* CinetPAY notify routes */
-Route::post('/cinetpay/notify', [IdentificationController::class, 'cinetPayNotify'])->name('lien_cinetpay_paiement_effectue');
-Route::post('/cinetpay/return', [IdentificationController::class, 'cinetPayReturn'])->name('lien_cinetpay_paiement');
-Route::post('/cinetpay/cancel', [IdentificationController::class, 'cinetPayCancel'])->name('lien_cinetpay_paiement_annule');
+Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPayAPI'])->name('lien_cinetpay_paiement_effectue');
+Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
+Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
+
+Route::get('/test', [IdentificationController::class, 'test'])->name('test');

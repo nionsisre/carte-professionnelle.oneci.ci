@@ -8,6 +8,7 @@ use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Exception\GuzzleException;
+use http\Url;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,13 @@ use Symfony\Component\HttpFoundation\Response;
  * @github     https://github.com/oneci-dev
  */
 class IdentificationController extends Controller {
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function test(Request $request) {
+        return view('layouts.certificat-identification');
+    }
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -590,70 +598,62 @@ class IdentificationController extends Controller {
      * @return array Value of result
      */
     private function getPaymentLinkCinetPayAPI($abonne_infos) {
-        /* CinetPAY payment url generation (works in "Staging" and "Production" only, not "Local" environment) */
-        /*if (App::environment(['staging', 'production'])) {*/
-            $client = new Client();
-            try {
-                $transaction_id = date('Y', time()).time();
-                $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
-                    'verify' => false,
-                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
-                    'form_params' => [
-                        'apikey' => env('CINETPAY_API_KEY'),
-                        'site_id' => env('CINETPAY_SERVICE_KEY'),
-                        'transaction_id' => $transaction_id,
-                        'amount' => env('CINETPAY_SERVICE_AMOUNT'),
-                        'currency' => 'XOF',
-                        'alternative_currency' => '',
-                        'description' => 'Paiement Certificat Identification',
-                        'customer_id' => $abonne_infos->numero_dossier,
-                        'customer_name' => $abonne_infos->nom,
-                        'customer_surname' => $abonne_infos->prenoms,
-                        'customer_email' => $abonne_infos->email,
-                        'customer_phone_number' => $abonne_infos->numero_de_telephone,
-                        'customer_address' => 'Antananarivo',
-                        'customer_city' => 'Antananarivo',
-                        'customer_country' => 'CM',
-                        'customer_state' => 'CM',
-                        'customer_zip_code' => '065100',
-                        'channels' => 'ALL',
-                        'metadata' => 'user1',
-                        'lang' => 'FR',
-                        'invoice_data' => [
-                            'Numéro de validation' => $abonne_infos->numero_dossier
-                        ],
-                    ]
-                ]);
-                $cinetpay_api_result = json_decode($response->getBody(), true);
-                /* Response check up */
-                if ($cinetpay_api_result['code']=='201') {
-                    return [
-                        'has_error' => false,
-                        'message' => '<a id="payment-link" target="_blank" href="'.$cinetpay_api_result['data']['payment_url'].'" class="button payment-link" style="margin-bottom: 0"><i class="fa fa-sack-dollar text-white"></i> &nbsp; Procéder au paiement...</a>',
-                        'data' => $cinetpay_api_result['data'],
-                        'transaction_id' => $transaction_id
-                    ];
-                } else {
-                    return [
-                        'has_error' => true,
-                        'message' => 'Payment failed'
-                    ];
-                }
-            } catch (GuzzleException $guzzle_exception) {
-                /* Moving here if something is wrong with CinetPay API */
+        $client = new Client();
+        try {
+            $transaction_id = date('Y', time()).time();
+            $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
+                'verify' => false,
+                'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                'form_params' => [
+                    'apikey' => env('CINETPAY_API_KEY'),
+                    'site_id' => env('CINETPAY_SERVICE_KEY'),
+                    'transaction_id' => $transaction_id,
+                    'amount' => env('CINETPAY_SERVICE_AMOUNT'),
+                    'currency' => 'XOF',
+                    'alternative_currency' => '',
+                    'description' => 'Paiement Certificat Identification',
+                    'customer_id' => $abonne_infos->numero_dossier,
+                    'customer_name' => $abonne_infos->nom,
+                    'customer_surname' => $abonne_infos->prenoms,
+                    'customer_email' => $abonne_infos->email,
+                    'customer_phone_number' => $abonne_infos->numero_de_telephone,
+                    'customer_address' => 'Antananarivo',
+                    'customer_city' => 'Antananarivo',
+                    'customer_country' => 'CM',
+                    'customer_state' => 'CM',
+                    'customer_zip_code' => '065100',
+                    'channels' => 'ALL',
+                    'metadata' => 'user1',
+                    'lang' => 'FR',
+                    'invoice_data' => [
+                        'Numéro de validation' => $abonne_infos->numero_dossier
+                    ],
+                ]
+            ]);
+            $cinetpay_api_result = json_decode($response->getBody(), true);
+            /* Response check up */
+            if ($cinetpay_api_result['code']=='201') {
+                return [
+                    'has_error' => false,
+                    'message' => '<a id="payment-link" target="_blank" href="'.$cinetpay_api_result['data']['payment_url'].'" class="button payment-link" style="margin-bottom: 0"><i class="fa fa-sack-dollar text-white"></i> &nbsp; Procéder au paiement...</a>',
+                    'data' => $cinetpay_api_result['data'],
+                    'transaction_id' => $transaction_id
+                ];
+            } else {
                 return [
                     'has_error' => true,
-                    'message' => 'CinetPay API client exception : ['
-                        .$guzzle_exception->getMessage()
-                        .' -- Code : '.$guzzle_exception->getCode().']'
+                    'message' => 'Payment failed'
                 ];
             }
-        /*} else {
+        } catch (GuzzleException $guzzle_exception) {
+            /* Moving here if something is wrong with CinetPay API */
             return [
-                'has_error' => false,
-                'message' => 'Payment link successfully generated !'
+                'has_error' => true,
+                'message' => 'CinetPay API client exception : ['
+                    .$guzzle_exception->getMessage()
+                    .' -- Code : '.$guzzle_exception->getCode().']'
             ];
-        }*/
+        }
     }
 
     /**
@@ -702,6 +702,96 @@ class IdentificationController extends Controller {
                     .' -- Code : '.$guzzle_exception->getCode().']'
             ];
         }
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Notification de Paiement par l'API CinetPay<br/><br/>
+     * <b>RedirectResponse</b> notifyCinetPayAPI(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     */
+    public function notifyCinetPayAPI(Request $request) {
+        /* Valider variables du formulaire */
+        request()->validate([
+            'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
+            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
+            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
+            'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
+            'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
+            'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
+            'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
+            'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
+            'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
+            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
+        ]);
+        /* Vérification du Token générique */
+        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
+            return redirect()->route('consultation_statut_identification');
+        } else {
+            /* Vérification de l'ID de transaction chez CinetPAY */
+            $payment_data = $this->verifyCinetPayAPI($request->input('ti'));
+            if($payment_data['has_error']) {
+                return redirect()->route('consultation_statut_identification');
+            } else {
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+                $abonne_numeros = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->get();
+                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
+                    return redirect()->route('consultation_statut_identification');
+                }
+                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                DB::table('abonnes_numeros')
+                    ->where('abonne_id','=', $abonne_numero->abonne_id)
+                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
+                    ->update([
+                        'transaction_id' => $payment_data['transaction_id'],
+                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+                        'cinetpay_code' => $payment_data['data']['code'],
+                        'cinetpay_message' => $payment_data['data']['message'],
+                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
+                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
+                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
+                    ]);
+                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+            }
+        }
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Obtention d'un certificat d'identification ONECI<br/><br/>
+     * <b>RedirectResponse</b> returnCinetPayAPI(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     */
+    public function returnCinetPayAPI(Request $request) {
+
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Obtention d'un certificat d'identification ONECI<br/><br/>
+     * <b>RedirectResponse</b> cancelCinetPayAPI(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     */
+    public function cancelCinetPayAPI(Request $request) {
+
     }
 
     /**
