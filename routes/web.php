@@ -23,6 +23,7 @@ Route::get('/consultation-statut-identification', [MainController::class, 'consu
 Route::get('/imprimer-recu-identification', [IdentificationController::class, 'printRecu'])->name('imprimer_recu_identification');
 Route::get('/get-certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');
 Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
+Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('checker_certificat_identification');
 Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
 
 /* Post Processing Only Routes */
@@ -36,5 +37,3 @@ Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLi
 Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPayAPI'])->name('lien_cinetpay_paiement_effectue');
 Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
 Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
-
-Route::get('/test', [IdentificationController::class, 'test'])->name('test');
