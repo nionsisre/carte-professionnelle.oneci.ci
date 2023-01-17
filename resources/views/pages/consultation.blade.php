@@ -30,6 +30,37 @@
                     <div id="modalBox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
+                            <section>
+                                <div class="one-third">
+                                    <div class="arrowbox arrowbox-first">
+                                        <h2 class="arrowbox-title"><i class="fa fa-search"></i> &nbsp; Consultation
+                                            <span class="arrowbox-title-arrow-front"></span>
+                                        </h2>
+                                        <p>Consultez régulièrement le statut de vos numéros</p>
+                                    </div>
+                                </div>
+
+                                <div class="one-third">
+                                    <div class="arrowbox">
+                                        <h2 class="arrowbox-title"><i class="fa fa-sack-dollar"></i> &nbsp; Paiement
+                                            <span class="arrowbox-title-arrow-back"></span>
+                                            <span class="arrowbox-title-arrow-front"></span>
+                                        </h2>
+                                        <p>Procédez au paiement du certificat de vos numéros identifiés</p>
+                                    </div>
+                                </div>
+
+                                <div class="one-third" style="width: 30%">
+                                    <div class="arrowbox">
+                                        <h2 class="arrowbox-title"><i class="fa fa-file-certificate"></i> &nbsp; Impression du certificat
+                                            <span class="arrowbox-title-arrow-back"></span>
+                                            <span class="arrowbox-title-arrow-front"></span>
+                                        </h2>
+                                        <p>Imprimez votre certificat d'identification ONECI</p>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </section><br/>
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
                             <h4><i class="fa fa-user fa-3x text-black"></i><br/><br/>Abonné Mobile</h4>
                             <br/><div>
