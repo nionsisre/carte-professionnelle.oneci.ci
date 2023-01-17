@@ -128,14 +128,41 @@
                                     <br/>
                                 </div>
                                 <!-- With MSISDN -->
-                                <div class="form-group" id="msisdn-field" style="display: none">
-                                    <label class="col-sm-2 control-label">
-                                        Entrez votre numéro de téléphone<span style="color: #d9534f">*</span> :
-                                    </label>
-                                    <div class="col-sm-10">
-                                        <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" minlength="14" style="width: 23.4em; text-align: center" value="{{ old('msisdn') }}" autocomplete="off" />
+                                <div id="msisdn-container">
+                                    <div class="form-group" id="msisdn-field" style="display: none">
+                                        <label class="col-sm-2 control-label">
+                                            Entrez votre numéro de téléphone<span style="color: #d9534f">*</span> :
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" minlength="14" style="width: 23.4em; text-align: center" value="{{ old('msisdn') }}" autocomplete="off" />
+                                        </div>
+                                        <br/>
                                     </div>
-                                    <br/>
+                                    <div class="form-group" id="first-name-field" style="display: none">
+                                        <label class="col-sm-2 control-label">
+                                            Nom de l'abonné<span style="color: #d9534f">*</span> :
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
+                                                   placeholder="Nom de l'abonné..." maxlength="25"
+                                                   autocomplete="off"
+                                                   style="text-transform: uppercase; width: 23.4em; text-align: center"/>
+                                        </div>
+                                        <br/>
+                                    </div>
+                                    <div class="form-group" id="birth-date-field" style="display: none">
+                                        <label class="col-sm-2 control-label">
+                                            Date de naissance de l'abonné<span
+                                                style="color: #d9534f">*</span> :
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
+                                                   placeholder="Date de Naissance"
+                                                   max="{{ date('Y-m-d', strtotime('-10 years')) }}"
+                                                   style="width: 23.4em; text-align: center"/>
+                                        </div>
+                                        <br/>
+                                    </div>
                                 </div>
                                 <div id="no-form-number" style="margin-bottom: 2.5em;"><i class="fa fa-sim-card"></i> &nbsp; <span id="no-form-number-text" style="font-size: 1.1em; font-weight: bold; text-decoration: underline; cursor: pointer; font-style: italic;">Vérifier plutôt avec mon numéro de téléphone</span></div>
                                 <!-- Captcha and submit -->

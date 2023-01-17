@@ -164,6 +164,8 @@ class IdentificationController extends Controller {
             } else {
                 request()->validate([
                     'msisdn' => ['required', 'string', 'min:14', 'max:14'],
+                    'first-name' => ['required', 'string', 'min:2', 'max:150'],
+                    'birth-date' => ['required', 'string', 'min:10', 'max:10'],
                 ]);
                 $abonne_numeros = DB::table('abonnes_numeros')
                     ->select('*')
@@ -172,6 +174,8 @@ class IdentificationController extends Controller {
                     ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                     ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                     ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
+                    ->whereRaw('UCASE(abonnes.nom) = (?)', [strtoupper($request->input('first-name'))])
+                    ->where('abonnes.date_de_naissance', '=', $request->input('birth-date'))
                     ->get();
             }
             /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */

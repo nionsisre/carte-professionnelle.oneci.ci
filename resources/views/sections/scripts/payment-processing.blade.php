@@ -69,7 +69,12 @@
                 animatedTimer{{ $i }} = setInterval(cp{{ $i }}, 1000);
                 jQuery('#modalBox').html(
                     '<center> <div class="notification-box notification-box-success">\n\
-                    <div class="modal-header"><i class="fa fa-file-certificate fa-2x"></i><br/><br/>Obtention d\'un certificat d\'identification ONECI pour le <br/><b><i class="fa fa-sim-card"></i> &nbsp; {{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}</b><br/><br/><h3>'+data.message+'</h3></div>\n\
+                    <div class="modal-header">\
+                    <i class="fa fa-file-certificate fa-2x"></i><br/><br/>\
+                        Obtention d\'un certificat d\'identification ONECI pour le <br/>\
+                        <b><i class="fa fa-sim-card"></i> &nbsp; {{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}\
+                        </b><br/><br/>\
+                        <b><i class="fa fa-money-bill fa-1x"></i> &nbsp; Coût: {{ env('CINETPAY_SERVICE_AMOUNT') }} Fcfa </b><br/><br/><h3>'+data.message+'</h3></div>\n\
                     </div><div class="modal-footer">\n\
                     <a href="#" onclick="ccp{{ $i }}()" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Annuler</a></div></center>'
                 ).modal({
