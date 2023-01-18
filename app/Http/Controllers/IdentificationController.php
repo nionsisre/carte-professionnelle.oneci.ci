@@ -426,34 +426,38 @@ class IdentificationController extends Controller {
                 ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
                 ->first();
             if (!empty($identification_resultats)) {
-                /* PDF Download document generation */
-                $data = [
-                    'title' => 'Certificat d\'identification',
-                    'qrcode' => $this->generateQrBase64(route('checker_certificat_identification').'?c='.$identification_resultats->certificate_download_link, 183, 1),
-                    'numero_dossier' => $identification_resultats->numero_dossier,
-                    'uniqid' => $identification_resultats->uniqid,
-                    'msisdn' => $identification_resultats->numero_de_telephone,
-                    'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
-                    'date_expiration' => date('d/m/Y', strtotime(date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)) . ' + 1 year')),
-                    'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                    'prenoms' => $identification_resultats->prenoms,
-                    'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
-                    'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
-                    'lieu_de_residence' => $identification_resultats->domicile,
-                    'nationalite' => $identification_resultats->nationalite,
-                    'profession' => $identification_resultats->profession,
-                    'email' => $identification_resultats->email,
-                    'id_operateur' => $identification_resultats->abonnes_operateur_id,
-                    'document_justificatif' => $identification_resultats->libelle_piece,
-                    'numero_document_justificatif' => $identification_resultats->numero_document,
-                ];
-                $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
-                $pdf_certificat_identification = Pdf::loadView('layouts.certificat-identification', $data)->setPaper([0,-10,445,617.5]);
-                /* Envoi de mail */
-                /*if (!empty($identification_resultats->email)) {
-                    $this->sendMailTemplate('layouts.certificat-identification', $data);
-                }*/
-                return $pdf_certificat_identification->download($filename);
+                $date_expiration = date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+                $date_du_jour = date('d/m/Y', time());
+                if($date_du_jour <= $date_expiration) {
+                    /* PDF Download document generation */
+                    $data = [
+                        'title' => 'Certificat d\'identification',
+                        'qrcode' => $this->generateQrBase64(route('checker_certificat_identification') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'numero_dossier' => $identification_resultats->numero_dossier,
+                        'uniqid' => $identification_resultats->uniqid,
+                        'msisdn' => $identification_resultats->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date))),
+                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
+                        'prenoms' => $identification_resultats->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
+                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
+                        'lieu_de_residence' => $identification_resultats->domicile,
+                        'nationalite' => $identification_resultats->nationalite,
+                        'profession' => $identification_resultats->profession,
+                        'email' => $identification_resultats->email,
+                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
+                        'document_justificatif' => $identification_resultats->libelle_piece,
+                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                    ];
+                    $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+                    $pdf_certificat_identification = Pdf::loadView('layouts.certificat-identification', $data)->setPaper([0, -10, 445, 617.5]);
+                    /* Envoi de mail */
+                    /*if (!empty($identification_resultats->email)) {
+                        $this->sendMailTemplate('layouts.certificat-identification', $data);
+                    }*/
+                    return $pdf_certificat_identification->download($filename);
+                }
             }
         }
         /* Retourner vue resultat */
@@ -478,33 +482,41 @@ class IdentificationController extends Controller {
                 ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
                 ->first();
             if (!empty($identification_resultats)) {
-                /* PDF Certficate document generation */
-                return view('layouts.certificat-identification', [
-                    'title' => 'Certificat d\'identification',
-                    'qrcode' => $this->generateQrBase64(route('checker_certificat_identification').'?c='.$identification_resultats->certificate_download_link, 183, 1),
-                    'numero_dossier' => $identification_resultats->numero_dossier,
-                    'uniqid' => $identification_resultats->uniqid,
-                    'msisdn' => $identification_resultats->numero_de_telephone,
-                    'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
-                    'date_expiration' => date('d/m/Y', strtotime(date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)) . ' + 1 year')),
-                    'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                    'prenoms' => $identification_resultats->prenoms,
-                    'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
-                    'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
-                    'lieu_de_residence' => $identification_resultats->domicile,
-                    'nationalite' => $identification_resultats->nationalite,
-                    'profession' => $identification_resultats->profession,
-                    'email' => $identification_resultats->email,
-                    'id_operateur' => $identification_resultats->abonnes_operateur_id,
-                    'document_justificatif' => $identification_resultats->libelle_piece,
-                    'numero_document_justificatif' => $identification_resultats->numero_document,
-                ]);
+                $date_expiration = date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+                $date_du_jour = date('d/m/Y', time());
+                if($date_du_jour <= $date_expiration) {
+                    /* PDF Certficate document generation */
+                    return view('layouts.certificat-identification', [
+                        'title' => 'Certificat d\'identification',
+                        'qrcode' => $this->generateQrBase64(route('checker_certificat_identification') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'numero_dossier' => $identification_resultats->numero_dossier,
+                        'uniqid' => $identification_resultats->uniqid,
+                        'msisdn' => $identification_resultats->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date))),
+                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
+                        'prenoms' => $identification_resultats->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
+                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
+                        'lieu_de_residence' => $identification_resultats->domicile,
+                        'nationalite' => $identification_resultats->nationalite,
+                        'profession' => $identification_resultats->profession,
+                        'email' => $identification_resultats->email,
+                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
+                        'document_justificatif' => $identification_resultats->libelle_piece,
+                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                    ]);
+                }
             }
+            return redirect()->route('consultation_statut_identification')->with([
+                'error' => true,
+                'error_message' => 'Ce certificat n\'est pas ou plus valide !'
+            ]);
         }
         /* Retourner vue resultat */
         return redirect()->route('consultation_statut_identification')->with([
             'error' => true,
-            'error_message' => 'Erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+            'error_message' => 'Certificat incorrect !'
         ]);
     }
 

@@ -52,11 +52,11 @@
 
                                 <div class="one-third" style="width: 30%">
                                     <div class="arrowbox">
-                                        <h2 class="arrowbox-title"><i class="fa fa-file-certificate"></i> &nbsp; Impression du certificat
+                                        <h2 class="arrowbox-title"><i class="fa fa-file-certificate"></i> &nbsp; Obtention du certificat
                                             <span class="arrowbox-title-arrow-back"></span>
                                             <span class="arrowbox-title-arrow-front"></span>
                                         </h2>
-                                        <p>Imprimez votre certificat d'identification ONECI</p>
+                                        <p>Téléchargez et imprimez votre certificat d'identification ONECI</p>
                                     </div>
                                 </div>
                                 <div class="clear"></div>
@@ -82,7 +82,9 @@
                                                 <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
                                                     @if(session()->get('abonne_numeros')[$i]->code_statut==='NUI')
-                                                        @if(session()->get('abonne_numeros')[$i]->cinetpay_data_status==='ACCEPTED')
+                                                        {{-- Si le numéro est identifié, que le paiement est effectué et que la date de validité du paiement n'excède pas 1 an --}}
+                                                        @if(session()->get('abonne_numeros')[$i]->cinetpay_data_status==='ACCEPTED' && !empty(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date) &&
+                                                            date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date))))
                                                             <a href="{{ route('imprimer_certificat_identification').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
                                                         @else
                                                             <div id="certificate-get-payment-link-container" style="display: block;">
