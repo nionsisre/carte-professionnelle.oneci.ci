@@ -210,6 +210,45 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Recherche d'une identification par l'abonné<br/><br/>
+     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    public function statusCheck(Request $request) {
+        /* Valider variables du formulaire */
+        request()->validate([
+            'cli' => ['required', 'string', 'max:100'], // Url du client
+            'msdn' => ['required', 'string', 'max:14'], // Numero de telephone a verifier
+        ]);
+        /* Récupération des numéros de telephone de l'abonné à partir du numéro de téléphone vérifié */
+        $abonne_numeros = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+            ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msdn')))
+            ->get();
+        /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+        if(sizeof($abonne_numeros) > 0) {
+            foreach ($abonne_numeros as $abonne_numero) {
+                if($abonne_numero->code_statut==='NUI') {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Numéro déjà identifié !'
+                    ], Response::HTTP_ACCEPTED);
+                }
+            }
+        }
+        return response([
+            'has_error' => false,
+            'message' => 'Ok'
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
      * Obtention d'un lien de paiement<br/><br/>
      * <b>RedirectResponse</b> getPaymentLink(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>

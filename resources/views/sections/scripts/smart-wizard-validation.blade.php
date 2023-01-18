@@ -4,6 +4,11 @@
     | Validation étapes formulaire
     |--------------------------------------------------------------------------
     --}}
+    {{-- Fonction utile pour compter les nombre d'occurences identiques dans un tableau (pour détecter si quelqu'un entre 2 fois le même numéro --}}
+    function elementCount(arr, element){
+        return arr.filter((currentElement) => currentElement === element).length;
+    };
+    {{-- Initialisation et lancement de la fenetre Pop-up au chargement du Smart-Wizard --}}
     jQuery('#modalInfo').html(
         '<center> <div class="notification-box notification-box-info">\n\
         <div class="modal-header"><h3><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: x-large"></i><br/><br/>Merci de vous rassurer que le numéro est le votre et est accessible. <br/><br/>Il sera utilisé pour les confirmations nécessaires.</h3></div>\n\
@@ -176,6 +181,10 @@
                 {{-- Step 1 --}}
                 case 0:
                     msisdn = document.querySelectorAll('[name="msisdn[]"]');
+                    let msisdn_val_arr = [];
+                    for(let i=0; i<msisdn.length; i++) {
+                        msisdn_val_arr.push(jQuery(msisdn[i]).val());
+                    }
                     telco = document.querySelectorAll('[name="telco[]"]');
                     for(let i=0; i<telco.length; i++) {
                         if(!jQuery(telco[i]).val()) {
@@ -247,8 +256,72 @@
                             jQuery('.blocker').css('z-index','2');
                             jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
+                        } else if (elementCount(msisdn_val_arr, jQuery(msisdn[i]).val()) >= 2) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><h3>Le numéro <br/><b>'+jQuery(msisdn[i]).val().replaceAll(" ", "")+'</b><br/>est repété '+elementCount(msisdn_val_arr, jQuery(msisdn[i]).val())+' fois !</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
                         } else {
-                            jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                            {{-- Verification du statut de chacun des numeros valides --}}
+                            var am = []; {{-- all_msisdn tableau de numéros à identifier --}}
+                            var im = []; {{-- identified_msisdn tableau destiné à recevoir les numéros déjà identifiés --}}
+                            var ims = ''; {{-- identified_msisdn_string variable destinée à recevoir les numéros déjà identifiés --}}
+                            var iml = 0; {{-- identified_msisdn_length variable destinée à recevoir le nombre de numéros déjà identifiés --}}
+                            for(let i=0; i<msisdn.length; i++) {
+                                (function(index){
+                                    let url = '{{ route('verification_statut_numero_deja_verifie') }}';
+                                    let cli = "{{ url()->current() }}";
+                                    $.post({
+                                        type: 'POST',
+                                        url: url,
+                                        async:false,
+                                        data: {
+                                            '_token': "{{ csrf_token() }}",
+                                            cli: cli,
+                                            msdn: msisdn_val_arr[index].replaceAll(" ", ""),
+                                        }, success: function(res) {
+                                            am[index] = [msisdn_val_arr[index].replaceAll(" ", ""), false];
+                                            if(res.has_error){
+                                                im[index] = msisdn_val_arr[index].replaceAll(" ", "");
+                                                ims += '<i class="fa fa-sim-card"></i> &nbsp; '+msisdn_val_arr[index].replaceAll(" ", "")+'<br/>';
+                                            }
+                                            return true;
+                                        }
+                                    });
+                                })(i);
+                            }
+                            iml = im.filter(elm => elm).length;
+                            if(iml > 0) {
+                                jQuery('#modalError').html(
+                                    '<center> <div class="notification-box notification-box-error">\n\
+                                    <div class="modal-header">\
+                                        <h3>Vous avez saisi '+ iml +' numéro(s) déjà identifié(s) :<br/><br/><b>' + ims + '</b><br/>Souhaitez vous effectuer une réclamation ?<br/></h3>\
+                                        <a href="https://www.oneci.ci/nos-services/retard-de-production" class="button"><i class="fa fa-headset text-white"></i> &nbsp; Oui, réclamer ce(s) numéro(s)</a>\
+                                    </div>\n\
+                                    </div><div class="modal-footer">\n\
+                                    <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Non merci, modifier</a></div></center>'
+                                );
+                                jQuery('#modalError').modal({
+                                    escapeClose: false,
+                                    clickClose: false,
+                                    showClose: false
+                                });
+                                jQuery('.blocker').css('z-index','2');
+                                jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                                return false;
+                            } else {
+                                jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                            }
                         }
                     }
                     break;
