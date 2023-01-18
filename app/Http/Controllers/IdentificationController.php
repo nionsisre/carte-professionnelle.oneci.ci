@@ -22,6 +22,7 @@ use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Mail;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Ramsey\Uuid\Type\Integer;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -136,7 +137,7 @@ class IdentificationController extends Controller {
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * Recherche d'une identification par l'abonné<br/><br/>
-     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * <b>RedirectResponse</b> search(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
@@ -210,8 +211,8 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Recherche d'une identification par l'abonné<br/><br/>
-     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * Vérification du statut pour détection de numéro déjà vérifié<br/><br/>
+     * <b>RedirectResponse</b> statusCheck(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
@@ -447,12 +448,11 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Impression du reçu d'identification<br/><br/>
+     * Impression du certificat d'identification<br/><br/>
      * <b>RedirectResponse</b> printCertficate(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
     public function printCertificate(Request $request) {
-        /*$numero_dossier = $request->session()->get('numero_dossier');*/
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
@@ -465,8 +465,8 @@ class IdentificationController extends Controller {
                 ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
                 ->first();
             if (!empty($identification_resultats)) {
-                $date_expiration = date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
-                $date_du_jour = date('d/m/Y', time());
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+                $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
@@ -507,6 +507,10 @@ class IdentificationController extends Controller {
     }
 
     /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Controle par scan QR Code du certificat d'identification<br/><br/>
+     * <b>RedirectResponse</b> checkCertificate(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function checkCertificate(Request $request) {
@@ -521,8 +525,8 @@ class IdentificationController extends Controller {
                 ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
                 ->first();
             if (!empty($identification_resultats)) {
-                $date_expiration = date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
-                $date_du_jour = date('d/m/Y', time());
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+                $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
@@ -587,8 +591,10 @@ class IdentificationController extends Controller {
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * QrCode Base64 Image Generator from String Message<br/><br/>
-     * <b>void</b> generateQrBase64(<b>String</b> $message)<br/>
+     * <b>void</b> generateQrBase64(<b>String</b> $message [, <b>Integer</b> $size, <b>Integer</b> $margin])<br/>
      * @param String $message <p>QR Code message.</p>
+     * @param Integer $size <p>QR Code size (optional).</p>
+     * @param Integer $margin <p>QR Code margin (optional).</p>
      * @return String Return QrCode Base64 value
      */
     private function generateQrBase64($message, $size=300, $margin=10) {
@@ -690,8 +696,8 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
-     * <b>void</b> cinetPayAPI(<b>Array</b> $abonne_infos)<br/>
+     * Get CinetPay API payment link method<br/><br/>
+     * <b>void</b> getPaymentLinkCinetPayAPI(<b>Array</b> $abonne_infos)<br/>
      * @param array $request <p>Client Request object.</p>
      * @return array Value of result
      */
@@ -810,69 +816,69 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function notifyCinetPayAPI(Request $request) {
-        /* Valider variables du formulaire */
-        request()->validate([
-            'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
-            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
-            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
-            'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
-            'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
-            'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
-            'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
-            'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
-            'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
-            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
-        ]);
-        /* Vérification du Token générique */
-        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
-            return redirect()->route('consultation_statut_identification');
-        } else {
-            /* Vérification de l'ID de transaction chez CinetPAY */
-            $payment_data = $this->verifyCinetPayAPI($request->input('ti'));
-            if($payment_data['has_error']) {
-                return redirect()->route('consultation_statut_identification');
-            } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-                    ->get();
-                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
-                    return redirect()->route('consultation_statut_identification');
-                }
-                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                $abonne_numero = $abonne_numeros[$request->input('idx')];
-                DB::table('abonnes_numeros')
-                    ->where('abonne_id','=', $abonne_numero->abonne_id)
-                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
-                    ->update([
-                        'transaction_id' => $payment_data['transaction_id'],
-                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
-                        'cinetpay_code' => $payment_data['data']['code'],
-                        'cinetpay_message' => $payment_data['data']['message'],
-                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
-                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
-                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
-                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
-                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
-                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
-                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
-                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
-                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
-                    ]);
-                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
-            }
-        }
+        /* @TODO: Mettre à jour les informations de paiement fournie par CinetPAY */
+//        request()->validate([
+//            'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
+//            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
+//            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
+//            'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
+//            'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
+//            'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
+//            'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
+//            'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
+//            'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
+//            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
+//        ]);
+//        /* Vérification du Token générique */
+//        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
+//            return redirect()->route('consultation_statut_identification');
+//        } else {
+//            /* Vérification de l'ID de transaction chez CinetPAY */
+//            $payment_data = $this->verifyCinetPayAPI($request->input('ti'));
+//            if($payment_data['has_error']) {
+//                return redirect()->route('consultation_statut_identification');
+//            } else {
+//                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+//                $abonne_numeros = DB::table('abonnes_numeros')
+//                    ->select('*')
+//                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+//                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+//                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+//                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+//                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+//                    ->get();
+//                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+//                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
+//                    return redirect()->route('consultation_statut_identification');
+//                }
+//                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+//                $abonne_numero = $abonne_numeros[$request->input('idx')];
+//                DB::table('abonnes_numeros')
+//                    ->where('abonne_id','=', $abonne_numero->abonne_id)
+//                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
+//                    ->update([
+//                        'transaction_id' => $payment_data['transaction_id'],
+//                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+//                        'cinetpay_code' => $payment_data['data']['code'],
+//                        'cinetpay_message' => $payment_data['data']['message'],
+//                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+//                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+//                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
+//                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+//                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
+//                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+//                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+//                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+//                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
+//                    ]);
+//                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+//            }
+//        }
     }
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Obtention d'un certificat d'identification ONECI<br/><br/>
+     * retour de Paiement par l'API CinetPay<br/><br/>
      * <b>RedirectResponse</b> returnCinetPayAPI(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
@@ -883,7 +889,7 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Obtention d'un certificat d'identification ONECI<br/><br/>
+     * Annulation de Paiement par l'API CinetPay<br/><br/>
      * <b>RedirectResponse</b> cancelCinetPayAPI(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
