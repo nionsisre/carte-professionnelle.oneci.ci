@@ -306,7 +306,7 @@
                                     '<center> <div class="notification-box notification-box-error">\n\
                                     <div class="modal-header">\
                                         <h3>Vous avez saisi '+ iml +' numéro(s) déjà identifié(s) :<br/><br/><b>' + ims + '</b><br/>Souhaitez vous effectuer une réclamation ?<br/></h3>\
-                                        <a href="https://www.oneci.ci/nos-services/retard-de-production" class="button"><i class="fa fa-headset text-white"></i> &nbsp; Oui, réclamer ce(s) numéro(s)</a>\
+                                        <a href="https://www.oneci.ci/nos-services/retard-de-production?tr=abonne-mobile" class="button"><i class="fa fa-headset text-white"></i> &nbsp; Oui, réclamer ce(s) numéro(s)</a>\
                                     </div>\n\
                                     </div><div class="modal-footer">\n\
                                     <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Non merci, modifier</a></div></center>'
