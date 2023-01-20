@@ -25,6 +25,11 @@
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
+    @if(config('services.sms.enabled'))
+        @if(session()->has('abonne_numeros'))
+            @include('sections.scripts.otp-verification')
+        @endif
+    @endif
     @if(session()->has('abonne_numeros'))
         @include('sections.scripts.payment-processing')
     @endif

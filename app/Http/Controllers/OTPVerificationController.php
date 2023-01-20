@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -150,8 +151,60 @@ class OTPVerificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function verifyOTP(Request $request) {
-        dd('ok');
-        return redirect()->route('consultation_statut_identification');
+        /* Valider variables du formulaire */
+        $validator = Validator::make($request->all(), [
+            'cli' => ['required', 'string', 'max:100'], // Url du client
+            'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
+            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
+            'otp-code' => ['required', 'string', 'min:6', 'max:6'], // Code OTP de l'abonne a verifier
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('consultation_statut_identification')->withErrors($validator)->withInput();
+        }
+        /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+        $abonne_numeros = DB::table('abonnes_numeros')
+            ->select('*')
+            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+            ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+            ->get();
+        /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
+        $abonne_numero = $abonne_numeros[$request->input('idx')];
+        if($abonne_numero->code_statut==='NNV') {
+            /* Obtention des messages OTP envoyés à ce numéro du jour (validité 1 jour) */
+            $otp_history_messages = AbonnesNumerosOtp::where('form_number', '=', $request->input('fn'))
+                ->where('msisdn', '=', $abonne_numero->numero_de_telephone)
+                ->where('otp_verification_status', '=', '1')
+                ->where('created_at', '>', Carbon::today())
+                ->orderByDesc('id')
+                ->first();
+            /* Comparaison entre le code OTP soumis et le dernier code OTP envoyé à ce numéro */
+            if($otp_history_messages->otp_code == $request->input('otp-code')) {
+                /* Changement de statut du numéro et ajout des informations OTP sur la ligne du numéro de téléphone */
+                $otp_history_messages->otp_verification_status = '2';
+                $otp_history_messages->save();
+                DB::table('abonnes_numeros')
+                    ->where('abonne_id','=', $abonne_numero->abonne_id)
+                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
+                    ->update([
+                        'otp_code' => $otp_history_messages->otp_code,
+                        'otp_sms' => $otp_history_messages->otp_sms_message,
+                        'abonnes_statut_id' => '2',
+                    ]);
+                /* Récupération des numéros de telephone de l'abonné à jour du numéro de dossier */
+                $abonne_numeros = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->get();
+            }
+        }
+        return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
     }
 
     /**

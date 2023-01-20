@@ -183,6 +183,14 @@ class IdentificationController extends Controller {
             if(sizeof($abonne_numeros) !== 0) {
                 for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
                 session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+                /* Si le service d'envoi de SMS est actif */
+                if(config('services.sms.enabled')) {
+                    /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+                    for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                        $otp_msisdn_tokens[$i] = $this->createToken(0);
+                    }
+                    session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+                }
                 return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             } else {
                 return redirect()->route('consultation_statut_identification');
@@ -201,7 +209,14 @@ class IdentificationController extends Controller {
                 /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
                 for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
                 session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
-
+                /* Si le service d'envoi de SMS est actif */
+                if(config('services.sms.enabled')) {
+                    /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+                    for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                        $otp_msisdn_tokens[$i] = $this->createToken(0);
+                    }
+                    session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+                }
                 return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             }
         }

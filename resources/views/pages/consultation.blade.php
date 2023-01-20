@@ -61,6 +61,15 @@
                                 </div>
                                 <div class="clear"></div>
                             </section><br/>
+                            @if(session()->has('error') && session()->get('error'))
+                                <center>
+                                    <div class="notification-box notification-box-error">
+                                        <div class="modal-header">
+                                            <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
+                                        </div>
+                                    </div>
+                                </center>
+                            @endif
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
                             <h4><i class="fa fa-user fa-3x text-black"></i><br/><br/>Abonné Mobile</h4>
                             <br/><div>
@@ -91,6 +100,32 @@
                                                                 <span id="certificate-get-payment-link-loader-{{ $i }}" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
                                                                 <a id="certificate-get-payment-link-{{ $i }}" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
                                                             </div>
+                                                        @endif
+                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='NNV')
+                                                        @if(config('services.sms.enabled'))
+                                                        <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
+                                                            <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
+                                                            <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
+                                                        </div>
+                                                        <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                            {{ csrf_field() }}
+                                                            <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
+                                                            <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
+                                                            <input type="hidden" name="idx" value="{{ $i }}">
+                                                            <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
+                                                                <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
+                                                                    Code de vérification reçu
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="one-third column-last">
+                                                                <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
+                                                                    <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
+                                                                </button>
+                                                            </div>
+                                                        </form>
                                                         @endif
                                                     @endif
                                                 </td>
