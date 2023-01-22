@@ -61,15 +61,6 @@
                                 </div>
                                 <div class="clear"></div>
                             </section><br/>
-                            @if(session()->has('error') && session()->get('error'))
-                                <center>
-                                    <div class="notification-box notification-box-error">
-                                        <div class="modal-header">
-                                            <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
-                                        </div>
-                                    </div>
-                                </center>
-                            @endif
                             <!--<i class="fad fa-search" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>-->
                             <h4><i class="fa fa-user fa-3x text-black"></i><br/><br/>Abonné Mobile</h4>
                             <br/><div>
@@ -77,6 +68,33 @@
                                     Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $abonne_numeros[0]->numero_dossier }}</b><br/><br/>
                                     Document justificatif : &nbsp; <br/><b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $abonne_numeros[0]->libelle_piece }}</b><br/>
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
+                                        @if(session()->has('success'))
+                                            <center>
+                                                <div class="notification-box notification-box-success">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #1b5e20"><i class="fa fa-check-circle mr10"></i> &nbsp; {{ session()->get('success')['message'] }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
+                                        @if(session()->has('error') && session()->get('error'))
+                                            <center>
+                                                <div class="notification-box notification-box-error">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
+                                        @if($errors->any())
+                                            <center>
+                                                <div class="notification-box notification-box-error">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
                                         <thead>
                                         <tr style="font-size: 0.75em;">
                                             <th scope="col">Numéro(s) de téléphone</td>
@@ -109,7 +127,7 @@
                                                         </div>
                                                         <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
                                                             {{ csrf_field() }}
-                                                            <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
+                                                            <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                             <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
                                                             <input type="hidden" name="idx" value="{{ $i }}">
                                                             <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
@@ -127,6 +145,8 @@
                                                             </div>
                                                         </form>
                                                         @endif
+                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='DAA')
+                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
                                                     @endif
                                                 </td>
                                             </tr>
@@ -171,7 +191,7 @@
                                 </div>
                             </center>
                         @endif
-                        @if($errors->has('form-number') || $errors->has('msisdn'))
+                        @if($errors->any())
                             <center>
                                 <div class="notification-box notification-box-error">
                                     <div class="modal-header">
@@ -188,7 +208,7 @@
                                 <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
-                                        Entrez le numéro du dossier reçu lors de votre identification<span style="color: #d9534f">*</span> :
+                                        Entrez le numéro de validation reçu lors de votre identification<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
                                         <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="10" minlength="10" style="width: 23.4em; text-align: center" value="{{ old('form-number') }}" autocomplete="off" required="required"/>

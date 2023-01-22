@@ -66,35 +66,16 @@ class OTPVerificationController extends Controller {
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                     ->get();
                 /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
-                $msisdn_infos = $abonne_numeros[$request->input('idx')];
-                /* Vérification de l'existence d'anciennes tentatives en base */
-                $otp_attempts = AbonnesNumerosOtp::where('msisdn', '=', $msisdn_infos->numero_de_telephone)
-                    ->where('form_number', '=', $request->input('fn'))
-                    ->where('created_at', '>', Carbon::today())
-                    ->orderByDesc('id')
-                    ->get();
-                if (sizeof($otp_attempts) <= 0) { /* Aucun SMS précédemment envoyé pour ce numéro de téléphone ou quota journalier non atteint */
-                    /* SMS sending using MTN API */
-                    $sms_sent = $this->sendSMS($msisdn_infos);
-                    if ($sms_sent['has_error']) {
-                        return response([
-                            'has_error' => true,
-                            'message' => 'Une erreur est survenue lors de l\'envoi du SMS, veuillez actualiser la page et/ou réessayer plus tard SVP...',
-                            'message_service' => $sms_sent['message'],
-                            'remaining_sec' => '120'
-                        ], Response::HTTP_SERVICE_UNAVAILABLE);
-                    } else {
-                        return response([
-                            'has_error' => false,
-                            'message' => 'SMS envoyé avec succès !',
-                            'remaining_sec' => '120'
-                        ], Response::HTTP_OK);
-                    }
-                } elseif (sizeof($otp_attempts) <= $this::MAX_ATTEMPTS) {
-                    if ($otp_attempts[0]->otp_verification_status == 1) {
-                        $last_otp_date = strtotime($otp_attempts[0]->created_at);
-                        $current_date = time();
-                        if (($current_date - $last_otp_date)/60 > sizeof($otp_attempts) * 2) { // Check If Time interval reached (OTP sent after 2 minutes * number of attempts)
+                if(!empty($abonne_numeros)) {
+                    $msisdn_infos = $abonne_numeros[$request->input('idx')];
+                    if (!empty($msisdn_infos) && property_exists($msisdn_infos, 'numero_de_telephone') && $msisdn_infos->code_statut === 'NNV') {
+                        /* Vérification de l'existence d'anciennes tentatives en base */
+                        $otp_attempts = AbonnesNumerosOtp::where('msisdn', '=', $msisdn_infos->numero_de_telephone)
+                            ->where('form_number', '=', $request->input('fn'))
+                            ->where('created_at', '>', Carbon::today())
+                            ->orderByDesc('id')
+                            ->get();
+                        if (sizeof($otp_attempts) <= 0) { /* Aucun SMS précédemment envoyé pour ce numéro de téléphone ou quota journalier non atteint */
                             /* SMS sending using MTN API */
                             $sms_sent = $this->sendSMS($msisdn_infos);
                             if ($sms_sent['has_error']) {
@@ -111,27 +92,50 @@ class OTPVerificationController extends Controller {
                                     'remaining_sec' => '120'
                                 ], Response::HTTP_OK);
                             }
-                        } else {
-                            /* Time interval between two OTP sent is not reached */
+                        } elseif (sizeof($otp_attempts) <= $this::MAX_ATTEMPTS) {
+                            if ($otp_attempts[0]->otp_verification_status == 1) {
+                                $last_otp_date = strtotime($otp_attempts[0]->created_at);
+                                $current_date = time();
+                                if (($current_date - $last_otp_date) / 60 > sizeof($otp_attempts) * 2) { // Check If Time interval reached (OTP sent after 2 minutes * number of attempts)
+                                    /* SMS sending using MTN API */
+                                    $sms_sent = $this->sendSMS($msisdn_infos);
+                                    if ($sms_sent['has_error']) {
+                                        return response([
+                                            'has_error' => true,
+                                            'message' => 'Une erreur est survenue lors de l\'envoi du SMS, veuillez actualiser la page et/ou réessayer plus tard SVP...',
+                                            'message_service' => $sms_sent['message'],
+                                            'remaining_sec' => '120'
+                                        ], Response::HTTP_SERVICE_UNAVAILABLE);
+                                    } else {
+                                        return response([
+                                            'has_error' => false,
+                                            'message' => 'SMS envoyé avec succès !',
+                                            'remaining_sec' => '120'
+                                        ], Response::HTTP_OK);
+                                    }
+                                } else {
+                                    /* Time interval between two OTP sent is not reached */
+                                    return response([
+                                        'has_error' => true,
+                                        'message' => 'Temps d\'intervalle avant l\'envoi d\'un nouveau code non atteint...',
+                                        'remaining_sec' => round(((sizeof($otp_attempts) * 2) - (($current_date - $last_otp_date) / 60)) * 60)
+                                    ], Response::HTTP_SERVICE_UNAVAILABLE);
+                                }
+                            } else {
+                                return response([
+                                    'has_error' => true,
+                                    'message' => 'Vous avez déjà vérifié ce numéro !',
+                                    'remaining_sec' => '480'
+                                ], Response::HTTP_CONFLICT);
+                            }
+                        } else { /* Nombre de SMS précédemment envoyés et supérieurs au maximum journalier pour ce numéro */
                             return response([
                                 'has_error' => true,
-                                'message' => 'Temps d\'intervalle avant l\'envoi d\'un nouveau code non atteint...',
-                                'remaining_sec' => round(( (sizeof($otp_attempts) * 2) - (($current_date - $last_otp_date)/60) ) * 60)
-                            ], Response::HTTP_SERVICE_UNAVAILABLE);
+                                'message' => 'Vous avez atteint votre quota de SMS de vérification, veuillez réessayer un autre jour SVP',
+                                'remaining_sec' => '120'
+                            ], Response::HTTP_TOO_MANY_REQUESTS);
                         }
-                    } else {
-                        return response([
-                            'has_error' => true,
-                            'message' => 'Vous avez déjà vérifié ce numéro !',
-                            'remaining_sec' => '480'
-                        ], Response::HTTP_CONFLICT);
                     }
-                } else { /* Nombre de SMS précédemment envoyés et supérieurs au maximum journalier pour ce numéro */
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Vous avez atteint votre quota de SMS de vérification, veuillez réessayer un autre jour SVP',
-                        'remaining_sec' => '120'
-                    ], Response::HTTP_TOO_MANY_REQUESTS);
                 }
             }
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
@@ -141,6 +145,11 @@ class OTPVerificationController extends Controller {
                     'remaining_sec' => '120'
                 ], Response::HTTP_UNAUTHORIZED);
         }
+        return response([
+            'has_error' => true,
+            'message' => '...',
+            'remaining_sec' => '120'
+        ], Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -171,40 +180,53 @@ class OTPVerificationController extends Controller {
             ->where('abonnes.numero_dossier', '=', $request->input('fn'))
             ->get();
         /* Récupération du numéro de telephone à vérifier via OTP grâce à l'index reçu */
-        $abonne_numero = $abonne_numeros[$request->input('idx')];
-        if($abonne_numero->code_statut==='NNV') {
-            /* Obtention des messages OTP envoyés à ce numéro du jour (validité 1 jour) */
-            $otp_history_messages = AbonnesNumerosOtp::where('form_number', '=', $request->input('fn'))
-                ->where('msisdn', '=', $abonne_numero->numero_de_telephone)
-                ->where('otp_verification_status', '=', '1')
-                ->where('created_at', '>', Carbon::today())
-                ->orderByDesc('id')
-                ->first();
-            /* Comparaison entre le code OTP soumis et le dernier code OTP envoyé à ce numéro */
-            if($otp_history_messages->otp_code == $request->input('otp-code')) {
-                /* Changement de statut du numéro et ajout des informations OTP sur la ligne du numéro de téléphone */
-                $otp_history_messages->otp_verification_status = '2';
-                $otp_history_messages->save();
-                DB::table('abonnes_numeros')
-                    ->where('abonne_id','=', $abonne_numero->abonne_id)
-                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
-                    ->update([
-                        'otp_code' => $otp_history_messages->otp_code,
-                        'otp_sms' => $otp_history_messages->otp_sms_message,
-                        'abonnes_statut_id' => '2',
-                    ]);
-                /* Récupération des numéros de telephone de l'abonné à jour du numéro de dossier */
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-                    ->get();
+        if(!empty($abonne_numeros)) {
+            $abonne_numero = $abonne_numeros[$request->input('idx')];
+            if (!empty($abonne_numero) && property_exists($abonne_numero, 'code_statut') && $abonne_numero->code_statut === 'NNV') {
+                /* Obtention des messages OTP envoyés à ce numéro du jour (validité 1 jour) */
+                $otp_history_messages = AbonnesNumerosOtp::where('form_number', '=', $request->input('fn'))
+                    ->where('msisdn', '=', $abonne_numero->numero_de_telephone)
+                    ->where('otp_verification_status', '=', '1')
+                    ->where('created_at', '>', Carbon::today())
+                    ->orderByDesc('id')
+                    ->first();
+                /* Comparaison entre le code OTP soumis et le dernier code OTP envoyé à ce numéro */
+                if (isset($otp_history_messages->otp_code) && $otp_history_messages->otp_code == $request->input('otp-code')) {
+                    /* Changement de statut du numéro et ajout des informations OTP sur la ligne du numéro de téléphone */
+                    $otp_history_messages->otp_verification_status = '2';
+                    $otp_history_messages->save();
+                    DB::table('abonnes_numeros')
+                        ->where('abonne_id', '=', $abonne_numero->abonne_id)
+                        ->where('numero_de_telephone', '=', $abonne_numero->numero_de_telephone)
+                        ->update([
+                            'otp_code' => $otp_history_messages->otp_code,
+                            'otp_sms' => $otp_history_messages->otp_sms_message,
+                            'abonnes_statut_id' => '2',
+                        ]);
+                    /* Récupération des numéros de telephone de l'abonné à jour du numéro de dossier */
+                    $abonne_numeros = DB::table('abonnes_numeros')
+                        ->select('*')
+                        ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                        ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                        ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                        ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                        ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                        ->get();
+                    if ($request->input('cli') === route('accueil')) {
+                        return redirect()->route('accueil')->with('abonne_numeros', $abonne_numeros)
+                            ->with('success', ['message' => 'Numéro de téléphone vérifié avec succès !']);
+                    } else {
+                        return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros)
+                            ->with('success', ['message' => 'Numéro de téléphone vérifié avec succès !']);
+                    }
+                }
             }
         }
-        return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+        if ($request->input('cli') === route('accueil')) {
+            return redirect()->route('accueil')->with('abonne_numeros', $abonne_numeros)->withErrors(['not-found' => 'Code OTP Incorrect !']);
+        } else {
+            return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros)->withErrors(['not-found' => 'Code OTP Incorrect !']);
+        }
     }
 
     /**

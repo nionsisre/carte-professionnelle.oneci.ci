@@ -101,20 +101,22 @@ class IdentificationController extends Controller {
             $msisdn[$i] = $msisdn[$i] . ' (' . AbonnesOperateur::find($telco[$i])->libelle_operateur . ') | ';
         }
         /* Envoi de mail */
-        $this->sendMailTemplate('layouts.recu-identification', [
-            'title' => 'Reçu d\'identification',
-            'qrcode' => $this->generateQrBase64(route('obtenir_info_abonne').'?f='.$abonne->numero_dossier.'&t='.$abonne->uniqid),
-            'numero_dossier' => $abonne->numero_dossier,
-            'uniqid' => $abonne->uniqid,
-            'msisdn_list' => $msisdn,
-            'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
-            'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
-            'lieu_de_residence' => $abonne->domicile,
-            'nationalite' => $abonne->nationalite,
-            'profession' => $abonne->profession,
-            'email' => $abonne->email,
-            'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
-        ]);
+        if(!empty($request->input('email'))) {
+            $this->sendMailTemplate('layouts.recu-identification', [
+                'title' => 'Reçu d\'identification',
+                'qrcode' => $this->generateQrBase64(route('obtenir_info_abonne') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
+                'numero_dossier' => $abonne->numero_dossier,
+                'uniqid' => $abonne->uniqid,
+                'msisdn_list' => $msisdn,
+                'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
+                'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
+                'lieu_de_residence' => $abonne->domicile,
+                'nationalite' => $abonne->nationalite,
+                'profession' => $abonne->profession,
+                'email' => $abonne->email,
+                'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
+            ]);
+        }
         /* Obtention des informations sur l'abonné et ses numéros */
         $abonne_numeros = DB::table('abonnes_numeros')
             ->select('*')
@@ -145,7 +147,7 @@ class IdentificationController extends Controller {
      */
     public function search(Request $request) {
         /* Search according if it's a 'Form POST search' or a 'Url GET search' */
-        if($request->get('t') === null && $request->get('f') === null) {
+        if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
                 $this->verifyGoogleRecaptchaV3($request)['error'] ??
@@ -196,9 +198,9 @@ class IdentificationController extends Controller {
                 }
                 return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             } else {
-                return redirect()->route('consultation_statut_identification');
+                return redirect()->route('consultation_statut_identification')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
-        } elseif ($request->get('f') != null && $request->get('t') != null) {
+        } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Url GET search */
             $abonne_numeros = DB::table('abonnes_numeros')
                 ->select('*')
@@ -208,19 +210,23 @@ class IdentificationController extends Controller {
                 ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                 ->where('abonnes.numero_dossier', '=', $request->get('f'))
                 ->get();
-            if ($abonne_numeros[0]->uniqid === $request->get('t')) {
-                /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-                for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
-                session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
-                /* Si le service d'envoi de SMS est actif */
-                if(config('services.sms.enabled')) {
-                    /* Génération d'un token OTP pour chaque numéro de téléphone en session */
-                    for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
-                        $otp_msisdn_tokens[$i] = $this->createToken(0);
+            if(sizeof($abonne_numeros) !== 0) {
+                if ($abonne_numeros[0]->uniqid === $request->get('t')) {
+                    /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
+                    for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
+                    session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+                    /* Si le service d'envoi de SMS est actif */
+                    if (config('services.sms.enabled')) {
+                        /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+                        for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                            $otp_msisdn_tokens[$i] = $this->createToken(0);
+                        }
+                        session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
                     }
-                    session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+                    return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
                 }
-                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+            } else {
+                return redirect()->route('consultation_statut_identification')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         }
 
@@ -297,7 +303,7 @@ class IdentificationController extends Controller {
                     'message' => 'Token invalide ! Veuillez actualiser la page et/ou réessayer plus tard...'
                 ], Response::HTTP_UNAUTHORIZED);
             } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
                 $abonne_numeros = DB::table('abonnes_numeros')
                     ->select('*')
                     ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
@@ -370,7 +376,7 @@ class IdentificationController extends Controller {
             if($payment_data['has_error']) {
                 return redirect()->route('consultation_statut_identification');
             } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
                 $abonne_numeros = DB::table('abonnes_numeros')
                     ->select('*')
                     ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
@@ -449,10 +455,6 @@ class IdentificationController extends Controller {
                 ];
                 $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
                 $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
-                /* Envoi de mail */
-                /*if (!empty($identification_resultats->email)) {
-                    $this->sendMailTemplate('layouts.recu-identification', $data);
-                }*/
                 /*$request->session()->remove('numero_dossier');*/
                 return $pdf_recu_identification->download($filename);
             }
@@ -630,7 +632,7 @@ class IdentificationController extends Controller {
             ->build();
             /*
             ->logoPath(URL::asset('assets/images/logo-o-white.svg'))
-            ->labelText('Numéro de dossier : '.$identification_resultats->numero_dossier)
+            ->labelText('Numéro de validation : '.$identification_resultats->numero_dossier)
             ->labelFont(new NotoSans(20))
             ->labelAlignment(new LabelAlignmentCenter())
             */
@@ -678,13 +680,13 @@ class IdentificationController extends Controller {
      */
     private function verifyGoogleRecaptchaV3(Request $request) {
         /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        if (App::environment(['staging', 'production'])) {
+        if(config('services.recaptcha.enabled')) {
             $client = new Client();
             try {
                 $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
                     'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
                     'form_params' => [
-                        'secret' => env('RECAPTCHA_SECRET'), /* config('services.recaptcha.secret'), */
+                        'secret' => config('services.recaptcha.secret'),
                         'response' => $request->input('g-recaptcha-response'),
                         'remoteip' => $request->ip()
                     ]
@@ -856,7 +858,7 @@ class IdentificationController extends Controller {
 //            if($payment_data['has_error']) {
 //                return redirect()->route('consultation_statut_identification');
 //            } else {
-//                /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
+//                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
 //                $abonne_numeros = DB::table('abonnes_numeros')
 //                    ->select('*')
 //                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')

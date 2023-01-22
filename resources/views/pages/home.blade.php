@@ -24,26 +24,6 @@
             <div class="column-last">
                 <h2><i class="fa fa-sim-card text-black mr10"></i> &nbsp; Identification du numéro de téléphone en ligne
                 </h2>
-                @if($errors->has('first-name') || $errors->has('spouse-name') || $errors->has('last-name') || $errors->has('birth-date') ||
-                    $errors->has('residence') || $errors->has('profession') || $errors->has('country') || $errors->has('email') ||
-                    $errors->has('doc-type') || $errors->has('pdf_doc') || $errors->has('document-number') || $errors->has('document-expiry'))
-                    <center>
-                        <div class="notification-box notification-box-error">
-                            <div class="modal-header">
-                                <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
-                            </div>
-                        </div>
-                    </center>
-                @endif
-                @if(session()->has('error') && session()->get('error'))
-                    <center>
-                        <div class="notification-box notification-box-error">
-                            <div class="modal-header">
-                                <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
-                            </div>
-                        </div>
-                    </center>
-                @endif
                 @if(session()->has('abonne_numeros'))
                     @if(!config('services.sms.enabled'))
                         <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
@@ -74,6 +54,33 @@
                                     <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
                                     Veuillez procéder à la vérification de vos numéros de téléphone ci-dessous afin que votre demande fasse l'objet d'une analyse par l'ONECI avant d'être validée :<br/><br>
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
+                                        @if(session()->has('success'))
+                                            <center>
+                                                <div class="notification-box notification-box-success">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #1b5e20"><i class="fa fa-check-circle mr10"></i> &nbsp; {{ session()->get('success')['message'] }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
+                                        @if(session()->has('error') && session()->get('error'))
+                                            <center>
+                                                <div class="notification-box notification-box-error">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
+                                        @if($errors->any())
+                                            <center>
+                                                <div class="notification-box notification-box-error">
+                                                    <div class="modal-header">
+                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
+                                                    </div>
+                                                </div>
+                                            </center>
+                                        @endif
                                         <thead>
                                         <tr style="font-size: 0.75em;">
                                             <th scope="col">Numéro(s) de téléphone</td>
@@ -94,7 +101,7 @@
                                                     </div>
                                                     <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
                                                         {{ csrf_field() }}
-                                                        <input type="hidden" name="cli" value="{{ env('APP_URL') }}">
+                                                        <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                         <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
                                                         <input type="hidden" name="idx" value="{{ $i }}">
                                                         <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
@@ -125,7 +132,7 @@
                                         L'ONECI vous remercie !
                                         <br/><br/><br/><br/>
                                 </div>
-                                <!--<a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>-->
+                                <a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
                                 <a href="{{ route('accueil') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
                                 <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
@@ -133,6 +140,24 @@
                     @endif
                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                 @else
+                    @if($errors->any())
+                        <center>
+                            <div class="notification-box notification-box-error">
+                                <div class="modal-header">
+                                    <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
+                                </div>
+                            </div>
+                        </center>
+                    @endif
+                    @if(session()->has('error') && session()->get('error'))
+                        <center>
+                            <div class="notification-box notification-box-error">
+                                <div class="modal-header">
+                                    <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
+                                </div>
+                            </div>
+                        </center>
+                    @endif
                     <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
                         téléphone(s) en ligne<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">

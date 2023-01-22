@@ -18,8 +18,8 @@
     @include('sections.scripts.dynamic-msisdn')
     @include('sections.scripts.smart-wizard-validation')
     @include('sections.scripts.copy-to-clipboard')
-    @if(config('services.sms.enabled'))
-        @if(session()->has('abonne_numeros'))
+    @if(session()->has('abonne_numeros'))
+        @if(config('services.sms.enabled'))
             @include('sections.scripts.otp-verification')
         @endif
     @endif
@@ -29,13 +29,11 @@
     @endif
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
-    @if(config('services.sms.enabled'))
-        @if(session()->has('abonne_numeros'))
+    @if(session()->has('abonne_numeros'))
+        @if(config('services.sms.enabled'))
             @include('sections.scripts.otp-verification')
         @endif
-    @endif
-    @if(config('services.cinetpay.enabled'))
-        @if(session()->has('abonne_numeros'))
+        @if(config('services.cinetpay.enabled'))
             @include('sections.scripts.payment-processing')
         @endif
     @endif
