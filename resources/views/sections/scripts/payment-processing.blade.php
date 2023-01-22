@@ -46,7 +46,7 @@
         jQuery("#certificate-get-payment-link-{{ $i }}").show();
     }
     jQuery("#certificate-get-payment-link-{{ $i }}").click(function () {
-        var cli = "{{ env('APP_URL') }}";
+        var cli = "{{ url()->current() }}";
         var fn = "{{ session()->get('abonne_numeros')[0]->numero_dossier }}";
         var idx = {{ $i }};
         $.ajax({

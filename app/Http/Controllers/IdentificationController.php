@@ -42,9 +42,11 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function submit(Request $request) {
-        /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
-        $this->verifyGoogleRecaptchaV3($request)['error'] ??
-            redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+        /* Si le service de vérification Google reCAPTCHA v3 est actif */
+        if(config('services.recaptcha.enabled')) {
+            $this->verifyGoogleRecaptchaV3($request)['error'] ??
+                redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+        }
         /* Valider variables du formulaire */
         request()->validate([
             'first-name' => ['required', 'string', 'max:70'],
@@ -144,10 +146,11 @@ class IdentificationController extends Controller {
     public function search(Request $request) {
         /* Search according if it's a 'Form POST search' or a 'Url GET search' */
         if($request->get('t') === null && $request->get('f') === null) {
-            /* Form POST search */
-            /* Google reCAPTCHA v3 Verification (works in "Staging" and "Production" only, not "Local" environment) */
+            /* Si le service de vérification Google reCAPTCHA v3 est actif */
+            if(config('services.recaptcha.enabled')) {
                 $this->verifyGoogleRecaptchaV3($request)['error'] ??
-                redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+                    redirect()->route('consultation_statut_identification')->with($this->verifyGoogleRecaptchaV3($request));
+            }
             /* Search with msisdn or form number */
             $search_with_msisdn = $request->input('tsch');
             if ($search_with_msisdn == '0') {

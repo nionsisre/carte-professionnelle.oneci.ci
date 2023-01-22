@@ -31,11 +31,16 @@ return [
     ],
 
     'recaptcha' => [
-        'secret' => env('RECAPTCHA_SECRET', '6Le0UkweAAAAADnzJbqGAOAiDvVraUShf0T5EXXl'),
+        'enabled' => env('RECAPTCHA_ENABLED', false),
+        'secret' => env('RECAPTCHA_SECRET', ''),
     ],
 
     'sms' => [
         'enabled' => env('SMS_SERVICE_ENABLED', false),
+    ],
+
+    'cinetpay' => [
+        'enabled' => env('CINETPAY_API_ENABLED', false),
     ],
 
 ];

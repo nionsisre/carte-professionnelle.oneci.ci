@@ -9,7 +9,9 @@
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
 @if(Route::is('accueil'))
-    @include('sections.scripts.recaptcha')
+    @if(config('services.recaptcha.enabled'))
+        @include('sections.scripts.recaptcha')
+    @endif
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
@@ -22,7 +24,9 @@
         @endif
     @endif
 @elseif(Route::is('consultation_statut_identification'))
-    @include('sections.scripts.recaptcha')
+    @if(config('services.recaptcha.enabled'))
+        @include('sections.scripts.recaptcha')
+    @endif
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
     @if(config('services.sms.enabled'))
@@ -30,8 +34,10 @@
             @include('sections.scripts.otp-verification')
         @endif
     @endif
-    @if(session()->has('abonne_numeros'))
-        @include('sections.scripts.payment-processing')
+    @if(config('services.cinetpay.enabled'))
+        @if(session()->has('abonne_numeros'))
+            @include('sections.scripts.payment-processing')
+        @endif
     @endif
 @endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>
