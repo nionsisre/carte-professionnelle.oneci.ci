@@ -9,6 +9,7 @@ use App\Models\AbonnesOperateur;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client;
@@ -408,6 +409,7 @@ class IdentificationController extends Controller {
                         'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
                         'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
                         'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
+                        'updated_at' => Carbon::today()
                     ]);
                 return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             }

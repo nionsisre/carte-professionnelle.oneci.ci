@@ -108,45 +108,88 @@
                                                 <td style="vertical-align: middle;"><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}</b> ({{ session()->get('abonne_numeros')[$i]->libelle_operateur }})</td>
                                                 <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
-                                                    @if(session()->get('abonne_numeros')[$i]->code_statut==='NUI')
+                                                    @if(session()->get('abonne_numeros')[$i]->code_statut==='NNV')
+                                                        @if(config('services.sms.enabled'))
+                                                            <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
+                                                                <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
+                                                                <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
+                                                            </div>
+                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                                {{ csrf_field() }}
+                                                                <input type="hidden" name="cli" value="{{ url()->current() }}">
+                                                                <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
+                                                                <input type="hidden" name="idx" value="{{ $i }}">
+                                                                <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
+                                                                    <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
+                                                                        Code de vérification reçu
+                                                                    </label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="one-third column-last">
+                                                                    <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
+                                                                        <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        @endif
+                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='DAA')
+                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
+                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='NUI')
                                                         {{-- Si le numéro est identifié, que le paiement est effectué et que la date de validité du paiement n'excède pas 1 an --}}
                                                         @if(session()->get('abonne_numeros')[$i]->cinetpay_data_status==='ACCEPTED' && !empty(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date) &&
                                                             date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date))))
-                                                            <a href="{{ route('imprimer_certificat_identification').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                            {{-- Si le jour du paiement n'est pas encore passé l'otp est inactif --}}
+                                                            @if(date('Y-m-d', time()) === date('Y-m-d', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date)))
+                                                                <a href="{{ route('imprimer_certificat_identification').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                            @else
+                                                                {{-- Sinon activation de l'otp avant chaque téléchargement --}}
+                                                                <a id="cert-dl-link-{{ $i }}" href="javascript:void(0);" class="button otp-send-link" style="margin-bottom: 0"><i class="fa fa-award text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                                <div id="otp-container-{{ $i }}" style="display: none">
+                                                                    <center>
+                                                                        <div class="notification-box notification-box-success">
+                                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                                                {{ csrf_field() }}
+                                                                                <input type="hidden" name="cli" value="{{ url()->current() }}">
+                                                                                <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
+                                                                                <input type="hidden" name="idx" value="{{ $i }}">
+                                                                                <div class="form-group" id="otp-code-field-{{ $i }}" style="display: block; margin-bottom: 1em">
+                                                                                    <div><i class="fa fa-envelope-open"></i> &nbsp; Un SMS a été envoyé au numéro <b><span id="otp-sms-msisdn-{{ $i }}">{{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}</span></b> !<br/><br/></div>
+                                                                                    <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
+                                                                                        Entrez le code de vérification reçu, puis validez afin de télécharger le certificat :<br/><br/>
+                                                                                    </label>
+                                                                                    <div class="col-sm-10">
+                                                                                        <div id="otp-send-link-container" style="display: inline-block; margin-bottom: 1em">
+                                                                                            <span id="otp-send-counter-{{ $i }}" style="margin-right: 1em">0:00</span>
+                                                                                            <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="display: none; margin-bottom: 0"><i class="fa fa-sync text-white"></i> &nbsp; Renvoyer le sms</a>
+                                                                                        </div>
+                                                                                        <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center; margin-bottom: 0"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="column-last">
+                                                                                    <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
+                                                                                        <i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #eeeeee;border-color: #bdbdbd;"><i class="fa fa-times"></i> &nbsp; Fermer</a>
+                                                                        </div>
+                                                                    </center>
+                                                                </div>
+                                                                <div id="otp-container-error-{{ $i }}" style="display: none"></div>
+                                                                <div id="modalError" style="display: none"></div>
+                                                            @endif
                                                         @else
                                                             <div id="certificate-get-payment-link-container" style="display: block;">
                                                                 <span id="certificate-get-payment-link-loader-{{ $i }}" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
                                                                 <a id="certificate-get-payment-link-{{ $i }}" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
                                                             </div>
                                                         @endif
-                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='NNV')
-                                                        @if(config('services.sms.enabled'))
-                                                        <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
-                                                            <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
-                                                            <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
-                                                        </div>
-                                                        <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
-                                                            {{ csrf_field() }}
-                                                            <input type="hidden" name="cli" value="{{ url()->current() }}">
-                                                            <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
-                                                            <input type="hidden" name="idx" value="{{ $i }}">
-                                                            <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
-                                                                <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
-                                                                    Code de vérification reçu
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
-                                                                </div>
-                                                            </div>
-                                                            <div class="one-third column-last">
-                                                                <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
-                                                                    <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                        @endif
-                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='DAA')
-                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
+                                                    @elseif(session()->get('abonne_numeros')[$i]->code_statut==='IDR')
+                                                        <i class="fa fa-times-circle"></i> &nbsp; Document refusé par l'ONECI
                                                     @endif
                                                 </td>
                                             </tr>
