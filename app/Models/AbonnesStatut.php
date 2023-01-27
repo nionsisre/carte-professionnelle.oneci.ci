@@ -15,4 +15,9 @@ class AbonnesStatut extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    public function abonnes()
+    {
+        return $this->hasMany(AbonnesNumero::class);
+    }
 }

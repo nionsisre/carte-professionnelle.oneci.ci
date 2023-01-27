@@ -23,4 +23,14 @@ class Abonne extends Model {
      */
     protected $hidden = [];
 
+    public function abonnestypepiece()
+    {
+        return $this->belongsTo(AbonnesTypePiece::class);
+    }
+
+    public function abonnesnumeros()
+    {
+        return $this->hasMany(AbonnesNumero::class);
+    }
+
 }

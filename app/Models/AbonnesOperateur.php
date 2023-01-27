@@ -15,4 +15,10 @@ class AbonnesOperateur extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+
+    public function abonnesnumeros()
+    {
+        return $this->hasMany(AbonnesNumero::class);
+    }
 }

@@ -5,6 +5,9 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\OTPVerificationController;
 
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AdminController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,3 +41,32 @@ Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLi
 Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPayAPI'])->name('lien_cinetpay_paiement_effectue');
 Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
 Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
+
+
+
+// Login Routes
+Route::get('/oneci-admin', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/oneci-admin-login', [LoginController::class,'login'])->name('authentificaton');
+Route::get('/oneci-password-rest', [LoginController::class,'restPassword'])->name('password.rest');
+Route::put('/oneci-update-password', [LoginController::class,'updatePassword'])->name('oneci.update.password');
+
+// Security
+Route::middleware('connected')->group(function (){
+    Route::get('/oneci-admin/home', [AdminController::class, 'index'])->name('admin_home');
+    Route::get('/oneci-admin/rapport', [AdminController::class, 'rapport'])->name('rapport');
+    Route::get('/oneci-admin/setting', [AdminController::class, 'setting'])->name('setting');
+    Route::get('/oneci-admin/setting-user', [AdminController::class, 'adduser'])->name('user');
+    Route::post('/oneci-admin/setting-add-user', [AdminController::class, 'postadduser'])->name('add.user');
+    Route::put('/oneci-admin/setting-update-user', [AdminController::class, 'updateuser'])->name('update.user');
+    Route::post('/oneci-admin/rapport-search', [AdminController::class, 'rapportsearch'])->name('rapport.search');
+
+    Route::post('/oneci-admin/operateur-search-export', [AdminController::class, 'operateur'])->name('operateur.search.export');
+
+    Route::post('/oneci-admin/rapport-export', [AdminController::class, 'export'])->name('rapport.export');
+    Route::put('/oneci-admin/rapport-import', [AdminController::class, 'import'])->name('rapport.import');
+
+    Route::get('/oneci-admin/exportation', [AdminController::class, 'exportation'])->name('abonnees.exportation');
+    Route::get('/oneci-admin/importation', [AdminController::class, 'importation'])->name('abonnees.importation');
+
+    Route::get('logout', [LoginController::class,'logout'])->name('logout');
+});

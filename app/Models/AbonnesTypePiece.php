@@ -15,4 +15,9 @@ class AbonnesTypePiece extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    public function abonnes()
+    {
+        return $this->hasMany(Abonne::class);
+    }
 }
