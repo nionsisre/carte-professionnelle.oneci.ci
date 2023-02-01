@@ -33,9 +33,22 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
     public function collection()
     {
         //dd($this->ope,$this->status);
-        if ($this->ope == 0 &&  $this->status == 0 ){/* Tous les operateurs et tous les statuts*/
+        if ($this->ope == 0 &&  $this->status == 0 && $this->date1 == " 00:00:00" && $this->date2 == " 23:59:59"){/* Tous les operateurs et tous les statuts*/
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
@@ -59,9 +72,62 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_statut'=>$operateur->abonnes_statut_id,
                 );
             }
-        }elseif ($this->ope == 0 &&  $this->status != 0 ){/* Tous les operateurs et differents statuts */
+        }elseif ($this->ope == 0 &&  $this->status == 0 && $this->date1 != 0 && $this->date2 != 0){/* Tous les operateurs et differents statuts */
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->whereBetween('abonnes_numeros.created_at',  [$this->date1,$this->date2])
+                ->get();
+            //dd($operateurs);
+            $result = array();
+            $index=1;
+            foreach($operateurs as $operateur){
+                $indice =$index++;
+                $result[] = array(
+                    '#' => $indice,
+                    'libelle_operateur'=>$operateur->libelle_operateur,
+                    'numero_de_telephone'=>$operateur->numero_de_telephone,
+                    'numero_dossier'=>$operateur->numero_dossier,
+                    'nom'=>$operateur->nom,
+                    'prenoms'=>$operateur->prenoms,
+                    'date_de_naissance'=>$operateur->date_de_naissance,
+                    'lieu_de_naissance'=>$operateur->lieu_de_naissance,
+                    'nationalite'=>$operateur->nationalite,
+                    'genre'=>$operateur->genre,
+                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                );
+            }
+        } elseif ($this->ope == 0 &&  $this->status  != 0){/* Tous les operateurs et differents statuts */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
@@ -86,9 +152,22 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_statut'=>$operateur->abonnes_statut_id,
                 );
             }
-        } elseif($this->ope != 0 &&  $this->status  == 0 ){
+        }elseif($this->ope != 0 &&  $this->status  == 0 ){
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
@@ -116,7 +195,20 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
         }elseif($this->ope != 0 &&  $this->status  != 0 ){
             //dd($this->ope,$this->status);
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
@@ -144,7 +236,20 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
             }
         }else{
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')

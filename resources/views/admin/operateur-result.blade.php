@@ -50,7 +50,7 @@
                 <tbody>
                 @foreach($operateurs as $operateur)
                 <tr>
-                    <td>{{ date('d-m-Y',strtotime($operateur->created_at))}}</td>
+                    <td>{{date('d-m-Y',strtotime($operateur->created_at))}}</td>
                     <td>{{$operateur->libelle_operateur}}</td>
                     <td>{{preg_replace("/\s+/","",$operateur->numero_de_telephone)}}</td>
                     <td>{{$operateur->numero_dossier}}</td>

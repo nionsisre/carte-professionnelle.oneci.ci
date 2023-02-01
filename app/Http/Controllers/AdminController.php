@@ -23,70 +23,90 @@ class AdminController extends Controller
      */
     public function index()
     {
-////Orange
-//        $OrangeEnattente = AbonnesNumero::where('abonnes_operateur_id', "1")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "1")
-//            ->get();
-//
-//        $OrangeValide = AbonnesNumero::where('abonnes_operateur_id', "1")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "3")
-//            ->get();
-//
-//        $OrangeReject = AbonnesNumero::where('abonnes_operateur_id', "1")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "4")
-//            ->get();
-//
-//        $sommeOrange = count($OrangeEnattente) + count($OrangeValide) + count($OrangeReject);
-//
-////MTN
-//        $MtnEnattente = AbonnesNumero::where('abonnes_operateur_id', "2")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "1")
-//            ->get();
-//
-//        $MtnValide = AbonnesNumero::where('abonnes_operateur_id', "2")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "3")
-//            ->get();
-//
-//        $MtnReject =AbonnesNumero::where('abonnes_operateur_id', "2")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "4")
-//            ->get();
-//
-//        $sommeMtn = count($MtnEnattente) + count($MtnValide) + count($MtnReject);
-//
-////Moov
-//        $MoovEnattente = AbonnesNumero::where('abonnes_operateur_id', "3")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "1")
-//            ->get();
-//
-//        $MoovValide = AbonnesNumero::where('abonnes_operateur_id', "3")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "3")
-//            ->get();
-//
-//
-//        $MoovReject = AbonnesNumero::where('abonnes_operateur_id', "3")
-//            ->Where('abonnes_numeros.abonnes_statut_id', "4")
-//            ->get();
-//
-//        $sommeMoov = count($MoovEnattente) + count($MoovValide) + count($MoovReject);
-//
-////Somme
-//        $sommeEncours =  count($OrangeEnattente) + count($MtnEnattente) + count($MoovEnattente);
-//        $sommeValide = count($OrangeValide) + count($MtnValide) + count($MoovValide);
-//        $sommeRejet = count($OrangeReject) + count($MtnReject) + count($MoovReject);
-//        $somme = $sommeEncours + $sommeValide + $sommeRejet;
-//
-//        $data = collect();
+//Orange
+        $OrangeEnattente1 = AbonnesNumero::where('abonnes_operateur_id', "1")
+            ->Where('abonnes_numeros.abonnes_statut_id', "1")
+            ->get();
+
+        $OrangeEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "1")
+            ->Where('abonnes_numeros.abonnes_statut_id', "2")
+            ->get();
+
+        $OrangeValide = AbonnesNumero::where('abonnes_operateur_id', "1")
+            ->Where('abonnes_numeros.abonnes_statut_id', "3")
+            ->get();
+
+        $OrangeReject = AbonnesNumero::where('abonnes_operateur_id', "1")
+            ->Where('abonnes_numeros.abonnes_statut_id', "4")
+            ->get();
+
+        $OrangeEnattente = count($OrangeEnattente1) + count($OrangeEnattente2);
+
+        $sommeOrange = $OrangeEnattente + count($OrangeValide) + count($OrangeReject);
+
+//MTN
+        $MtnEnattente1 = AbonnesNumero::where('abonnes_operateur_id', "2")
+            ->Where('abonnes_numeros.abonnes_statut_id', "1")
+            ->get();
+
+        $MtnEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "2")
+            ->Where('abonnes_numeros.abonnes_statut_id', "2")
+            ->get();
+
+
+        $MtnValide = AbonnesNumero::where('abonnes_operateur_id', "2")
+            ->Where('abonnes_numeros.abonnes_statut_id', "3")
+            ->get();
+
+        $MtnReject =AbonnesNumero::where('abonnes_operateur_id', "2")
+            ->Where('abonnes_numeros.abonnes_statut_id', "4")
+            ->get();
+
+        $MtnEnattente = count($MtnEnattente1) + count($MtnEnattente2) ;
+
+        $sommeMtn = $MtnEnattente + count($MtnValide) + count($MtnReject);
+
+//Moov
+        $MoovEnattente1 = AbonnesNumero::where('abonnes_operateur_id', "3")
+            ->Where('abonnes_numeros.abonnes_statut_id', "1")
+            ->get();
+
+        $MoovEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "3")
+            ->Where('abonnes_numeros.abonnes_statut_id', "2")
+            ->get();
+
+
+        $MoovValide = AbonnesNumero::where('abonnes_operateur_id', "3")
+            ->Where('abonnes_numeros.abonnes_statut_id', "3")
+            ->get();
+
+
+        $MoovReject = AbonnesNumero::where('abonnes_operateur_id', "3")
+            ->Where('abonnes_numeros.abonnes_statut_id', "4")
+            ->get();
+
+        $MoovEnattente = count($MoovEnattente1) + count($MoovEnattente2);
+
+        $sommeMoov = $MoovEnattente + count($MoovValide) + count($MoovReject);
+
+//Somme
+        $sommeEncours =  $OrangeEnattente + $MtnEnattente + $MoovEnattente;
+        $sommeValide = count($OrangeValide) + count($MtnValide) + count($MoovValide);
+        $sommeRejet = count($OrangeReject) + count($MtnReject) + count($MoovReject);
+        $somme = $sommeEncours + $sommeValide + $sommeRejet;
+
+        $data = collect();
 //
         $operateurs = AbonnesOperateur::with("abonnesnumeros")->get();
-//
-//        return view('admin/index',compact('OrangeEnattente','sommeOrange','OrangeValide','OrangeReject',
-//                    'MtnEnattente','sommeMtn','MtnValide','MtnReject',
-//                    'MoovEnattente','sommeMoov','MoovValide','MoovReject',
-//                    'somme','sommeValide','sommeRejet','sommeEncours',
-//                    'data',
-//                    'operateurs'
-//                ));
-        return view('admin/dashbord', compact('operateurs'));
+
+        return view('admin/dashbord',compact('OrangeEnattente','sommeOrange','OrangeValide','OrangeReject',
+                    'MtnEnattente','sommeMtn','MtnValide','MtnReject',
+                    'MoovEnattente','sommeMoov','MoovValide','MoovReject',
+                    'somme','sommeValide','sommeRejet','sommeEncours',
+                    'data',
+                    'operateurs'
+                ));
+//        return view('admin/dashbord', compact('operateurs'));
 
     }
 
@@ -287,62 +307,129 @@ class AdminController extends Controller
         $st = $request->statut;
         $date1 = $request->date1." 00:00:00";
         $date2 = $request->date2." 23:59:59";
-
+        //dd($op,$st,$date1,$date2);
         $request->session()->put('abonnes', [
             $op,
             $st,
             $date1,
             $date2
         ]);
+        //dd($op,$st,$date1,$date2);
+        if ($op == 0 &&  $st == 0 && $date1 == " 00:00:00" && $date2 == " 23:59:59"){/* Tous les operateurs et tous les statuts*/
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                'abonnes.numero_dossier',
+                'abonnes.numero_document',
+                'abonnes.nom',
+                'abonnes.prenoms',
+                'abonnes.date_de_naissance',
+                'abonnes.lieu_de_naissance',
+                'abonnes.nationalite',
+                'abonnes.type_cni',
+                'abonnes.genre',
+                'abonnes_statuts.libelle_statut',
+                'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->get();
+                //dd($date1,$date2,$operateurs);
 
-        if ($op == 0 &&  $st == 0 ){/* Tous les operateurs et tous les statuts*/
+        }elseif ($op == 0 &&  $st == 0 && $date1 != 0 && $date2 != 0){
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->whereBetween('abonnes_numeros.created_at',  [$date1,$date2])
                 ->get();
-            //dd($operateurs);
-        }elseif ($op == 0 &&  $st != 0 ){/* Tous les operateurs et differents statuts */
-            $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->Where('abonnes_statuts.id', $st)
-                ->get();
-            //dd($operateurs);
-        } elseif($op != 0 &&  $st != 0 ){
+            //dd($date1,$date2,$operateurs);
 
+        }elseif ($op == 0 &&  $st != 0 ) {/* Tous les operateurs et differents statuts */
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+            //dd($date1,$date2, $operateurs);
+        } elseif($op != 0 &&  $st == 0  ){
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
                 ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
                 ->where('abonnes_operateurs.id', $op)
                 ->Where('abonnes_statuts.id', $st)
                 ->get();
-            //dd($operateurs);
-        } elseif($op != 0 &&  $st == 0 ){
+           // dd($date1,$date2, $operateurs);
+        } elseif($op != 0 &&  $st != 0 && $date1 != 0 && $date2 != 0){
+            //dd($date1,$date2);
             $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_numeros.abonnes_operateur_id','=','abonnes_operateurs.id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->where('abonnes_operateurs.id', $op)
-                ->get();
-            //dd($operateurs);
-        }else{
-            $operateurs = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->whereBetween('abonnes_numeros.created_at',[$date1,$date2])
+                ->whereBetween('abonnes_numeros.created_at',  [$date1,$date2])
                 ->where('abonnes_operateurs.id', $op)
                 ->Where('abonnes_statuts.id', $st)
                 ->get();
-            //dd($operateurs);
+           // dd($op,$st,$date1,$date2, $operateurs);
         }
         return view('admin/operateur-result', compact('operateurs'));
     }

@@ -21,7 +21,7 @@
                         <span class="fa fa-mobile"></span>&nbsp;&nbsp;Orange CI
                     </div>
                     <hr>
-                    <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ count($OrangeEnattente) }}</span> </div>
+                    <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ $OrangeEnattente }}</span> </div>
                     <div class="col-md-12" style="font-style: italic">Validés : &nbsp;<span style="font-weight: bold">{{ count($OrangeValide) }}</span></div>
                     <div class="col-md-12" style="font-style: italic ; padding-bottom: 10px">Rejeté : &nbsp;<span style="font-weight: bold">{{ count($OrangeReject) }}</span></div>
                     <hr>
