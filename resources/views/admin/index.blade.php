@@ -92,9 +92,8 @@
             google.charts.load('current', {'packages':['corechart']});
             google.charts.load('current', {'packages':['bar']});
             google.charts.setOnLoadCallback(drawChart);
-
             function drawChart() {
-
+                console.log(JSON.parse(''));
                 var data = google.visualization.arrayToDataTable([
                     ['Operateurs', 'Abonnees'],
                     @foreach ($operateurs as $operateur) // On parcourt les operateurs
@@ -116,7 +115,7 @@
                     var data = google.visualization.arrayToDataTable([
                         ['Operateurs', 'Abonnees'],
                         @foreach ($operateurs as $operateur) // On parcourt les catégories
-                        ['{{ $operateur->libelle_operateur  }}', {{ $operateur->abonnesnumeros->count() }} ],
+                        ['{{ $operateur->libelle_operateur  }}', {{ $operateur->abonnesnumeros->count() }} ]
                         @endforeach
                     ]);
 
