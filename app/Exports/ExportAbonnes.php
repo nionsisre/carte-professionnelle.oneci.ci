@@ -40,6 +40,7 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -63,13 +64,15 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
         }elseif ($this->ope == 0 &&  $this->status == 0 && $this->date1 != 0 && $this->date2 != 0){/* Tous les operateurs et differents statuts */
@@ -79,6 +82,7 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -103,13 +107,15 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
         } elseif ($this->ope == 0 &&  $this->status  != 0){/* Tous les operateurs et differents statuts */
@@ -119,6 +125,7 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -143,13 +150,15 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
         }elseif($this->ope != 0 &&  $this->status  == 0 ){
@@ -159,6 +168,7 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -183,13 +193,15 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
         }elseif($this->ope != 0 &&  $this->status  != 0 ){
@@ -200,6 +212,7 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -225,22 +238,25 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
-        }else{
+        }elseif($this->ope != 0 &&  $this->status != 0 && $this->date1 != 0 && $this->date2 != 0){
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
+                    'abonnes.abonnes_type_piece_id',
                     'abonnes.nom',
                     'abonnes.prenoms',
                     'abonnes.date_de_naissance',
@@ -267,13 +283,15 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
                     'libelle_operateur'=>$operateur->libelle_operateur,
                     'numero_de_telephone'=>$operateur->numero_de_telephone,
                     'numero_dossier'=>$operateur->numero_dossier,
+                    'numero_document'=>$operateur->numero_document,
+                    'abonnes_type_piece_id'=>$operateur->abonnes_type_piece_id,
                     'nom'=>$operateur->nom,
                     'prenoms'=>$operateur->prenoms,
                     'date_de_naissance'=>$operateur->date_de_naissance,
                     'lieu_de_naissance'=>$operateur->lieu_de_naissance,
                     'nationalite'=>$operateur->nationalite,
                     'genre'=>$operateur->genre,
-                    'libelle_statut'=>$operateur->abonnes_statut_id,
+                    'libelle_statut'=>$operateur->libelle_statut,
                 );
             }
         }
@@ -289,6 +307,8 @@ class ExportAbonnes implements FromCollection, WithHeadings, WithStyles
             'Operateur',
             'N°telephone',
             'N°dossier',
+            'N°document',
+            'Type de document',
             'Nom',
             'Prenoms',
             'Date de naissance',

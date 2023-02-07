@@ -389,7 +389,7 @@
     <!-- Importation de l'API AJAX Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        alert("ok");
+        //alert("ok");
         google.charts.load('current', {'packages':['corechart']});
         google.charts.load('current', {'packages':['bar']});
         google.charts.setOnLoadCallback(drawChart);
