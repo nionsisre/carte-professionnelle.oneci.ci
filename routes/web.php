@@ -68,5 +68,7 @@ Route::middleware('connected')->group(function (){
     Route::get('/oneci-admin/exportation', [AdminController::class, 'exportation'])->name('abonnees.exportation');
     Route::get('/oneci-admin/importation', [AdminController::class, 'importation'])->name('abonnees.importation');
 
+    Route::get('/oneci-admin/traitement', [AdminController::class, 'validation'])->name('abonnes.validation');
+
     Route::get('logout', [LoginController::class,'logout'])->name('logout');
 });

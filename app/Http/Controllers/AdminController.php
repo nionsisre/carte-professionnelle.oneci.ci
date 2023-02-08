@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ExportAbonnes;
 use App\Imports\AbonneesImport;
 use App\Imports\ImportAbonnes;
+use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use App\Models\User;
@@ -19,7 +20,7 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -108,75 +109,6 @@ class AdminController extends Controller
                 ));
 //        return view('admin/dashbord', compact('operateurs'));
 
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function rapport()
-    {
-        return view('admin/rapport');
-    }
-
-    public function rapportsearch(Request $request)
-    {
-
-        $transationstatus = "1";
-        $status = $request->status;
-        $date1 = $request->date1;
-        $date2 = $request->date2;
-
-        $request->session()->put('procurations', [
-            $transationstatus,
-            $status,
-            $date1,
-            $date2
-        ]);
-
-        if ($request->status == 'En attente'){
-            if($date1 == null && $date2 == null){
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->get();
-            }else{
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->whereBetween('dateop',[$date1,$date2])
-                    ->get();
-            }
-        }
-
-        if ($request->status == 'Accepter'){
-            if($date1 == null && $date2 == null){
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->get();
-            }else{
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->whereBetween('dateop',[$date1,$date2])
-                    ->get();
-            }
-
-        }
-
-        if ($request->status == 'Refuser'){
-            if($date1 == null && $date2 == null){
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->get();
-            }else{
-                $procurations = Procuration::where('procurationstatus', $status)
-                    ->where('transationstatus', $transationstatus)
-                    ->whereBetween('dateop',[$date1,$date2])
-                    ->get();
-            }
-
-        }
-        return view('admin/rapport-result', compact('procurations'));
     }
 
     /**
@@ -468,6 +400,36 @@ class AdminController extends Controller
         //dd($ope,$status);
         $file_name = 'abonne'.date('YmdHis').'.xlsx';
         return Excel::download(new ExportAbonnes($ope,$status,$date1,$date2), $file_name);
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function validation() {
+        $operateurs = DB::table('abonnes_numeros')
+            ->select('abonnes_numeros.id',
+                'abonnes_numeros.created_at',
+                'abonnes_operateurs.libelle_operateur',
+                'abonnes_numeros.numero_de_telephone',
+                'abonnes.numero_dossier',
+                'abonnes.numero_document',
+                'abonnes.nom',
+                'abonnes.prenoms',
+                'abonnes.date_de_naissance',
+                'abonnes.lieu_de_naissance',
+                'abonnes.nationalite',
+                'abonnes.type_cni',
+                'abonnes.genre',
+                'abonnes_statuts.libelle_statut',
+                'abonnes.document_justificatif')
+            ->join('abonnes_operateurs','abonnes_numeros.abonnes_operateur_id','=','abonnes_operateurs.id')
+            ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+            ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+            ->get();
+        return view('admin/validation', compact('operateurs'));
     }
 
 
