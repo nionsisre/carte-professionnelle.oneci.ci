@@ -162,6 +162,8 @@ class AdminController extends Controller
 
         return redirect()->route("user")->with("info", "Ajout avec sucess");
     }
+
+
     /**
      * Display the specified resource.
      *
@@ -430,6 +432,27 @@ class AdminController extends Controller
             ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
             ->get();
         return view('admin/validation', compact('operateurs'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function validationupdate(Request $request)
+    {
+        $this->validate($request,[
+            'id'=> 'required',
+            'status'=> 'required',
+        ], [
+            'id.required'=> 'message sur id',
+            'status.required'=> 'message status',
+        ]);
+        $statusupdate = AbonnesNumero::find($request->id);
+        $statusupdate->abonnes_statut_id = $request->status;
+        $statusupdate->save();
+        return redirect()->route('abonnes.validation')->with('info', 'valider avec succes');
     }
 
 

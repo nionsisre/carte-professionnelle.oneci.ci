@@ -89,7 +89,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <form action="" method="post">
+        <form action="{{ route('abonnees.validation.update') }}" method="post">
             @csrf
             @method('put')
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -106,16 +106,10 @@
                                 <input type="hidden" name="id"  id="idstatus">
                                 <select class="form-control" name="status" autocomplete=off required>
                                     <option value="" disabled selected hidden>Changer le status</option>
-                                    <option value="En cours de traitement">En cours de traitement</option>
-                                    <option value="Traiter">Traiter</option>
-                                    <option value="Refuser">Refuser</option>
+                                    <option value="2">Document justificatif en attente d'approbation</option>
+                                    <option value="3">Numéro identifié</option>
+                                    <option value="4">Identification refusée</option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="form-group msg">
-                            <div class="col-sm-12">
-                                <input type="hidden" name="id"  id="txtobservation">
-                                <textarea class="form-control " name="txtobservation" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
@@ -126,51 +120,6 @@
                 </div>
             </div>
         </form>
-    </div>
-
-    <!-- Modal download -->
-    <div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-        <form action="" method="post" enctype="multipart/form-data">
-            @csrf
-            @method('put')
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Complément de documents</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <input type="hidden" name="id"  id="iddoc">
-                                <select class="form-control" name="typedocument" autocomplete=off required>
-                                    <option value="" disabled selected hidden>Type de documents</option>
-                                    <option value="courrier">Courrier</option>
-                                    <option value="procurationdoc">Procuration</option>
-                                    <option value="justificatif">Justificatif</option>
-                                    <option value="piecemandataire">Piéce mandataire</option>
-                                    <option value="certificat">Certificat</option>
-                                    <option value="recepisse">Récepisse</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-12" >
-                                <input type="hidden" name="id"  id="typedoc">
-                                <input type="file" style="padding-bottom: 37px" class="form-control" name="doc"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-
     </div>
 
 @endsection
@@ -182,30 +131,7 @@
             $(document).on('click','.btn-status',function () {
                 var id = $(this).attr('statusId');
                 $("#idstatus").val(id);
-                $("#txtobservation").val(id);
             })
         })
-
-        $(function () {
-            // alert("ok");
-            $(document).on('click','.btn-document',function () {
-                var id = $(this).attr('fileId');
-                $("#iddoc").val(id);
-                $("#typedoc").val(id);
-            })
-        })
-
-        $(document).ready(function(){
-            $("select").change(function(){
-                $(this).find("option:selected").each(function(){
-                    var val = $(this).attr("value");
-                    if(val == 'Refuser'){
-                        $(".msg").show();
-                    } else{
-                        $(".msg").hide();
-                    }
-                });
-            }).change();
-        });
     </script>
 @endsection
