@@ -36,6 +36,7 @@ class CreateAbonnesNumerosTable extends Migration
             $table->foreignIdFor(\App\Models\Abonne::class)->nullable();
             $table->foreignIdFor(\App\Models\AbonnesOperateur::class)->nullable();
             $table->foreignIdFor(\App\Models\AbonnesStatut::class)->nullable();
+            $table->string('observation')->nullable();
             /*$table->foreign('abonnes_operateurs_id')->references('id')->on('abonnes_operateurs')
             ->nullable()
             ->constrained()

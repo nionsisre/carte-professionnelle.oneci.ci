@@ -413,6 +413,7 @@ class AdminController extends Controller
     public function validation() {
         $operateurs = DB::table('abonnes_numeros')
             ->select('abonnes_numeros.id',
+                'abonnes_numeros.observation',
                 'abonnes_numeros.created_at',
                 'abonnes_operateurs.libelle_operateur',
                 'abonnes_numeros.numero_de_telephone',
@@ -442,6 +443,7 @@ class AdminController extends Controller
      */
     public function validationupdate(Request $request)
     {
+        //dd($request);
         $this->validate($request,[
             'id'=> 'required',
             'status'=> 'required',
@@ -451,6 +453,7 @@ class AdminController extends Controller
         ]);
         $statusupdate = AbonnesNumero::find($request->id);
         $statusupdate->abonnes_statut_id = $request->status;
+        $statusupdate->observation = $request->txtobservation;
         $statusupdate->save();
         return redirect()->route('abonnes.validation')->with('info', 'valider avec succes');
     }

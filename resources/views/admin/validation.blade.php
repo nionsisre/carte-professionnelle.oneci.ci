@@ -35,6 +35,7 @@
                     <th>Document</th>
                     <th>Genre</th>
                     <th>Statut</th>
+                    <th>Motif du rejet</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -80,6 +81,7 @@
                                 </button>
                             @endif
                         </td>
+                        <td>{{$operateur->observation}}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -111,6 +113,13 @@
                                     <option value="4">Identification refusée</option>
                                 </select>
                             </div>
+                            <br/>
+                        </div>
+                        <div class="form-group block-observation" style="margin-top: 2.1em">
+                            <div class="col-sm-12">
+                                <input type="hidden" name="id"  id="txtobservation">
+                                <textarea class="form-control " name="txtobservation" rows="3"></textarea>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -131,7 +140,22 @@
             $(document).on('click','.btn-status',function () {
                 var id = $(this).attr('statusId');
                 $("#idstatus").val(id);
+                $("#txtobservation").val(id);
             })
         })
+
+        $(document).ready(function(){
+            $("select").change(function(){
+                $(this).find("option:selected").each(function(){
+                    var val = $(this).attr("value");
+                    if(val == '4'){
+                        $(".block-observation").show();
+                    } else{
+                        $(".block-observation").hide();
+                    }
+                });
+            }).change();
+        });
+
     </script>
 @endsection
