@@ -59,7 +59,6 @@ Route::middleware('connected')->group(function (){
     Route::post('/oneci-admin/setting-add-user', [AdminController::class, 'postadduser'])->name('add.user');
     Route::put('/oneci-admin/setting-update-user', [AdminController::class, 'updateuser'])->name('update.user');
     Route::post('/oneci-admin/rapport-search', [AdminController::class, 'rapportsearch'])->name('rapport.search');
-
     Route::post('/oneci-admin/operateur-search-export', [AdminController::class, 'operateur'])->name('operateur.search.export');
 
     Route::post('/oneci-admin/rapport-export', [AdminController::class, 'export'])->name('rapport.export');
@@ -69,6 +68,7 @@ Route::middleware('connected')->group(function (){
     Route::get('/oneci-admin/importation', [AdminController::class, 'importation'])->name('abonnees.importation');
 
     Route::get('/oneci-admin/traitement', [AdminController::class, 'validation'])->name('abonnes.validation');
+    Route::post('/oneci-admin/traitement-validation-search', [AdminController::class, 'validationSearch'])->name('abonnees.validation.search');
     Route::put('/oneci-admin/traitement-validation-update', [AdminController::class, 'validationupdate'])->name('abonnees.validation.update');
 
     Route::get('logout', [LoginController::class,'logout'])->name('logout');

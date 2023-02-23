@@ -200,6 +200,8 @@ class AdminController extends Controller
 
     }
 
+
+
     public function import(Request $request) {
 
         $this->validate($request, [
@@ -225,7 +227,24 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Support\Collection
+     */
+    public function export(Request $request) {
+        $abonne = $request->session()->get('abonnes');
+        //dd($abonne);
+        $ope  = $abonne[0];
+        $status = $abonne[1];
+        $date1 = $abonne[2];
+        $date2 = $abonne[3];
+        //dd($ope,$status);
+        $file_name = 'abonne'.date('YmdHis').'.xlsx';
+        return Excel::download(new ExportAbonnes($ope,$status,$date1,$date2), $file_name);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function operateur(Request $request) {
         $request->validate([
@@ -390,24 +409,6 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Support\Collection
-     */
-    public function export(Request $request) {
-        $abonne = $request->session()->get('abonnes');
-        //dd($abonne);
-        $ope  = $abonne[0];
-        $status = $abonne[1];
-        $date1 = $abonne[2];
-        $date2 = $abonne[3];
-        //dd($ope,$status);
-        $file_name = 'abonne'.date('YmdHis').'.xlsx';
-        return Excel::download(new ExportAbonnes($ope,$status,$date1,$date2), $file_name);
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function validation() {
@@ -435,6 +436,188 @@ class AdminController extends Controller
         return view('admin/validation', compact('operateurs'));
     }
 
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function validationSearch(Request $request) {
+
+        $request->validate([
+            'operateur' => 'required',
+        ], [
+            'operateur.required'=> 'message sur id',
+        ]);
+
+        // operateur 1 =orange; 2=mtn; 3=moov
+        // statut 1 =IAT. 3=IDV. 4=IDR
+
+        $op = $request->operateur;
+        $st = $request->statut;
+        $date1 = $request->date1." 00:00:00";
+        $date2 = $request->date2." 23:59:59";
+//        dd($op,$st,$date1,$date2);
+        $request->session()->put('abonnes', [
+            $op,
+            $st,
+            $date1,
+            $date2
+        ]);
+//        dd($op,$st,$date1,$date2);
+        if ($op == 0 &&  $st == 0 && $date1 == " 00:00:00" && $date2 == " 23:59:59"){/* Tous les operateurs et tous les statuts*/
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->get();
+            //dd($date1,$date2,$operateurs);
+
+        }elseif ($op == 0 &&  $st == 0 && $date1 != 0 && $date2 != 0){/* Tous les operateurs et tous les statuts et par periode */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->whereBetween('abonnes_numeros.created_at',  [$date1,$date2])
+                ->get();
+            //dd($date1,$date2,$operateurs);
+
+        }elseif ($op == 0 &&  $st != 0 ) {/* Tous les operateurs et differents statuts */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+            //dd($date1,$date2, $operateurs);
+        } elseif($op != 0 &&  $st == 0  ){/* differents les operateurs et Tous statuts  */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->where('abonnes_operateurs.id', $op)
+                ->get();
+//            dd($date1,$date2, $operateurs);
+        }elseif($op != 0 &&  $st  != 0 ){
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->where('abonnes_operateurs.id', $op)
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+        } elseif($op != 0 &&  $st != 0 && $date1 != 0 && $date2 != 0){
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.id',
+                    'abonnes_numeros.observation',
+                    'abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_numeros.abonnes_operateur_id','=','abonnes_operateurs.id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->whereBetween('abonnes_numeros.created_at',  [$date1,$date2])
+                ->where('abonnes_operateurs.id', $op)
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+        }
+//        dd($operateurs);
+//        return redirect()->route('abonnes.validation',compact('operateurs'));
+        return view('admin/validation-search-result', compact('operateurs'));
+    }
+
+
     /**
      * Display the specified resource.
      *
@@ -451,11 +634,14 @@ class AdminController extends Controller
             'id.required'=> 'message sur id',
             'status.required'=> 'message status',
         ]);
-        $statusupdate = AbonnesNumero::find($request->id);
-        $statusupdate->abonnes_statut_id = $request->status;
-        $statusupdate->observation = $request->txtobservation;
-        $statusupdate->save();
-        return redirect()->route('abonnes.validation')->with('info', 'valider avec succes');
+        $operateurs = AbonnesNumero::find($request->id);
+        $operateurs->abonnes_statut_id = $request->status;
+        $operateurs->observation = $request->txtobservation;
+        $operateurs->save();
+//        return view('admin/validation-search-result', compact('operateurs'));
+      return redirect()->route('abonnes.validation')->with(['info'=> 'valider avec succes']);
+
+
     }
 
 
