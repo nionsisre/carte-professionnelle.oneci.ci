@@ -208,10 +208,12 @@ class AdminController extends Controller
             'fichier' => 'required|file|mimes:xlsx'
         ]);
         $importAbonnes = new ImportAbonnes();
-
         Excel::import($importAbonnes, $request->file('fichier')->store('temp'));
 //        dd($importAbonnes->getRows());
-        return back()->with(["success"=>"Importation effectuée avec succes", "cles"=>$importAbonnes->getRows()]);
+        return back()->with([
+                            "success"=>"Importation effectuée avec succes",
+                            "cles"=>$importAbonnes->getRows(),
+                            "files"=>$importAbonnes->getTables()]);
     }
 
     /**

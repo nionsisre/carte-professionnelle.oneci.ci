@@ -1039,7 +1039,8 @@ body .container.body .right_col {
 
 .nav-md .container.body .right_col {
   padding: 10px 20px 0;
-  margin-left: 230px; }
+  margin-left: 230px;
+}
 
 .nav_title {
   width: 230px;
@@ -1925,9 +1926,69 @@ table.jambo_table tbody tr.selected td {
     float: right;
 }
 
+div.dt-buttons {
+    margin-top: 1.2em;
+    /*float: left;*/
+    position: initial;
+}
+
+div.dt-buttons .dt-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+button.dt-button, div.dt-button, a.dt-button, input.dt-button {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-left: 0.167em;
+    margin-right: 0.167em;
+    margin-bottom: 0.333em;
+    padding: 0.5em 1em;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: .88em;
+    line-height: 1.6em;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr="rgba(230, 230, 230, 0.1)", EndColorStr="rgba(0, 0, 0, 0.1)");
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: none;
+    outline: none;
+    text-overflow: ellipsis;
+}
+
+
+/*.table-responsive {*/
+/*    display: block;*/
+/*    width: 70%;*/
+/*    overflow-x: auto;*/
+/*    -webkit-overflow-scrolling: touch;*/
+/*    margin-top: 86px;*/
+/*    margin-bottom: 50px;*/
+/*}*/
+
+/*.table-bordered {*/
+/*    border: 1px solid #dee2e6;*/
+/*}*/
+
+/*.table {*/
+/*    width: 100%;*/
+/*    margin-bottom: 1rem;*/
+/*    color: #212529;*/
+/*}*/
+
+
 .dataTables_paginate a {
-    padding: 6px 9px !important;
-    /*background: #ddd !important;*/
+padding: 6px 9px !important;
+/*background: #ddd !important;*/
     /*border-color: #ddd !important;*/
 }
 

@@ -15,12 +15,12 @@
     <!-- Font Awesome -->
     <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
-    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+{{--    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">--}}
     <!-- iCheck -->
     <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 
     <!-- bootstrap-progressbar -->
-    <link href="../vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+{{--    <link href="../vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">--}}
     <!-- JQVMap -->
     <link href="../vendors/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
     <!-- bootstrap-daterangepicker -->
@@ -38,7 +38,7 @@
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <div class="navbar nav_title" style="border: 0;background-color: #00635a;border-right: 1px solid #D9DEE4;">
-                    <a href="index.html" class="site_title"><img src="{{URL::asset('/images/logo.png')}}" alt="..." class="img-circle logo_img"> <span>Oneci</span></a>
+                    <a href="{{ route('admin_home') }}" class="site_title"><img src="{{URL::asset('/images/logo.png')}}" alt="..." class="img-circle logo_img"> <span>Oneci</span></a>
                 </div>
 
                 <div class="clearfix"></div>
@@ -176,12 +176,18 @@
 
 <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.5/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.print.min.js"></script>
 <!-- Bootstrap -->
 <script src="../vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <!-- FastClick -->
 <script src="../vendors/fastclick/lib/fastclick.js"></script>
 <!-- NProgress -->
-<script src="../vendors/nprogress/nprogress.js"></script>
+{{--<script src="../vendors/nprogress/nprogress.js"></script>--}}
 {{--<!-- Chart.js -->--}}
 {{--<script src="../vendors/Chart.js/dist/Chart.min.js"></script>--}}
 <!-- gauge.js -->

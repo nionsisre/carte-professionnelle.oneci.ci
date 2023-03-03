@@ -16,13 +16,13 @@
                 @csrf
                 <div class="row ">
                     <div class="col-md-3 offset-md-9">
-                        <a class="input-group-btn btn btn-primary" href="{{ route('abonnees.exportation') }}" style="margin-left: 10px">
+                        <a class="input-group-btn btn btn-primary" href="{{ route('abonnees.exportation') }}" style="float: right">
                             <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;&nbsp;Retour
                         </a>
 
-                        <button class="input-group-btn btn btn-success" type="submit" style="margin-left: 10px">
-                            <span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Export-Excel
-                        </button>
+{{--                        <button class="input-group-btn btn btn-success" type="submit" style="margin-left: 10px">--}}
+{{--                            <span class="glyphicon glyphicon-export"></span>&nbsp;&nbsp;Export-Excel--}}
+{{--                        </button>--}}
                     </div>
                 </div>
             </form>
