@@ -203,7 +203,6 @@ class AdminController extends Controller
 
 
     public function import(Request $request) {
-
         $this->validate($request, [
             'fichier' => 'required|file|mimes:xlsx'
         ]);
@@ -262,7 +261,6 @@ class AdminController extends Controller
         $st = $request->statut;
         $date1 = $request->date1." 00:00:00";
         $date2 = $request->date2." 23:59:59";
-        //dd($op,$st,$date1,$date2);
         $request->session()->put('abonnes', [
             $op,
             $st,
@@ -292,7 +290,9 @@ class AdminController extends Controller
                 ->get();
                 //dd($date1,$date2,$operateurs);
 
-        }elseif ($op == 0 &&  $st == 0 && $date1 != 0 && $date2 != 0){/* Tous les operateurs et tous les statuts et par periode */
+        }
+
+        elseif ($op == 0 &&  $st == 0 && $date1 !== 0 && $date2 !== 0){/* Tous les operateurs et tous les statuts et par periode */
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
                     'abonnes_operateurs.libelle_operateur',
@@ -315,7 +315,10 @@ class AdminController extends Controller
                 ->get();
             //dd($date1,$date2,$operateurs);
 
-        }elseif ($op == 0 &&  $st != 0 ) {/* Tous les operateurs et differents statuts */
+        }
+
+        elseif($op == 0 &&  $st !== 0 && $date1 !== 0 && $date2 !== 0){
+
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
                     'abonnes_operateurs.libelle_operateur',
@@ -331,57 +334,15 @@ class AdminController extends Controller
                     'abonnes.genre',
                     'abonnes_statuts.libelle_statut',
                     'abonnes.document_justificatif')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_operateurs','abonnes_numeros.abonnes_operateur_id','=','abonnes_operateurs.id')
                 ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
                 ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->whereBetween('abonnes_numeros.created_at',  [$date1,$date2])
                 ->Where('abonnes_statuts.id', $st)
                 ->get();
-            //dd($date1,$date2, $operateurs);
-        } elseif($op != 0 &&  $st == 0  ){/* differents les operateurs et Tous statuts  */
-            $operateurs = DB::table('abonnes_numeros')
-                ->select('abonnes_numeros.created_at',
-                    'abonnes_operateurs.libelle_operateur',
-                    'abonnes_numeros.numero_de_telephone',
-                    'abonnes.numero_dossier',
-                    'abonnes.numero_document',
-                    'abonnes.nom',
-                    'abonnes.prenoms',
-                    'abonnes.date_de_naissance',
-                    'abonnes.lieu_de_naissance',
-                    'abonnes.nationalite',
-                    'abonnes.type_cni',
-                    'abonnes.genre',
-                    'abonnes_statuts.libelle_statut',
-                    'abonnes.document_justificatif')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->where('abonnes_operateurs.id', $op)
-                ->get();
-//            dd($date1,$date2, $operateurs);
-        }elseif($op != 0 &&  $st  != 0 ){
-            $operateurs = DB::table('abonnes_numeros')
-                ->select('abonnes_numeros.created_at',
-                    'abonnes_operateurs.libelle_operateur',
-                    'abonnes_numeros.numero_de_telephone',
-                    'abonnes.numero_dossier',
-                    'abonnes.numero_document',
-                    'abonnes.nom',
-                    'abonnes.prenoms',
-                    'abonnes.date_de_naissance',
-                    'abonnes.lieu_de_naissance',
-                    'abonnes.nationalite',
-                    'abonnes.type_cni',
-                    'abonnes.genre',
-                    'abonnes_statuts.libelle_statut',
-                    'abonnes.document_justificatif')
-                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
-                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
-                ->where('abonnes_operateurs.id', $op)
-                ->Where('abonnes_statuts.id', $st)
-                ->get();
-        } elseif($op != 0 &&  $st != 0 && $date1 != 0 && $date2 != 0){
+        }
+
+        elseif($op !== 0 &&  $st !== 0 && $date1 !== 0 && $date2 !== 0){
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
                     'abonnes_operateurs.libelle_operateur',
@@ -404,7 +365,81 @@ class AdminController extends Controller
                 ->where('abonnes_operateurs.id', $op)
                 ->Where('abonnes_statuts.id', $st)
                 ->get();
+
         }
+
+        elseif ($op == 0 &&  $st !== 0 ) {/* Tous les operateurs et differents statuts */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+            //dd($date1,$date2, $operateurs);
+        }
+
+        elseif($op !== 0 &&  $st == 0  ){/* differents les operateurs et Tous statuts  */
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->where('abonnes_operateurs.id', $op)
+                ->get();
+//            dd($date1,$date2, $operateurs);
+        }
+
+        elseif($op !== 0 &&  $st  !== 0 ){
+            $operateurs = DB::table('abonnes_numeros')
+                ->select('abonnes_numeros.created_at',
+                    'abonnes_operateurs.libelle_operateur',
+                    'abonnes_numeros.numero_de_telephone',
+                    'abonnes.numero_dossier',
+                    'abonnes.numero_document',
+                    'abonnes.nom',
+                    'abonnes.prenoms',
+                    'abonnes.date_de_naissance',
+                    'abonnes.lieu_de_naissance',
+                    'abonnes.nationalite',
+                    'abonnes.type_cni',
+                    'abonnes.genre',
+                    'abonnes_statuts.libelle_statut',
+                    'abonnes.document_justificatif')
+                ->join('abonnes_operateurs','abonnes_operateurs.id','=','abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes','abonnes.id','=','abonnes_numeros.abonne_id')
+                ->join('abonnes_statuts','abonnes_statuts.id','=','abonnes_numeros.abonnes_statut_id')
+                ->where('abonnes_operateurs.id', $op)
+                ->Where('abonnes_statuts.id', $st)
+                ->get();
+        }
+
         return view('admin/operateur-result', compact('operateurs'));
     }
 
