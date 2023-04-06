@@ -2,8 +2,10 @@
 
 namespace App\Imports;
 
+use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -20,19 +22,35 @@ private $ficher_importer =array();
                 $excelTel = $row['ntelephone'];
                 $excelstatut = $row['statut'];
                 $excelobservation = $row['observation'];
+                $excelnumdoss= $row['ndossier'];
                 $ficher_importer[]= $row;
-                $table = AbonnesNumero::where('abonnes_numeros.numero_de_telephone',$excelTel )->first();
-                if (!empty($table)){
+                $table = DB::table('abonnes_numeros')
+                    ->select('abonnes_numeros.numero_de_telephone', 'abonnes.numero_dossier','abonnes_numeros.observation','abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes_operateurs', 'abonnes_numeros.abonnes_operateur_id', '=', 'abonnes_operateurs.id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->where('abonnes_numeros.numero_de_telephone', $excelTel)
+                    ->where('abonnes.numero_dossier', $excelnumdoss)
+                    ->first();
+                if ($table !== null){
                     $table->abonnes_statut_id = $excelstatut;
                     $table->observation = $excelobservation;
-                    $table->save();
+                    $table->numero_de_telephone = $excelstatut;
+
+                    $abonnesNumeros = new AbonnesNumero();
+                    $abonnesNumeros->numero_de_telephone = $table->numero_de_telephone;
+                    $abonnesNumeros->abonnes_statut_id = $table->abonnes_statut_id;
+                    $abonnesNumeros->abonnes_statut_id = $table->abonnes_statut_id;
+                    $abonnesNumeros->observation = $table->observation;
+
+                    $abonnesNumeros->save();
                 }else{
-                    $numero_non_trouvers[]= $row;
+                    $numero_non_trouvers[] = (array) $row;
                 }
+
             }
             $this->ficher_importer = $ficher_importer;
             $this->numero_non_trouvers = $numero_non_trouvers;
-//            dd($this->ficher_importer);
         }
     }
 

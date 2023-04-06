@@ -27,6 +27,7 @@
                             <option disabled selected hidden>Choisie Statut</option>
                             <option value="0">Tout </option>
                             <option value="1">IAT</option>
+                            <option value="2">DDA</option>
                             <option value="3">IDV</option>
                             <option value="4">IDR</option>
                         </select>

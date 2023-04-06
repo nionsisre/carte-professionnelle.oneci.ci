@@ -35,6 +35,13 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+            @elseif(Session::has('error'))
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    {{ Session::get('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 @endif
             <form action="{{route('rapport.import')}}" method="post" style="margin-left: 250px; padding-left: 25em" enctype="multipart/form-data">
                 @csrf
@@ -81,7 +88,7 @@
                 <h5>LISTE DES ABONNES IMPORTES</h5>
             </div>
             <div class="card-body">
-                <table class="table table-striped table-bordered table-responsive" style="width:50%; margin-top: 80px; margin-bottom: 50px"id="datatable" >
+                <table class="table table-striped table-bordered table-responsive" style="width:100%; margin-top: 80px; margin-bottom: 50px"id="datatable" >
                     <thead>
                     <tr>
                         <th>Operateur</th>
@@ -124,7 +131,7 @@
             <h5>LISTE DES ABONNES N'EXISTANT PAS EN BASE</h5>
         </div>
         <div class="card-body">
-            <table class="table table-striped table-bordered table-responsive" style="width:50%; margin-top: 80px; margin-bottom: 50px"id="datatable" >
+            <table class="table table-striped table-bordered table-responsive" style="width:100%; margin-top: 80px; margin-bottom: 50px"id="datatable" >
                 <thead>
                 <tr>
                     <th>Operateur</th>
@@ -196,5 +203,6 @@
                 $input.removeClass('has-focus');
             });
     });
+
 </script>
 @endsection
