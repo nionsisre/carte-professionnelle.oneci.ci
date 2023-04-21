@@ -35,13 +35,14 @@
     31 => 'Carbon\\Laravel\\ServiceProvider',
     32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     33 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
-    34 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    35 => 'App\\Providers\\AppServiceProvider',
-    36 => 'App\\Providers\\AuthServiceProvider',
-    37 => 'App\\Providers\\EventServiceProvider',
-    38 => 'App\\Providers\\RouteServiceProvider',
-    39 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
-    40 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
+    34 => 'STS\\ZipStream\\ZipStreamServiceProvider',
+    35 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    36 => 'App\\Providers\\AppServiceProvider',
+    37 => 'App\\Providers\\AuthServiceProvider',
+    38 => 'App\\Providers\\EventServiceProvider',
+    39 => 'App\\Providers\\RouteServiceProvider',
+    40 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
+    41 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
   ),
   'eager' => 
   array (
@@ -198,6 +199,10 @@
     'Laravel\\Sail\\Console\\InstallCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'Laravel\\Sail\\Console\\PublishCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
+    'ZipStream\\Option\\File' => 'STS\\ZipStream\\ZipStreamServiceProvider',
+    'ZipStream\\Option\\Archive' => 'STS\\ZipStream\\ZipStreamServiceProvider',
+    'zipstream' => 'STS\\ZipStream\\ZipStreamServiceProvider',
+    'zipstream.s3client' => 'STS\\ZipStream\\ZipStreamServiceProvider',
   ),
   'when' => 
   array (
@@ -241,6 +246,9 @@
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
+    array (
+    ),
+    'STS\\ZipStream\\ZipStreamServiceProvider' => 
     array (
     ),
   ),

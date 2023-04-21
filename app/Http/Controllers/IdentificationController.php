@@ -8,6 +8,7 @@ use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -21,10 +22,13 @@ use Endroid\QrCode\Label\Font\NotoSans;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Type\Integer;
+use STS\ZipStream\ZipStream;
 use Symfony\Component\HttpFoundation\Response;
+use ZipArchive;
 
 /**
  * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -608,6 +612,79 @@ class IdentificationController extends Controller {
         header('Content-Type: '.$qrresult->getMimeType());
         echo $qrresult->getString();
         return true;
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Genere automatiquement des Codes QR pour les Cartes Professionnelles<br/><br/>
+     * <b>void</b> generateCarteProfessionnelleQrCode(<b>Request</b> $request)<br/>
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function generateCarteProfessionnelleQrCode() {
+
+        $employes = DB::table('employes')
+            ->select('*')
+            ->get();
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+            /* Delete all existing files in a directory */
+            $file = new Filesystem;
+            $file->cleanDirectory(storage_path('app\\public\\qrcp'));
+        } else { /* If Current server OS is not windows */
+            /* Delete all existing files in a directory */
+            $file = new Filesystem;
+            $file->cleanDirectory(storage_path('app/public/qrcp'));
+        }
+        foreach($employes as $employe) {
+            $message = 'https://www.oneci.ci/check-carte-professionnelle?m=' .$employe->matricule. '&t=' .sha1(md5($employe->matricule.'cp'));
+            $qrresult = Builder::create()
+                ->writer(new PngWriter())
+                ->writerOptions([])
+                ->data($message)
+                ->encoding(new Encoding('UTF-8'))
+                ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+                ->size(300)
+                ->logoPath(asset('assets/images/logo_qrcode.png'))
+                ->logoResizeToWidth(60)
+                ->margin(10)
+                ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+                ->build();
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+                /* Save qrcode to a png file */
+                $qrresult->saveToFile(storage_path('app\\public\\qrcp').'\\'.trim($employe->matricule.'_'.$employe->nom).'.png');
+            } else { /* If Current server OS is not windows */
+                /* Save qrcode to a png file */
+                $qrresult->saveToFile(storage_path('app/public/qrcp').'/'.trim($employe->matricule.'_'.$employe->nom).'.png');
+            }
+        }
+
+        /* Zip all files */
+        $zip = new ZipArchive();
+        $zip_file_name = 'qrcodes_cartes_professionnelles_'.date('Y-m-d').'.zip';
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+            $zip_file_path = public_path('storage\\qrcp').'\\'.$zip_file_name;
+        } else { /* If Current server OS is not windows */
+            $zip_file_path = public_path('storage/qrcp').'/'.$zip_file_name;
+        }
+        if ($zip->open($zip_file_path, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            /* Folder files to zip and download */
+            $files = Storage::files('public/qrcp');
+            /* Loop the files result */
+            foreach ($files as $file) {
+                $relative_name_in_zip_file = basename($file);
+                if($relative_name_in_zip_file !== '.gitignore') {
+                    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+                        $zip->addFile(public_path('storage\\qrcp\\'.$relative_name_in_zip_file), $relative_name_in_zip_file);
+                    } else { /* If Current server OS is not windows */
+                        $zip->addFile(public_path('storage/qrcp/'.$relative_name_in_zip_file), $relative_name_in_zip_file);
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        /* Download the generated zip */
+        return response()->download($zip_file_path, $zip_file_name)->deleteFileAfterSend(false);
     }
 
     /**
