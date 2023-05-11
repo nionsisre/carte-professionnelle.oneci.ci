@@ -624,7 +624,7 @@ class IdentificationController extends Controller {
 
         $employes = DB::table('employes')
             ->select('*')
-            ->whereDate('created_at', Carbon::today())
+            ->where('creation_date', 'LIKE', date('Y-m-d').' %')
             ->get();
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
