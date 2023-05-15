@@ -36,7 +36,6 @@ deploy:
   provider: script
   script:
     /usr/local/bin/php7.4 composer.phar install
-    /usr/local/bin/npm-node14 install
   on:
     branch: main
 
