@@ -30,12 +30,12 @@ before_deploy:
   - rsync -a --exclude={"vendor/","node_modules/",".git/","travis_deploy/",".travis.yml",".gitignore"} $TRAVIS_BUILD_DIR/ ./travis_deploy/
   - zip -r travis_deploy.zip travis_deploy/
   - ls -al $TRAVIS_BUILD_DIR/travis_deploy
-  - rsync -r --delete-after --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes/public/test
+  - rsync -r --delete-after --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes
 
 deploy:
   provider: script
   script:
-    ssh -i ./travis_deploy_key clfvcfl@sshcloud.cluster024.hosting.ovh.net -p 44306 "cd /home/clfvcfl/identification-abonnes/public/test && /usr/local/bin/php7.4 composer.phar install && /usr/local/bin/npm-node14 install"
+    ssh -i ./travis_deploy_key clfvcfl@sshcloud.cluster024.hosting.ovh.net -p 44306 "cp -r /home/clfvcfl/.travis-ci/identification-abonnes/.env /home/clfvcfl/identification-abonnes/.env && cd /home/clfvcfl/identification-abonnes && /usr/local/bin/php7.4 composer.phar install && /usr/local/bin/npm-node14 install"
   on:
     branch: main
 
