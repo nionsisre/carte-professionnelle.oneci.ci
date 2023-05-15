@@ -30,7 +30,7 @@ before_deploy:
   - rsync -a --exclude={"vendor/","node_modules/",".git/","travis_deploy/",".travis.yml",".gitignore"} $TRAVIS_BUILD_DIR/ ./travis_deploy/
   - zip -r travis_deploy.zip travis_deploy/
   - ls -al $TRAVIS_BUILD_DIR/travis_deploy
-  - rsync -r --delete-after --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes/public
+  - rsync -r --delete-after --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes/public/test
 
 deploy:
   provider: script
