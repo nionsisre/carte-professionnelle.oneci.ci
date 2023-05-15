@@ -27,7 +27,7 @@ before_install:
 before_deploy:
   - cd $TRAVIS_BUILD_DIR
   - mkdir travis_deploy
-  - rsync -a --exclude={"vendor/","node_modules/",".git/","travis_deploy/",".travis.yml",".gitignore",".env","composer.phar"} $TRAVIS_BUILD_DIR/ ./travis_deploy/
+  - rsync -a --exclude={"vendor/","node_modules/",".git/","travis_deploy/",".travis.yml",".gitignore"} $TRAVIS_BUILD_DIR/ ./travis_deploy/
   - zip -r travis_deploy.zip travis_deploy/
   - ls -al $TRAVIS_BUILD_DIR/travis_deploy
   - rsync -r --delete-after --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes/public/test
@@ -35,7 +35,9 @@ before_deploy:
 deploy:
   provider: script
   script:
+    pwd
     /usr/local/bin/php7.4 composer.phar install
+    /usr/local/bin/npm-node14 install
   on:
     branch: main
 
