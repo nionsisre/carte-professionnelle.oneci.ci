@@ -31,6 +31,7 @@ before_deploy:
   - zip -r travis_deploy.zip travis_deploy/
   - ls -al $TRAVIS_BUILD_DIR/travis_deploy/storage
   - rsync -r --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv --filter="dir-merge,- .rsync-exclude" travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes
+
 deploy:
   provider: script
   script:
