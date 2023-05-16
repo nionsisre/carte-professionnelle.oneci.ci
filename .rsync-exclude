@@ -2,7 +2,7 @@ vendor/
 node_modules/
 travis_deploy/
 public/storage/
-storage/
+storage/app/public/
 .git/
 .travis.yml
 .gitignore
