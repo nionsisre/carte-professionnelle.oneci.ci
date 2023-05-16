@@ -624,17 +624,16 @@ class IdentificationController extends Controller {
 
         $employes = DB::table('employes')
             ->select('*')
-            ->where('creation_date', 'LIKE', '2023-05-15 22%')
-            /*->where('creation_date', 'LIKE', date('Y-m-d H').' %') */
+            /*->where('creation_date', 'LIKE', '2023-05-15 22%')*/
+            ->where('creation_date', 'LIKE', date('Y-m-d').' %')
             ->get();
 
+        $file = new Filesystem();
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
             /* Delete all existing files in a directory */
-            $file = new Filesystem;
             $file->cleanDirectory(storage_path('app\\public\\qrcp'));
         } else { /* If Current server OS is not windows */
             /* Delete all existing files in a directory */
-            $file = new Filesystem;
             $file->cleanDirectory(storage_path('app/public/qrcp'));
         }
         foreach($employes as $employe) {
