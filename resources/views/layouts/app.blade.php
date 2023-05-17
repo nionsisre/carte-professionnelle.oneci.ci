@@ -21,6 +21,8 @@
                 @yield('home')
             @elseif(Route::is('consultation_statut_identification'))
                 @yield('consultation')
+            @elseif(Route::is('pre_identification_abonnes_mobile'))
+                @yield('pre_identification_abonnes_mobile')
             @endif
             @include('sections.footer')
             @include('sections.scripts')

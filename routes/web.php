@@ -21,6 +21,7 @@ use App\Http\Controllers\AdminController;
 
 /* View Routes */
 Route::get('/', [MainController::class, 'index'])->name('accueil');
+Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentificationAbonnesMobile'])->name('pre_identification_abonnes_mobile');
 Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
 Route::get('/imprimer-recu-identification', [IdentificationController::class, 'printRecu'])->name('imprimer_recu_identification');

@@ -54,5 +54,25 @@ class MainController extends Controller
         ]);
     }
 
+    /**
+     * @return Application|Factory|View
+     */
+    public function preIdentificationAbonnesMobile() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.pre-identification', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
+
 
 }
