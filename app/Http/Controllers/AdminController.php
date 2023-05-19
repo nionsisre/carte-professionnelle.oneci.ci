@@ -206,6 +206,7 @@ class AdminController extends Controller
         $this->validate($request, [
             'fichier' => 'required|file|mimes:xlsx'
         ]);
+        try {
             $importAbonnes = new ImportAbonnes();
             Excel::import($importAbonnes, $request->file('fichier')->store('temp'));
             return back()->with([
@@ -213,6 +214,9 @@ class AdminController extends Controller
                 "cles" => $importAbonnes->getRows(),
                 "files" => $importAbonnes->getTables()
             ]);
+        } catch (\Exception $e) {
+            return back()->with(["error" => "Veuillez vérifier la forme du fichier."]);
+        }
     }
 
     /**

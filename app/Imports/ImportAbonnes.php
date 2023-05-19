@@ -24,26 +24,23 @@ private $ficher_importer =array();
                 $excelobservation = $row['observation'];
                 $excelnumdoss= $row['ndossier'];
                 $ficher_importer[]= $row;
+
                 $table = DB::table('abonnes_numeros')
-                    ->select('abonnes_numeros.numero_de_telephone', 'abonnes.numero_dossier','abonnes_numeros.observation','abonnes_numeros.abonnes_statut_id')
+                    ->select('abonnes_numeros.id','abonnes_numeros.numero_de_telephone', 'abonnes.numero_dossier','abonnes_numeros.observation','abonnes_numeros.abonnes_statut_id')
                     ->join('abonnes_operateurs', 'abonnes_numeros.abonnes_operateur_id', '=', 'abonnes_operateurs.id')
                     ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                     ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                     ->where('abonnes_numeros.numero_de_telephone', $excelTel)
                     ->where('abonnes.numero_dossier', $excelnumdoss)
                     ->first();
+
                 if ($table !== null){
-                    $table->abonnes_statut_id = $excelstatut;
-                    $table->observation = $excelobservation;
-                    $table->numero_de_telephone = $excelstatut;
-
-                    $abonnesNumeros = new AbonnesNumero();
-                    $abonnesNumeros->numero_de_telephone = $table->numero_de_telephone;
-                    $abonnesNumeros->abonnes_statut_id = $table->abonnes_statut_id;
-                    $abonnesNumeros->abonnes_statut_id = $table->abonnes_statut_id;
-                    $abonnesNumeros->observation = $table->observation;
-
+                    $abonnesNumeros = AbonnesNumero::find($table->id);
+                    $abonnesNumeros->abonnes_statut_id = $excelstatut;
+                    $abonnesNumeros->observation = $excelobservation;
                     $abonnesNumeros->save();
+//                    dd($table,$abonnesNumeros);
+
                 }else{
                     $numero_non_trouvers[] = (array) $row;
                 }
