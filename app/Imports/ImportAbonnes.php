@@ -33,7 +33,7 @@ private $ficher_importer =array();
                     ->where('abonnes_numeros.numero_de_telephone', $excelTel)
                     ->where('abonnes.numero_dossier', $excelnumdoss)
                     ->first();
-
+//                dd($table);
                 if ($table !== null){
                     $abonnesNumeros = AbonnesNumero::find($table->id);
                     $abonnesNumeros->abonnes_statut_id = $excelstatut;
