@@ -1,0 +1,16 @@
+vendor/
+node_modules/
+travis_deploy/
+public/storage/
+storage/app/public/
+.git/
+.travis.yml
+.gitignore
+.env
+.env.backup
+.phpunit.result.cache
+.idea
+.vscode
+docker-compose.override.yml
+npm-debug.log
+yarn-error.log

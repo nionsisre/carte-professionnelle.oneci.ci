@@ -1,0 +1,43 @@
+os: linux
+dist: bionic
+language: php
+
+php:
+  - 7.4
+
+branches:
+  only:
+    - main
+
+addons:
+  ssh_known_hosts:
+    - sshcloud.cluster024.hosting.ovh.net:44306
+
+script:
+  - echo "Tests not implemented yet"
+
+before_install:
+  - openssl aes-256-cbc -d -in travis_deploy_key.enc -out travis_deploy_key -k "$SSH_PASSWORD"
+  - eval "$(ssh-agent -s)"
+  - chmod 600 ./travis_deploy_key
+  - echo -e "Host sshcloud.cluster024.hosting.ovh.net\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - ssh-add ./travis_deploy_key
+  - ssh -i ./travis_deploy_key clfvcfl@sshcloud.cluster024.hosting.ovh.net -p 44306 pwd
+
+before_deploy:
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir travis_deploy
+  - rsync -a --exclude={"vendor/","node_modules/",".git/","travis_deploy/",".travis.yml",".gitignore"} $TRAVIS_BUILD_DIR/ ./travis_deploy/
+  - zip -r travis_deploy.zip travis_deploy/
+  - ls -al $TRAVIS_BUILD_DIR/travis_deploy/storage
+  - rsync -r --quiet -e "ssh -p 44306 -o StrictHostKeyChecking=no" -vv --filter="dir-merge,- .rsync-exclude" travis_deploy/ clfvcfl@sshcloud.cluster024.hosting.ovh.net:/home/clfvcfl/identification-abonnes
+
+deploy:
+  provider: script
+  script:
+    ssh -i ./travis_deploy_key clfvcfl@sshcloud.cluster024.hosting.ovh.net -p 44306 "cd /home/clfvcfl/identification-abonnes && /usr/local/bin/php7.4 composer.phar install && /usr/local/bin/npm-node14 install"
+  on:
+    branch: main
+
+after_deploy:
+  - echo "Commands have been executed after deployment"

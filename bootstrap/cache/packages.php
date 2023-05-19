@@ -104,4 +104,15 @@
       'Alert' => 'RealRashid\\SweetAlert\\Facades\\Alert',
     ),
   ),
+  'stechstudio/laravel-zipstream' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'STS\\ZipStream\\ZipStreamServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Zip' => 'STS\\ZipStream\\ZipStreamFacade',
+    ),
+  ),
 );

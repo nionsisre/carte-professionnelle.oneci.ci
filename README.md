@@ -4,7 +4,10 @@
 
 <br/>
 
-# Projet d'identification des abonnés mobile ONECI
+# Plateforme Identification Abonnés Mobile ONECI
+### Code source du Projet d'identification des abonnés mobile de l'Office National de l'Etat Civil et de l'Identification de Côte d'Ivoire
+[![Build Status](https://app.travis-ci.com/oneci-dev/identification-abonnes-mobile.svg?token=FCxHLpk7WCyDNpfd9wST&branch=main)](https://app.travis-ci.com/oneci-dev/identification-abonnes-mobile)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
 
 <br/>
 
@@ -32,10 +35,11 @@ D -- Importer et Traiter --> C
 ## Pré-réquis
 
 Pour pouvoir exécuter le code source du projet, assurez-vous de pouvoir disposer des outils suivants :
-- [`PHP >=7.4.9`](https://www.php.net/downloads.php)
-- [`Composer >=2.3.9`](https://getcomposer.org/download/)
-- [`NodeJS >=14.18.1`](https://nodejs.org/en/download/)
-- [`NPM >=6.14.15`](https://www.npmjs.com/)
+- [![PHP](https://img.shields.io/badge/PHP-%3E%3D7.4.9-blue.svg)](https://www.php.net/downloads.php)
+- [![Composer](https://img.shields.io/badge/Composer-%3E%3D2.3.9-blue.svg)](https://getcomposer.org/download/)
+- [![NodeJS](https://img.shields.io/badge/NodeJS-%3E%3D14.18.1-blue.svg)](https://nodejs.org/en/download/)
+- [![NPM](https://img.shields.io/badge/NPM-%3E%3D6.14.15-blue.svg)](https://www.npmjs.com/)
+- [![MariaDB](https://img.shields.io/badge/MariaDB-%3E%3D10.4.21-blue.svg)](https://mariadb.org/download/)
 
 ## Initialisation du projet
 
