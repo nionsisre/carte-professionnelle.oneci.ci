@@ -22,7 +22,7 @@
     });
     jQuery('.blocker').css('z-index','2'); --}}
     {{-- Variables --}}
-    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Apparition ou non du champ nom épouse selon que le genre soit masculin ou feminin --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#gender-input-male').is(':checked')) {
@@ -155,7 +155,7 @@
                     birth_date = document.querySelectorAll('[name="birth-date"]');
                     country = jQuery(document.querySelectorAll('[name="country"]')).val();
                     birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') :
-                        document.querySelectorAll('[name="birth-place"]');
+                    document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
                     gender = document.querySelectorAll('[name="gender"]');
@@ -343,13 +343,17 @@
                         jQuery("#document-number-input").mask('9999999999');
                     }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                    {{-- Declenchement la detection de la taille du document a charger --}}
+                    pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
+                    $(pdf_doc).on('change', function() {
+                        pdf_doc_size = this.files[0].size;
+                    });
                     break;
                 {{-- Step 2 --}}
                 case 1:
                     doc_type = document.querySelectorAll('[name="doc-type"]');
                     document_number = document.querySelectorAll('[name="document-number"]');
                     document_expiry = document.querySelectorAll('[name="document-expiry"]');
-                    pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
                     {{-- doc_type --}}
                     if(!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
@@ -390,13 +394,10 @@
                     var minExpiryDate = new Date();
                     maxExpiryDate.setFullYear(maxExpiryDate.getFullYear()+20);
                     minExpiryDate.setFullYear(minExpiryDate.getFullYear()-5);
-                    console.log(jQuery(document_expiry).val());
-                    console.log(documentExpiryFormatted.getTime());
-                    console.log(document_expiry);
-                    if(jQuery(document_expiry).val() && (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime()) ) {
+                    if(jQuery(document_expiry).val() === '' || (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime()) ) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-calendar-day"></i><br/><br/><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -426,13 +427,30 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    {{-- pdf_doc_size --}}
+                    var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+                    fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
+                    console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
+                    if(pdf_doc_size >= 1048576) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(fSize*100)/100)+' '+fSExt[i])+'</b></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
                     {{-- RECAP --}}
-                        spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
+                    spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     var msisdn_list = "";
-                    for(let i=0; i<msisdn.length; i++) {
-                        msisdn_list += '<i class="fa fa-sim-card"></i> &nbsp; '+jQuery(msisdn[i]).val()+' ('+jQuery(telco[i]).select2('data')[0].text+')<br/>';
-                    }
                     jQuery('#recap-msisdn').html(msisdn_list);
                     if(spouse_name) {
                         jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase() + ' epse ' + spouse_name.toUpperCase());
@@ -440,7 +458,13 @@
                         jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase());
                     }
                     jQuery('#recap-last-name').text(jQuery(last_name).val().toUpperCase());
-                    jQuery('#recap-gender').text(jQuery(gender).select2('data')[0].text);
+                    if (jQuery(gender).val().toUpperCase() === 'M') {
+                        jQuery('#recap-gender').html('<i class="fa fa-mars"></i> &nbsp; Masculin');
+                    } else if (jQuery(gender).val().toUpperCase() === 'F') {
+                        jQuery('#recap-gender').html('<i class="fa fa-venus"></i> &nbsp; Feminin');
+                    } else {
+                        jQuery('#recap-gender').html('<i class="fa fa-venus-mars"></i> &nbsp; Indéfini');
+                    }
                     jQuery('#recap-birth-date').text(jQuery(birth_date).val());
                     if(country !== "Côte d’Ivoire") {
                         jQuery('#recap-birth-place').text(jQuery(birth_place).val());
@@ -450,8 +474,12 @@
                     jQuery('#recap-residence').text(jQuery(residence).val().toUpperCase());
                     jQuery('#recap-country').text(country.toUpperCase());
                     jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());
-                    jQuery('#recap-email').text(email);
-                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+')');
+                    if (email === '') {
+                        jQuery('#recap-email').text('...');
+                    } else {
+                        jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
+                    }
+                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
                     jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
