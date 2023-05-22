@@ -19,7 +19,13 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-/* View Routes */
+/*
+|--------------------------------------------------------------------------
+| Front Office Routes
+|--------------------------------------------------------------------------
+*/
+
+/* Views Routes */
 Route::get('/', [MainController::class, 'index'])->name('accueil');
 Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentificationAbonnesMobile'])->name('pre_identification_abonnes_mobile');
 Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
@@ -44,7 +50,11 @@ Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPa
 Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
 Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
 
-
+/*
+|--------------------------------------------------------------------------
+| Back Office Routes
+|--------------------------------------------------------------------------
+*/
 
 // Login Routes
 Route::get('/oneci-admin', [LoginController::class, 'showLoginForm'])->name('login');

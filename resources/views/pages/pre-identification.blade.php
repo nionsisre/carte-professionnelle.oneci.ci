@@ -185,9 +185,9 @@
                                                     <span style="display: none" id="err-toast"></span>
                                                     <div class="form-group column-last" id="gender-field">
                                                         <label class="col-sm-4 control-label">
-                                                            Genre<span
+                                                            Genre de l'abonné<span
                                                                 style="color: #d9534f">*</span> :
-                                                        </label><br/>
+                                                        </label>
                                                         <div class="form-group">
                                                             <div class="col-sm-12 container clearfix">
                                                                 <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
@@ -228,18 +228,6 @@
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-third column-last" id="spouse-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            <em>Nom d'épouse :</em>
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
-                                                                   placeholder="Nom d'épouse..." maxlength="70"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
                                                     <div class="form-group one-third column-last" id="last-name-field">
                                                         <label class="col-sm-2 control-label">
                                                             Prénom(s) de l'abonné<span style="color: #d9534f">*</span> :
@@ -250,6 +238,18 @@
                                                                    autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="spouse-name-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            <em>Nom d'épouse (facultatif) :</em>
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
+                                                                   placeholder="Nom d'épouse..." maxlength="70"
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
@@ -301,8 +301,6 @@
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                </div>
-                                                <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de naissance de l'abonné<span
@@ -315,6 +313,8 @@
                                                         </div>
                                                         <br/>
                                                     </div>
+                                                </div>
+                                                <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="residence-field">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de résidence de l'abonné<span
