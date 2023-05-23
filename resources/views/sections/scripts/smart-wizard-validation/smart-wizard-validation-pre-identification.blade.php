@@ -152,10 +152,10 @@
                 case 0:
                     first_name = document.querySelectorAll('[name="first-name"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
+                    spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]'));
                     birth_date = document.querySelectorAll('[name="birth-date"]');
                     country = jQuery(document.querySelectorAll('[name="country"]')).val();
-                    birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') :
-                    document.querySelectorAll('[name="birth-place"]');
+                    birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') : document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
                     gender = document.querySelectorAll('[name="gender"]:checked');
@@ -176,6 +176,9 @@
                         jQuery('.blocker').css('z-index','2');
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
+                    }
+                    if (jQuery(gender).val().toUpperCase() === 'M') {
+                        jQuery(spouse_name).val('');
                     }
                     {{-- first_name --}}
                     if(!jQuery(first_name).val()) {
@@ -448,12 +451,11 @@
                         return false;
                     }
                     {{-- RECAP --}}
-                    spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]')).val();
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     var msisdn_list = "";
                     jQuery('#recap-msisdn').html(msisdn_list);
-                    if(spouse_name) {
-                        jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase() + ' epse ' + spouse_name.toUpperCase());
+                    if(jQuery(spouse_name).val()) {
+                        jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase() + ' epse ' + jQuery(spouse_name).val().toUpperCase());
                     } else {
                         jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase());
                     }
