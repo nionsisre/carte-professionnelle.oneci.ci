@@ -324,6 +324,19 @@
                                                         </div>
                                                         <br/>
                                                     </div>
+                                                    <div class="form-group one-third column-last" id="country-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Nationalité de l'abonné<span
+                                                                style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="country-input" name="country"
+                                                                   placeholder="Nationalité..." maxlength="70"
+                                                                   autocomplete="off" required="required"
+                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
                                                     <div class="form-group one-third column-last" id="birth-place-field">
                                                         <label class="col-sm-4 control-label">
                                                             Lieu de naissance de l'abonné<span
@@ -344,21 +357,6 @@
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-third column-last" id="country-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Nationalité de l'abonné<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="country-input" name="country"
-                                                                   placeholder="Nationalité..." maxlength="70"
-                                                                   autocomplete="off" required="required"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                </div>
-                                                <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de naissance de l'abonné<span
@@ -371,6 +369,8 @@
                                                         </div>
                                                         <br/>
                                                     </div>
+                                                </div>
+                                                <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="residence-field">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de résidence de l'abonné<span
