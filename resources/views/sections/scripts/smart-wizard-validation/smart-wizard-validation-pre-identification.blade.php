@@ -158,7 +158,7 @@
                     document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
-                    gender = document.querySelectorAll('[name="gender"]');
+                    gender = document.querySelectorAll('[name="gender"]:checked');
 
                     {{-- gender --}}
                     if(!jQuery('#gender-input-male').is(':checked') && !jQuery('#gender-input-female').is(':checked')) {
@@ -428,7 +428,7 @@
                         return false;
                     }
                     {{-- pdf_doc_size --}}
-                    var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+                    var fSExt = new Array('Bytes', 'Ko', 'Mo', 'Go');
                     fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
                     console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
                     if(pdf_doc_size >= 1048576) {

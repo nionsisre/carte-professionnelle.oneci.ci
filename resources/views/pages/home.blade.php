@@ -299,7 +299,7 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="spouse-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            <em>Nom d'épouse :</em>
+                                                            <em>Nom d'épouse (facultatif) :</em>
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
