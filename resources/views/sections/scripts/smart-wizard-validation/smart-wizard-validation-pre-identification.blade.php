@@ -118,6 +118,21 @@
             }
         }
     });
+    jQuery("#doc-type").change(function () {
+        var selected_doc = this.value;
+        if(selected_doc == "5") {
+            jQuery("#pdf-doc-field").hide();
+            jQuery("#document-expiry-field").hide();
+            jQuery("#document-expiry-field").hide();
+            jQuery("#document-number-field").hide();
+        } else {
+            jQuery("#pdf-doc-field").show();
+            jQuery("#document-expiry-field").show();
+            jQuery("#document-expiry-field").show();
+            jQuery("#document-number-field").show();
+        }
+        {{--jQuery("#checkboxSuccess_1").prop('checked', false);--}}
+    });
     {{-- Changement dynamique du libelle pour le NNI --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#new-format-card').is(':checked')) {
@@ -361,7 +376,7 @@
                     if(!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez selectionner votre type de document justificatif</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez sélectionner votre type de document justificatif</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );

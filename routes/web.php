@@ -39,6 +39,8 @@ Route::get('/generer-qrcode-carte-professionnelle', [IdentificationController::c
 
 /* Post Processing Only Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
+//Route::post('/soumettre-pre-identification', [IdentificationController::class, 'submit'])->name('soumettre-pre-identification');
+
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/sc', [IdentificationController::class, 'statusCheck'])->name('verification_statut_numero_deja_verifie');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
