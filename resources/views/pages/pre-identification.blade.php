@@ -369,6 +369,7 @@
                                                             @foreach($abonnes_type_pieces as $abonnes_type_piece)
                                                                 <option value="{{ $abonnes_type_piece->id }}">{{ $abonnes_type_piece->libelle_piece }}</option>
                                                             @endforeach
+                                                            <option value="0">Je n'ai aucun des documents ci-dessus</option>
                                                         </select>
                                                     </div>
                                                 </div><br/>
