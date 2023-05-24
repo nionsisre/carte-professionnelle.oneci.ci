@@ -385,12 +385,15 @@
                     }
                     if (jQuery("#doc-type").val() === "0") { {{-- Cas où l'utilisateur n'a aucun des documents de la liste --}}
                         jQuery("#cni-type-field").hide();
-                        jQuery("#document-number-field").hide();
-                        jQuery("#document-expiry-field").hide();
-                        jQuery("#pdf-doc-field").hide();
+                        jQuery("#document-number-input").val('');
+                        jQuery("#document-expiry-input").val('');
+                        jQuery("#pdf-doc-input").val('');
+                        jQuery("#pdf-doc-label").html('<i class="fad fa-file-pdf fa-3x mr10" style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em">' +
+                            '</i><br/><span>Charger le document…</span>');
                         {{-- RECAP AVEC PIECE --}}
                         jQuery('#recap-pdf-doc').text('Aucun document ONECI');
                         jQuery('#recap-document-number').text('...');
+                        jQuery('#recap-document-label').hide();
                     } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
                         {{-- document_number --}}
                         if(!jQuery(document_number).val()) {
@@ -471,6 +474,7 @@
                         {{-- RECAP AVEC PIECE --}}
                         jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
                         jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
+                        jQuery('#recap-document-label').show();
                     }
                     {{-- RECAP --}}
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();

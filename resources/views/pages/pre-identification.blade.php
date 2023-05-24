@@ -419,7 +419,7 @@
                                                                    class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                    style="display: none">
                                                             <label for="pdf-doc-input" class="atcl-inv hoverable"
-                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;" id="pdf-doc-label"><i
                                                                     class="fad fa-file-pdf fa-3x mr10"
                                                                     style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
                                                         </div>
@@ -480,7 +480,7 @@
                                                     <label class="col-sm-2 control-label">
                                                         Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
                                                     </label><br/>
-                                                    <label class="col-sm-2 control-label">
+                                                    <label class="col-sm-2 control-label" id="recap-document-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
                                                     </label><br/><br/>
                                                     <div class="form-group">
