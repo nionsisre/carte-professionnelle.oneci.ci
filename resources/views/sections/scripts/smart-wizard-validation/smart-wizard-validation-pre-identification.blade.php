@@ -383,81 +383,94 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- document_number --}}
-                    if(!jQuery(document_number).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-asterisk"></i><br/><br/><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
+                    if (jQuery("#doc-type").val() === "0") { {{-- Cas où l'utilisateur n'a aucun des documents de la liste --}}
+                        jQuery("#cni-type-field").hide();
+                        jQuery("#document-number-field").hide();
+                        jQuery("#document-expiry-field").hide();
+                        jQuery("#pdf-doc-field").hide();
+                        {{-- RECAP AVEC PIECE --}}
+                        jQuery('#recap-pdf-doc').text('Aucun document ONECI');
+                        jQuery('#recap-document-number').text('...');
+                    } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
+                        {{-- document_number --}}
+                        if(!jQuery(document_number).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-asterisk"></i><br/><br/><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- document_expiry --}}
+                        var documentExpiryFormatted = new Date(jQuery(document_expiry).val());
+                        var maxExpiryDate = new Date();
+                        var minExpiryDate = new Date();
+                        maxExpiryDate.setFullYear(maxExpiryDate.getFullYear()+20);
+                        minExpiryDate.setFullYear(minExpiryDate.getFullYear()-5);
+                        if(jQuery(document_expiry).val() === '' || (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime()) ) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-calendar-day"></i><br/><br/><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- pdf_doc --}}
+                        if(!jQuery(pdf_doc).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>Veuillez charger un document justificatif</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- pdf_doc_size --}}
+                        var fSExt = new Array('Bytes', 'Ko', 'Mo', 'Go');
+                        fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
+                        console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
+                        if(pdf_doc_size >= 1048576) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(fSize*100)/100)+' '+fSExt[i])+'</b></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- document_expiry --}}
-                    var documentExpiryFormatted = new Date(jQuery(document_expiry).val());
-                    var maxExpiryDate = new Date();
-                    var minExpiryDate = new Date();
-                    maxExpiryDate.setFullYear(maxExpiryDate.getFullYear()+20);
-                    minExpiryDate.setFullYear(minExpiryDate.getFullYear()-5);
-                    if(jQuery(document_expiry).val() === '' || (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime()) ) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-calendar-day"></i><br/><br/><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- pdf_doc --}}
-                    if(!jQuery(pdf_doc).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>Veuillez charger un document justificatif</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- pdf_doc_size --}}
-                    var fSExt = new Array('Bytes', 'Ko', 'Mo', 'Go');
-                    fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
-                    console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
-                    if(pdf_doc_size >= 1048576) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(fSize*100)/100)+' '+fSExt[i])+'</b></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- RECAP AVEC PIECE --}}
+                        jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
+                        jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     }
                     {{-- RECAP --}}
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
@@ -490,8 +503,6 @@
                     } else {
                         jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
                     }
-                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
-                    jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
                     } else {
