@@ -431,13 +431,13 @@
                                                     <br/>
                                                 </div>
                                                 <br/>
-                                                <div class="form-group column-last" id="document-number-field">
-                                                    <label class="col-sm-2 control-label" id="document-number-label">
-                                                        Choisir le nombre de numéro<span style="color: #d9534f">*</span> :
+                                                <div class="form-group column-last" id="msisdn-length-field">
+                                                    <label class="col-sm-2 control-label" id="msisdn-length-label">
+                                                        Combien de numéro(s) de téléphone (cartes SIM) souhaitez-vous acquérir<span style="color: #d9534f">*</span> ?
                                                     </label>
                                                     <div class="col-sm-10">
-                                                        <input type="number" id="document-number-input" name="document-number"
-                                                               placeholder="1, 2 ou 3" maxlength="11" required="required"
+                                                        <input type="number" id="msisdn-length-input" name="msisdn-length"
+                                                               value="1" min="1" max="100" required="required"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
                                                     <br/>
