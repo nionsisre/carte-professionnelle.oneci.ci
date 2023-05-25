@@ -921,14 +921,14 @@ class IdentificationController extends Controller {
         $validator = Validator::make($request->all(), [
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
             'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
-            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
+            /*'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
             'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
             'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
             'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
             'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
             'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
-            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
+            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY*/
         ]);
         if ($validator->fails()) {
             return response([
@@ -937,9 +937,18 @@ class IdentificationController extends Controller {
             ], Response::HTTP_BAD_REQUEST);
         } else {
             /* Vérification de l'ID de transaction chez CinetPAY */
+            if(env('CINETPAY_SERVICE_KEY') !== $request->input('cpm_site_id')) {
+                return response([
+                    'has_error' => true,
+                    'message' => 'Hum..'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
             $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
             if($payment_data['has_error']) {
-                return redirect()->route('consultation_statut_identification');
+                return response([
+                    'has_error' => true,
+                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                ], Response::HTTP_OK);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
                 $abonne_numeros = DB::table('abonnes_numeros')
