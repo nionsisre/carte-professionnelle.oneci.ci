@@ -394,6 +394,8 @@
                         jQuery('#recap-pdf-doc').text('Aucun document ONECI');
                         jQuery('#recap-document-number').text('...');
                         jQuery('#recap-document-label').hide();
+                        jQuery("#cptch-sbmt-btn").attr('class', "button");
+                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Procéder au paiement et Soumettre votre pré-identification');
                     } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
                         {{-- document_number --}}
                         if(!jQuery(document_number).val()) {
@@ -475,6 +477,8 @@
                         jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
                         jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                         jQuery('#recap-document-label').show();
+                        jQuery("#cptch-sbmt-btn").attr('class', "button");
+                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification');
                     }
                     {{-- RECAP --}}
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();

@@ -23,6 +23,7 @@ use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Ramsey\Uuid\Type\Integer;
@@ -913,67 +914,72 @@ class IdentificationController extends Controller {
      * Notification de Paiement par l'API CinetPay<br/><br/>
      * <b>RedirectResponse</b> notifyCinetPayAPI(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function notifyCinetPayAPI(Request $request) {
         /* @TODO: Mettre à jour les informations de paiement fournie par CinetPAY */
-//        request()->validate([
-//            'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
-//            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
-//            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
-//            'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
-//            'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
-//            'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
-//            'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
-//            'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
-//            'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
-//            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
-//        ]);
-//        /* Vérification du Token générique */
-//        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
-//            return redirect()->route('consultation_statut_identification');
-//        } else {
-//            /* Vérification de l'ID de transaction chez CinetPAY */
-//            $payment_data = $this->verifyCinetPayAPI($request->input('ti'));
-//            if($payment_data['has_error']) {
-//                return redirect()->route('consultation_statut_identification');
-//            } else {
-//                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-//                $abonne_numeros = DB::table('abonnes_numeros')
-//                    ->select('*')
-//                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-//                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-//                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-//                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-//                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-//                    ->get();
-//                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-//                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
-//                    return redirect()->route('consultation_statut_identification');
-//                }
-//                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-//                $abonne_numero = $abonne_numeros[$request->input('idx')];
-//                DB::table('abonnes_numeros')
-//                    ->where('abonne_id','=', $abonne_numero->abonne_id)
-//                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
-//                    ->update([
-//                        'transaction_id' => $payment_data['transaction_id'],
-//                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
-//                        'cinetpay_code' => $payment_data['data']['code'],
-//                        'cinetpay_message' => $payment_data['data']['message'],
-//                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
-//                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
-//                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
-//                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
-//                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
-//                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
-//                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
-//                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
-//                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
-//                    ]);
-//                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
-//            }
-//        }
+        $validator = Validator::make($request->all(), [
+            'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
+            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
+            'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
+            'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
+            'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
+            'signature' => ['required', 'string', 'max:70'], // API Response ID (CinetPAY)
+            'payment_method' => ['required', 'string', 'max:70'], // Code (CinetPAY)
+            'cel_phone_num' => ['nullable', 'string', 'max:150'], // Message retour API CinetPAY
+            'cpm_phone_prefixe' => ['required', 'string', 'max:150'], // Methode de paiement CinetPAY
+            'cpm_payment_config' => ['required', 'string', 'max:150'], // Date de paiement CinetPAY
+        ]);
+        if ($validator->fails()) {
+            return response([
+                'has_error' => true,
+                'message' => 'Some parameters are missing'
+            ], Response::HTTP_BAD_REQUEST);
+        } else {
+            /* Vérification de l'ID de transaction chez CinetPAY */
+            $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
+            if($payment_data['has_error']) {
+                return redirect()->route('consultation_statut_identification');
+            } else {
+                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
+                $abonne_numeros = DB::table('abonnes_numeros')
+                    ->select('*')
+                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->get();
+                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
+                    return redirect()->route('consultation_statut_identification');
+                }
+                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                DB::table('abonnes_numeros')
+                    ->where('abonne_id','=', $abonne_numero->abonne_id)
+                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
+                    ->update([
+                        'transaction_id' => $payment_data['transaction_id'],
+                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+                        'cinetpay_code' => $payment_data['data']['code'],
+                        'cinetpay_message' => $payment_data['data']['message'],
+                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
+                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
+                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
+                    ]);
+                return response([
+                    'has_error' => false,
+                    'message' => 'Roger !'
+                ], Response::HTTP_OK);
+            }
+        }
     }
 
     /**
