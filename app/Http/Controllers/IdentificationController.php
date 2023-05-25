@@ -923,7 +923,7 @@ class IdentificationController extends Controller {
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
             'cpm_trans_id' => ['required', 'string', 'max:100'], // ID de transaction
             'cpm_custom' => ['required', 'string', 'max:100'], // Numero de dossier contenu dans la variable Metadata
-            'cpm_designation' => ['required', 'string', 'max:20'], // Numero de telephone a actualisers
+            'cpm_designation' => ['required', 'string', 'max:20'], // Numero de telephone a actualiser
             /*'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
             'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
@@ -943,14 +943,14 @@ class IdentificationController extends Controller {
             if(env('CINETPAY_SERVICE_KEY') !== $request->input('cpm_site_id')) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                    'message' => 'Ok liar, you\'ll be blacklisted soon... 1'
                 ], Response::HTTP_OK);
             }
             $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
             if($payment_data['has_error']) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                    'message' => 'Ok liar, you\'ll be blacklisted soon... 2'
                 ], Response::HTTP_OK);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
@@ -967,7 +967,7 @@ class IdentificationController extends Controller {
                 if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
                     return response([
                         'has_error' => true,
-                        'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                        'message' => 'Ok liar, you\'ll be blacklisted soon... 3'
                     ], Response::HTTP_OK);
                 }
                 dd($abonne_numero);
