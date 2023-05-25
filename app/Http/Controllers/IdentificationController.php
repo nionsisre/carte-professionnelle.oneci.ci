@@ -805,7 +805,7 @@ class IdentificationController extends Controller {
     private function getPaymentLinkCinetPayAPI($abonne_infos) {
         $client = new Client();
         try {
-            $transaction_id = date('Y', time()).time();
+            $transaction_id = date('Y', time()).$this->generateTransactionId();
             $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
                 'verify' => false,
                 'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
@@ -1067,6 +1067,19 @@ class IdentificationController extends Controller {
         $token['time'] = $expireTime;
         session()->put('token_time', time());
         return $token;
+    }
+
+    /**
+     * (PHP 4, PHP 5, PHP 7)<br/>
+     * This function is useful to generate Transaction ID<br/><br/>
+     * <b>array</b> generateTransactionId()<br/>
+     * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
+     * </p>
+     * @return int Value of result
+     */
+    private function generateTransactionId() {
+        $transaction_id = time();
+        return (AbonnesNumero::where('transaction_id', $transaction_id)->exists()) ? $this->generateTransactionId() : $transaction_id;
     }
 
     /**
