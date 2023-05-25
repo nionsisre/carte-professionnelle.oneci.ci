@@ -828,7 +828,7 @@ class IdentificationController extends Controller {
                     'customer_state' => 'CM',
                     'customer_zip_code' => '065100',
                     'channels' => 'ALL',
-                    'metadata' => 'user1',
+                    'metadata' => $abonne_infos->numero_dossier,
                     'lang' => 'FR',
                     'invoice_data' => [
                         'Numéro de validation' => $abonne_infos->numero_dossier
@@ -920,7 +920,8 @@ class IdentificationController extends Controller {
         /* @TODO: Mettre à jour les informations de paiement fournie par CinetPAY */
         $validator = Validator::make($request->all(), [
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
-            'cpm_trans_id' => ['nullable', 'string', 'max:100'], // ID de transaction
+            'cpm_trans_id' => ['required', 'string', 'max:100'], // ID de transaction
+            'cpm_custom' => ['required', 'string', 'max:100'], // Numero de dossier contenu dans la variable Metadata
             /*'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
             'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
@@ -940,8 +941,8 @@ class IdentificationController extends Controller {
             if(env('CINETPAY_SERVICE_KEY') !== $request->input('cpm_site_id')) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Hum..'
-                ], Response::HTTP_UNAUTHORIZED);
+                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                ], Response::HTTP_OK);
             }
             $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
             if($payment_data['has_error']) {
@@ -960,11 +961,14 @@ class IdentificationController extends Controller {
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                     ->get();
                 /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
-                    return redirect()->route('consultation_statut_identification');
+                if(!isset($abonne_numeros[$request->input('cpm_custom')]) || $abonne_numeros[$request->input('cpm_custom')]->code_statut!=='NUI') {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                    ], Response::HTTP_OK);
                 }
                 /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                $abonne_numero = $abonne_numeros[$request->input('idx')];
+                $abonne_numero = $abonne_numeros[$request->input('cpm_custom')];
                 DB::table('abonnes_numeros')
                     ->where('abonne_id','=', $abonne_numero->abonne_id)
                     ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
