@@ -960,11 +960,9 @@ class IdentificationController extends Controller {
                     ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                     ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                     ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                    ->where('abonnes.numero_dossier', '=', $request->input('cpm_custom'))
                     ->where('abonnes_numeros.numero_de_telephone', '=', $request->input('cpm_designation'))
                     ->first();
-                echo $request->input('cpm_designation')."<br/>\n <br/>";
-                dd($abonne_numero);
                 /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
                 if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
                     return response([
