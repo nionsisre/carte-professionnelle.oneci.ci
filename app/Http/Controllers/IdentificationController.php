@@ -943,14 +943,14 @@ class IdentificationController extends Controller {
             if(env('CINETPAY_SERVICE_KEY') !== $request->input('cpm_site_id')) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon... 1'
+                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
                 ], Response::HTTP_OK);
             }
             $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
             if($payment_data['has_error']) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon... 2'
+                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
                 ], Response::HTTP_OK);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
@@ -963,14 +963,15 @@ class IdentificationController extends Controller {
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                     ->where('abonnes_numeros.numero_de_telephone', '=', $request->input('cpm_designation'))
                     ->first();
+                echo $request->input('cpm_designation')."<br/>\n <br/>";
+                dd($abonne_numero);
                 /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
                 if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
                     return response([
                         'has_error' => true,
-                        'message' => 'Ok liar, you\'ll be blacklisted soon... 3'
+                        'message' => 'Ok liar, you\'ll be blacklisted soon...'
                     ], Response::HTTP_OK);
                 }
-                dd($abonne_numero);
                 /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
                 DB::table('abonnes_numeros')
                     ->where('abonne_id','=', $abonne_numero->abonne_id)
