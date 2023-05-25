@@ -918,7 +918,11 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function notifyCinetPayAPI(Request $request) {
-        /* @TODO: Mettre à jour les informations de paiement fournie par CinetPAY */
+        /*
+           CinetPAY envoie une requête POST vers cette methode après chaque paiement effectué censée mettre à jour
+           le statut au cas où le navigateur du client s'est déconnecté avant la synchronisation du statut lors de
+           son paiement
+        */
         $validator = Validator::make($request->all(), [
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
             'cpm_trans_id' => ['required', 'string', 'max:100'], // ID de transaction
@@ -1005,7 +1009,33 @@ class IdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function returnCinetPayAPI(Request $request) {
-
+        /* Après le paiement une redirection est effectuee vers l'espace de consultation si le transaction_id exist dans la base */
+        if(!empty($request->input('transaction_id')) && !empty($request->get('token'))) {
+            $abonne_numeros = DB::table('abonnes_numeros')
+                ->select('*')
+                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                ->where('abonnes.transaction_id', '=', $request->get('transaction_id'))
+                ->get();
+            if (sizeof($abonne_numeros) !== 0) {
+                /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
+                for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = $this->createToken(0);
+                session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
+                /* Si le service d'envoi de SMS est actif */
+                if (config('services.sms.enabled')) {
+                    /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+                    for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                        $otp_msisdn_tokens[$i] = $this->createToken(0);
+                    }
+                    session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+                }
+                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
+            }
+        }
+        /* Sinon retourner sur le formulaire de consultation */
+        return redirect()->route('consultation_statut_identification');
     }
 
     /**
@@ -1013,10 +1043,14 @@ class IdentificationController extends Controller {
      * Annulation de Paiement par l'API CinetPay<br/><br/>
      * <b>RedirectResponse</b> cancelCinetPayAPI(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function cancelCinetPayAPI(Request $request) {
-
+        /* En cas d'annulation d'un paiement */
+        return response([
+            'has_error' => false,
+            'message' => 'Impossible d\'annuler un paiement'
+        ], Response::HTTP_OK);
     }
 
     /**
