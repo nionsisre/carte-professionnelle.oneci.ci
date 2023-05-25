@@ -829,6 +829,7 @@ class IdentificationController extends Controller {
                     'customer_zip_code' => '065100',
                     'channels' => 'ALL',
                     'metadata' => $abonne_infos->numero_dossier,
+                    'designation' => $abonne_infos->numero_de_telephone,
                     'lang' => 'FR',
                     'invoice_data' => [
                         'Numéro de validation' => $abonne_infos->numero_dossier
@@ -922,6 +923,7 @@ class IdentificationController extends Controller {
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
             'cpm_trans_id' => ['required', 'string', 'max:100'], // ID de transaction
             'cpm_custom' => ['required', 'string', 'max:100'], // Numero de dossier contenu dans la variable Metadata
+            'cpm_designation' => ['required', 'string', 'max:20'], // Numero de telephone a actualisers
             /*'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
             'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
@@ -952,23 +954,24 @@ class IdentificationController extends Controller {
                 ], Response::HTTP_OK);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-                $abonne_numeros = DB::table('abonnes_numeros')
+                $abonne_numero = DB::table('abonnes_numeros')
                     ->select('*')
                     ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
                     ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
                     ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
                     ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                     ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-                    ->get();
+                    ->where('abonnes_numeros.numero_de_telephone', '=', $request->input('cpm_designation'))
+                    ->first();
                 /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numeros[$request->input('cpm_custom')]) || $abonne_numeros[$request->input('cpm_custom')]->code_statut!=='NUI') {
+                if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
                     return response([
                         'has_error' => true,
                         'message' => 'Ok liar, you\'ll be blacklisted soon...'
                     ], Response::HTTP_OK);
                 }
+                dd($abonne_numero);
                 /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                $abonne_numero = $abonne_numeros[$request->input('cpm_custom')];
                 DB::table('abonnes_numeros')
                     ->where('abonne_id','=', $abonne_numero->abonne_id)
                     ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
