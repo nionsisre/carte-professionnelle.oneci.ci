@@ -31,12 +31,14 @@
                 <thead>
                 <tr>
                     <th>Date Enregistrement</th>
+                    <th>Date Validation</th>
                     <th>Operateur</th>
                     <th>N°Télephone</th>
                     <th>N°Dossier</th>
                     <th>N°Document</th>
                     <th>Nom</th>
                     <th>Prénoms</th>
+                    <th>Epouse</th>
                     <th>Date de Naissance</th>
                     <th>Lieu de  Naissance</th>
                     <th>Nationalité</th>
@@ -51,12 +53,14 @@
                 @foreach($operateurs as $operateur)
                 <tr>
                     <td>{{date('d-m-Y',strtotime($operateur->created_at))}}</td>
+                    <td>{{date('d-m-Y',strtotime($operateur->date_validation))}}</td>
                     <td>{{$operateur->libelle_operateur}}</td>
                     <td>{{preg_replace("/\s+/","",$operateur->numero_de_telephone)}}</td>
                     <td>{{$operateur->numero_dossier}}</td>
                     <td>{{$operateur->numero_document}}</td>
                     <td>{{$operateur->nom}}</td>
                     <td>{{ $operateur->prenoms}}</td>
+                    <td>{{ $operateur->nom_epouse}}</td>
                     <td>{{ date('d-m-Y',strtotime($operateur->date_de_naissance))}}</td>
                     <td>{{ $operateur->lieu_de_naissance}}</td>
                     <td>{{ $operateur->nationalite}}</td>

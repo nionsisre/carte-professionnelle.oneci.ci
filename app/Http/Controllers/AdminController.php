@@ -137,7 +137,6 @@ class AdminController extends Controller
         $pass = $request->password;
         $passhash = Hash::make($pass);
 
-
         $users = User::where('email', $request->email)->get();
 
         foreach ($users as $user){
@@ -199,8 +198,6 @@ class AdminController extends Controller
         return view('admin/importation');
 
     }
-
-
 
     public function import(Request $request) {
         $this->validate($request, [
@@ -271,12 +268,14 @@ class AdminController extends Controller
         if ($op == 0 &&  $st == 0 && $date1 == " 00:00:00" && $date2 == " 23:59:59"){/* Tous les operateurs et tous les statuts*/
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                'abonnes_numeros.date_validation',
                 'abonnes_operateurs.libelle_operateur',
                 'abonnes_numeros.numero_de_telephone',
                 'abonnes.numero_dossier',
                 'abonnes.numero_document',
                 'abonnes.nom',
                 'abonnes.prenoms',
+                'abonnes.nom_epouse',
                 'abonnes.date_de_naissance',
                 'abonnes.lieu_de_naissance',
                 'abonnes.nationalite',
@@ -295,6 +294,8 @@ class AdminController extends Controller
         elseif ($op == 0 &&  $st == 0 && $date1 !== " 00:00:00" && $date2 !== " 23:59:59"){/* Tous les operateurs et tous les statuts et par periode */
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -321,6 +322,8 @@ class AdminController extends Controller
         elseif ($op == 0 &&  $st !== 0 && $date1 == " 00:00:00" && $date2 == " 23:59:59") {/* Tous les operateurs et differents statuts */
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -346,6 +349,8 @@ class AdminController extends Controller
         elseif($op == 0 &&  $st !== 0 && $date1 !== 0 && $date2 !== 0){
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -373,6 +378,8 @@ class AdminController extends Controller
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
                     'abonnes_operateurs.libelle_operateur',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
                     'abonnes.numero_document',
@@ -397,6 +404,8 @@ class AdminController extends Controller
         elseif($op !== 0 &&  $st == 0 && $date1 !== 0 && $date2 !== 0){/* differents les operateurs et Tous statuts  */
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -423,6 +432,8 @@ class AdminController extends Controller
         elseif($op !== 0 &&  $st  !== 0 && $date1 == " 00:00:00" && $date2 == " 23:59:59"){
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -449,6 +460,8 @@ class AdminController extends Controller
         elseif($op !== 0 &&  $st !== 0 && $date1 !== 0 && $date2 !== 0){
             $operateurs = DB::table('abonnes_numeros')
                 ->select('abonnes_numeros.created_at',
+                    'abonnes.nom_epouse',
+                    'abonnes_numeros.date_validation',
                     'abonnes_operateurs.libelle_operateur',
                     'abonnes_numeros.numero_de_telephone',
                     'abonnes.numero_dossier',
@@ -484,6 +497,7 @@ class AdminController extends Controller
         $operateurs = DB::table('abonnes_numeros')
             ->select('abonnes_numeros.id',
                 'abonnes_numeros.observation',
+                'abonnes_numeros.date_validation',
                 'abonnes_numeros.created_at',
                 'abonnes_operateurs.libelle_operateur',
                 'abonnes_numeros.numero_de_telephone',
@@ -491,6 +505,7 @@ class AdminController extends Controller
                 'abonnes.numero_document',
                 'abonnes.nom',
                 'abonnes.prenoms',
+                'abonnes.nom_epouse',
                 'abonnes.date_de_naissance',
                 'abonnes.lieu_de_naissance',
                 'abonnes.nationalite',
@@ -706,10 +721,10 @@ class AdminController extends Controller
         $operateurs = AbonnesNumero::find($request->id);
         $operateurs->abonnes_statut_id = $request->status;
         $operateurs->observation = $request->txtobservation;
+        $operateurs->user_valid = Auth::user()->login;
+        $operateurs->date_validation = date('Y-m-d H:i:s');
         $operateurs->save();
-//        return view('admin/validation-search-result', compact('operateurs'));
       return redirect()->route('abonnes.validation')->with(['info'=> 'valider avec succes']);
-
 
     }
 

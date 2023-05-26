@@ -37,12 +37,8 @@ class CreateAbonnesNumerosTable extends Migration
             $table->foreignIdFor(\App\Models\AbonnesOperateur::class)->nullable();
             $table->foreignIdFor(\App\Models\AbonnesStatut::class)->nullable();
             $table->string('observation')->nullable();
-            /*$table->foreign('abonnes_operateurs_id')->references('id')->on('abonnes_operateurs')
-            ->nullable()
-            ->constrained()
-            ->OnUpdate('cascade')
-            ->OnDelete('set null');
-            $table->engine('InnoDB');*/
+            $table->string('user_validation')->nullable();
+            $table->string('date_validation')->nullable();
         });
     }
 

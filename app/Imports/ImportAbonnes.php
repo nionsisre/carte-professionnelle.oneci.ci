@@ -4,7 +4,9 @@ namespace App\Imports;
 
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
+use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -38,6 +40,8 @@ private $ficher_importer =array();
                     $abonnesNumeros = AbonnesNumero::find($table->id);
                     $abonnesNumeros->abonnes_statut_id = $excelstatut;
                     $abonnesNumeros->observation = $excelobservation;
+                    $abonnesNumeros->user_valid = Auth::user()->login;
+                    $abonnesNumeros->date_validation = date('Y-m-d H:i:s');
                     $abonnesNumeros->save();
 //                    dd($table,$abonnesNumeros);
 

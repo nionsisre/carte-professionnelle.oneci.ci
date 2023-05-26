@@ -62,12 +62,14 @@
                 <thead>
                 <tr>
                     <th>Date Enregistrement</th>
+                    <th>Date validation</th>
                     <th>Operateur</th>
                     <th>N°Télephone</th>
                     <th>N°Dossier</th>
                     <th>N°Document</th>
                     <th>Nom</th>
                     <th>Prénoms</th>
+                    <th>Epouse</th>
                     <th>Date de Naissance</th>
                     <th>Lieu de  Naissance</th>
                     <th>Nationalité</th>
@@ -82,12 +84,14 @@
                 @foreach($operateurs as $operateur)
                     <tr>
                         <td>{{date('d-m-Y',strtotime($operateur->created_at))}}</td>
+                        <td>{{date('d-m-Y',strtotime($operateur->validation))}}</td>
                         <td>{{$operateur->libelle_operateur}}</td>
                         <td>{{preg_replace("/\s+/","",$operateur->numero_de_telephone)}}</td>
                         <td>{{$operateur->numero_dossier}}</td>
                         <td>{{$operateur->numero_document}}</td>
                         <td>{{$operateur->nom}}</td>
                         <td>{{ $operateur->prenoms}}</td>
+                        <td>{{ $operateur->nom_epouse}}</td>
                         <td>{{ date('d-m-Y',strtotime($operateur->date_de_naissance))}}</td>
                         <td>{{ $operateur->lieu_de_naissance}}</td>
                         <td>{{ $operateur->nationalite}}</td>
@@ -148,9 +152,13 @@
                                 <input type="hidden" name="id"  id="idstatus">
                                 <select class="form-control" name="status" autocomplete=off required>
                                     <option value="" disabled selected hidden>Changer le status</option>
-                                    <option value="2">Document justificatif en attente d'approbation</option>
-                                    <option value="3">Numéro identifié</option>
-                                    <option value="4">Identification refusée</option>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->role_id == 2)
+                                        <option value="2">Document justificatif en attente d'approbation</option>
+                                        <option value="3">Numéro identifié</option>
+                                        <option value="4">Identification refusée</option>
+                                    @endif
+                                    <option value="5">Information Conforme</option>
+                                    <option value="6">Information Nom Conforme</option>
                                 </select>
                             </div>
                             <br/>
