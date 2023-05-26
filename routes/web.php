@@ -19,8 +19,15 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-/* View Routes */
+/*
+|--------------------------------------------------------------------------
+| Front Office Routes
+|--------------------------------------------------------------------------
+*/
+
+/* Views Routes */
 Route::get('/', [MainController::class, 'index'])->name('accueil');
+Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentificationAbonnesMobile'])->name('pre_identification_abonnes_mobile');
 Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
 Route::get('/imprimer-recu-identification', [IdentificationController::class, 'printRecu'])->name('imprimer_recu_identification');
@@ -28,10 +35,13 @@ Route::get('/get-certificat-identification', [IdentificationController::class, '
 Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
 Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('checker_certificat_identification');
 Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
+/*Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('reclamation_paiement');*/
 Route::get('/generer-qrcode-carte-professionnelle', [IdentificationController::class, 'generateCarteProfessionnelleQrCode'])->name('generate_qr_code_carte_professionnelle');
 
 /* Post Processing Only Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
+//Route::post('/soumettre-pre-identification', [IdentificationController::class, 'submit'])->name('soumettre-pre-identification');
+
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/sc', [IdentificationController::class, 'statusCheck'])->name('verification_statut_numero_deja_verifie');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
@@ -43,7 +53,11 @@ Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPa
 Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
 Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
 
-
+/*
+|--------------------------------------------------------------------------
+| Back Office Routes
+|--------------------------------------------------------------------------
+*/
 
 // Login Routes
 Route::get('/oneci-admin', [LoginController::class, 'showLoginForm'])->name('login');

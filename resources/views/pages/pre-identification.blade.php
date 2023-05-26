@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Identification Abonné Mobile')
+@section('title', 'Pré-Identification Abonné Mobile')
 
-@section('home')
+@section('pre_identification_abonnes_mobile')
     <!-- begin page title -->
     <section id="page-title">
         <div class="container clearfix">
@@ -10,7 +10,7 @@
                 <ul>
                     <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo; </li>
                     <li>Nos services &rsaquo; </li>
-                    <li>Identification Abonné Mobile</li>
+                    <li>Pré-identification pour l'acquisition d'un nouveau numéro de téléphone (Carte SIM)</li>
                 </ul>
             </nav>
         </div>
@@ -22,7 +22,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-sim-card text-black mr10"></i> &nbsp; Identification du numéro de téléphone en ligne
+                <h2><i class="fa fa-sim-card text-black mr10"></i> &nbsp; Pré-identification pour l'acquisition d'un nouveau numéro de téléphone (Carte SIM)
                 </h2>
                 @if(session()->has('abonne_numeros'))
                     @if(!config('services.sms.enabled'))
@@ -95,31 +95,31 @@
                                                 <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
                                                 <td style="vertical-align: middle;">
                                                     @if(session()->get('abonne_numeros')[$i]->abonnes_statut_id == 1)
-                                                    <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
-                                                        <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
-                                                        <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
-                                                    </div>
-                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
-                                                        {{ csrf_field() }}
-                                                        <input type="hidden" name="cli" value="{{ url()->current() }}">
-                                                        <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
-                                                        <input type="hidden" name="idx" value="{{ $i }}">
-                                                        <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
-                                                            <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
-                                                                Code de vérification reçu
-                                                            </label>
-                                                            <div class="col-sm-10">
-                                                                <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
+                                                        <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
+                                                            <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
+                                                            <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
+                                                        </div>
+                                                        <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                            {{ csrf_field() }}
+                                                            <input type="hidden" name="cli" value="{{ url()->current() }}">
+                                                            <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
+                                                            <input type="hidden" name="idx" value="{{ $i }}">
+                                                            <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
+                                                                <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
+                                                                    Code de vérification reçu
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="one-third column-last">
-                                                            <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
-                                                                <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
-                                                            </button>
-                                                        </div>
-                                                    </form>
+                                                            <div class="one-third column-last">
+                                                                <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
+                                                                    <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
+                                                                </button>
+                                                            </div>
+                                                        </form>
                                                     @else
-                                                    <i class="fa fa-check"></i> &nbsp; Vérification effectuée
+                                                        <i class="fa fa-check"></i> &nbsp; Vérification effectuée
                                                     @endif
                                                 </td>
                                             </tr>
@@ -128,9 +128,9 @@
                                     </table>
                                     <br/>
                                     <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('consultation_statut_identification') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
-                                        <br/><br/><br/>
-                                        L'ONECI vous remercie !
-                                        <br/><br/><br/><br/>
+                                    <br/><br/><br/>
+                                    L'ONECI vous remercie !
+                                    <br/><br/><br/><br/>
                                 </div>
                                 <a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
                                 <a href="{{ route('accueil') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
@@ -158,8 +158,7 @@
                             </div>
                         </center>
                     @endif
-                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
-                        téléphone(s) en ligne<br/></h5>
+                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'Obtenir une fiche provisoire de pré-identification pour l'acquisition d'un nouveau numéro de téléphone Ivoirien<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center>
                             <div id="tvi-preorder-container">
@@ -170,70 +169,15 @@
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard">
                                         <ul class="nav">
-                                            <li><a class="nav-link" href="#step-1"><i class="fa fa-sim-card text-white"></i>
-                                                    &nbsp; Etape 1 : Numéro(s) à identifier</a></li>
-                                            <li><a class="nav-link" href="#step-2"><i
-                                                        class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
-                                                    Informations sur l'abonné</a></li>
-                                            <li><a class="nav-link" href="#step-3"><i class="fa fa-id-card text-white"></i>
-                                                    &nbsp; Etape 3 : Document justificatif</a></li>
-                                            <li><a class="nav-link" href="#step-4"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 4 : Récapitulatif</a></li>
+                                            <li><a class="nav-link" href="#step-1"><i class="fa fa-info-circle text-white"></i>
+                                                    &nbsp; Etape 1 : Informations sur l'abonné</a></li>
+                                            <li><a class="nav-link" href="#step-2"><i class="fa fa-id-card text-white"></i>
+                                                    &nbsp; Etape 2 : Document justificatif</a></li>
+                                            <li><a class="nav-link" href="#step-3"><i class="fa fa-eye text-white"></i>
+                                                    &nbsp; Etape 3 : Récapitulatif</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="step-1" class="tab-pane" role="tabpanel">
-                                                <br/><br/>
-                                                <h2>Numéro(s) à identifier :</h2>
-                                                <center>
-                                                    <div class="notification-box notification-box-info">
-                                                        <div class="modal-header">
-                                                            <h3><i class="fa fa-sim-card"></i> &nbsp; Merci de vous rassurer que le numéro est le votre et est accessible. <br/>Il sera utilisé pour les confirmations nécessaires.</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer"></div>
-                                                </center>
-                                                <br/>
-                                                {{--                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>--}}
-                                                <div id="msisdn-container">
-                                                    <div class="container clearfix" id="ct-msisdn-1" style="background-color: #ccc; padding: 2em 2em">
-                                                        <div class="form-group one-half column-last" id="msisdn-field-1">
-                                                            <div class="col-sm-12">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Numéro de téléphone<span
-                                                                        style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <span style="display: none" id="err-toast"></span>
-                                                                <div class="col-sm-10"><span style="width: 2em">+ 225</span>
-                                                                    &nbsp;
-                                                                    <input type="text" class="form-control msisdn"
-                                                                           id="msisdn-input-1" name="msisdn[]"
-                                                                           placeholder="__ __ __ __ __" maxlength="14"
-                                                                           style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                           required="required" autocomplete="off" /></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group one-half column-last" id="telco-field-1">
-                                                            <label class="col-sm-2 control-label">
-                                                                Opérateur téléphonique<span style="color: #d9534f">*</span> :
-                                                            </label>
-                                                            <span style="display: none" id="err-toast"></span>
-                                                            <div class="col-sm-10">
-                                                                <select class="form-control good-select"
-                                                                        id="telco-input-1" name="telco[]"
-                                                                        placeholder="Opérateur téléphonique" required="required" readonly="readonly"
-                                                                        style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                    <option value="" selected disabled>Opérateur téléphonique</option>
-                                                                    @foreach($abonnes_operateurs as $abonnes_operateur)
-                                                                        <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div><br/><br/>
-                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
-                                            </div>
-                                            <div id="step-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Informations sur l'abonné :</h2>
                                                 <br/>
@@ -409,7 +353,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="step-3" class="tab-pane" role="tabpanel">
+                                            <div id="step-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Document justificatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
@@ -425,6 +369,7 @@
                                                             @foreach($abonnes_type_pieces as $abonnes_type_piece)
                                                                 <option value="{{ $abonnes_type_piece->id }}">{{ $abonnes_type_piece->libelle_piece }}</option>
                                                             @endforeach
+                                                            <option value="0">Je n'ai aucun des documents ci-dessus</option>
                                                         </select>
                                                     </div>
                                                 </div><br/>
@@ -474,7 +419,7 @@
                                                                    class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                    style="display: none">
                                                             <label for="pdf-doc-input" class="atcl-inv hoverable"
-                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;" id="pdf-doc-label"><i
                                                                     class="fad fa-file-pdf fa-3x mr10"
                                                                     style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
                                                         </div>
@@ -486,8 +431,19 @@
                                                     <br/>
                                                 </div>
                                                 <br/>
+                                                <div class="form-group column-last" id="msisdn-length-field">
+                                                    <label class="col-sm-2 control-label" id="msisdn-length-label">
+                                                        Combien de numéro(s) de téléphone (cartes SIM) souhaitez-vous acquérir<span style="color: #d9534f">*</span> ?
+                                                    </label>
+                                                    <div class="col-sm-10">
+                                                        <input type="number" id="msisdn-length-input" name="msisdn-length"
+                                                               value="1" min="1" max="100" required="required"
+                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                    </div>
+                                                    <br/>
+                                                </div>
                                             </div>
-                                            <div id="step-4" class="tab-pane" role="tabpanel">
+                                            <div id="step-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
@@ -524,7 +480,7 @@
                                                     <label class="col-sm-2 control-label">
                                                         Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
                                                     </label><br/>
-                                                    <label class="col-sm-2 control-label">
+                                                    <label class="col-sm-2 control-label" id="recap-document-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
                                                     </label><br/><br/>
                                                     <div class="form-group">

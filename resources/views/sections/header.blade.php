@@ -15,6 +15,9 @@
             <li>
                 <a href="https://www.oneci.ci/accueil">Accueil</a>
             </li>
+            <!--<li>
+                <a href="{{ route('pre_identification_abonnes_mobile') }}">Pré-identification</a>
+            </li>-->
             <li>
                 <a href="{{ route('accueil') }}">Identification</a>
             </li>

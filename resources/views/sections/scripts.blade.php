@@ -16,7 +16,7 @@
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
     @include('sections.scripts.dynamic-msisdn')
-    @include('sections.scripts.smart-wizard-validation')
+    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
     @include('sections.scripts.copy-to-clipboard')
     @if(session()->has('abonne_numeros'))
         @if(config('services.sms.enabled'))
@@ -35,6 +35,20 @@
         @endif
         @if(config('services.cinetpay.enabled'))
             @include('sections.scripts.payment-processing')
+        @endif
+    @endif
+@elseif(Route::is('pre_identification_abonnes_mobile'))
+    @if(config('services.recaptcha.enabled'))
+        @include('sections.scripts.recaptcha')
+    @endif
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.smart-wizard')
+    @include('sections.scripts.custom-input-file')
+    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-pre-identification')
+    @include('sections.scripts.copy-to-clipboard')
+    @if(session()->has('abonne_numeros'))
+        @if(config('services.sms.enabled'))
+            @include('sections.scripts.otp-verification')
         @endif
     @endif
 @endif
