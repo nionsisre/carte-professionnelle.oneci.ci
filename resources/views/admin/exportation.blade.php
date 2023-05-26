@@ -30,6 +30,8 @@
                             <option value="2">DDA</option>
                             <option value="3">IDV</option>
                             <option value="4">IDR</option>
+                            <option value="5">ICF</option>
+                            <option value="6">INCF</option>
                         </select>
                     </div>
 
