@@ -940,21 +940,21 @@ class IdentificationController extends Controller {
         if ($validator->fails()) {
             return response([
                 'has_error' => true,
-                'message' => 'Some parameters are missing'
+                'message' => 'Some parameters are missing : '.$validator->errors()->first()
             ], Response::HTTP_BAD_REQUEST);
         } else {
             /* Vérification de l'ID de transaction chez CinetPAY */
             if(env('CINETPAY_SERVICE_KEY') !== $request->input('cpm_site_id')) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                    'message' => 'Echec de la synchronisation...'
                 ], Response::HTTP_OK);
             }
             $payment_data = $this->verifyCinetPayAPI($request->input('cpm_trans_id'));
             if($payment_data['has_error']) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                    'message' => 'Echec de la synchronisation du paiement, votre numéro de transaction n\'est pas reconnu...'
                 ], Response::HTTP_OK);
             } else {
                 /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
@@ -971,7 +971,7 @@ class IdentificationController extends Controller {
                 if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
                     return response([
                         'has_error' => true,
-                        'message' => 'Ok liar, you\'ll be blacklisted soon...'
+                        'message' => 'Echec de la synchronisation du paiement, le numéro de téléphone saisi ne correspond pas au numéro identifié...'
                     ], Response::HTTP_OK);
                 }
                 /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
@@ -995,7 +995,7 @@ class IdentificationController extends Controller {
                     ]);
                 return response([
                     'has_error' => false,
-                    'message' => 'Roger !'
+                    'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
                 ], Response::HTTP_OK);
             }
         }

@@ -35,6 +35,7 @@ Route::get('/get-certificat-identification', [IdentificationController::class, '
 Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
 Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('checker_certificat_identification');
 Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
+/*Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('reclamation_paiement');*/
 Route::get('/generer-qrcode-carte-professionnelle', [IdentificationController::class, 'generateCarteProfessionnelleQrCode'])->name('generate_qr_code_carte_professionnelle');
 
 /* Post Processing Only Routes */
