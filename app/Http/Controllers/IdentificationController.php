@@ -69,8 +69,8 @@ class IdentificationController extends Controller {
             'document-expiry' => ['nullable', 'string', 'max:11'],
         ]);
         /* Stocker variables en base */
-        $numero_dossier = time();
-        $document_justificatif_filename = 'identification' . '_' . time() . '.' . $request->pdf_doc->extension();
+        $numero_dossier = $this->generateUniqueNumberID('numero_dossier');
+        $document_justificatif_filename = 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension();
         $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
         $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
             DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
@@ -805,7 +805,7 @@ class IdentificationController extends Controller {
     private function getPaymentLinkCinetPayAPI($abonne_infos) {
         $client = new Client();
         try {
-            $transaction_id = date('Y', time()).$this->generateTransactionId();
+            $transaction_id = date('Y', time()).$this->generateUniqueNumberID('transaction_id');
             $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
                 'verify' => false,
                 'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
@@ -1054,7 +1054,7 @@ class IdentificationController extends Controller {
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
+     * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
      * This function is useful to generate Token<br/><br/>
      * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
      * @param int $expireTime <p>
@@ -1070,20 +1070,26 @@ class IdentificationController extends Controller {
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
-     * This function is useful to generate Transaction ID<br/><br/>
-     * <b>array</b> generateTransactionId()<br/>
-     * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
+     * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
+     * This function is useful to generate unique number ID<br/><br/>
+     * <b>array</b> generateUniqueNumberID()<br/>
      * </p>
-     * @return int Value of result
+     * @return int Unique Number ID
      */
-    private function generateTransactionId() {
-        $transaction_id = time();
-        return (AbonnesNumero::where('transaction_id', $transaction_id)->exists()) ? $this->generateTransactionId() : $transaction_id;
+    private function generateUniqueNumberID($type) {
+        $unique_number_id = time();
+        switch ($type) {
+            case 'numero_dossier':
+                return (Abonne::where('numero_dossier', $unique_number_id)->exists()) ? $this->generateUniqueNumberID($type) : $unique_number_id;
+            case 'transaction_id':
+                return (AbonnesNumero::where('transaction_id', $unique_number_id)->exists()) ? $this->generateUniqueNumberID($type) : $unique_number_id;
+            default:
+                return $unique_number_id;
+        }
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
+     * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
      * This function checks generated token<br/><br/>
      * <b>bool</b> checkToken(<b>string</b> $token_received, <b>array</b> $token_session)<br/>
      * @param string $token_received <p>
