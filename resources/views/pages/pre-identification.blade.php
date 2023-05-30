@@ -459,7 +459,7 @@
                                                 <h2><i class="fa fa-sim-card"></i> &nbsp; Nombre de cartes SIM à acquerir :</h2>
                                                 <div class="form-group column-last" id="msisdn-length-field">
                                                     <label class="col-sm-2 control-label" id="msisdn-length-label">
-                                                        Combien de numéro(s) de téléphone (cartes SIM) souhaitez-vous acquérir<span style="color: #d9534f">*</span> ?
+                                                        Combien de numéro(s) de téléphone (cartes SIM) souhaitez-vous acquérir en votre nom<span style="color: #d9534f">*</span> ?
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="number" id="msisdn-length-input" name="msisdn-length"
@@ -511,6 +511,12 @@
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label" id="recap-document-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Nombre de cartes SIM pré-identifiables : <b><span id="recap-msisdn-length"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label" id="recap-prov-amount-label" style="display: none">
+                                                        Frais d'exemption de document <em>(Sans document justificatif ONECI uniquement)</em> : <b><span id="recap-prov-amount"></span></b>
                                                     </label><br/><br/>
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
