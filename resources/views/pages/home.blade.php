@@ -411,7 +411,7 @@
                                             </div>
                                             <div id="step-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2>Document justificatif :</h2>
+                                                <h2><i class="fa fa-id-card"></i> &nbsp; Document justificatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
                                                     <label class="col-sm-2 control-label">
                                                         Type de pièce d'identité<span style="color: #d9534f">*</span> :
@@ -476,7 +476,7 @@
                                                             <label for="pdf-doc-input" class="atcl-inv hoverable"
                                                                    style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
                                                                     class="fad fa-file-pdf fa-3x mr10"
-                                                                    style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><span>Charger le document…</span></label>
+                                                                    style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
                                                         </div>
                                                     </div><br/>
                                                     <label for="pdf-doc-input" class="col-sm-2 control-label">
@@ -485,7 +485,27 @@
                                                     </label>
                                                     <br/>
                                                 </div>
-                                                <br/>
+                                                <br/><br/>
+                                                <h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
+                                                Veuillez charger <b>une photo selfie récente</b> de <b>vous</b>.<br/>
+                                                Cette photo doit être <b>différente</b> de celle présente sur <b>votre document d'identité</b>.<br/><br/>
+                                                <div class="form-group" id="selfie-img-field">
+                                                    <div class="col-sm-10">
+                                                        <div class="box">
+                                                            <input type="file" name="selfie_img" id="selfie-img-input"
+                                                                   class="inputfile" accept="image/jpeg, image/png"
+                                                                   style="display: none">
+                                                            <label for="selfie-img-input" class="atcl-inv hoverable"
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;" id="selfie-img-label"><i
+                                                                    class="fad fa-user fa-3x mr10"
+                                                                    style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-camera"></i> &nbsp; <span>Charger votre photo...</span></label>
+                                                        </div>
+                                                    </div><br/>
+                                                    <label for="selfie-img-input" class="col-sm-2 control-label">
+                                                        <em>Votre photo doit être au format <b>*.jpg</b> ou <b>*.png</b> et ne doit pas excéder <b>3 Mo</b>.</em>
+                                                    </label>
+                                                    <br/>
+                                                </div>
                                             </div>
                                             <div id="step-4" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
@@ -523,6 +543,9 @@
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Photo selfie récente : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
