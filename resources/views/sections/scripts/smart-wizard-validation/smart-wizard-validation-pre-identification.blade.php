@@ -8,6 +8,11 @@
     function elementCount(arr, element){
         return arr.filter((currentElement) => currentElement === element).length;
     };
+    {{-- Fonction pour valider l'adresse email --}}
+    function isEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+    }
     {{-- Initialisation et lancement de la fenetre Pop-up au chargement du Smart-Wizard --}}
     {{-- jQuery('#modalInfo').html(
         '<center> <div class="notification-box notification-box-info">\n\
@@ -22,7 +27,7 @@
     });
     jQuery('.blocker').css('z-index','2'); --}}
     {{-- Variables --}}
-    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Apparition ou non du champ nom épouse selon que le genre soit masculin ou feminin --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#gender-input-male').is(':checked')) {
@@ -168,7 +173,7 @@
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
                     gender = document.querySelectorAll('[name="gender"]:checked');
-
+                    email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     {{-- gender --}}
                     if(!jQuery('#gender-input-male').is(':checked') && !jQuery('#gender-input-female').is(':checked')) {
                         jQuery('#modalError').html(
@@ -354,11 +359,33 @@
                         jQuery("#document-number-input").attr('placeholder','__________');
                         jQuery("#document-number-input").mask('9999999999');
                     }
+                    {{-- email --}}
+                    if(email !== "" && !isEmail(email)) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-envelope"></i><br/><br/><h3>Veuillez correctement renseigner votre adresse mail SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     {{-- Declenchement la detection de la taille du document a charger --}}
-                    pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
+                        pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
                     $(pdf_doc).on('change', function() {
                         pdf_doc_size = this.files[0].size;
+                    });
+                    {{-- Declenchement la detection de la taille du selfie a charger --}}
+                    selfie_img = document.querySelectorAll('[name="selfie_img"]');
+                    $(selfie_img).on('change', function() {
+                        selfie_img_size = this.files[0].size;
                     });
                     break;
                 {{-- Step 2 --}}
@@ -390,8 +417,45 @@
                         jQuery("#pdf-doc-input").val('');
                         jQuery("#pdf-doc-label").html('<i class="fad fa-file-pdf fa-3x mr10" style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em">' +
                             '</i><br/><span>Charger le document…</span>');
-                        {{-- RECAP AVEC PIECE --}}
+                        {{-- selfie_img --}}
+                        if(!jQuery(selfie_img).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez charger une photo selfie récente de vous</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- selfie_img_size --}}
+                        var selffSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                        selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
+                        if(pdf_doc_size >= 3145728) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>La taille de votre photo excède 3 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'</b></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- RECAP SANS PIECE --}}
                         jQuery('#recap-pdf-doc').text('Aucun document ONECI');
+                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split('\\')[2]+' - '+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'');
                         jQuery('#recap-document-number').text('...');
                         jQuery('#recap-document-label').hide();
                         jQuery("#cptch-sbmt-btn").attr('class', "button");
@@ -454,9 +518,8 @@
                             return false;
                         }
                         {{-- pdf_doc_size --}}
-                        var fSExt = new Array('Bytes', 'Ko', 'Mo', 'Go');
+                        var fSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
                         fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
-                        console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
                         if(pdf_doc_size >= 1048576) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
@@ -473,15 +536,51 @@
                             jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
                         }
+                        {{-- selfie_img --}}
+                        if(!jQuery(selfie_img).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez charger une photo selfie récente de vous</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- selfie_img_size --}}
+                        var selffSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                        selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
+                        if(pdf_doc_size >= 3145728) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>La taille de votre photo excède 3 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'</b></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
                         {{-- RECAP AVEC PIECE --}}
                         jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
+                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split('\\')[2]+' - '+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'');
                         jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                         jQuery('#recap-document-label').show();
                         jQuery("#cptch-sbmt-btn").attr('class', "button");
                         jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification');
                     }
                     {{-- RECAP --}}
-                    email = jQuery(document.querySelectorAll('[name="email"]')).val();
                     var msisdn_list = "";
                     jQuery('#recap-msisdn').html(msisdn_list);
                     if(jQuery(spouse_name).val()) {
@@ -524,6 +623,10 @@
                         }
                     });
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                    break;
+                {{-- Step 3 --}}
+                case 2:
+
                     break;
             }
         }
