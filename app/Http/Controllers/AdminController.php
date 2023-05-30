@@ -29,7 +29,7 @@ class AdminController extends Controller
             ->Where('abonnes_numeros.abonnes_statut_id', "1")
             ->get();
 
-        $OrangeEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "1")
+        $Otporange = AbonnesNumero::where('abonnes_operateur_id', "1")
             ->Where('abonnes_numeros.abonnes_statut_id', "2")
             ->get();
 
@@ -41,16 +41,16 @@ class AdminController extends Controller
             ->Where('abonnes_numeros.abonnes_statut_id', "4")
             ->get();
 
-        $OrangeEnattente = count($OrangeEnattente1) + count($OrangeEnattente2);
+        //$OrangeEnattente = count($OrangeEnattente1) + count($Otporange);
 
-        $sommeOrange = $OrangeEnattente + count($OrangeValide) + count($OrangeReject);
+        $sommeOrange = count($OrangeEnattente1) + count($Otporange) + count($OrangeValide) + count($OrangeReject);
 
 //MTN
         $MtnEnattente1 = AbonnesNumero::where('abonnes_operateur_id', "2")
             ->Where('abonnes_numeros.abonnes_statut_id', "1")
             ->get();
 
-        $MtnEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "2")
+        $MtnOtp = AbonnesNumero::where('abonnes_operateur_id', "2")
             ->Where('abonnes_numeros.abonnes_statut_id', "2")
             ->get();
 
@@ -63,16 +63,16 @@ class AdminController extends Controller
             ->Where('abonnes_numeros.abonnes_statut_id', "4")
             ->get();
 
-        $MtnEnattente = count($MtnEnattente1) + count($MtnEnattente2) ;
+        //$MtnEnattente = count($MtnEnattente1) + count($MtnEnattente2) ;
 
-        $sommeMtn = $MtnEnattente + count($MtnValide) + count($MtnReject);
+        $sommeMtn =  count($MtnEnattente1) + count($MtnOtp)+ count($MtnValide) + count($MtnReject);
 
 //Moov
         $MoovEnattente1 = AbonnesNumero::where('abonnes_operateur_id', "3")
             ->Where('abonnes_numeros.abonnes_statut_id', "1")
             ->get();
 
-        $MoovEnattente2 = AbonnesNumero::where('abonnes_operateur_id', "3")
+        $MoovOtp = AbonnesNumero::where('abonnes_operateur_id', "3")
             ->Where('abonnes_numeros.abonnes_statut_id', "2")
             ->get();
 
@@ -86,24 +86,25 @@ class AdminController extends Controller
             ->Where('abonnes_numeros.abonnes_statut_id', "4")
             ->get();
 
-        $MoovEnattente = count($MoovEnattente1) + count($MoovEnattente2);
+        //$MoovEnattente = count($MoovEnattente1) + count($MoovEnattente2);
 
-        $sommeMoov = $MoovEnattente + count($MoovValide) + count($MoovReject);
+        $sommeMoov = count($MoovEnattente1) + count($MoovOtp) + count($MoovValide) + count($MoovReject);
 
 //Somme
-        $sommeEncours =  $OrangeEnattente + $MtnEnattente + $MoovEnattente;
+        $sommeEncours =  count($OrangeEnattente1) + count($MtnEnattente1)  + count($MoovEnattente1) ;
+        $sommeOtp =  count($Otporange) + count($MtnOtp) +count($MoovOtp) ;
         $sommeValide = count($OrangeValide) + count($MtnValide) + count($MoovValide);
         $sommeRejet = count($OrangeReject) + count($MtnReject) + count($MoovReject);
-        $somme = $sommeEncours + $sommeValide + $sommeRejet;
+        $somme = $sommeEncours + $sommeOtp + $sommeValide + $sommeRejet;
 
         $data = collect();
 //
         $operateurs = AbonnesOperateur::with("abonnesnumeros")->get();
 
-        return view('admin/dashbord',compact('OrangeEnattente','sommeOrange','OrangeValide','OrangeReject',
-                    'MtnEnattente','sommeMtn','MtnValide','MtnReject',
-                    'MoovEnattente','sommeMoov','MoovValide','MoovReject',
-                    'somme','sommeValide','sommeRejet','sommeEncours',
+        return view('admin/dashbord',compact('OrangeEnattente1','Otporange','sommeOrange','OrangeValide','OrangeReject',
+                    'MtnEnattente1','MtnOtp','sommeMtn','MtnValide','MtnReject',
+                    'MoovEnattente1','MoovOtp','sommeMoov','MoovValide','MoovReject',
+                    'somme','sommeValide','sommeRejet','sommeEncours','sommeOtp',
                     'data',
                     'operateurs'
                 ));

@@ -320,7 +320,8 @@
                     <span class="fa fa-mobile"></span>&nbsp;&nbsp;Orange CI
                 </div>
                 <hr>
-                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ $OrangeEnattente }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ count($OrangeEnattente1) }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">Otp : &nbsp;<span style="font-weight: bold">{{ count($Otporange) }}</span> </div>
                 <div class="col-md-12" style="font-style: italic">Validés : &nbsp;<span style="font-weight: bold">{{ count($OrangeValide) }}</span></div>
                 <div class="col-md-12" style="font-style: italic ; padding-bottom: 10px">Rejeté : &nbsp;<span style="font-weight: bold">{{ count($OrangeReject) }}</span></div>
                 <hr>
@@ -335,7 +336,8 @@
                     <span class="fa fa-mobile"></span>&nbsp;&nbsp;MTN CI
                 </div>
                 <hr>
-                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ $MtnEnattente }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ count($MtnEnattente1) }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">Otp : &nbsp;<span style="font-weight: bold">{{ count($MtnOtp) }}</span> </div>
                 <div class="col-md-12" style="font-style: italic">Validés : &nbsp;<span style="font-weight: bold">{{ count($MtnValide) }}</span></div>
                 <div class="col-md-12" style="font-style: italic ; padding-bottom: 10px">Rejeté: &nbsp;<span style="font-weight: bold">{{ count($MtnReject) }}</span></div>
                 <hr>
@@ -350,7 +352,8 @@
                     <span class="fa fa-mobile"></span>&nbsp;&nbsp;Moov Africa
                 </div>
                 <hr>
-                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ $MoovEnattente }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ count($MoovEnattente1) }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">Otp : &nbsp;<span style="font-weight: bold">{{ count($MoovOtp) }}</span> </div>
                 <div class="col-md-12" style="font-style: italic">Validés : &nbsp;<span style="font-weight: bold">{{ count($MoovValide) }}</span></div>
                 <div class="col-md-12" style="font-style: italic ; padding-bottom: 10px">Rejeté: &nbsp;<span style="font-weight: bold">{{ count($MoovReject) }}</span></div>
                 <hr>
@@ -366,6 +369,7 @@
                 </div>
                 <hr style="color: #fff;">
                 <div class="col-md-12" style="font-style: italic">En cours : &nbsp;<span style="font-weight: bold">{{ $sommeEncours }}</span> </div>
+                <div class="col-md-12" style="font-style: italic">Otp : &nbsp;<span style="font-weight: bold">{{ $sommeOtp }}</span> </div>
                 <div class="col-md-12" style="font-style: italic">Validés : &nbsp;<span style="font-weight: bold">{{ $sommeValide }}</span></div>
                 <div class="col-md-12" style="font-style: italic ; padding-bottom: 10px">Rejeté : &nbsp;<span style="font-weight: bold">{{ $sommeRejet }}</span></div>
                 <hr>
