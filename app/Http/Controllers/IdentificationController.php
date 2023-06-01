@@ -1010,7 +1010,7 @@ class IdentificationController extends Controller {
      */
     public function returnCinetPayAPI(Request $request) {
         /* Après le paiement une redirection est effectuee vers l'espace de consultation si le transaction_id exist dans la base */
-        if(!empty($request->input('transaction_id')) && !empty($request->get('token'))) {
+        if(!empty($request->input('transaction_id'))) {
             $abonne_numeros = DB::table('abonnes_numeros')
                 ->select('*')
                 ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
