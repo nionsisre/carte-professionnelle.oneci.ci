@@ -846,6 +846,35 @@
                     </div>
                 </div>
                 <div class="u-row-container" style="padding: 0px;background-color: transparent">
+                    <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #fff;">
+                        <div style="border-collapse: collapse;display: table;width: 100%;background-color: transparent;">
+                            <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: #f78e0c;"><![endif]-->
+                            <!--[if (mso)|(IE)]><td align="center" width="600" style="width: 600px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;" valign="top"><![endif]-->
+                            <div class="u-col u-col-100" style="max-width: 320px;min-width: 600px;display: table-cell;vertical-align: top;">
+                                <div style="width: 100% !important;">
+                                    <!--[if (!mso)&(!IE)]><!--><div style="padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;"><!--<![endif]-->
+                                        <table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                                            <tbody>
+                                            <tr>
+                                                <td style="overflow-wrap:break-word;word-break:break-word;padding:16px;font-family:'Open Sans',sans-serif;" align="left">
+
+                                                    <div class="v-text-align" style="color: #615e5e; line-height: 140%; text-align: center; word-wrap: break-word;">
+                                                        <p style="font-size: 14px; line-height: 140%;"><em><span style="font-size: 12px; line-height: 16.8px;"><span>Pour obtenir votre certificat d’identification, rendez-vous sur le site www.oneci.ci puis cliquez sur consultation de mon identification<br/><br/></span>&nbsp;</span></em></p>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
+                                </div>
+                            </div>
+                            <!--[if (mso)|(IE)]></td><![endif]-->
+                            <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
+                        </div>
+                    </div>
+                </div>
+                <div class="u-row-container" style="padding: 0px;background-color: transparent">
                     <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #1b5e20;">
                         <div style="border-collapse: collapse;display: table;width: 100%;background-color: transparent;">
                             <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: #f78e0c;"><![endif]-->
