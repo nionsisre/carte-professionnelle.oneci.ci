@@ -189,7 +189,7 @@
                                                             </div>
                                                         @endif
                                                     @elseif(session()->get('abonne_numeros')[$i]->code_statut==='IDR')
-                                                        <i class="fa fa-times-circle"></i> &nbsp; Document refusé par l'ONECI
+                                                        <i class="fa fa-times-circle"></i> &nbsp; Document refusé par l'ONECI<br/><b>Motif : {{ (!empty(session()->get('abonne_numeros')[$i]->observation)) ? session()->get('abonne_numeros')[$i]->observation : "..." }}</b>
                                                     @endif
                                                 </td>
                                             </tr>
