@@ -15,12 +15,13 @@ class LaravelMinifyHtml
         // check if environment is production
         if(env('APP_ENV') === "production") {
             if ($this->isResponseObject($response) && $this->isHtmlResponse($response) && Config::get('htmlminify.default')) {
-                if (!Route::is('login') && !Route::is('authentificaton') && !Route::is('password.*')
-                    && !Route::is('oneci.update.password') && !Route::is('abonnees.*') && !Route::is('abonnees.*')
-                    && !Route::is('admin_home') && !Route::is('rapport') && !Route::is('setting')
-                    && !Route::is('user') && !Route::is('add.user') && !Route::is('update.user')
-                    && !Route::is('rapport.search') && !Route::is('operateur.search.export') && !Route::is('rapport.export')
-                    && !Route::is('rapport.import') && !Route::is('abonnees.*') && !Route::is('logout')) {
+                if (!(Route::currentRouteName() == 'login' || Route::currentRouteName() == 'authentificaton' || Route::currentRouteName() == 'password.rest'
+                    || Route::currentRouteName() == 'oneci.update.password' || Route::currentRouteName() == 'abonnees.*' || Route::currentRouteName() == 'abonnees.*'
+                    || Route::currentRouteName() == 'admin_home' || Route::currentRouteName() == 'rapport' || Route::currentRouteName() == 'setting'
+                    || Route::currentRouteName() == 'user' || Route::currentRouteName() == 'add.user' || Route::currentRouteName() == 'update.user'
+                    || Route::currentRouteName() == 'rapport.search' || Route::currentRouteName() == 'operateur.search.export' || Route::currentRouteName() == 'rapport.export'
+                    || Route::currentRouteName() == 'rapport.import' || Route::currentRouteName() == 'abonnees.exportation' || Route::currentRouteName() == 'logout.importation'
+                    || Route::currentRouteName() == 'abonnes.validation' || Route::currentRouteName() == 'abonnees.validation.search' || Route::currentRouteName() == 'abonnees.validation.update')) {
                     $response->setContent(LaravelHtmlMinifyFacade::htmlMinify($response->getContent()));
                 }
             }
