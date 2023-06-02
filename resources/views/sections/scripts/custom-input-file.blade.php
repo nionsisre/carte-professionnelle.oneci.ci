@@ -15,9 +15,9 @@ jQuery('.inputfile').each(function () {
         if (this.files && this.files.length > 1) {
             fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
         } else if (e.target.value) {
-            {{-- fileName = e.target.value.split('\\').pop(); --}}
+            fileName = e.target.value.split('\\').pop();
             {{-- Renommage du fichier en retirant les espaces et les caracteres speciaux --}}
-            fileName = e.target.value.split('\\').pop().replace(/['"[\]{}()<>+*=/\\|?:^~]/g, '').replace(/[^\w.-]/g, '-');
+            {{-- fileName = e.target.value.split('\\').pop().replace(/['"[\]{}()<>+*=/\\|?:^~]/g, '').replace(/[^\w.-]/g, '-'); --}}
         }
 
         if (fileName) {
@@ -27,7 +27,7 @@ jQuery('.inputfile').each(function () {
         }
 
         {{-- attribution de la valeur du fileName du fichier chargé dans le champ input du formulaire a soumettre --}}
-        $input.val(fileName);
+        {{-- $input.val(fileName); --}}
     });
 
     {{-- Firefox bug fix --}}

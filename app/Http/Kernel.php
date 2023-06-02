@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use App\Http\Middleware\LaravelMinifyHtml;
 
 class Kernel extends HttpKernel
 {
@@ -41,7 +40,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            LaravelMinifyHtml::class,
+            /*\App\Http\Middleware\LaravelMinifyHtml::class,*/
         ],
 
         'api' => [
