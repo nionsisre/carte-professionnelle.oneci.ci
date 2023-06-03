@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\IdentificationController;
+use App\Http\Controllers\PreIdentificationController;
 use App\Http\Controllers\OTPVerificationController;
 
 use App\Http\Controllers\LoginController;
@@ -40,7 +41,7 @@ Route::get('/generer-qrcode-carte-professionnelle', [IdentificationController::c
 
 /* Post Processing Only Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
-//Route::post('/soumettre-pre-identification', [IdentificationController::class, 'submit'])->name('soumettre-pre-identification');
+Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('soumettre_preidentification');
 
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
 Route::post('/sc', [IdentificationController::class, 'statusCheck'])->name('verification_statut_numero_deja_verifie');

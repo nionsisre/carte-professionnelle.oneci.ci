@@ -7,7 +7,7 @@
     {{-- Fonction utile pour compter les nombre d'occurences identiques dans un tableau (pour détecter si quelqu'un entre 2 fois le même numéro --}}
     function elementCount(arr, element){
         return arr.filter((currentElement) => currentElement === element).length;
-    };
+    }
     {{-- Fonction pour valider l'adresse email --}}
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -28,7 +28,7 @@
     jQuery('.blocker').css('z-index','2'); --}}
     {{-- Variables --}}
     var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
-    {{-- Apparition ou non du champ nom épouse selon que le genre soit masculin ou feminin --}}
+    {{-- Apparition ou non du champ nom epouse selon que le genre soit masculin ou feminin --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#gender-input-male').is(':checked')) {
             jQuery("#spouse-name-field").hide();
@@ -435,7 +435,7 @@
                             return false;
                         }
                         {{-- selfie_img_size --}}
-                        var selffSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                        var selffSExt = ["Octets", "Ko", "Mo", "Go"];
                         selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
                         if(pdf_doc_size >= 3145728) {
                             jQuery('#modalError').html(
@@ -455,9 +455,11 @@
                         }
                         {{-- RECAP SANS PIECE --}}
                         jQuery('#recap-pdf-doc').text('Aucun document ONECI');
-                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split('\\')[2]+' - '+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'');
+                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
                         jQuery('#recap-document-number').text('...');
                         jQuery('#recap-document-label').hide();
+                        jQuery("#cptch-sbmt-btn").attr('class', "button");
+                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification et Procéder au paiement (' + ({{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }}) + ' FCFA)');
                     } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
                         {{-- document_number --}}
                         if(!jQuery(document_number).val()) {
@@ -516,7 +518,7 @@
                             return false;
                         }
                         {{-- pdf_doc_size --}}
-                        var fSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                        var fSExt = ["Octets", "Ko", "Mo", "Go"];
                         fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
                         if(pdf_doc_size >= 1048576) {
                             jQuery('#modalError').html(
@@ -552,9 +554,9 @@
                             return false;
                         }
                         {{-- selfie_img_size --}}
-                        var selffSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                        var selffSExt = ["Octets", "Ko", "Mo", "Go"];
                         selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
-                        if(pdf_doc_size >= 3145728) {
+                        if(selfie_img_size >= 3145728) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
                                 <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>La taille de votre photo excède 3 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'</b></div>\n\
@@ -571,10 +573,12 @@
                             return false;
                         }
                         {{-- RECAP AVEC PIECE --}}
-                        jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
-                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split('\\')[2]+' - '+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'');
+                        jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2]+" ("+jQuery(doc_type).select2('data')[0].text+") - "+((Math.round(fSize*100)/100)+" "+fSExt[i]));
+                        jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
                         jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                         jQuery('#recap-document-label').show();
+                        jQuery("#cptch-sbmt-btn").attr('class', "button");
+                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification et Obtenir votre fiche après validation du document ONECI');
                     }
                     {{-- RECAP --}}
                     var msisdn_list = "";
@@ -606,40 +610,15 @@
                     } else {
                         jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
                     }
-                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
-                    break;
-                {{-- Step 3 --}}
-                case 2:
-                    msisdn_length = document.querySelectorAll('[name="msisdn-length"]');
-                    {{-- msisdn_length --}}
-                    if(!jQuery(msisdn_length).val() || parseInt(jQuery(msisdn_length).val()) <= 0 || parseInt(jQuery(msisdn_length).val()) > 100) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez correctement renseigner le nombre de carte(s) SIM à acquérir en votre nom</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    jQuery('#recap-msisdn-length').html(jQuery(msisdn_length).val().toUpperCase() + ' carte(s) SIM  &nbsp; <i class="fa fa-sim-card"></i>');
-                    if (jQuery("#doc-type").val() === "0") { {{-- Cas où l'utilisateur n'a aucun des documents de la liste --}}
-                        jQuery('#recap-prov-amount').html('&nbsp; <i class="fa fa-money-bill"></i> &nbsp; '+ jQuery(msisdn_length).val() + ' x ' + {{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }} + ' FCFA = ' + (parseInt(jQuery(msisdn_length).val())*{{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }}) + ' FCFA');
-                        jQuery('#recap-prov-amount-label').show();
-                        jQuery("#cptch-sbmt-btn").attr('class', "button");
-                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification et Procéder au paiement (' + (parseInt(jQuery(msisdn_length).val())*{{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }}) + ' FCFA)');
-                    } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
-                        jQuery('#recap-prov-amount').html('...');
-                        jQuery('#recap-prov-amount-label').hide();
-                        jQuery("#cptch-sbmt-btn").attr('class', "button");
-                        jQuery("#cptch-sbmt-btn").html('<i class="fa fa-sim-card"></i> &nbsp; Soumettre votre pré-identification et Obtenir votre fiche après validation du document ONECI');
-                    }
+
+
+
+
+
+
+
+
+
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
                     } else {

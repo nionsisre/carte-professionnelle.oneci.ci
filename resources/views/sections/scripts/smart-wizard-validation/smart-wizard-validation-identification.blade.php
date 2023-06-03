@@ -649,7 +649,7 @@
                         return false;
                     }
                     {{-- pdf_doc_size --}}
-                    var fSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                    var fSExt = ["Octets", "Ko", "Mo", "Go"];
                     fSize = pdf_doc_size; i=0;while(fSize>900){fSize/=1024;i++;}
                     console.log((Math.round(fSize*100)/100)+' '+fSExt[i]);
                     if(pdf_doc_size >= 1048576) {
@@ -686,7 +686,7 @@
                         return false;
                     }
                     {{-- selfie_img_size --}}
-                    var selffSExt = new Array('Octets', 'Ko', 'Mo', 'Go');
+                    var selffSExt = ["Octets", "Ko", "Mo", "Go"];
                     selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
                     if(selfie_img_size >= 3145728) {
                         jQuery('#modalError').html(
@@ -737,8 +737,8 @@
                     } else {
                         jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
                     }
-                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split('\\')[2]+' ('+jQuery(doc_type).select2('data')[0].text+') - '+((Math.round(fSize*100)/100)+' '+fSExt[i])+'');
-                    jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split('\\')[2]+' - '+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'');
+                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2]+" ("+jQuery(doc_type).select2('data')[0].text+") - "+((Math.round(fSize*100)/100)+" "+fSExt[i]));
+                    jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
                     jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();

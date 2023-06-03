@@ -83,9 +83,9 @@
                                         @endif
                                         <thead>
                                         <tr style="font-size: 0.75em;">
-                                            <th scope="col">Numéro(s) de téléphone</td>
-                                            <th scope="col">Statut de l'identification</td>
-                                            <th scope="col">Vérification OTP</td>
+                                            <th scope="col">Numéro(s) de téléphone</th>
+                                            <th scope="col">Statut de l'identification</th>
+                                            <th scope="col">Vérification OTP</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -163,7 +163,7 @@
                         <center>
                             <div id="tvi-preorder-container">
                                 <form id="ctptch-frm-id" class="content-form" method="post"
-                                      action="{{ route('soumettre_identification') }}" enctype="multipart/form-data">
+                                      action="{{ route('soumettre_preidentification') }}" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
@@ -174,8 +174,6 @@
                                             <li><a class="nav-link" href="#step-2"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 2 : Justificatif d'identité</a></li>
                                             <li><a class="nav-link" href="#step-3"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 3 : Nombre de numéros</a></li>
-                                            <li><a class="nav-link" href="#step-4"><i class="fa fa-eye text-white"></i>
                                                     &nbsp; Etape 4 : Récapitulatif</a></li>
                                         </ul>
                                         <div class="tab-content">
@@ -456,21 +454,6 @@
                                             </div>
                                             <div id="step-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2><i class="fa fa-sim-card"></i> &nbsp; Nombre de cartes SIM à acquerir :</h2>
-                                                <div class="form-group column-last" id="msisdn-length-field">
-                                                    <label class="col-sm-2 control-label" id="msisdn-length-label">
-                                                        Combien de numéro(s) de téléphone (cartes SIM) souhaitez-vous acquérir en votre nom<span style="color: #d9534f">*</span> ?
-                                                    </label>
-                                                    <div class="col-sm-10">
-                                                        <input type="number" id="msisdn-length-input" name="msisdn-length"
-                                                               value="1" min="1" max="100" required="required"
-                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                    </div>
-                                                    <br/>
-                                                </div>
-                                            </div>
-                                            <div id="step-4" class="tab-pane" role="tabpanel">
-                                                <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
                                                     <label class="col-sm-2 control-label">
@@ -511,9 +494,6 @@
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label" id="recap-document-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>
-                                                    </label><br/>
-                                                    <label class="col-sm-2 control-label">
-                                                        Nombre de cartes SIM pré-identifiables : <b><span id="recap-msisdn-length"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label" id="recap-prov-amount-label" style="display: none">
                                                         Frais d'exemption de document <em>(Sans document justificatif ONECI uniquement)</em> : <b><span id="recap-prov-amount"></span></b>
