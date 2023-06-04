@@ -4,7 +4,7 @@
     | Initialize smartwizard library
     |--------------------------------------------------------------------------
     --}}
-    window.location.hash = '#step-1';
+    window.location.hash = '#etape-1';
     jQuery('#smartwizard').smartWizard({
         selected: 0, {{-- Initial selected step, 0 = first step --}}
         theme: 'arrows', {{-- theme for the wizard, related css need to include for other than default theme --}}

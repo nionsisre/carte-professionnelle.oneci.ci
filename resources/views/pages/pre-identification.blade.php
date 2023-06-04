@@ -169,15 +169,15 @@
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard">
                                         <ul class="nav">
-                                            <li><a class="nav-link" href="#step-1"><i class="fa fa-info-circle text-white"></i>
+                                            <li><a class="nav-link" href="#etape-1"><i class="fa fa-info-circle text-white"></i>
                                                     &nbsp; Etape 1 : Informations sur l'abonné</a></li>
-                                            <li><a class="nav-link" href="#step-2"><i class="fa fa-id-card text-white"></i>
+                                            <li><a class="nav-link" href="#etape-2"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 2 : Justificatif d'identité</a></li>
-                                            <li><a class="nav-link" href="#step-3"><i class="fa fa-eye text-white"></i>
+                                            <li><a class="nav-link" href="#etape-3"><i class="fa fa-eye text-white"></i>
                                                     &nbsp; Etape 4 : Récapitulatif</a></li>
                                         </ul>
                                         <div class="tab-content">
-                                            <div id="step-1" class="tab-pane" role="tabpanel">
+                                            <div id="etape-1" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Informations sur l'abonné :</h2>
                                                 <br/>
@@ -353,7 +353,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="step-2" class="tab-pane" role="tabpanel">
+                                            <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2><i class="fa fa-id-card"></i> &nbsp; Document justificatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
@@ -452,7 +452,7 @@
                                                     <br/>
                                                 </div>
                                             </div>
-                                            <div id="step-3" class="tab-pane" role="tabpanel">
+                                            <div id="etape-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
