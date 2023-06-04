@@ -26,11 +26,11 @@
                 </h2>
                 @if(session()->has('abonne_numeros'))
                     @if(!config('services.sms.enabled'))
-                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                             <center>
-                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
+                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i>
                                 <br/><div>
-                                    <p style="padding: 0em 0em 3em">
+                                    <p style="padding: 0 0 3em">
                                         Votre demande d'identification a bien été soumise avec succès !<br/><br/>
                                         Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('abonne_numeros')[0]->numero_dossier }}</span></b> &nbsp;<br/><br/>
                                         Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
@@ -44,9 +44,9 @@
                             </center>
                         </div><br/><br/><br/><br/><br/><br/>
                     @else
-                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                             <center>
-                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 8em;margin: 0.3em 0em 0.2em;"></i>
+                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 8em;margin: 0.3em 0 0.2em;"></i>
                                 <br/>
                                 <div>
                                     Votre demande d'identification a bien été soumise avec succès !<br/><br><br>
@@ -160,7 +160,7 @@
                     @endif
                     <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
                         téléphone(s) en ligne<br/></h5>
-                    <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
+                    <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
                             <div id="tvi-preorder-container">
                                 <form id="ctptch-frm-id" class="content-form" method="post"
@@ -220,7 +220,7 @@
                                                             <div class="col-sm-10">
                                                                 <select class="form-control good-select"
                                                                         id="telco-input-1" name="telco[]"
-                                                                        placeholder="Opérateur téléphonique" required="required" readonly="readonly"
+                                                                        required="required" readonly="readonly"
                                                                         style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                     <option value="" selected disabled>Opérateur téléphonique</option>
                                                                     @foreach($abonnes_operateurs as $abonnes_operateur)
@@ -345,7 +345,7 @@
                                                         <span style="display: none" id="err-toast"></span>
                                                         <div class="col-sm-10">
                                                             <select class="form-control good-select" id="birth-place-input"
-                                                                    name="birth-place" placeholder="Lieu de naissance"
+                                                                    name="birth-place"
                                                                     style="width: 11.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Choisir le lieu de
                                                                     naissance
@@ -439,7 +439,7 @@
                                                                 </div>
                                                                 <div class="col-sm-6 ckbox ckbox-success">
                                                                     <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" checked="checked" />
-                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label>
+                                                                    <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" alt="icône CNI 2020" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label>
                                                                 </div>
                                                                 <br/>
                                                             </div>
@@ -474,9 +474,9 @@
                                                                    class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                    style="display: none">
                                                             <label for="pdf-doc-input" class="atcl-inv hoverable"
-                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;"><i
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i
                                                                     class="fad fa-file-pdf fa-3x mr10"
-                                                                    style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
+                                                                    style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
                                                         </div>
                                                     </div><br/>
                                                     <label for="pdf-doc-input" class="col-sm-2 control-label">
@@ -496,9 +496,9 @@
                                                                    class="inputfile" accept="image/jpeg, image/png"
                                                                    style="display: none">
                                                             <label for="selfie-img-input" class="atcl-inv hoverable"
-                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: solid 1px black;border-style: dashed;border-radius: 1em; width: 20em;" id="selfie-img-label"><i
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;" id="selfie-img-label"><i
                                                                     class="fad fa-user fa-3x mr10"
-                                                                    style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-camera"></i> &nbsp; <span>Charger votre photo...</span></label>
+                                                                    style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-camera"></i> &nbsp; <span>Charger votre photo...</span></label>
                                                         </div>
                                                     </div><br/>
                                                     <label for="selfie-img-input" class="col-sm-2 control-label">
@@ -552,7 +552,7 @@
                                                     </label><br/><br/>
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
-                                                            <div class="col-sm-6 ckbox ckbox-success" style="border: solid 1px #333;padding: 1em; border-style: dashed; border-radius: 2em">
+                                                            <div class="col-sm-6 ckbox ckbox-success" style="padding: 1em; border: 1px dashed #333;border-radius: 2em">
                                                                 <input type="checkbox" name="agreement" id="agreement-input" value="1" style="width: auto; box-shadow:none; margin-bottom: 0.65em;" required />
                                                                 <label for="agreement-input" style="display: inline-block;" class="col-sm-5"><b> &nbsp;&nbsp; Je certifie que les informations saisies sont correctes &nbsp; <i class="fad fa-award mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i></b></label>
                                                             </div>

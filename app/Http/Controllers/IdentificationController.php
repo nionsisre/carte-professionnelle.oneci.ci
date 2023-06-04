@@ -957,46 +957,55 @@ class IdentificationController extends Controller {
                     'message' => 'Echec de la synchronisation du paiement, votre numéro de transaction n\'est pas reconnu...'
                 ], Response::HTTP_OK);
             } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-                $abonne_numero = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('cpm_custom'))
-                    ->where('abonnes_numeros.numero_de_telephone', '=', $request->input('cpm_designation'))
-                    ->first();
-                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut!=='NUI') {
+                /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
+                   d'un dossier à celui d'une autre personne */
+                if ($request->input('cpm_custom') === $payment_data['data']['data']['metadata']) {
+                    /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
+                    $abonne_numero = DB::table('abonnes_numeros')
+                        ->select('*')
+                        ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                        ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                        ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                        ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                        ->where('abonnes.numero_dossier', '=', $request->input('cpm_custom'))
+                        ->where('abonnes_numeros.numero_de_telephone', '=', $request->input('cpm_designation'))
+                        ->first();
+                    /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                    if (!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut !== 'NUI') {
+                        return response([
+                            'has_error' => true,
+                            'message' => 'Echec de la synchronisation du paiement, le numéro de téléphone saisi ne correspond pas au numéro identifié par le dossier : '.$request->input('cpm_custom')
+                        ], Response::HTTP_OK);
+                    }
+                    /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                    DB::table('abonnes_numeros')
+                        ->where('abonne_id', '=', $abonne_numero->abonne_id)
+                        ->where('numero_de_telephone', '=', $abonne_numero->numero_de_telephone)
+                        ->update([
+                            'transaction_id' => $payment_data['transaction_id'],
+                            'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+                            'cinetpay_code' => $payment_data['data']['code'],
+                            'cinetpay_message' => $payment_data['data']['message'],
+                            'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+                            'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                            'cinetpay_data_status' => $payment_data['data']['data']['status'],
+                            'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                            'cinetpay_data_description' => $payment_data['data']['data']['description'],
+                            'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+                            'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                            'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                            'certificate_download_link' => md5($request->input('fn') . $payment_data['transaction_id'] . $payment_data['data']['data']['operator_id']),
+                        ]);
+                    return response([
+                        'has_error' => false,
+                        'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
+                    ], Response::HTTP_OK);
+                } else {
                     return response([
                         'has_error' => true,
-                        'message' => 'Echec de la synchronisation du paiement, le numéro de téléphone saisi ne correspond pas au numéro identifié...'
+                        'message' => 'Cet ID de transaction n\'est pas celui du numéro de dossier : '.$request->input('cpm_custom')
                     ], Response::HTTP_OK);
                 }
-                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                DB::table('abonnes_numeros')
-                    ->where('abonne_id','=', $abonne_numero->abonne_id)
-                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
-                    ->update([
-                        'transaction_id' => $payment_data['transaction_id'],
-                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
-                        'cinetpay_code' => $payment_data['data']['code'],
-                        'cinetpay_message' => $payment_data['data']['message'],
-                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
-                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
-                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
-                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
-                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
-                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
-                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
-                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
-                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
-                    ]);
-                return response([
-                    'has_error' => false,
-                    'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
-                ], Response::HTTP_OK);
             }
         }
     }
