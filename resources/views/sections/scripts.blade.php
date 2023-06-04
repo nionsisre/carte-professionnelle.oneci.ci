@@ -8,7 +8,7 @@
     });
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
-@if(Route::is('accueil'))
+@if(Route::is('front_office.page.identification'))
     @if(config('services.recaptcha.enabled'))
         @include('sections.scripts.recaptcha')
     @endif
@@ -23,7 +23,7 @@
             @include('sections.scripts.otp-verification')
         @endif
     @endif
-@elseif(Route::is('consultation_statut_identification'))
+@elseif(Route::is('front_office.page.consultation'))
     @if(config('services.recaptcha.enabled'))
         @include('sections.scripts.recaptcha')
     @endif
@@ -37,7 +37,7 @@
             @include('sections.scripts.payment-processing')
         @endif
     @endif
-@elseif(Route::is('pre_identification_abonnes_mobile'))
+@elseif(Route::is('front_office.page.pre_identification'))
     @if(config('services.recaptcha.enabled'))
         @include('sections.scripts.recaptcha')
     @endif

@@ -17,11 +17,11 @@ class QrCartesProfessionnellesController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Genere automatiquement des Codes QR pour les Cartes Professionnelles<br/><br/>
-     * <b>void</b> generateCarteProfessionnelleQrCode(<b>Request</b> $request)<br/>
+     * Genere automatiquement des Codes QR pour les Cartes Professionnelles et les rend téléchargeable au format ZIP<br/><br/>
+     * <b>void</b> downloadQrCodesAsZip(<b>Request</b> $request)<br/>
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function generate() {
+    public function downloadQrCodesAsZip() {
 
         $employes = DB::table('employes')
             ->select('*')

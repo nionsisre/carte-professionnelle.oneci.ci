@@ -17,11 +17,11 @@
         <div id="wrap">
             <div class="spacer">&nbsp;</div>
             <div class="spacer">&nbsp;</div>
-            @if(Route::is('accueil'))
+            @if(Route::is('front_office.page.identification'))
                 @yield('home')
-            @elseif(Route::is('consultation_statut_identification'))
+            @elseif(Route::is('front_office.page.consultation'))
                 @yield('consultation')
-            @elseif(Route::is('pre_identification_abonnes_mobile'))
+            @elseif(Route::is('front_office.page.pre_identification'))
                 @yield('pre_identification_abonnes_mobile')
             @endif
             @include('sections.footer')

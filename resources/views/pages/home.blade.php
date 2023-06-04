@@ -38,8 +38,8 @@
                                     </p>
                                 </div>
                                 <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                <a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
-                                <a href="{{ route('accueil') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
+                                <a href="{{ route('front_office.page.identification') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
                                 <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
                         </div><br/><br/><br/><br/><br/><br/>
@@ -99,7 +99,7 @@
                                                         <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
                                                         <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
                                                     </div>
-                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('front_office.scripts.otp_code.verify') }}">
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                         <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
@@ -127,13 +127,13 @@
                                         </tbody>
                                     </table>
                                     <br/>
-                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('consultation_statut_identification') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
+                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('front_office.page.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
                                         <br/><br/><br/>
                                         L'ONECI vous remercie !
                                         <br/><br/><br/><br/>
                                 </div>
-                                <a href="{{ route('imprimer_recu_identification').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
-                                <a href="{{ route('accueil') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
+                                <a href="{{ route('front_office.page.identification') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
                                 <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
                         </div><br/><br/><br/><br/><br/><br/>
@@ -164,7 +164,7 @@
                         <center>
                             <div id="tvi-preorder-container">
                                 <form id="ctptch-frm-id" class="content-form" method="post"
-                                      action="{{ route('soumettre_identification') }}" enctype="multipart/form-data">
+                                      action="{{ route('front_office.form.soumettre_identification') }}" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>

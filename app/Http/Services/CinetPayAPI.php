@@ -251,7 +251,7 @@ class CinetPayAPI {
             }
         }
         /* Sinon retourner sur le formulaire de consultation */
-        return redirect()->route('consultation_statut_identification');
+        return redirect()->route('front_office.page.consultation');
     }
 
     /**

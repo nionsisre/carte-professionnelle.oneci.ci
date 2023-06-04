@@ -23,7 +23,7 @@
         var fn = "{{ session()->get('abonne_numeros')[0]->numero_dossier }}";
         var idx = {{ $i }};
         $.ajax({
-            url: "{{ route('envoi_code_otp_par_sms') }}",
+            url: "{{ route('front_office.scripts.otp_code.send') }}",
             type: "POST",
             data: {
                 '_token': "{{ csrf_token() }}",
@@ -86,7 +86,7 @@
             }
         }
         $.ajax({
-            url: "{{ route('envoi_code_otp_par_sms') }}",
+            url: "{{ route('front_office.scripts.otp_code.send') }}",
             type: "POST",
             data: {
                 '_token': "{{ csrf_token() }}",

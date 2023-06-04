@@ -248,7 +248,7 @@ class OTPVerificationController extends Controller {
             'otp-code' => ['required', 'string', 'min:6', 'max:6'], // Code OTP de l'abonne a verifier
         ]);
         if ($validator->fails()) {
-            return redirect()->route('consultation_statut_identification')->withErrors($validator)->withInput();
+            return redirect()->route('front_office.page.consultation')->withErrors($validator)->withInput();
         }
         /* Récupération des numéros de telephone de l'abonné à partir du numéro de dossier */
         $abonne_numeros = DB::table('abonnes_numeros')
@@ -302,11 +302,11 @@ class OTPVerificationController extends Controller {
                         ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
                         ->where('abonnes.numero_dossier', '=', $request->input('fn'))
                         ->get();
-                    if ($request->input('cli') === route('accueil')) {
-                        return redirect()->route('accueil')->with('abonne_numeros', $abonne_numeros)
+                    if ($request->input('cli') === route('front_office.page.identification')) {
+                        return redirect()->route('front_office.page.identification')->with('abonne_numeros', $abonne_numeros)
                             ->with('success', ['message' => 'Numéro de téléphone vérifié avec succès !']);
                     } else {
-                        return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros)
+                        return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros)
                             ->with('success', ['message' => 'Numéro de téléphone vérifié avec succès !']);
                     }
                 }
@@ -339,7 +339,7 @@ class OTPVerificationController extends Controller {
                         /* PDF Download document generation */
                         $data = [
                             'title' => 'Certificat d\'identification',
-                            'qrcode' => (new QrCode())->generateQrBase64(route('checker_certificat_identification') . '?c=' . $abonne_numero->certificate_download_link, 183, 1),
+                            'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_identification.url') . '?c=' . $abonne_numero->certificate_download_link, 183, 1),
                             'numero_dossier' => $abonne_numero->numero_dossier,
                             'uniqid' => $abonne_numero->uniqid,
                             'msisdn' => $abonne_numero->numero_de_telephone,
@@ -363,13 +363,13 @@ class OTPVerificationController extends Controller {
                         return $pdf_certificat_identification->download($filename);
                     }
                 }
-                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros)->withErrors([
+                return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros)->withErrors([
                     'not-found' => 'Le téléchargement du certificat d\'identification a échoué : Code OTP Incorrect !'
                 ]);
             }
         }
 
-        return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros)->withErrors(['not-found' => 'Code OTP Incorrect !']);
+        return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros)->withErrors(['not-found' => 'Code OTP Incorrect !']);
     }
 
     /**

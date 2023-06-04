@@ -15,11 +15,11 @@ class QrCodeController extends Controller {
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * QrCode Raw Image Generator from Request Message<br/><br/>
-     * <b>void</b> generateQrCode(<b>Request</b> $request)<br/>
+     * <b>void</b> downloadQrCodeImage(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return bool Return true after displaying QrCode
      */
-    public function generateQrCode(Request $request) {
+    public function downloadQrCodeImage(Request $request) {
         $message = $request->get('m');
         $qrresult = Builder::create()
             ->writer(new PngWriter())

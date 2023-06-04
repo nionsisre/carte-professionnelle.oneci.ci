@@ -298,7 +298,7 @@
                             var iml = 0; {{-- identified_msisdn_length variable destinée à recevoir le nombre de numéros déjà identifiés --}}
                             for(let i=0; i<msisdn.length; i++) {
                                 (function(index){
-                                    let url = '{{ route('verification_statut_numero_deja_verifie') }}';
+                                    let url = '{{ route('front_office.scripts.msisdn.is_already_identified') }}';
                                     let cli = "{{ url()->current() }}";
                                     $.post({
                                         type: 'POST',

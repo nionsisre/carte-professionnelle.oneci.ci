@@ -40,7 +40,7 @@ class IdentificationController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('consultation_statut_identification')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
         }
         /* Valider les variables du formulaire */
         request()->validate([
@@ -99,7 +99,7 @@ class IdentificationController extends Controller {
         if(!empty($request->input('email'))) {
             MailONECI::sendMailTemplate('layouts.recu-identification', [
                 'title' => 'Reçu d\'identification',
-                'qrcode' => (new QrCode())->generateQrBase64(route('obtenir_info_abonne') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
+                'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
                 'numero_dossier' => $abonne->numero_dossier,
                 'uniqid' => $abonne->uniqid,
                 'msisdn_list' => $msisdn,
@@ -130,7 +130,7 @@ class IdentificationController extends Controller {
             session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
         }
         /* Retourner vue resultat */
-        return redirect()->route('accueil')->with('abonne_numeros', $abonne_numeros);
+        return redirect()->route('front_office.page.identification')->with('abonne_numeros', $abonne_numeros);
     }
 
     /**
@@ -147,7 +147,7 @@ class IdentificationController extends Controller {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
                 (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                    redirect()->route('consultation_statut_identification')->with((new GoogleRecaptchaV3())->verify($request));
+                    redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
             }
             /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
             $search_with_msisdn = $request->input('tsch');
@@ -184,7 +184,7 @@ class IdentificationController extends Controller {
             if(sizeof($abonne_numeros) !== 0) {
                 return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
             } else {
-                return redirect()->route('consultation_statut_identification')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
@@ -203,11 +203,11 @@ class IdentificationController extends Controller {
                     return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
                 }
             } else {
-                return redirect()->route('consultation_statut_identification')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         }
 
-        return redirect()->route('consultation_statut_identification');
+        return redirect()->route('front_office.page.consultation');
     }
 
     /**
@@ -350,48 +350,54 @@ class IdentificationController extends Controller {
         ]);
         /* Vérification du Token générique */
         if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
-            return redirect()->route('consultation_statut_identification');
+            return redirect()->route('front_office.page.consultation');
         } else {
             /* Vérification de l'ID de transaction chez CinetPAY */
             $payment_data = (new CinetPayAPI())->verify($request->input('ti'));
             if($payment_data['has_error']) {
-                return redirect()->route('consultation_statut_identification');
+                return redirect()->route('front_office.page.consultation');
             } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-                    ->get();
-                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
-                    return redirect()->route('consultation_statut_identification');
+                /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
+                   d'un dossier à celui d'une autre personne */
+                if ($request->input('fn') === $payment_data['data']['data']['metadata']) {
+                    /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
+                    $abonne_numeros = DB::table('abonnes_numeros')
+                        ->select('*')
+                        ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                        ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                        ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                        ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                        ->where('abonnes.numero_dossier', '=', $request->input('fn'))
+                        ->get();
+                    /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                    if (!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut !== 'NUI') {
+                        return redirect()->route('front_office.page.consultation');
+                    }
+                    /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                    $abonne_numero = $abonne_numeros[$request->input('idx')];
+                    DB::table('abonnes_numeros')
+                        ->where('abonne_id', '=', $abonne_numero->abonne_id)
+                        ->where('numero_de_telephone', '=', $abonne_numero->numero_de_telephone)
+                        ->update([
+                            'transaction_id' => $payment_data['transaction_id'],
+                            'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
+                            'cinetpay_code' => $payment_data['data']['code'],
+                            'cinetpay_message' => $payment_data['data']['message'],
+                            'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
+                            'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                            'cinetpay_data_status' => $payment_data['data']['data']['status'],
+                            'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                            'cinetpay_data_description' => $payment_data['data']['data']['description'],
+                            'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
+                            'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                            'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                            'certificate_download_link' => md5($request->input('fn') . $payment_data['transaction_id'] . $payment_data['data']['data']['operator_id']),
+                            'updated_at' => Carbon::today()
+                        ]);
+                    return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros);
+                } else {
+                    return redirect()->route('front_office.page.consultation');
                 }
-                /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
-                $abonne_numero = $abonne_numeros[$request->input('idx')];
-                DB::table('abonnes_numeros')
-                    ->where('abonne_id','=', $abonne_numero->abonne_id)
-                    ->where('numero_de_telephone','=', $abonne_numero->numero_de_telephone)
-                    ->update([
-                        'transaction_id' => $payment_data['transaction_id'],
-                        'cinetpay_api_response_id' => $payment_data['data']['api_response_id'],
-                        'cinetpay_code' => $payment_data['data']['code'],
-                        'cinetpay_message' => $payment_data['data']['message'],
-                        'cinetpay_data_amount' => $payment_data['data']['data']['amount'],
-                        'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
-                        'cinetpay_data_status' => $payment_data['data']['data']['status'],
-                        'cinetpay_data_payment_method' => $payment_data['data']['data']['payment_method'],
-                        'cinetpay_data_description' => $payment_data['data']['data']['description'],
-                        'cinetpay_data_metadata' => $payment_data['data']['data']['metadata'],
-                        'cinetpay_data_operator_id' => $payment_data['data']['data']['operator_id'],
-                        'cinetpay_data_payment_date' => $payment_data['data']['data']['payment_date'],
-                        'certificate_download_link' => md5($request->input('fn').$payment_data['transaction_id'].$payment_data['data']['data']['operator_id']),
-                        'updated_at' => Carbon::today()
-                    ]);
-                return redirect()->route('consultation_statut_identification')->with('abonne_numeros', $abonne_numeros);
             }
         }
     }
@@ -423,7 +429,7 @@ class IdentificationController extends Controller {
                 /* PDF Download document generation */
                 $data = [
                     'title' => 'Reçu d\'identification',
-                    'qrcode' => (new QrCode())->generateQrBase64(route('obtenir_info_abonne') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->uniqid),
+                    'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->uniqid),
                     'numero_dossier' => $identification_resultats->numero_dossier,
                     'uniqid' => $identification_resultats->uniqid,
                     'msisdn_list' => $msisdn,
@@ -442,7 +448,7 @@ class IdentificationController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('consulter_statut_identification')->with([
+        return redirect()->route('front_office.form.consulter_statut_identification')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement du reçu d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
@@ -450,11 +456,11 @@ class IdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Impression du certificat d'identification<br/><br/>
-     * <b>RedirectResponse</b> printCertficate(<b>Request</b> $request)<br/>
+     * Téléchargement du certificat d'identification au format PDF<br/><br/>
+     * <b>RedirectResponse</b> downloadCertificateIdentificationPDF(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
-    public function printCertificate(Request $request) {
+    public function downloadCertificateIdentificationPDF(Request $request) {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
@@ -473,7 +479,7 @@ class IdentificationController extends Controller {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('checker_certificat_identification') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_identification.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
                         'numero_dossier' => $identification_resultats->numero_dossier,
                         'uniqid' => $identification_resultats->uniqid,
                         'msisdn' => $identification_resultats->numero_de_telephone,
@@ -502,7 +508,7 @@ class IdentificationController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('consultation_statut_identification')->with([
+        return redirect()->route('front_office.page.consultation')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
@@ -533,7 +539,7 @@ class IdentificationController extends Controller {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('checker_certificat_identification') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_identification.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
                         'numero_dossier' => $identification_resultats->numero_dossier,
                         'uniqid' => $identification_resultats->uniqid,
                         'msisdn' => $identification_resultats->numero_de_telephone,
@@ -553,13 +559,13 @@ class IdentificationController extends Controller {
                     ]);
                 }
             }
-            return redirect()->route('consultation_statut_identification')->with([
+            return redirect()->route('front_office.page.consultation')->with([
                 'error' => true,
                 'error_message' => 'Ce certificat n\'est pas ou plus valide !'
             ]);
         }
         /* Retourner vue resultat */
-        return redirect()->route('consultation_statut_identification')->with([
+        return redirect()->route('front_office.page.consultation')->with([
             'error' => true,
             'error_message' => 'Certificat incorrect !'
         ]);

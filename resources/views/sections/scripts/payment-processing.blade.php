@@ -20,7 +20,7 @@
             },
             success: function(res){
                 if (res.data.status === 'ACCEPTED'){
-                    location.href = decodeURI("{{ route('obtenir_certificat_identification').'?t='.md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt')) }}&ti="+ti{{ $i }}+
+                    location.href = decodeURI("{{ route('front_office.scripts.certificat_identification.status.update').'?t='.md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt')) }}&ti="+ti{{ $i }}+
                         "&fn={{ session()->get('abonne_numeros')[$i]->numero_dossier }}&idx={{ $i }}&oid="+res.data.operator_id+
                         "&ari="+res.api_response_id+"&code="+res.code+"&msg="+res.message+"&pm="+res.data.payment_method+"&pd="+res.data.payment_date+
                         "");
@@ -50,7 +50,7 @@
         var fn = "{{ session()->get('abonne_numeros')[0]->numero_dossier }}";
         var idx = {{ $i }};
         $.ajax({
-            url: "{{ route('obtenir_lien_de_paiement') }}",
+            url: "{{ route('front_office.scripts.certificat_identification.payment_link.get') }}",
             type: "POST",
             data: {
                 '_token': "{{ csrf_token() }}",

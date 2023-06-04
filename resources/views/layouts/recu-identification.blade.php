@@ -282,9 +282,9 @@
                                                     <center><img src="{{ $qrcode }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 12em;"/></center>
                                                 @else
                                                     <center>
-                                                        <img src="{{ route('generate_qr_code').'?'.
+                                                        <img src="{{ route('front_office.download.qrcode_image').'?'.
                                                                 http_build_query([
-                                                                    'm' => route('obtenir_info_abonne').'?f='.$numero_dossier.'&t='.$uniqid
+                                                                    'm' => route('front_office.auth.recu_identification.url').'?f='.$numero_dossier.'&t='.$uniqid
                                                                 ])
                                                             }}" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 12em;"/>
                                                     </center>

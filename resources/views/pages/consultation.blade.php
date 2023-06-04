@@ -97,9 +97,9 @@
                                         @endif
                                         <thead>
                                         <tr style="font-size: 0.75em;">
-                                            <th scope="col">Numéro(s) de téléphone</td>
-                                            <th scope="col">Statut de l'identification</td>
-                                            <th scope="col">Action</td>
+                                            <th scope="col">Numéro(s) de téléphone</th>
+                                            <th scope="col">Statut de l'identification</th>
+                                            <th scope="col">Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -114,7 +114,7 @@
                                                                 <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
                                                                 <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
                                                             </div>
-                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('front_office.scripts.otp_code.verify') }}">
                                                                 {{ csrf_field() }}
                                                                 <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                                 <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
@@ -142,14 +142,14 @@
                                                             date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date))))
                                                             {{-- Si le jour du paiement n'est pas encore passé l'otp est inactif --}}
                                                             @if(date('Y-m-d', time()) === date('Y-m-d', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date)))
-                                                                <a href="{{ route('imprimer_certificat_identification').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
+                                                                <a href="{{ route('front_office.download.certificat_identification.pdf').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
                                                             @else
                                                                 {{-- Sinon activation de l'otp avant chaque téléchargement --}}
                                                                 <a id="cert-dl-link-{{ $i }}" href="javascript:void(0);" class="button otp-send-link" style="margin-bottom: 0"><i class="fa fa-award text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
                                                                 <div id="otp-container-{{ $i }}" style="display: none">
                                                                     <center>
                                                                         <div class="notification-box notification-box-success">
-                                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('verification_code_otp_soumis') }}">
+                                                                            <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('front_office.scripts.otp_code.verify') }}">
                                                                                 {{ csrf_field() }}
                                                                                 <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                                                 <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
@@ -243,7 +243,7 @@
                                 </div>
                             </center>
                         @endif
-                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('consulter_statut_identification') }}">
+                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('front_office.form.consulter_statut_identification') }}">
                             {{ csrf_field() }}
                             <input type="hidden" id="tsch-input" name="tsch" value="0"/>
                             <center>

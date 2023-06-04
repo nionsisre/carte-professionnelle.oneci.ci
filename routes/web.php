@@ -28,33 +28,38 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-/* Views Routes */
-Route::get('/', [MainController::class, 'index'])->name('accueil');
-Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentificationAbonnesMobile'])->name('pre_identification_abonnes_mobile');
-Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
-Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
-Route::get('/imprimer-recu-identification', [IdentificationController::class, 'downloadRecuIdentificationPDF'])->name('imprimer_recu_identification');
-Route::get('/get-certificat-identification', [IdentificationController::class, 'autoUpdateCertificateStatusAfterPayment'])->name('obtenir_certificat_identification');
-Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
-Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('checker_certificat_identification');
-Route::get('/qrcode', [QrCodeController::class, 'generateQrCode'])->name('generate_qr_code');
-/*Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('reclamation_paiement');*/
-Route::get('/generer-qrcode-carte-professionnelle', [QrCartesProfessionnellesController::class, 'generate'])->name('generate_qr_code_carte_professionnelle');
+/* Front Office Main Pages Routes */
+Route::get('/', [MainController::class, 'identification'])->name('front_office.page.identification');
+Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentification'])->name('front_office.page.pre_identification');
+Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('front_office.page.consultation');
+Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('front_office.page.reclamation_paiement');
 
-/* Post Processing Only Routes */
-Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
-Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('soumettre_preidentification');
+/* Front Office Form Submit Routes URL */
+Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');
+Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('front_office.form.soumettre_pre_identification');
+Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('front_office.form.consulter_statut_identification');
 
-Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
-Route::post('/sc', [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('verification_statut_numero_deja_verifie');
-Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
-Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');
-Route::post('/get-payment-link', [IdentificationController::class, 'getCertificatePaymentLink'])->name('obtenir_lien_de_paiement');
+/* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
+Route::post('/cimiai', [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
+Route::post('/soc', [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
+Route::post('/voc', [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
+Route::post('/gcpl', [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
+Route::get('/aucsap', [IdentificationController::class, 'autoUpdateCertificateStatusAfterPayment'])->name('front_office.scripts.certificat_identification.status.update');
 
-/* CinetPAY notify routes */
-Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('lien_cinetpay_paiement_effectue');
-Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('lien_cinetpay_paiement');
-Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('lien_cinetpay_paiement_annule');
+/* Front Office URLs on readable QR Code Routes */
+Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');
+Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('front_office.auth.certificat_identification.url');
+
+/* Front Office File Downloads Routes */
+Route::get('/telecharger-recu-identification-pdf', [IdentificationController::class, 'downloadRecuIdentificationPDF'])->name('front_office.download.recu_identification.pdf');
+Route::get('/telecharger-certificat-identification-pdf', [IdentificationController::class, 'downloadCertificateIdentificationPDF'])->name('front_office.download.certificat_identification.pdf');
+Route::get('/qrcode', [QrCodeController::class, 'downloadQrCodeImage'])->name('front_office.download.qrcode_image');
+Route::get('/telecharger-qrcode-carte-professionnelle', [QrCartesProfessionnellesController::class, 'downloadQrCodesAsZip'])->name('front_office.download.qrcode.zip');
+
+/* Front Office CinetPAY routes */
+Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('front_office.cinetpay.notify');
+Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('front_office.cinetpay.return');
+Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('front_office.cinetpay.cancel');
 
 /*
 |--------------------------------------------------------------------------
