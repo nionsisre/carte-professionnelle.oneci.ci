@@ -1,13 +1,15 @@
 <?php
 
+use App\Http\Controllers\BackOffice\AdminController;
+use App\Http\Controllers\BackOffice\LoginController;
+use App\Http\Controllers\FrontOffice\IdentificationController;
+use App\Http\Controllers\FrontOffice\MainController;
+use App\Http\Controllers\FrontOffice\OTPVerificationController;
+use App\Http\Controllers\FrontOffice\PreIdentificationController;
+use App\Http\Controllers\FrontOffice\QrCartesProfessionnellesController;
+use App\Http\Controllers\FrontOffice\QrCodeController;
+use App\Http\Services\CinetPayAPI;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MainController;
-use App\Http\Controllers\IdentificationController;
-use App\Http\Controllers\PreIdentificationController;
-use App\Http\Controllers\OTPVerificationController;
-
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,28 +33,28 @@ Route::get('/', [MainController::class, 'index'])->name('accueil');
 Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentificationAbonnesMobile'])->name('pre_identification_abonnes_mobile');
 Route::get('/get', [IdentificationController::class, 'search'])->name('obtenir_info_abonne');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('consultation_statut_identification');
-Route::get('/imprimer-recu-identification', [IdentificationController::class, 'printRecu'])->name('imprimer_recu_identification');
-Route::get('/get-certificat-identification', [IdentificationController::class, 'getCertificate'])->name('obtenir_certificat_identification');
+Route::get('/imprimer-recu-identification', [IdentificationController::class, 'downloadRecuIdentificationPDF'])->name('imprimer_recu_identification');
+Route::get('/get-certificat-identification', [IdentificationController::class, 'autoUpdateCertificateStatusAfterPayment'])->name('obtenir_certificat_identification');
 Route::get('/imprimer-certificat-identification', [IdentificationController::class, 'printCertificate'])->name('imprimer_certificat_identification');
 Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('checker_certificat_identification');
-Route::get('/qrcode', [IdentificationController::class, 'generateQrCode'])->name('generate_qr_code');
+Route::get('/qrcode', [QrCodeController::class, 'generateQrCode'])->name('generate_qr_code');
 /*Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('reclamation_paiement');*/
-Route::get('/generer-qrcode-carte-professionnelle', [IdentificationController::class, 'generateCarteProfessionnelleQrCode'])->name('generate_qr_code_carte_professionnelle');
+Route::get('/generer-qrcode-carte-professionnelle', [QrCartesProfessionnellesController::class, 'generate'])->name('generate_qr_code_carte_professionnelle');
 
 /* Post Processing Only Routes */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('soumettre_identification');
 Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('soumettre_preidentification');
 
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('consulter_statut_identification');
-Route::post('/sc', [IdentificationController::class, 'statusCheck'])->name('verification_statut_numero_deja_verifie');
+Route::post('/sc', [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('verification_statut_numero_deja_verifie');
 Route::post('/send-otp-code', [OTPVerificationController::class, 'sendOTP'])->name('envoi_code_otp_par_sms');
 Route::post('/verify-otp-code', [OTPVerificationController::class, 'verifyOTP'])->name('verification_code_otp_soumis');
-Route::post('/get-payment-link', [IdentificationController::class, 'getPaymentLink'])->name('obtenir_lien_de_paiement');
+Route::post('/get-payment-link', [IdentificationController::class, 'getCertificatePaymentLink'])->name('obtenir_lien_de_paiement');
 
 /* CinetPAY notify routes */
-Route::post('/cinetpay/notify', [IdentificationController::class, 'notifyCinetPayAPI'])->name('lien_cinetpay_paiement_effectue');
-Route::post('/cinetpay/return', [IdentificationController::class, 'returnCinetPayAPI'])->name('lien_cinetpay_paiement');
-Route::post('/cinetpay/cancel', [IdentificationController::class, 'cancelCinetPayAPI'])->name('lien_cinetpay_paiement_annule');
+Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('lien_cinetpay_paiement_effectue');
+Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('lien_cinetpay_paiement');
+Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('lien_cinetpay_paiement_annule');
 
 /*
 |--------------------------------------------------------------------------

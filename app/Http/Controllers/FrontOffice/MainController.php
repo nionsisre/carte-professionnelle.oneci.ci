@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\FrontOffice;
 
+use App\Http\Controllers\Controller;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
 use Illuminate\Contracts\Foundation\Application;

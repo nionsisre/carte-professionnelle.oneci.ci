@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\FrontOffice;
 
+use App\Helpers\GeneratedTokensOrIDs;
+use App\Helpers\QrCode;
+use App\Http\Controllers\Controller;
 use App\Models\AbonnesNumerosOtp;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\Writer\PngWriter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
@@ -51,7 +49,7 @@ class OTPVerificationController extends Controller {
             $client_otp_msisdn_token = $request->input('tn');
             $session_otp_msisdn_tokens = session()->get('otp_msisdn_tokens');
             for ($i=0;$i<sizeof($session_otp_msisdn_tokens);$i++) {
-                if ($this->checkToken($client_otp_msisdn_token, $session_otp_msisdn_tokens[$i])) {
+                if ((new GeneratedTokensOrIDs())->checkToken($client_otp_msisdn_token, $session_otp_msisdn_tokens[$i])) {
                     $is_token_correct = true;
                     break;
                 }
@@ -341,7 +339,7 @@ class OTPVerificationController extends Controller {
                         /* PDF Download document generation */
                         $data = [
                             'title' => 'Certificat d\'identification',
-                            'qrcode' => $this->generateQrBase64(route('checker_certificat_identification') . '?c=' . $abonne_numero->certificate_download_link, 183, 1),
+                            'qrcode' => (new QrCode())->generateQrBase64(route('checker_certificat_identification') . '?c=' . $abonne_numero->certificate_download_link, 183, 1),
                             'numero_dossier' => $abonne_numero->numero_dossier,
                             'uniqid' => $abonne_numero->uniqid,
                             'msisdn' => $abonne_numero->numero_de_telephone,
@@ -453,85 +451,6 @@ class OTPVerificationController extends Controller {
                     .' -- Code : '.$guzzle_exception->getCode().']'
             ];
         }
-    }
-
-    /**
-     * (PHP 5, PHP 7, PHP 8+)<br/>
-     * QrCode Base64 Image Generator from String Message<br/><br/>
-     * <b>void</b> generateQrBase64(<b>String</b> $message [, <b>Integer</b> $size, <b>Integer</b> $margin])<br/>
-     * @param String $message <p>QR Code message.</p>
-     * @param Integer $size <p>QR Code size (optional).</p>
-     * @param Integer $margin <p>QR Code margin (optional).</p>
-     * @return String Return QrCode Base64 value
-     */
-    private function generateQrBase64($message, $size=300, $margin=10) {
-        $qrresult = Builder::create()
-            ->writer(new PngWriter())
-            ->writerOptions([])
-            ->data($message)
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
-            ->size($size)
-            ->logoPath(asset('assets/images/logo_qrcode.png'))
-            ->logoResizeToWidth(60)
-            ->margin($margin)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->build();
-        /*
-        ->logoPath(URL::asset('assets/images/logo-o-white.svg'))
-        ->labelText('Numéro de validation : '.$identification_resultats->numero_dossier)
-        ->labelFont(new NotoSans(20))
-        ->labelAlignment(new LabelAlignmentCenter())
-        */
-        return $qrresult->getDataUri();
-    }
-
-    /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
-     * This function is useful to generate Token<br/><br/>
-     * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
-     * @param int $expireTime <p>
-     * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
-     * </p>
-     * @return array Value of result
-     */
-    private function createToken($expireTime) {
-        $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
-        $token['time'] = $expireTime;
-        session()->put('token_time', time());
-        return $token;
-    }
-
-    /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
-     * This function checks generated token<br/><br/>
-     * <b>bool</b> checkToken(<b>string</b> $token_received, <b>array</b> $token_session)<br/>
-     * @param string $token_received <p>
-     * Received token via post
-     * </p>
-     * @param array $token_session <p>
-     * Session token variable
-     * </p>
-     * @return bool Value of result
-     */
-    private function checkToken($token_received, $token_session){
-        try {
-            $token_age = time() - session()->get('token_time', time());
-        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
-            return FALSE;
-        }
-        if ( ($token_received===$token_session["value"]) && $token_session['time']<=0 ) {
-            return TRUE;
-        } elseif ( ($token_received===$token_session["value"]) && ($token_age<=$token_session['time']) ) {
-            return TRUE;
-        } elseif ( ($token_received===$token_session["value"]) && ($token_age>$token_session['time']) ) {
-            return FALSE;
-        } elseif ( ($token_received!==$token_session["value"]) && ($token_age<=$token_session['time']) ) {
-            return FALSE;
-        } elseif ( ($token_received!==$token_session["value"]) && ($token_age<=$token_session['time']) ) {
-            return FALSE;
-        }
-        return FALSE;
     }
 
 }

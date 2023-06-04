@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\BackOffice;
 
 use App\Exports\ExportAbonnes;
+use App\Http\Controllers\Controller;
 use App\Imports\AbonneesImport;
 use App\Imports\ImportAbonnes;
-use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
