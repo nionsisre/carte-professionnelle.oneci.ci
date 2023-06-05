@@ -22,7 +22,7 @@
                 '_token': tkn{{ $i }},
                 'cli': cli,
                 't': t,
-                'ti': "ti{{ $i }}",
+                'ti': ti{{ $i }},
                 'fn': fn,
                 'msisdn': msisdn
             },
