@@ -24,6 +24,9 @@
             <li>
                 <a href="{{ route('front_office.page.consultation') }}">Consultation</a>
             </li>
+            <!--<li>
+                <a href="{{ route('front_office.page.reclamation_paiement') }}">Réclamation</a>
+            </li>-->
         </ul>
     </div>
 </nav>

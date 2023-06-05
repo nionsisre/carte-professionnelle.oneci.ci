@@ -23,6 +23,8 @@
                 @yield('consultation')
             @elseif(Route::is('front_office.page.pre_identification'))
                 @yield('pre_identification_abonnes_mobile')
+            @elseif(Route::is('front_office.page.reclamation_paiement'))
+                @yield('reclamation_paiement')
             @endif
             @include('sections.footer')
             @include('sections.scripts')

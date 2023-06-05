@@ -40,11 +40,11 @@ Route::post('/soumettre-pre-identification', [PreIdentificationController::class
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('front_office.form.consulter_statut_identification');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
-Route::post('/cimiai', [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
-Route::post('/soc', [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
-Route::post('/voc', [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
-Route::post('/gcpl', [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
-Route::get('/aucsap', [IdentificationController::class, 'autoUpdateCertificateStatusAfterPayment'])->name('front_office.scripts.certificat_identification.status.update');
+Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
+Route::post('/'.md5('soc'.date('m')), [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
+Route::post('/'.md5('voc'.date('m')), [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
+Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
+Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.scripts.payment_status.verify');
 
 /* Front Office URLs on readable QR Code Routes */
 Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');

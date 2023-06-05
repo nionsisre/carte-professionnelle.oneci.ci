@@ -8,34 +8,28 @@
     var ti{{ $i }} = 0;
     var animatedTimer{{ $i }};
     var idx{{ $i }};
+    var tkn{{ $i }} = "{{ csrf_token() }}";
     function cp{{ $i }}() {
-        let url = '{{ env('CINETPAY_CHECK_URL') }}';
+        let url = "{{ route('front_office.scripts.payment_status.verify') }}";
+        let cli = "{{ url()->current() }}";
+        let t = "{{ md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt'))}}";
+        let fn = "{{ session()->get('abonne_numeros')[$i]->numero_dossier }}";
+        let msisdn = "{{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}";
         $.post({
             type: 'POST',
             url: url,
             data: {
-                'apikey':  '{{ env('CINETPAY_API_KEY') }}',
-                'site_id': '{{ env('CINETPAY_SERVICE_KEY') }}',
-                'transaction_id': ti{{ $i }},
+                '_token': tkn{{ $i }},
+                'cli': cli,
+                't': t,
+                'ti': "ti{{ $i }}",
+                'fn': fn,
+                'msisdn': msisdn
             },
             success: function(res){
-                if (res.data.status === 'ACCEPTED'){
-                    location.href = decodeURI("{{ route('front_office.scripts.certificat_identification.status.update').'?t='.md5(sha1('s@lty'.session()->get('abonne_numeros')[0]->numero_dossier.'s@lt')) }}&ti="+ti{{ $i }}+
-                        "&fn={{ session()->get('abonne_numeros')[$i]->numero_dossier }}&idx={{ $i }}&oid="+res.data.operator_id+
-                        "&ari="+res.api_response_id+"&code="+res.code+"&msg="+res.message+"&pm="+res.data.payment_method+"&pd="+res.data.payment_date+
-                        "");
-                } else if (res.data.status === 'REFUSED') {
-                    jQuery('#modalBox').html(
-                        '<center> <div class="notification-box notification-box-error">\n\
-                        <div class="modal-header"><h3></h3></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" onclick="ccp{{ $i }}()" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                    ).modal({
-                        escapeClose: false,
-                        clickClose: false,
-                        showClose: false
-                    });
-                    jQuery('.blocker').css('z-index','2');
+                if(!res.has_error) {
+                    jQuery('#close-modal-{{ $i }}-btn').click();
+                    location.href = encodeURI("{{ route('front_office.auth.recu_identification.url') }}"+"?f="+ "{{ session()->get('abonne_numeros')[$i]->numero_dossier }}"+"&t="+"{{ session()->get('abonne_numeros')[$i]->uniqid }}");
                 }
             }
         });
@@ -76,7 +70,7 @@
                         </b><br/><br/>\
                         <b><i class="fa fa-money-bill fa-1x"></i> &nbsp; Coût: {{ env('CINETPAY_SERVICE_AMOUNT') }} Fcfa </b><br/><br/><h3>'+data.message+'</h3></div>\n\
                     </div><div class="modal-footer">\n\
-                    <a href="#" onclick="ccp{{ $i }}()" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Annuler</a></div></center>'
+                    <a href="#" onclick="ccp{{ $i }}()" id="close-modal-{{ $i }}-btn" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Annuler</a></div></center>'
                 ).modal({
                     escapeClose: false,
                     clickClose: false,

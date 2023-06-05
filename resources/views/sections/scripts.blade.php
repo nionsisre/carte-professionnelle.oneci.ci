@@ -51,5 +51,10 @@
             @include('sections.scripts.otp-verification')
         @endif
     @endif
+@elseif(Route::is('front_office.page.reclamation_paiement'))
+    @if(config('services.recaptcha.enabled'))
+        @include('sections.scripts.recaptcha')
+    @endif
+    @include('sections.scripts.form-masks')
 @endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>
