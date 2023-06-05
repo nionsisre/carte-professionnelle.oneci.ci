@@ -3,6 +3,7 @@
 use App\Http\Controllers\BackOffice\AdminController;
 use App\Http\Controllers\BackOffice\LoginController;
 use App\Http\Controllers\FrontOffice\IdentificationController;
+use App\Http\Controllers\FrontOffice\ReclamationController;
 use App\Http\Controllers\FrontOffice\MainController;
 use App\Http\Controllers\FrontOffice\OTPVerificationController;
 use App\Http\Controllers\FrontOffice\PreIdentificationController;
@@ -36,8 +37,9 @@ Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement
 
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');
-Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('front_office.form.soumettre_pre_identification');
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('front_office.form.consulter_statut_identification');
+Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('front_office.form.soumettre_pre_identification');
+Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('front_office.form.soumettre_reclamation_paiement');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
 Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
