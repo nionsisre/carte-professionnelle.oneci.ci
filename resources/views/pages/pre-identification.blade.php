@@ -397,7 +397,7 @@
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="document-number-input" name="document-number"
-                                                               placeholder="___________" maxlength="11" required="required"
+                                                               placeholder="___________" maxlength="11"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
                                                     <br/>
