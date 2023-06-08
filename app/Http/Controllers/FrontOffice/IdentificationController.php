@@ -40,7 +40,7 @@ class IdentificationController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('front_office.page.identification')->with((new GoogleRecaptchaV3())->verify($request));
         }
         /* Valider les variables du formulaire */
         request()->validate([

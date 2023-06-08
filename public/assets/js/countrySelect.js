@@ -1093,7 +1093,7 @@
 		n: "Montserrat",
 		i: "ms"
 	}, {
-		n: "Morocco (‫المغرب‬‎)",
+		n: "Maroc (‫المغرب‬‎)",
 		i: "ma"
 	}, {
 		n: "Mozambique (Moçambique)",
