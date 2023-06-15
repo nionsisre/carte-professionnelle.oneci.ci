@@ -31,6 +31,7 @@ class CreateAbonnesPreIdentifiesTable extends Migration
             $table->string('profession');
             $table->string('nationalite');
             $table->string('email')->nullable();
+            $table->string('libelle_document_justificatif');
             $table->string('document_justificatif');
             $table->string('numero_document');
             $table->string('date_expiration_document')->nullable();

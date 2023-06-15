@@ -19,9 +19,10 @@ class MailONECI extends Mailable {
      *
      * @return void
      */
-    public function __construct($view_layout_name, $data) {
+    public function __construct($view_layout_name, $data, $subject = "") {
         $this->view_layout_name = $view_layout_name;
         $this->data = $data;
+        $this->subject = $subject;
     }
 
     /**
@@ -31,7 +32,7 @@ class MailONECI extends Mailable {
      */
     public function build() {
         return $this->from(env('MAIL_USERNAME'))
-                    ->subject("Votre fiche d'identification d'abonné mobile ONECI")
+                    ->subject($this->subject)
                     ->view($this->view_layout_name, $this->data);
     }
 
@@ -43,7 +44,7 @@ class MailONECI extends Mailable {
      * @param array $data <p>Blade view layout data</p>
      * @return bool Return true if mail is sent successfully
      */
-    public static function sendMailTemplate($blade_view_layout, $data) {
+    public static function sendMailTemplate($blade_view_layout, $data, $subject = "ONECI") {
         $data['is_email'] = true;
         if (App::environment(['staging', 'production'])) {
             /* We use the method below because production server doesn't allow custom SMTP server */
@@ -53,7 +54,6 @@ class MailONECI extends Mailable {
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             $to = $data['email'];
-            $subject = "Identification d'abonné mobile ONECI";
             $content = view($blade_view_layout, $data);
             mail($to, $subject, $content, $headers);
             if (mail($to, $subject, $content, $headers)) {
@@ -62,7 +62,7 @@ class MailONECI extends Mailable {
                 return false;
             }
         } else {
-            Mail::to($data['email'])->queue(new MailONECI($blade_view_layout, $data));
+            Mail::to($data['email'])->queue(new MailONECI($blade_view_layout, $data, $subject));
             return true;
         }
     }

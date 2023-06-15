@@ -110,7 +110,7 @@ class IdentificationController extends Controller {
                 'profession' => $abonne->profession,
                 'email' => $abonne->email,
                 'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
-            ]);
+            ], "À propos de votre identification d'abonné mobile ONECI");
         }
         /* Obtention des informations sur l'abonné et ses numéros */
         $abonne_numeros = DB::table('abonnes_numeros')
@@ -474,7 +474,7 @@ class IdentificationController extends Controller {
                     $pdf_certificat_identification = Pdf::loadView('layouts.certificat-identification', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
                     /*if (!empty($identification_resultats->email)) {
-                        (new MailONECI())->sendMailTemplate('layouts.certificat-identification', $data);
+                        (new MailONECI())->sendMailTemplate('layouts.certificat-identification', $data, "À propos de votre identification d'abonné mobile ONECI");
                     }*/
                     return $pdf_certificat_identification->download($filename);
                 }

@@ -50,6 +50,7 @@ Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'auto
 
 /* Front Office URLs on readable QR Code Routes */
 Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');
+Route::get('/get-pi', [PreIdentificationController::class, 'search'])->name('front_office.auth.recu_pre_identification.url');
 Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('front_office.auth.certificat_identification.url');
 
 /* Front Office File Downloads Routes */
