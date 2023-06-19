@@ -9,8 +9,13 @@ use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Mail\MailONECI;
 use App\Models\Abonne;
+use App\Models\AbonnesOperateur;
 use App\Models\AbonnesPreIdentifie;
 use App\Models\AbonnesTypePiece;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Psr\Container\ContainerExceptionInterface;
@@ -20,6 +25,60 @@ use Symfony\Component\HttpFoundation\Response;
 class PreIdentificationController extends Controller {
 
     /**
+     * @return Application|Factory|View
+     */
+    public function showMenuPreIdentification() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        /* Retourner vue resultat */
+        return view('pages.menu-pre-identification', [
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showPreIdentification() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.menu-pre-identification.pre-identification', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showConsultation() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.consultation', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
+
+    /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * Soumission du formulaire de pré-identification par l'abonné<br/><br/>
      * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
@@ -27,11 +86,9 @@ class PreIdentificationController extends Controller {
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function submit(Request $request) {
-        /* Si le service de vérification Google reCAPTCHA v3 est actif */
-        if(config('services.recaptcha.enabled')) {
-                (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
-        }
+        /* Vérification CAPTCHA serveur si le service de vérification Google reCAPTCHA v3 est actif */
+        (new GoogleRecaptchaV3())->verify($request)['error'] ??
+            redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
         /* Valider les variables du formulaire */
         request()->validate([
             'first-name' => ['required', 'string', 'max:70'],
@@ -113,11 +170,9 @@ class PreIdentificationController extends Controller {
         /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
         par "url (accès direct ou scan du QR Code présent sur le reçu fourni après l'identification)" */
         if(empty($request->get('t')) && empty($request->get('f'))) {
-            /* Si le service de vérification Google reCAPTCHA v3 est actif */
-            if(config('services.recaptcha.enabled')) {
-                    (new GoogleRecaptchaV3())->verify($request)['error'] ??
+            /* Vérification CAPTCHA serveur si le service de vérification Google reCAPTCHA v3 est actif */
+            (new GoogleRecaptchaV3())->verify($request)['error'] ??
                     redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
-            }
             /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
             $search_with_msisdn = $request->input('tsch');
             if ($search_with_msisdn == '0') {
@@ -246,6 +301,81 @@ class PreIdentificationController extends Controller {
                 ], Response::HTTP_OK);
             }
         }
+    }
+
+    /**
+     * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
+     */
+    public function paymentDoneRedirection(Request $request) {
+        if (!empty($request->get('t')) && !empty($request->get('f'))) {
+            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
+            (numéro de dossier <f> + token d'authentification <t>) */
+            $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('f'))->first();
+            if($abonne->exists()) {
+                if ($abonne->uniqid === $request->get('t')) {
+                    return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
+                }
+            } else {
+                return redirect()->route('front_office.pre_identification.page')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+            }
+        }
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+        return view('pages.menu-pre-identification', [
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Téléchargement du certificat d'identification au format PDF<br/><br/>
+     * <b>RedirectResponse</b> downloadCertificateIdentificationPDF(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     */
+    public function downloadCertificatePreIdentificationPDF(Request $request) {
+        if(!empty($request->get('n'))) {
+            /* Print PDF ticket according form-number */
+            $enroll_download_link = $request->get('n');
+            $identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', '=', $enroll_download_link)->first();
+            if (!empty($identification_resultats)) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->integrator_data_payment_date)) );
+                $date_du_jour = date('Y-m-d', time());
+                if($date_du_jour <= $date_expiration) {
+                    /* PDF Download document generation */
+                    $data = [
+                        'title' => 'Certificat d\'identification',
+                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_pre_identification.url') . '?c=' . $identification_resultats->enroll_download_link, 183, 1),
+                        'numero_dossier' => $identification_resultats->numero_dossier,
+                        'uniqid' => $identification_resultats->uniqid,
+                        'msisdn' => $identification_resultats->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->integrator_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+2 weeks', strtotime($identification_resultats->integrator_data_payment_date))),
+                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
+                        'prenoms' => $identification_resultats->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
+                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
+                        'lieu_de_residence' => $identification_resultats->domicile,
+                        'nationalite' => $identification_resultats->nationalite,
+                        'profession' => $identification_resultats->profession,
+                        'email' => $identification_resultats->email,
+                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
+                        'document_justificatif' => (!empty($identification_resultats->libelle_document_justificatif)) ? $identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
+                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                    ];
+                    /*return view('layouts.certificat-pre-identification', $data);*/
+
+                    $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+                    $pdf_certificat_pre_identification = Pdf::loadView('layouts.certificat-pre-identification', $data)->setPaper('A5', 'landscape')->setOption("dpi", 200);
+
+                    return $pdf_certificat_pre_identification->download($filename);
+
+                }
+            }
+        }
+        /* Retourner vue resultat */
+        return redirect()->route('front_office.page.consultation')->with([
+            'error' => true,
+            'error_message' => 'Erreur est survenue lors du téléchargement de la fiche provisoire de demande d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+        ]);
     }
 
 }

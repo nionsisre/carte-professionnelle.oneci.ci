@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Helpers\GeneratedTokensOrIDs;
+use App\Models\AbonnesPreIdentifie;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class CinetPayAPI {
                     'customer_zip_code' => '065100',
                     'channels' => 'ALL',
                     'metadata' => $customer_informations->numero_dossier,
-                    'designation' => $customer_informations->numero_de_telephone,
+                    'designation' => isset($customer_informations->numero_de_telephone) ?? $customer_informations->numero_de_telephone,
                     'lang' => 'FR',
                     'invoice_data' => [
                         'Numéro de validation' => $customer_informations->numero_dossier
@@ -156,7 +157,7 @@ class CinetPayAPI {
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
             'cpm_trans_id' => ['required', 'string', 'max:100'], // ID de transaction
             'cpm_custom' => ['required', 'string', 'max:100'], // Numero de dossier contenu dans la variable Metadata
-            'cpm_designation' => ['required', 'string', 'max:20'], // Numero de telephone a actualiser
+            'cpm_designation' => ['nullable', 'string', 'max:20'], // Numero de telephone a actualiser
             /*'cpm_trans_date' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'cpm_amount' => ['required', 'numeric', 'max:10'], // Index de position du numero de telephone
             'cpm_currency' => ['required', 'string', 'max:70'], // Operator ID (CinetPAY)
@@ -186,8 +187,30 @@ class CinetPayAPI {
                     'message' => 'Echec de la synchronisation du paiement, votre numéro de transaction n\'est pas reconnu...'
                 ], Response::HTTP_OK);
             } else {
-                if($payment_data['data']['data']['description'] === 'Paiement Certificat Identification') {
-
+                if($payment_data['data']['data']['description'] === 'Paiement Fiche de Pré-Identification') {
+                    /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
+                    d'un dossier à celui d'une autre personne */
+                    if ($request->input('cpm_custom') === $payment_data['data']['data']['metadata']) {
+                        AbonnesPreIdentifie::where('numero_dossier', '=', $request->input('cpm_custom'))->first()->update([
+                            'transaction_id' => $payment_data['transaction_id'],
+                            'integrator_api_response_id' => $payment_data['data']['api_response_id'],
+                            'integrator_code' => $payment_data['data']['code'],
+                            'integrator_message' => $payment_data['data']['message'],
+                            'integrator_data_amount' => $payment_data['data']['data']['amount'],
+                            'integrator_data_currency' => $payment_data['data']['data']['currency'],
+                            'integrator_data_status' => $payment_data['data']['data']['status'],
+                            'integrator_data_payment_method' => $payment_data['data']['data']['payment_method'],
+                            'integrator_data_description' => $payment_data['data']['data']['description'],
+                            'integrator_data_metadata' => $payment_data['data']['data']['metadata'],
+                            'integrator_data_operator_id' => $payment_data['data']['data']['operator_id'],
+                            'integrator_data_payment_date' => $payment_data['data']['data']['payment_date'],
+                            'enroll_download_link' => md5($request->input('fn') . $payment_data['transaction_id'] . $payment_data['data']['data']['operator_id']),
+                        ]);
+                        return response([
+                            'has_error' => false,
+                            'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
+                        ], Response::HTTP_OK);
+                    }
                 } elseif($payment_data['data']['data']['description'] === 'Paiement Certificat Identification') {
                     /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
                    d'un dossier à celui d'une autre personne */
@@ -232,13 +255,17 @@ class CinetPayAPI {
                             'has_error' => false,
                             'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
                         ], Response::HTTP_OK);
-                    } else {
-                        return response([
-                            'has_error' => true,
-                            'message' => 'Cet ID de transaction n\'appartient pas au numéro de dossier : '.$request->input('cpm_custom')
-                        ], Response::HTTP_OK);
                     }
+                } else {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Echec de la synchronisation du paiement, votre numéro de transaction n\'appartient pas au service demandé...'
+                    ], Response::HTTP_OK);
                 }
+                return response([
+                    'has_error' => true,
+                    'message' => 'Cet ID de transaction n\'appartient pas au numéro de dossier : '.$request->input('cpm_custom')
+                ], Response::HTTP_OK);
             }
         }
     }

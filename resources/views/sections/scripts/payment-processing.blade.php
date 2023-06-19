@@ -124,7 +124,7 @@
                 success: function(res){
                     if(!res.has_error) {
                         jQuery('#close-modal-btn').click();
-                        location.href = encodeURI("{{ route('front_office.auth.recu_pre_identification.url') }}"+"?f="+ "{{ session()->get('abonne')->numero_dossier }}"+"&t="+"{{ session()->get('abonne')->uniqid }}");
+                        location.href = encodeURI("{{ route('front_office.pre_identification.script.payment.done') }}"+"?f="+ "{{ session()->get('abonne')->numero_dossier }}"+"&t="+"{{ session()->get('abonne')->uniqid }}");
                     }
                 }
             });

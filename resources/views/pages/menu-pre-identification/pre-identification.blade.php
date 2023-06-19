@@ -37,7 +37,7 @@
                                 @if(!empty(session()->get('abonne')->libelle_document_justificatif))
                                     {{-- Formulaire soumis avec document justificatif ONECI --}}
                                     <p>Veuillez cliquer sur le bouton ci-dessous pour télécharger votre fiche de pré-identification et vous rendre par la suite chez votre opérateur téléphonique afin de rentrer en possession de votre carte SIM :</p><br/>
-                                    <a href="{{ route('front_office.download.certificat_pre_identification.pdf').'?n='.session()->get('abonne')->certificate_download_link }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre fiche de pré-identification</a><br/>
+                                    <a href="{{ route('front_office.download.certificat_pre_identification.pdf').'?n='.session()->get('abonne')->enroll_download_link }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre fiche de pré-identification</a><br/>
                                     <br/>
                                     <p>Votre fiche est téléchargeable à tout moment depuis le menu de pré-identification en cliquant sur <b><a href="{{ route('front_office.pre_identification.consultation') }}">consulter ma fiche de pré-identification</a></b> et en renseignant votre <b>numéro de validation</b> ci-dessus (ou reçu par mail). <br/><br/><br/><br/>L'ONECI vous remercie !</p>
                                     <br/><br/>
@@ -47,7 +47,11 @@
                                     {{-- Formulaire soumis sans document justificatif ONECI (Avec paiement de frais d'exemption) --}}
                                     <p>Veuillez cliquer sur le bouton ci-dessous pour procéder au paiement des <b>frais d'exemption de document</b> et télécharger votre fiche de pré-identification :</p><br/>
                                     <span id="certificate-get-payment-link-loader" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i><br/></span>
-                                    <a href="javascript:void(0)" id="certificate-get-payment-link" class="button"><i class="fa fa-sack-dollar text-white"></i> &nbsp; Procéder au paiement ({{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }} FCFA)</a><br/>
+                                    @if(!empty(session()->get('abonne')->transaction_id))
+                                        <a href="{{ route('front_office.download.certificat_pre_identification.pdf').'?n='.session()->get('abonne')->enroll_download_link }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre fiche de pré-identification</a><br/>
+                                    @else
+                                        <a href="javascript:void(0)" id="certificate-get-payment-link" class="button"><i class="fa fa-sack-dollar text-white"></i> &nbsp; Procéder au paiement ({{ env('CINETPAY_SERVICE_AMOUNT_TEMP') }} FCFA)</a><br/>
+                                    @endif
                                     <br/>
                                     <p>Le paiement des frais d'exemption de document est disponible à tout moment depuis le menu de pré-identification en cliquant sur <b><a href="{{ route('front_office.pre_identification.consultation') }}">consulter ma fiche de pré-identification</a></b> et en renseignant votre <b>numéro de validation</b> ci-dessus (ou reçu par mail). <br/><br/><br/><br/>L'ONECI vous remercie !</p>
                                     <br/><br/>
