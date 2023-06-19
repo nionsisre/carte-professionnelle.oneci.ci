@@ -294,6 +294,19 @@
                                                         </select>
                                                     </div>
                                                 </div><br/>
+                                                <div class="form-group column-last" id="other-document-type-field" style="display: none">
+                                                    <label class="col-sm-2 control-label" id="other-document-type-label">
+                                                        <b style="color: #2A8FBD">Entrez le type de document en votre possession<span style="color: #d9534f">*</span> :</b>
+                                                    </label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="other-document-type-input" name="other-document-type"
+                                                               placeholder="Type de document d'identité" maxlength="100"
+                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                    </div>
+                                                    <br/>
+                                                    <p style="color: #2A8FBD"><em><i class="fa fa-info-circle"></i> &nbsp; NB : Ce document sera celui que vous <b>associerez</b> à la <b>fiche provisoire de demande d'identification</b> <br/>auprès votre <b>Opérateur téléphonique</b> lors de l'acquisition de votre <b>carte SIM</b>.</em></p>
+                                                    <br/>
+                                                </div>
                                                 <div class="form-group col-sm-12 column-last" id="cni-type-field" style="display: none">
                                                     <span style="display: none" id="err-toast"></span>
                                                     <div class="col-sm-10">

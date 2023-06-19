@@ -122,7 +122,7 @@
             <span class="unselectable-text" style="position: absolute;top: 58.3%;left: 65%;font-size: 0.7rem;font-family: berlin-sans,serif;opacity: 0.72;width: 18em;overflow-wrap: break-word;">{{ $email }}</span>
             <span class="unselectable-text" style="position: absolute;top: 74%;left: 24%;font-size: 1rem;font-family: berlin-sans,serif;opacity: 0.72;text-align: center;width: 23em;">
                 {{ $document_justificatif }}<br/>
-                <span class="unselectable-text" style="font-size: 1rem;position: relative;">(Passeport{{-- $numero_document_justificatif --}})</span>
+                <span class="unselectable-text" style="font-size: 1rem;position: relative;">({{ $numero_document_justificatif }})</span>
             </span>
             <span class="unselectable-text" style="position: absolute;top: 85.8%;left: 7.8%;font-size: 0.5rem;opacity: 0.72;width: 30em;">Ce document n'est valable que pour un seul Opérateur de Téléphonie Mobile et toujours accompagné de votre document justificatif d'identité.</span>
             <span class="unselectable-text" style="position: absolute;top: 94%;left: 22.8%;font-size: 0.5rem;opacity: 0.72;width: 45em; text-align: center">Copyright © {{ date('Y') }} - Office National de l’Etat Civil et de l’Identification (ONECI) - Tous droits reservés</span>

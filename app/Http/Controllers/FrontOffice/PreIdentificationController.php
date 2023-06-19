@@ -100,6 +100,7 @@ class PreIdentificationController extends Controller {
             'country' => ['required', 'string', 'max:70'],
             'email' => ['nullable', 'string', 'max:150'],
             'doc-type' => ['required', 'string', 'max:150'],
+            'other-document-type' => ['nullable','string','max:100'],
             'pdf_doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
             'selfie_img' => ['required', 'mimes:jpeg,png,jpg', 'max:2048'],
             'document-number' => ['nullable', 'string', 'max:150'],
@@ -107,15 +108,16 @@ class PreIdentificationController extends Controller {
         ]);
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
-        $document_justificatif_filename = $request->file('pdf_doc')->exists() ? 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension() : "";
-        $photo_selfie_filename = 'photo' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension();
-        $document_justificatif = $request->file('pdf_doc')->exists() ? $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public') : "";
+        $document_justificatif_filename = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension() : '';
+        $photo_selfie_filename = 'photo' . '_' . $numero_dossier . '.' . $request->selfie_img->extension();
+        $document_justificatif = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public') : '';
         $photo_selfie = $request->file('selfie_img')->storeAs('media', $photo_selfie_filename, 'public');
         $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
             DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
             : $request->input('birth-place-2');
         $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
-        $libelle_document_justificatif = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? AbonnesTypePiece::where('id', $request->input('doc-type'))->first()->libelle_piece : "";
+        $libelle_document_justificatif = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? AbonnesTypePiece::where('id', $request->input('doc-type'))->first()->libelle_piece : '';
+        $libelle_document_non_verifiable = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? '' : $request->input('other-document-type');
         $abonne = AbonnesPreIdentifie::create([
             'numero_dossier' => $numero_dossier,
             'status' => "Formulaire en ligne renseigné",
@@ -131,6 +133,7 @@ class PreIdentificationController extends Controller {
             'email' => $request->input('email'),
             'document_justificatif' => $document_justificatif,
             'libelle_document_justificatif' => $libelle_document_justificatif,
+            'libelle_document_non_verifiable' => $libelle_document_non_verifiable,
             'date_expiration_document' => $request->input('document-expiry'),
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni,
@@ -328,7 +331,7 @@ class PreIdentificationController extends Controller {
                         'email' => $identification_resultats->email,
                         'id_operateur' => $identification_resultats->abonnes_operateur_id,
                         'document_justificatif' => (!empty($identification_resultats->libelle_document_justificatif)) ? $identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
-                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                        'numero_document_justificatif' => (!empty($identification_resultats->libelle_document_justificatif)) ? $identification_resultats->numero_document : $identification_resultats->libelle_document_non_verifiable,
                     ];
                     /*return view('layouts.certificat-pre-identification', $data);*/
 

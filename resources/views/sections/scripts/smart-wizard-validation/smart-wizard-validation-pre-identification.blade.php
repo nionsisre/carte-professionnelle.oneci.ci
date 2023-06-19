@@ -27,7 +27,7 @@
     });
     jQuery('.blocker').css('z-index','2'); --}}
     {{-- Variables --}}
-    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", other_doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Apparition ou non du champ nom epouse selon que le genre soit masculin ou feminin --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#gender-input-male').is(':checked')) {
@@ -60,7 +60,9 @@
             jQuery("#document-number-field").hide();
             jQuery("#document-expiry-field").hide();
             jQuery("#pdf-doc-field").hide();
+            jQuery("#other-document-type-field").show();
         } else { {{-- Cas où l'utilisateur a selectionné un des documents de la liste --}}
+            jQuery("#other-document-type-field").hide();
             jQuery("#document-number-field").show();
             jQuery("#document-expiry-field").show();
             jQuery("#pdf-doc-field").show();
@@ -391,6 +393,7 @@
                 {{-- Step 2 --}}
                 case 1:
                     doc_type = document.querySelectorAll('[name="doc-type"]');
+                    other_doc_type = document.querySelectorAll('[name="other-document-type"]');
                     document_number = document.querySelectorAll('[name="document-number"]');
                     document_expiry = document.querySelectorAll('[name="document-expiry"]');
                     {{-- doc_type --}}
@@ -417,6 +420,23 @@
                         jQuery("#pdf-doc-input").val('');
                         jQuery("#pdf-doc-label").html('<i class="fad fa-file-pdf fa-3x mr10" style="padding: 0.2em 0em;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em">' +
                             '</i><br/><span>Charger le document…</span>');
+                        {{-- other_doc_type --}}
+                        if(!jQuery(other_doc_type).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez mentionner le type de document justificatif en votre possession pour l\'acquisition de votre carte SIM</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
                         {{-- selfie_img --}}
                         if(!jQuery(selfie_img).val()) {
                             jQuery('#modalError').html(
@@ -454,7 +474,7 @@
                             return false;
                         }
                         {{-- RECAP SANS PIECE --}}
-                        jQuery('#recap-pdf-doc').text('Aucun document ONECI');
+                        jQuery('#recap-pdf-doc').text('Aucun document ONECI (Pré-identification avec : '+jQuery(other_doc_type).val()+')');
                         jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
                         jQuery('#recap-document-number').text('...');
                         jQuery('#recap-document-label').hide();
@@ -573,6 +593,7 @@
                             return false;
                         }
                         {{-- RECAP AVEC PIECE --}}
+                        jQuery("#other-document-type-input").val('');
                         jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2]+" ("+jQuery(doc_type).select2('data')[0].text+") - "+((Math.round(fSize*100)/100)+" "+fSExt[i]));
                         jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
                         jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');

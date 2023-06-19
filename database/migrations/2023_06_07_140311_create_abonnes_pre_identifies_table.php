@@ -33,7 +33,7 @@ class CreateAbonnesPreIdentifiesTable extends Migration
             $table->string('email')->nullable();
             $table->string('libelle_document_justificatif');
             $table->string('document_justificatif');
-            $table->string('numero_document');
+            $table->string('numero_document')->nullable();
             $table->string('date_expiration_document')->nullable();
             $table->string('type_cni')->nullable();
             $table->string('photo_selfie')->nullable();
