@@ -301,7 +301,7 @@ class IdentificationController extends Controller {
                 /* Récupération du numéro de telephone valide */
                 $abonne_numero = $abonne_numeros[$request->input('idx')];
                 /* Obtention du lien de paiement via l'API CinetPay */
-                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne_numero);
+                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne_numero, 'Paiement Certificat Identification');
                 if ($payment_link_obtained['has_error']) {
                     return response([
                         'has_error' => true,

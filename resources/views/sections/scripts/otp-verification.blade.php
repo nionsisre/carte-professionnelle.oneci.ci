@@ -1,3 +1,4 @@
+@if(config('services.sms.enabled'))
 <script>
     {{--
     |--------------------------------------------------------------------------
@@ -134,3 +135,4 @@
     /* Initialize select2 */
     jQuery("#center-slct-lst").select2();
 </script>
+@endif

@@ -30,10 +30,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* Front Office Main Pages Routes */
+    /* --- Identification --- */
 Route::get('/', [MainController::class, 'identification'])->name('front_office.page.identification');
-Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentification'])->name('front_office.page.pre_identification');
+/*Route::get('/identification', [MainController::class, 'identification'])->name('front_office.page.identification');*/
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('front_office.page.consultation');
 Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('front_office.page.reclamation_paiement');
+    /* --- Pré-identification --- */
+Route::get('/menu-pre-identification', [MainController::class, 'menuPreIdentification'])->name('front_office.pre_identification.menu');
+Route::get('/pre-identification-abonnes-mobile', [MainController::class, 'preIdentification'])->name('front_office.pre_identification.page');
+Route::get('/consultation-pre-identification', [MainController::class, 'consultation'])->name('front_office.pre_identification.consultation');
 
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');
@@ -46,7 +51,9 @@ Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'chec
 Route::post('/'.md5('soc'.date('m')), [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
 Route::post('/'.md5('voc'.date('m')), [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
 Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
-Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.scripts.payment_status.verify');
+Route::post('/'.md5('gpcpl'.date('m')), [PreIdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_pre_identification.payment_link.get');
+Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
+Route::post('/'.md5('avippid'.date('m')), [PreIdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.pre_identification.script.payment.verify');
 
 /* Front Office URLs on readable QR Code Routes */
 Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');
@@ -56,6 +63,7 @@ Route::get('/check-certificat-identification', [IdentificationController::class,
 /* Front Office File Downloads Routes */
 Route::get('/telecharger-recu-identification-pdf', [IdentificationController::class, 'downloadRecuIdentificationPDF'])->name('front_office.download.recu_identification.pdf');
 Route::get('/telecharger-certificat-identification-pdf', [IdentificationController::class, 'downloadCertificateIdentificationPDF'])->name('front_office.download.certificat_identification.pdf');
+Route::get('/telecharger-fiche-pre-identification-pdf', [PreIdentificationController::class, 'downloadCertificatePreIdentificationPDF'])->name('front_office.download.certificat_pre_identification.pdf');
 Route::get('/qrcode', [QrCodeController::class, 'downloadQrCodeImage'])->name('front_office.download.qrcode_image');
 Route::get('/telecharger-qrcode-carte-professionnelle', [QrCartesProfessionnellesController::class, 'downloadQrCodesAsZip'])->name('front_office.download.qrcode.zip');
 

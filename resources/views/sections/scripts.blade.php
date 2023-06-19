@@ -1,4 +1,6 @@
+@if(config('services.recaptcha.enabled'))
 <script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
+@endif
 <script src="{{ URL::asset('assets/js/select2.min.js') }}" type='text/javascript'></script>
 <script src="{{ URL::asset('assets/js/countrySelect.js') }}" type='text/javascript'></script>
 <script>
@@ -9,9 +11,7 @@
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
 @if(Route::is('front_office.page.identification'))
-    @if(config('services.recaptcha.enabled'))
-        @include('sections.scripts.recaptcha')
-    @endif
+    @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
@@ -19,42 +19,28 @@
     @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
     @include('sections.scripts.copy-to-clipboard')
     @if(session()->has('abonne_numeros'))
-        @if(config('services.sms.enabled'))
-            @include('sections.scripts.otp-verification')
-        @endif
+        @include('sections.scripts.otp-verification')
     @endif
 @elseif(Route::is('front_office.page.consultation'))
-    @if(config('services.recaptcha.enabled'))
-        @include('sections.scripts.recaptcha')
-    @endif
+    @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
     @if(session()->has('abonne_numeros'))
-        @if(config('services.sms.enabled'))
-            @include('sections.scripts.otp-verification')
-        @endif
-        @if(config('services.cinetpay.enabled'))
-            @include('sections.scripts.payment-processing')
-        @endif
+        @include('sections.scripts.otp-verification')
+        @include('sections.scripts.payment-processing')
     @endif
-@elseif(Route::is('front_office.page.pre_identification'))
-    @if(config('services.recaptcha.enabled'))
-        @include('sections.scripts.recaptcha')
-    @endif
+@elseif(Route::is('front_office.pre_identification.page'))
+    @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
     @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-pre-identification')
     @include('sections.scripts.copy-to-clipboard')
-    @if(session()->has('abonne_numeros'))
-        @if(config('services.sms.enabled'))
-            @include('sections.scripts.otp-verification')
-        @endif
+    @if(session()->has('abonne'))
+        @include('sections.scripts.payment-processing')
     @endif
 @elseif(Route::is('front_office.page.reclamation_paiement'))
-    @if(config('services.recaptcha.enabled'))
-        @include('sections.scripts.recaptcha')
-    @endif
+    @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
 @endif
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>

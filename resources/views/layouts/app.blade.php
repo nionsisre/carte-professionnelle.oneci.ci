@@ -17,16 +17,22 @@
         <div id="wrap">
             <div class="spacer">&nbsp;</div>
             <div class="spacer">&nbsp;</div>
+            {{-- Identification --}}
             @if(Route::is('front_office.page.identification'))
                 @yield('home')
             @elseif(Route::is('front_office.page.consultation'))
                 @yield('consultation')
-            @elseif(Route::is('front_office.page.pre_identification'))
-                @yield('pre_identification_abonnes_mobile')
             @elseif(Route::is('front_office.page.reclamation_paiement'))
                 @yield('reclamation_paiement')
+            {{-- Pré-Identification --}}
+            @elseif(Route::is('front_office.pre_identification.menu'))
+                @yield('menu_pre_identification')
+            @elseif(Route::is('front_office.pre_identification.page'))
+                @yield('pre_identification_abonnes_mobile')
             @endif
+            {{-- Footer --}}
             @include('sections.footer')
+            {{-- Scripts --}}
             @include('sections.scripts')
         </div>
         <!-- end container -->
