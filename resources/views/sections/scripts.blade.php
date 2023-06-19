@@ -39,6 +39,13 @@
     @if(session()->has('abonne'))
         @include('sections.scripts.payment-processing')
     @endif
+@elseif(Route::is('front_office.pre_identification.consultation'))
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.toggle-form-number-and-msisdn')
+    @if(session()->has('abonne'))
+        @include('sections.scripts.payment-processing')
+    @endif
 @elseif(Route::is('front_office.page.reclamation_paiement'))
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')

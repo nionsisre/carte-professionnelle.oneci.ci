@@ -69,7 +69,7 @@ class PreIdentificationController extends Controller {
         $civil_status_center = DB::table('civil_status_center')->get();
         $abonnes_type_pieces = AbonnesTypePiece::all();
 
-        return view('pages.consultation', [
+        return view('pages.menu-pre-identification.consultation-pre-identification', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
             'abonnes_operateurs' => $abonnes_operateurs,
             'civil_status_center' => $civil_status_center,
@@ -161,55 +161,46 @@ class PreIdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Cette méthode donne l'accès à l'espace de consultation de statut d'identification à l'abonné<br/><br/>
+     * Cette méthode redonne l'accès au résultat du formulaire de pré-identification de l'abonné afin qu'il puisse
+     * continuer plus tard les actions entamées<br/><br/>
      * <b>RedirectResponse</b> search(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
      */
     public function search(Request $request) {
         /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
         par "url (accès direct ou scan du QR Code présent sur le reçu fourni après l'identification)" */
         if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Vérification CAPTCHA serveur si le service de vérification Google reCAPTCHA v3 est actif */
-            (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                    redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
-            /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
-            $search_with_msisdn = $request->input('tsch');
-            if ($search_with_msisdn == '0') {
-                request()->validate([
-                    'form-number' => ['required', 'numeric', 'digits:10'],
-                ]);
-                $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('form-number'))->first();
-            } else {
-                request()->validate([
-                    'msisdn' => ['required', 'string', 'min:14', 'max:14'],
-                    'first-name' => ['required', 'string', 'min:2', 'max:150'],
-                    'birth-date' => ['required', 'string', 'min:10', 'max:10'],
-                ]);
-                $abonne = AbonnesPreIdentifie::where('abonnes.date_de_naissance', '=', $request->input('birth-date'))
-                    ->whereRaw('UCASE(abonnes.nom) = (?)', [strtoupper($request->input('first-name'))])
-                    ->first();
-            }
-            /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
+                (new GoogleRecaptchaV3())->verify($request)['error'] ??
+                redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+            /* Récupération des informations sur l'utilisateur pré-identifié */
+            request()->validate([
+                'form-number' => ['required', 'numeric', 'digits:10'],
+            ]);
+            $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('form-number'))->first();
             if($abonne->exists()) {
-                return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne);
+                return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
             } else {
-                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('front_office.pre_identification.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
-        } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
+        } else if (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
             (numéro de dossier <f> + token d'authentification <t>) */
             $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('f'))->first();
             if($abonne->exists()) {
                 if ($abonne->uniqid === $request->get('t')) {
-                    return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne);
+                    return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
                 }
             } else {
-                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('front_office.pre_identification.page')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         }
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        return redirect()->route('front_office.page.consultation');
+        return view('pages.menu-pre-identification', [
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
     }
 
     /**
@@ -301,28 +292,6 @@ class PreIdentificationController extends Controller {
                 ], Response::HTTP_OK);
             }
         }
-    }
-
-    /**
-     * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
-     */
-    public function paymentDoneRedirection(Request $request) {
-        if (!empty($request->get('t')) && !empty($request->get('f'))) {
-            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
-            (numéro de dossier <f> + token d'authentification <t>) */
-            $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('f'))->first();
-            if($abonne->exists()) {
-                if ($abonne->uniqid === $request->get('t')) {
-                    return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
-                }
-            } else {
-                return redirect()->route('front_office.pre_identification.page')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
-            }
-        }
-        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
-        return view('pages.menu-pre-identification', [
-            'mobile_header_enabled' => $mobile_header_enabled,
-        ]);
     }
 
     /**

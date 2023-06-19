@@ -29,6 +29,8 @@
                 @yield('menu_pre_identification')
             @elseif(Route::is('front_office.pre_identification.page'))
                 @yield('pre_identification_abonnes_mobile')
+            @elseif(Route::is('front_office.pre_identification.consultation'))
+                @yield('consultation_pre_identification')
             @endif
             {{-- Footer --}}
             @include('sections.footer')

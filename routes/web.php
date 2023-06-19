@@ -54,7 +54,7 @@ Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCer
 Route::post('/'.md5('gpcpl'.date('m')), [PreIdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_pre_identification.payment_link.get');
 Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
 Route::post('/'.md5('avippid'.date('m')), [PreIdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.pre_identification.script.payment.verify');
-Route::get('/'.md5('get-pi'.date('m')), [PreIdentificationController::class, 'paymentDoneRedirection'])->name('front_office.pre_identification.script.payment.done');
+Route::get('/'.md5('get-pi'.date('m')), [PreIdentificationController::class, 'search'])->name('front_office.pre_identification.script.payment.done');
 
 /* Front Office URLs on readable QR Code Routes */
 Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');
