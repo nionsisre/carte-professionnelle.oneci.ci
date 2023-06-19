@@ -108,8 +108,8 @@ class PreIdentificationController extends Controller {
         ]);
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
-        $document_justificatif_filename = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension() : '';
-        $photo_selfie_filename = 'photo' . '_' . $numero_dossier . '.' . $request->selfie_img->extension();
+        $document_justificatif_filename = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? 'preidentification_document_' . $numero_dossier . '.' . $request->pdf_doc->extension() : '';
+        $photo_selfie_filename = 'preidentification_photo_' . $numero_dossier . '.' . $request->selfie_img->extension();
         $document_justificatif = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public') : '';
         $photo_selfie = $request->file('selfie_img')->storeAs('media', $photo_selfie_filename, 'public');
         $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
@@ -307,35 +307,35 @@ class PreIdentificationController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $enroll_download_link = $request->get('n');
-            $identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', '=', $enroll_download_link)->first();
-            if (!empty($identification_resultats)) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->integrator_data_payment_date)) );
+            $pre_identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', '=', $enroll_download_link)->first();
+            if (!empty($pre_identification_resultats)) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($pre_identification_resultats->integrator_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
-                        'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_pre_identification.url') . '?c=' . $identification_resultats->enroll_download_link, 183, 1),
-                        'numero_dossier' => $identification_resultats->numero_dossier,
-                        'uniqid' => $identification_resultats->uniqid,
-                        'msisdn' => $identification_resultats->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->integrator_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+2 weeks', strtotime($identification_resultats->integrator_data_payment_date))),
-                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                        'prenoms' => $identification_resultats->prenoms,
-                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
-                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
-                        'lieu_de_residence' => $identification_resultats->domicile,
-                        'nationalite' => $identification_resultats->nationalite,
-                        'profession' => $identification_resultats->profession,
-                        'email' => $identification_resultats->email,
-                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
-                        'document_justificatif' => (!empty($identification_resultats->libelle_document_justificatif)) ? $identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
-                        'numero_document_justificatif' => (!empty($identification_resultats->libelle_document_justificatif)) ? $identification_resultats->numero_document : $identification_resultats->libelle_document_non_verifiable,
+                        'title' => 'Fiche Provisoire d\'Identification Abonné Mobile',
+                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_pre_identification.url') . '?c=' . $pre_identification_resultats->enroll_download_link, 183, 1),
+                        'numero_dossier' => $pre_identification_resultats->numero_dossier,
+                        'uniqid' => $pre_identification_resultats->uniqid,
+                        'msisdn' => $pre_identification_resultats->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($pre_identification_resultats->integrator_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date))),
+                        'nom' => $pre_identification_resultats->nom . ((!empty($pre_identification_resultats->nom_epouse)) ? ' epse ' . $pre_identification_resultats->nom_epouse : ''),
+                        'prenoms' => $pre_identification_resultats->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($pre_identification_resultats->date_de_naissance)),
+                        'lieu_de_naissance' => $pre_identification_resultats->lieu_de_naissance,
+                        'lieu_de_residence' => $pre_identification_resultats->domicile,
+                        'nationalite' => $pre_identification_resultats->nationalite,
+                        'profession' => $pre_identification_resultats->profession,
+                        'email' => $pre_identification_resultats->email,
+                        'id_operateur' => $pre_identification_resultats->abonnes_operateur_id,
+                        'document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? $pre_identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
+                        'numero_document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? $pre_identification_resultats->numero_document : $pre_identification_resultats->libelle_document_non_verifiable,
                     ];
                     /*return view('layouts.certificat-pre-identification', $data);*/
 
-                    $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+                    $filename = 'fiche-provisoire-identification-' . $pre_identification_resultats->nom . '-' . $pre_identification_resultats->numero_dossier . '.pdf';
                     $pdf_certificat_pre_identification = Pdf::loadView('layouts.certificat-pre-identification', $data)->setPaper('A5', 'landscape')->setOption("dpi", 200);
 
                     return $pdf_certificat_pre_identification->download($filename);
