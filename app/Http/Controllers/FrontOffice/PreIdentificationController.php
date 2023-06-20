@@ -364,4 +364,65 @@ class PreIdentificationController extends Controller {
         ]);
     }
 
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Controle par scan QR Code du certificat d'identification<br/><br/>
+     * <b>RedirectResponse</b> checkCertificate(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function checkCertificate(Request $request) {
+        if(!empty($request->get('c'))) {
+            /* Print PDF ticket according form-number */
+            $enroll_download_link = $request->get('c');
+            $pre_identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', $enroll_download_link)->first();
+            if (!empty($pre_identification_resultats)) {
+                if(empty($pre_identification_resultats->integrator_data_payment_date)) {
+                    $date_emission = date('d/m/Y', strtotime($pre_identification_resultats->created_at->format('Y-m-d')));
+                    $date_expiration = date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->created_at->format('Y-m-d'))));
+                    $date_expiration_comp = date('Y-m-d', strtotime('+2 weeks', strtotime($pre_identification_resultats->created_at->format('Y-m-d'))));
+                } else {
+                    $date_emission = date('d/m/Y', strtotime($pre_identification_resultats->integrator_data_payment_date));
+                    $date_expiration = date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date)));
+                    $date_expiration_comp = date('Y-m-d', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date)));
+                }
+                $date_du_jour = date('Y-m-d', time());
+                if ($date_du_jour <= $date_expiration_comp) {
+                    /* PDF Download document generation */
+                    $data = [
+                        'title' => 'Fiche Provisoire d\'Identification Abonné Mobile',
+                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_pre_identification.url') . '?c=' . $pre_identification_resultats->enroll_download_link, 183, 1),
+                        'numero_dossier' => $pre_identification_resultats->numero_dossier,
+                        'uniqid' => $pre_identification_resultats->uniqid,
+                        'msisdn' => $pre_identification_resultats->numero_de_telephone,
+                        'date_emission' => $date_emission,
+                        'date_expiration' => $date_expiration,
+                        'nom' => $pre_identification_resultats->nom . ((!empty($pre_identification_resultats->nom_epouse)) ? ' epse ' . $pre_identification_resultats->nom_epouse : ''),
+                        'prenoms' => $pre_identification_resultats->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($pre_identification_resultats->date_de_naissance)),
+                        'lieu_de_naissance' => $pre_identification_resultats->lieu_de_naissance,
+                        'lieu_de_residence' => $pre_identification_resultats->domicile,
+                        'nationalite' => $pre_identification_resultats->nationalite,
+                        'profession' => $pre_identification_resultats->profession,
+                        'email' => $pre_identification_resultats->email,
+                        'id_operateur' => $pre_identification_resultats->abonnes_operateur_id,
+                        'document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? $pre_identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
+                        'numero_document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? 'N° '.$pre_identification_resultats->numero_document : $pre_identification_resultats->libelle_document_non_verifiable,
+                    ];
+                    return view('layouts.certificat-pre-identification', $data);
+                } else {
+                    return redirect()->route('front_office.pre_identification.consultation')->with([
+                        'error' => true,
+                        'error_message' => 'Le document demandé a atteint sa durée de validité, veuillez reprendre une nouvelle demande de pré-identification...'
+                    ]);
+                }
+            }
+        }
+        /* Retourner vue resultat */
+        return redirect()->route('front_office.pre_identification.consultation')->with([
+            'error' => true,
+            'error_message' => 'Certificat incorrect !'
+        ]);
+    }
+
 }

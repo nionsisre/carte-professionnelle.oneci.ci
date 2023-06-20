@@ -48,11 +48,11 @@ Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 's
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
 Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
+Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
+Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
 Route::post('/'.md5('soc'.date('m')), [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
 Route::post('/'.md5('voc'.date('m')), [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
-Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
 Route::post('/'.md5('gpcpl'.date('m')), [PreIdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_pre_identification.payment_link.get');
-Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
 Route::post('/'.md5('avippid'.date('m')), [PreIdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.pre_identification.script.payment.verify');
 Route::get('/'.md5('get-pi'.date('m')), [PreIdentificationController::class, 'search'])->name('front_office.pre_identification.script.payment.done');
 
