@@ -126,7 +126,7 @@
                     jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
                     jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
                     jQuery("#document-number-input").attr('placeholder','__________');
-                    jQuery("#document-number-input").mask('9999999999');
+                    jQuery("#document-number-input").unmask().attr('maxlength', 20);
                     jQuery('#modalInfo').html(
                         '<center> <div class="notification-box notification-box-info">\n\
                         <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
@@ -163,7 +163,7 @@
                 jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
                 jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
                 jQuery("#document-number-input").attr('placeholder','__________');
-                jQuery("#document-number-input").mask('9999999999');
+                jQuery("#document-number-input").unmask().attr('maxlength', 20);
             }
         }
     });
@@ -177,7 +177,7 @@
             jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
             jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
             jQuery("#document-number-input").attr('placeholder','__________');
-            jQuery("#document-number-input").mask('9999999999');
+            jQuery("#document-number-input").unmask().attr('maxlength', 20);
             jQuery('#modalInfo').html(
                 '<center> <div class="notification-box notification-box-info">\n\
                 <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
@@ -507,7 +507,7 @@
                                 jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
                                 jQuery("#document-number-input").attr('placeholder', 'Numéro pièce identité...');
                                 jQuery("#document-number-input").attr('placeholder', '__________');
-                                jQuery("#document-number-input").mask('9999999999');
+                                jQuery("#document-number-input").unmask().attr('maxlength', 20);
                             }
                         } else if (jQuery("#doc-type").val() === "3") {
                             jQuery("#cni-type-field").hide();
@@ -532,14 +532,14 @@
                             jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
                             jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
                             jQuery("#document-number-input").attr('placeholder','__________');
-                            jQuery("#document-number-input").mask('9999999999');
+                            jQuery("#document-number-input").unmask().attr('maxlength', 20);
                         }
                     } else {
                         jQuery("#cni-type-field").hide();
                         jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
                         jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
                         jQuery("#document-number-input").attr('placeholder','__________');
-                        jQuery("#document-number-input").mask('9999999999');
+                        jQuery("#document-number-input").unmask().attr('maxlength', 20);
                     }
                     {{-- email --}}
                     if(email !== "" && !isEmail(email)) {

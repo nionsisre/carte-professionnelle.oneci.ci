@@ -241,7 +241,7 @@
                                                     <span style="display: none" id="err-toast"></span>
                                                     <div class="form-group column-last" id="gender-field">
                                                         <label class="col-sm-4 control-label">
-                                                            Genre de l'abonné<span
+                                                            Genre<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="form-group">
@@ -273,7 +273,7 @@
                                                 <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="first-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Nom de l'abonné<span style="color: #d9534f">*</span> :
+                                                            Nom<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
@@ -286,14 +286,14 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="last-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Prénom(s) de l'abonné<span style="color: #d9534f">*</span> :
+                                                            Prénom(s)<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
                                                                    placeholder="Prénom(s) de l'abonné..." maxlength="70"
                                                                    autocomplete="off"
                                                                    required="required"
-                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
+                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
@@ -313,7 +313,7 @@
                                                 <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="birth-date-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Date de naissance de l'abonné<span
+                                                            Date de naissance<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
@@ -326,7 +326,7 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="country-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Nationalité de l'abonné<span
+                                                            Nationalité<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
@@ -339,7 +339,7 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="birth-place-field">
                                                         <label class="col-sm-4 control-label">
-                                                            Lieu de naissance de l'abonné<span
+                                                            Lieu de naissance<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <span style="display: none" id="err-toast"></span>
@@ -359,7 +359,7 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
                                                         <label class="col-sm-2 control-label">
-                                                            Lieu de naissance de l'abonné<span
+                                                            Lieu de naissance<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
@@ -373,7 +373,7 @@
                                                 <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="residence-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Lieu de résidence de l'abonné<span
+                                                            Lieu de résidence<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
@@ -385,7 +385,7 @@
                                                     </div>
                                                     <div class="form-group one-third column-last" id="profession-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Profession de l'abonné<span
+                                                            Profession<span
                                                                 style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
