@@ -118,6 +118,7 @@ class PreIdentificationController extends Controller {
         $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
         $libelle_document_justificatif = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? AbonnesTypePiece::where('id', $request->input('doc-type'))->first()->libelle_piece : '';
         $libelle_document_non_verifiable = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? '' : $request->input('other-document-type');
+        $enroll_download_link = (AbonnesTypePiece::where('id', $request->input('doc-type'))->exists()) ? md5($numero_dossier) : '';
         $abonne = AbonnesPreIdentifie::create([
             'numero_dossier' => $numero_dossier,
             'status' => "Formulaire en ligne renseigné",
@@ -138,7 +139,8 @@ class PreIdentificationController extends Controller {
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni,
             'photo_selfie' => $photo_selfie,
-            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
+            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center),
+            'enroll_download_link' => $enroll_download_link,
         ]);
         /* Envoi du reçu de pré-identification par mail */
         if(!empty($request->input('email'))) {
