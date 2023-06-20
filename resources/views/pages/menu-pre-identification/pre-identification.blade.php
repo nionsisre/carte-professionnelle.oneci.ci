@@ -95,7 +95,7 @@
                                             <li><a class="nav-link" href="#etape-2"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 2 : Justificatif d'identité</a></li>
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 4 : Récapitulatif</a></li>
+                                                    &nbsp; Etape 3 : Récapitulatif</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
