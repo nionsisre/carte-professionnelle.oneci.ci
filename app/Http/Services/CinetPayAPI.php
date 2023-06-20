@@ -22,7 +22,7 @@ class CinetPayAPI {
      * @param bool $iframe_view_enabled <p>Client Request object.</p>
      * @return array Value of result
      */
-    public function getPaymentLink($customer_informations, $payment_type='', $iframe_view_enabled=false) {
+    public function getPaymentLink($customer_informations, $payment_type='', $price=1000, $iframe_view_enabled=false) {
         $client = new Client();
         try {
             $transaction_id = date('Y', time()). (new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
@@ -33,7 +33,7 @@ class CinetPayAPI {
                     'apikey' => env('CINETPAY_API_KEY'),
                     'site_id' => env('CINETPAY_SERVICE_KEY'),
                     'transaction_id' => $transaction_id,
-                    'amount' => env('CINETPAY_SERVICE_AMOUNT'),
+                    'amount' => $price,
                     'currency' => 'XOF',
                     'alternative_currency' => '',
                     'description' => $payment_type,

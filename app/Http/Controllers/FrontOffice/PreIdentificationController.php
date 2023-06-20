@@ -102,7 +102,7 @@ class PreIdentificationController extends Controller {
             'doc-type' => ['required', 'string', 'max:150'],
             'other-document-type' => ['nullable','string','max:100'],
             'pdf_doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-            'selfie_img' => ['required', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'selfie_img' => ['required', 'mimes:jpeg,png,jpg', 'max:4096'],
             'document-number' => ['nullable', 'string', 'max:150'],
             'document-expiry' => ['nullable', 'string', 'max:11'],
         ]);
@@ -224,7 +224,7 @@ class PreIdentificationController extends Controller {
         $abonne = AbonnesPreIdentifie::where('numero_dossier', '=', $request->input('fn'))->first();
         if($abonne->exists()) {
             /* Obtention du lien de paiement via l'API CinetPay */
-            $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne,'Paiement Fiche de Pré-Identification', true);
+            $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne,'Paiement Fiche de Pré-Identification', env('CINETPAY_SERVICE_AMOUNT_TEMP'), true);
             if ($payment_link_obtained['has_error']) {
                 return response([
                     'has_error' => true,
