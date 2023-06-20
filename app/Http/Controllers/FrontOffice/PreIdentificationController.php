@@ -309,11 +309,19 @@ class PreIdentificationController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $enroll_download_link = $request->get('n');
-            $pre_identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', '=', $enroll_download_link)->first();
+            $pre_identification_resultats = AbonnesPreIdentifie::where('enroll_download_link', $enroll_download_link)->first();
             if (!empty($pre_identification_resultats)) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($pre_identification_resultats->integrator_data_payment_date)) );
+                if(empty($pre_identification_resultats->integrator_data_payment_date)) {
+                    $date_emission = date('d/m/Y', strtotime($pre_identification_resultats->created_at->format('Y-m-d')));
+                    $date_expiration = date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->created_at->format('Y-m-d'))));
+                    $date_expiration_comp = date('Y-m-d', strtotime('+2 weeks', strtotime($pre_identification_resultats->created_at->format('Y-m-d'))));
+                } else {
+                    $date_emission = date('d/m/Y', strtotime($pre_identification_resultats->integrator_data_payment_date));
+                    $date_expiration = date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date)));
+                    $date_expiration_comp = date('Y-m-d', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date)));
+                }
                 $date_du_jour = date('Y-m-d', time());
-                if($date_du_jour <= $date_expiration) {
+                if ($date_du_jour <= $date_expiration_comp) {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Fiche Provisoire d\'Identification Abonné Mobile',
@@ -321,8 +329,8 @@ class PreIdentificationController extends Controller {
                         'numero_dossier' => $pre_identification_resultats->numero_dossier,
                         'uniqid' => $pre_identification_resultats->uniqid,
                         'msisdn' => $pre_identification_resultats->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($pre_identification_resultats->integrator_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+2 weeks', strtotime($pre_identification_resultats->integrator_data_payment_date))),
+                        'date_emission' => $date_emission,
+                        'date_expiration' => $date_expiration,
                         'nom' => $pre_identification_resultats->nom . ((!empty($pre_identification_resultats->nom_epouse)) ? ' epse ' . $pre_identification_resultats->nom_epouse : ''),
                         'prenoms' => $pre_identification_resultats->prenoms,
                         'date_de_naissance' => date('d/m/Y', strtotime($pre_identification_resultats->date_de_naissance)),
@@ -333,7 +341,7 @@ class PreIdentificationController extends Controller {
                         'email' => $pre_identification_resultats->email,
                         'id_operateur' => $pre_identification_resultats->abonnes_operateur_id,
                         'document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? $pre_identification_resultats->libelle_document_justificatif : 'Aucun document ONECI',
-                        'numero_document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? $pre_identification_resultats->numero_document : $pre_identification_resultats->libelle_document_non_verifiable,
+                        'numero_document_justificatif' => (!empty($pre_identification_resultats->libelle_document_justificatif)) ? 'N° '.$pre_identification_resultats->numero_document : $pre_identification_resultats->libelle_document_non_verifiable,
                     ];
                     /*return view('layouts.certificat-pre-identification', $data);*/
 
@@ -341,7 +349,11 @@ class PreIdentificationController extends Controller {
                     $pdf_certificat_pre_identification = Pdf::loadView('layouts.certificat-pre-identification', $data)->setPaper('A5', 'landscape')->setOption("dpi", 200);
 
                     return $pdf_certificat_pre_identification->download($filename);
-
+                } else {
+                    return redirect()->route('front_office.pre_identification.consultation')->with([
+                        'error' => true,
+                        'error_message' => 'Le document demandé a atteint sa durée de validité, veuillez reprendre une nouvelle demande de pré-identification...'
+                    ]);
                 }
             }
         }
