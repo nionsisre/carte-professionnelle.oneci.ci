@@ -346,7 +346,7 @@ class PreIdentificationController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.consultation')->with([
+        return redirect()->route('front_office.pre_identification.consultation')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement de la fiche provisoire de demande d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
