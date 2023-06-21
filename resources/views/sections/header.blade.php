@@ -19,12 +19,12 @@
                 <a href="{{ route('front_office.pre_identification.menu') }}">Pré-identification</a>
             </li>
             <li>
-                <a href="{{ route('front_office.page.identification') }}">Identification</a>
-            </li>
-            <li>
-                <a href="{{ route('front_office.page.consultation') }}">Consultation</a>
+                <a href="{{ route('front_office.identification.menu') }}">Identification</a>
             </li>
             {{--<li>
+                <a href="{{ route('front_office.page.consultation') }}">Consultation</a>
+            </li>
+            <li>
                 <a href="{{ route('front_office.page.reclamation_paiement') }}">Réclamation</a>
             </li>--}}
         </ul>
