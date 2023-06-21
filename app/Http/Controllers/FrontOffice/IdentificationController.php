@@ -13,6 +13,9 @@ use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +31,20 @@ use Symfony\Component\HttpFoundation\Response;
  * @github     https://github.com/oneci-dev
  */
 class IdentificationController extends Controller {
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showMenuIdentification() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        /* Retourner vue resultat */
+        return view('pages.menu-identification', [
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>

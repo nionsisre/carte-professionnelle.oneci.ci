@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 /* Front Office Main Pages Routes */
     /* --- Identification --- */
 Route::get('/', [MainController::class, 'identification'])->name('front_office.page.identification');
-/*Route::get('/identification', [MainController::class, 'identification'])->name('front_office.page.identification');*/
+Route::get('/menu-identification', [IdentificationController::class, 'showMenuIdentification'])->name('front_office.identification.menu');
 Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('front_office.page.consultation');
 Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('front_office.page.reclamation_paiement');
     /* --- Pré-identification --- */

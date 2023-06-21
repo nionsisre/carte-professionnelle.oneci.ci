@@ -18,7 +18,9 @@
             <div class="spacer">&nbsp;</div>
             <div class="spacer">&nbsp;</div>
             {{-- Identification --}}
-            @if(Route::is('front_office.page.identification'))
+            @if(Route::is('front_office.identification.menu'))
+                @yield('menu_identification')
+            @elseif(Route::is('front_office.page.identification'))
                 @yield('home')
             @elseif(Route::is('front_office.page.consultation'))
                 @yield('consultation')

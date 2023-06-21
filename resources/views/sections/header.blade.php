@@ -15,9 +15,9 @@
             <li>
                 <a href="https://www.oneci.ci/accueil">Accueil</a>
             </li>
-            {{--<li>
+            <li>
                 <a href="{{ route('front_office.pre_identification.menu') }}">Pré-identification</a>
-            </li>--}}
+            </li>
             <li>
                 <a href="{{ route('front_office.page.identification') }}">Identification</a>
             </li>
