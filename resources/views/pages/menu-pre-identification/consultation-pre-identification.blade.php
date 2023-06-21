@@ -10,7 +10,7 @@
                 <ul>
                     <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo; </li>
                     <li>Nos services &rsaquo; </li>
-                    <li>Consulter le statut de l'identification</li>
+                    <li>Consulter le statut de la pré-identification</li>
                 </ul>
             </nav>
         </div>
@@ -22,9 +22,9 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de l'identification
+                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de la pré-identification
                 </h2>
-                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre identification<br/></h5>
+                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre pré-identification<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         @if(session()->has('error') && session()->get('error'))
                             <center>
