@@ -465,7 +465,7 @@ class PreIdentificationController extends Controller {
             ->first();
         if(!empty($user)) {
             return response([
-                'has_error' => true,
+                'has_error' => false,
                 'message' => 'Ok',
                 'data' => $user
             ], Response::HTTP_OK);
