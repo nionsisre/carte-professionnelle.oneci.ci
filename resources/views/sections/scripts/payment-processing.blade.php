@@ -65,6 +65,22 @@
                     ti{{ $i }} = data.transaction_id;
                     animatedTimer{{ $i }} = setInterval(cp{{ $i }}, 1000);
                     jQuery('#modalBox').html(
+                        '<center> \
+                            <div>\
+                                <div class="modal-header">\
+                                    <iframe id="payment-link" src="'+data.message+'" style="border:1px #d9d9d9 solid;" name="paymentIFrame" height="400px" width="100%" allow="fullscreen"></iframe>\
+                                </div>\
+                                <div class="modal-footer" style="margin-top: 1.2em">\
+                                    <a href="#" onclick="ccp{{ $i }}()" id="close-modal-{{ $i }}-btn" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Annuler</a>\
+                                </div>\
+                            </div>\
+                        </center>'
+                    ).modal({
+                        escapeClose: false,
+                        clickClose: false,
+                        showClose: false
+                    });
+                    {{-- jQuery('#modalBox').html(
                         '<center> <div class="notification-box notification-box-success">\n\
                         <div class="modal-header">\
                         <i class="fa fa-file-certificate fa-2x"></i><br/><br/>\
@@ -78,7 +94,7 @@
                         escapeClose: false,
                         clickClose: false,
                         showClose: false
-                    });
+                    }); --}}
                     jQuery('.blocker').css('z-index','2');
                 },
                 error: function (data) {
