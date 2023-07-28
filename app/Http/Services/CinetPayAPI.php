@@ -149,9 +149,9 @@ class CinetPayAPI {
      */
     public function notify(Request $request) {
         /*
-           CinetPAY envoie une requête POST vers cette methode après chaque paiement effectué censée mettre à jour
+           CinetPAY envoie une requête POST vers cette methode après chaque paiement effectué censé mettre à jour
            le statut au cas où le navigateur du client s'est déconnecté avant la synchronisation du statut lors de
-           son paiement ou en cas de réclamattion de paiement non synchronisé
+           son paiement ou en cas de reclamation de paiement non synchronisé
         */
         $validator = Validator::make($request->all(), [
             'cpm_site_id' => ['required', 'string', 'max:100'], // Token generique
@@ -170,7 +170,7 @@ class CinetPayAPI {
         if ($validator->fails()) {
             return response([
                 'has_error' => true,
-                'message' => 'Some parameters are missing : '.$validator->errors()->first()
+                'message' => 'Des paramètres sont manquants : '.$validator->errors()->first()
             ], Response::HTTP_BAD_REQUEST);
         } else {
             /* Vérification de l'ID de transaction chez CinetPAY */
