@@ -388,7 +388,7 @@ class OTPVerificationController extends Controller {
         /* SMS sending using MTN API */
         $client = new Client();
         try {
-            $response = $client->get('https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms', [
+            /*$response = $client->get('https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms', [
                 'verify' => false,
                 'stream' => true,
                 'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
@@ -404,6 +404,21 @@ class OTPVerificationController extends Controller {
                     'Private' => 'false',
                     'recipientPhone' => $sms_msisdn,
                     'smsText' => $message
+                ]
+            ]);*/
+            $response = $client->post('https://api.smscloud.ci/v1/campaigns', [
+                /*'verify' => false,
+                'stream' => true,*/
+                'headers' => [
+                    'Authorization' => 'Bearer '.env('SMS_ACCESS_TOKEN'),
+                    'Content-type' => 'application/json',
+                    'cache-control' => 'no-cache'
+                ],
+                'query' => [
+                    'sender' => env('SMS_SENDER'),
+                    'content' => $message,
+                    "dlrUrl" => "",
+                    "recipients" => [$sms_msisdn]
                 ]
             ]);
             // Read bytes off of the stream until the end of the stream is reached
