@@ -105,8 +105,8 @@
 <!-- End JS for all pages -->
 <link href="{{ URL::asset('assets/css/select2.min.css') }}" rel='stylesheet' type='text/css'>
 <script src="{{ URL::asset('assets/js/jquery.min.js') }}"></script>
-<script src="{{ URL::asset('assets/js/jquery.modal.min.js') }}"></script>
 <link rel="stylesheet" href="{{ URL::asset('assets/css/jquery.modal.min.css') }}"/>
+<script src="{{ URL::asset('assets/js/jquery.modal.min.js') }}"></script>
 <link href="{{ URL::asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
 <script src="{{ URL::asset('assets/js/jquery-ui.min.js') }}" type="text/javascript"></script>
 <script src="{{ URL::asset('assets/js/jquery.mask.js') }}" type="text/javascript"></script>

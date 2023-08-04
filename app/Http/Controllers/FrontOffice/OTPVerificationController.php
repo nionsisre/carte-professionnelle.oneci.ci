@@ -405,21 +405,6 @@ class OTPVerificationController extends Controller {
                     'recipientPhone' => $sms_msisdn,
                     'smsText' => $message
                 ]
-            ]);*/
-            $response = $client->post('https://api.smscloud.ci/v1/campaigns', [
-                /*'verify' => false,
-                'stream' => true,*/
-                'headers' => [
-                    'Authorization' => 'Bearer '.env('SMS_ACCESS_TOKEN'),
-                    'Content-type' => 'application/json',
-                    'cache-control' => 'no-cache'
-                ],
-                'query' => [
-                    'sender' => env('SMS_SENDER'),
-                    'content' => $message,
-                    "dlrUrl" => "",
-                    "recipients" => [$sms_msisdn]
-                ]
             ]);
             // Read bytes off of the stream until the end of the stream is reached
             $body = $response->getBody();
@@ -428,10 +413,10 @@ class OTPVerificationController extends Controller {
             $xml = simplexml_load_string($contents);
             if($xml){
                 //@TODO: Créer des colonnes pour sauvegarder aussi le retour XML en base
-                /*$xml->Result;
+                $xml->Result;
                 $xml->TransactionID;
-                $xml->NetPoints;*/
-                AbonnesNumerosOtp::create([
+                $xml->NetPoints;
+            AbonnesNumerosOtp::create([
                     'msisdn' => $msisdn_infos->numero_de_telephone,
                     'form_number' => $msisdn_infos->numero_dossier,
                     'otp_code' => $otp_code,
@@ -449,6 +434,47 @@ class OTPVerificationController extends Controller {
                     return [
                         'has_error' => true,
                         'message' => $xml->Result.' ['.$xml->TransactionID.']'
+                    ];
+                }
+            }*/
+            $response = $client->post('https://api.smscloud.ci/v1/campaigns', [
+                'headers' => [
+                    'Authorization' => 'Bearer '.env('SMS_ACCESS_TOKEN'),
+                    'Content-type' => 'application/json',
+                    'Cache-Control' => 'no-cache'
+                ],
+                'json' => [
+                    'sender' => env('SMS_SENDER'),
+                    'recipients' => [$sms_msisdn],
+                    'content' => $message,
+                    'dlrUrl' => 'https://identification-abonnes.oneci.ci/sms/callback/done'
+                ]
+            ]);
+            $contents = json_decode($response->getBody()->getContents(),true);
+            if($contents['smsCount']){
+                //@TODO: Créer des colonnes pour sauvegarder aussi le retour JSON en base
+                /*$contents['id']
+                $contents['smsCount']
+                $contents['createdAt']
+                $contents['failed']*/
+                AbonnesNumerosOtp::create([
+                    'msisdn' => $msisdn_infos->numero_de_telephone,
+                    'form_number' => $msisdn_infos->numero_dossier,
+                    'otp_code' => $otp_code,
+                    'otp_sms_title' => $sms_title,
+                    'otp_sms_message' => $message,
+                    'otp_verification_status' => 1
+                ]);
+                if($contents['smsCount'] >= 1) {
+                    return [
+                        'has_error' => false,
+                        'message' => 'SMS successfully sent !',
+                        'data' => $contents
+                    ];
+                } else {
+                    return [
+                        'has_error' => true,
+                        'message' => 'SMS sending failed ['.$contents['id'].']'
                     ];
                 }
             } else {
