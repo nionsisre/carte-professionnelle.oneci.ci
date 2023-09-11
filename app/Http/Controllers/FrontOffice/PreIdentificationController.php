@@ -32,7 +32,7 @@ class PreIdentificationController extends Controller {
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
         /* Retourner vue resultat */
-        return view('pages.menu-pre-identification', [
+        return view('pages.pre-identification.menu-pre-identification', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
 
@@ -49,7 +49,7 @@ class PreIdentificationController extends Controller {
         $civil_status_center = DB::table('civil_status_center')->get();
         $abonnes_type_pieces = AbonnesTypePiece::all();
 
-        return view('pages.menu-pre-identification.pre-identification', [
+        return view('pages.pre-identification.pre-identification', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
             'abonnes_operateurs' => $abonnes_operateurs,
             'civil_status_center' => $civil_status_center,
@@ -69,7 +69,7 @@ class PreIdentificationController extends Controller {
         $civil_status_center = DB::table('civil_status_center')->get();
         $abonnes_type_pieces = AbonnesTypePiece::all();
 
-        return view('pages.menu-pre-identification.consultation-pre-identification', [
+        return view('pages.pre-identification.consultation-pre-identification', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
             'abonnes_operateurs' => $abonnes_operateurs,
             'civil_status_center' => $civil_status_center,
@@ -184,7 +184,7 @@ class PreIdentificationController extends Controller {
                 'form-number' => ['required', 'numeric', 'digits:10'],
             ]);
             $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('form-number'))->first();
-            if($abonne->exists()) {
+            if(!empty($abonne) && $abonne->exists()) {
                 return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
             } else {
                 return redirect()->route('front_office.pre_identification.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
@@ -193,7 +193,7 @@ class PreIdentificationController extends Controller {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
             (numéro de dossier <f> + token d'authentification <t>) */
             $abonne = AbonnesPreIdentifie::where('numero_dossier', $request->input('f'))->first();
-            if($abonne->exists()) {
+            if(!empty($abonne) && $abonne->exists()) {
                 if ($abonne->uniqid === $request->get('t')) {
                     return redirect()->route('front_office.pre_identification.page')->with('abonne', $abonne);
                 }
@@ -203,7 +203,7 @@ class PreIdentificationController extends Controller {
         }
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        return view('pages.menu-pre-identification', [
+        return view('pages.pre-identification.menu-pre-identification', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
     }

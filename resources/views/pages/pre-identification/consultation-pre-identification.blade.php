@@ -2,7 +2,16 @@
 
 @section('title', 'Consultation statut identification')
 
-@section('consultation_pre_identification')
+@section('scripts')
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.toggle-form-number-and-msisdn')
+    @if(session()->has('abonne'))
+        @include('sections.scripts.payment-processing')
+    @endif
+@endsection
+
+@section('content')
     <!-- begin page title -->
     <section id="page-title">
         <div class="container clearfix">

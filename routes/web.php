@@ -30,11 +30,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* Front Office Main Pages Routes */
+    /* --- Home --- */
+Route::get('/', [MainController::class, 'index']);
     /* --- Identification --- */
-Route::get('/', [MainController::class, 'identification'])->name('front_office.page.identification');
 Route::get('/menu-identification', [IdentificationController::class, 'showMenuIdentification'])->name('front_office.identification.menu');
-Route::get('/consultation-statut-identification', [MainController::class, 'consultation'])->name('front_office.page.consultation');
-Route::get('/reclamation-paiement', [MainController::class, 'reclamationPaiement'])->name('front_office.page.reclamation_paiement');
+Route::get('/identification-abonnes-mobile', [IdentificationController::class, 'showIdentification'])->name('front_office.page.identification');
+Route::get('/consultation-statut-identification', [IdentificationController::class, 'showConsultation'])->name('front_office.page.consultation');
+Route::get('/reclamation-paiement', [IdentificationController::class, 'showReclamationPaiement'])->name('front_office.page.reclamation_paiement');
     /* --- Pré-identification --- */
 Route::get('/menu-pre-identification', [PreIdentificationController::class, 'showMenuPreIdentification'])->name('front_office.pre_identification.menu');
 Route::get('/pre-identification-abonnes-mobile', [PreIdentificationController::class, 'showPreIdentification'])->name('front_office.pre_identification.page');

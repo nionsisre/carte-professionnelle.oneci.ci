@@ -2,7 +2,12 @@
 
 @section('title', 'Reclamation Post-Paiement')
 
-@section('reclamation_paiement')
+@section('scripts')
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+@endsection
+
+@section('content')
     <!-- begin page title -->
     <section id="page-title">
         <div class="container clearfix">
@@ -111,3 +116,5 @@
         </section>
     </section>
 @endsection
+
+

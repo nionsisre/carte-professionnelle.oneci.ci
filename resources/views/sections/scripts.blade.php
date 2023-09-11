@@ -10,44 +10,5 @@
     });
 </script>
 <script src="{{ URL::asset('assets/js/smart-wizard/jquery.smartWizard.min.js') }}"></script>
-@if(Route::is('front_office.page.identification'))
-    @include('sections.scripts.recaptcha')
-    @include('sections.scripts.form-masks')
-    @include('sections.scripts.smart-wizard')
-    @include('sections.scripts.custom-input-file')
-    @include('sections.scripts.dynamic-msisdn')
-    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
-    @include('sections.scripts.copy-to-clipboard')
-    @if(session()->has('abonne_numeros'))
-        @include('sections.scripts.otp-verification')
-    @endif
-@elseif(Route::is('front_office.page.consultation'))
-    @include('sections.scripts.recaptcha')
-    @include('sections.scripts.form-masks')
-    @include('sections.scripts.toggle-form-number-and-msisdn')
-    @if(session()->has('abonne_numeros'))
-        @include('sections.scripts.otp-verification')
-        @include('sections.scripts.payment-processing')
-    @endif
-@elseif(Route::is('front_office.pre_identification.page'))
-    @include('sections.scripts.recaptcha')
-    @include('sections.scripts.form-masks')
-    @include('sections.scripts.smart-wizard')
-    @include('sections.scripts.custom-input-file')
-    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-pre-identification')
-    @include('sections.scripts.copy-to-clipboard')
-    @if(session()->has('abonne'))
-        @include('sections.scripts.payment-processing')
-    @endif
-@elseif(Route::is('front_office.pre_identification.consultation'))
-    @include('sections.scripts.recaptcha')
-    @include('sections.scripts.form-masks')
-    @include('sections.scripts.toggle-form-number-and-msisdn')
-    @if(session()->has('abonne'))
-        @include('sections.scripts.payment-processing')
-    @endif
-@elseif(Route::is('front_office.page.reclamation_paiement'))
-    @include('sections.scripts.recaptcha')
-    @include('sections.scripts.form-masks')
-@endif
+@yield('scripts')
 <script src="{{ URL::asset('assets/js/modern-navbar.js') }}"></script>

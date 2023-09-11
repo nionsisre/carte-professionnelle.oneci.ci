@@ -2,7 +2,20 @@
 
 @section('title', 'Identification Abonné Mobile')
 
-@section('home')
+@section('scripts')
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.smart-wizard')
+    @include('sections.scripts.custom-input-file')
+    @include('sections.scripts.dynamic-msisdn')
+    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
+    @include('sections.scripts.copy-to-clipboard')
+    @if(session()->has('abonne_numeros'))
+        @include('sections.scripts.otp-verification')
+    @endif
+@endsection
+
+@section('content')
     <!-- begin page title -->
     <section id="page-title">
         <div class="container clearfix">
@@ -168,7 +181,7 @@
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
-                                    <div id="smartwizard">
+                                    <div id="smartwizard" class="mb-3">
                                         <ul class="nav">
                                             <li><a class="nav-link" href="#etape-1"><i class="fa fa-sim-card text-white"></i>
                                                     &nbsp; Etape 1 : Numéro(s) à identifier</a></li>
@@ -487,8 +500,8 @@
                                                 </div>
                                                 <br/><br/>
                                                 <h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
-                                                Veuillez charger <b>une photo selfie récente</b> de <b>vous</b>.<br/>
-                                                Cette photo doit être <b>différente</b> de celle présente sur <b>votre document d'identité</b>.<br/><br/>
+                                                Veuillez cliquer sur le bouton ci-dessous afin de charger <b>une photo récente</b> de <b>vous</b>.<br/>
+                                                Sur cette photo, le <b>document justificatif</b> ainsi que la <b>photo contenue sur ce document</b> doivent être <b>visible</b>.<br/><br/>
                                                 <div class="form-group" id="selfie-img-field">
                                                     <div class="col-sm-10">
                                                         <div class="box">
@@ -496,9 +509,10 @@
                                                                    class="inputfile" accept="image/jpeg, image/png"
                                                                    style="display: none">
                                                             <label for="selfie-img-input" class="atcl-inv hoverable"
-                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;" id="selfie-img-label"><i
-                                                                    class="fad fa-user fa-3x mr10"
-                                                                    style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-camera"></i> &nbsp; <span>Charger votre photo...</span></label>
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;" id="selfie-img-label">
+                                                                <img src="{{ asset('assets/images/selfie-icon.svg') }}" style="width: 14em;" />
+                                                                    <!--<i class="fad fa-user fa-3x mr10" style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i>--><br/>
+                                                                    <i class="fa fa-camera"></i> &nbsp; <span>Charger votre photo...</span></label>
                                                         </div>
                                                     </div><br/>
                                                     <label for="selfie-img-input" class="col-sm-2 control-label">
@@ -506,6 +520,23 @@
                                                     </label>
                                                     <br/>
                                                 </div>
+                                                {{--<h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
+                                                Veuillez <b>cliquer</b> sur le bouton ci-dessous puis <b>autoriser</b> l'utilisation de votre <b>caméra</b> par le navigateur afin de capturer <b>une photo</b> de <b>vous</b>.<br/>
+                                                Sur cette photo, le <b>document justificatif</b> ainsi que la <b>photo contenue sur ce document</b> doivent être <b>visible</b>.<br/><br/>
+                                                <div class="form-group" id="selfie-img-field">
+                                                    <div class="col-sm-10">
+                                                        <div class="box">
+                                                            <input type="text" name="selfie_img" id="selfie-img-input" style="display: none">
+                                                            <label for="selfie-img-input" class="atcl-inv hoverable"
+                                                                   style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;" id="selfie-img-label" onclick="openSnp()">
+                                                                <img src="{{ asset('assets/images/selfie-icon.svg') }}" style="width: 14em;" />
+                                                                <!--<i class="fad fa-user fa-3x mr10" style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i>--><br/>
+                                                                <i class="fa fa-camera"></i> &nbsp; <span>Prendre ma photo...</span>
+                                                            </label>
+                                                        </div>
+                                                    </div><br/><br/>
+                                                    <br/>
+                                                </div>--}}
                                             </div>
                                             <div id="etape-4" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
@@ -579,3 +610,6 @@
         </section>
     </section>
 @endsection
+
+
+

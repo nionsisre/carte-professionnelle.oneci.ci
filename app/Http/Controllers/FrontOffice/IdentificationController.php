@@ -11,6 +11,7 @@ use App\Mail\MailONECI;
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
+use App\Models\AbonnesTypePiece;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -40,7 +41,65 @@ class IdentificationController extends Controller {
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
         /* Retourner vue resultat */
-        return view('pages.menu-identification', [
+        return view('pages.identification.menu', [
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showIdentification() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.identification.index', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showConsultation() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.identification.consultation', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
+            'mobile_header_enabled' => $mobile_header_enabled,
+        ]);
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function showReclamationPaiement() {
+
+        $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+
+        $abonnes_operateurs = AbonnesOperateur::all();
+        $civil_status_center = DB::table('civil_status_center')->get();
+        $abonnes_type_pieces = AbonnesTypePiece::all();
+
+        return view('pages.reclamation-paiement', [
+            'abonnes_type_pieces' => $abonnes_type_pieces,
+            'abonnes_operateurs' => $abonnes_operateurs,
+            'civil_status_center' => $civil_status_center,
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
 
@@ -71,6 +130,7 @@ class IdentificationController extends Controller {
             'email' => ['nullable', 'string', 'max:150'],
             'doc-type' => ['required', 'string', 'max:150'],
             'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
+            'selfie_img' => ['required', 'mimes:jpeg,png,jpg', 'max:3072'],
             'document-number' => ['required', 'string', 'max:150'],
             'document-expiry' => ['nullable', 'string', 'max:11'],
         ]);

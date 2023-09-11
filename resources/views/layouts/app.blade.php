@@ -17,23 +17,7 @@
         <div id="wrap">
             <div class="spacer">&nbsp;</div>
             <div class="spacer">&nbsp;</div>
-            {{-- Identification --}}
-            @if(Route::is('front_office.identification.menu'))
-                @yield('menu_identification')
-            @elseif(Route::is('front_office.page.identification'))
-                @yield('home')
-            @elseif(Route::is('front_office.page.consultation'))
-                @yield('consultation')
-            @elseif(Route::is('front_office.page.reclamation_paiement'))
-                @yield('reclamation_paiement')
-            {{-- Pré-Identification --}}
-            @elseif(Route::is('front_office.pre_identification.menu'))
-                @yield('menu_pre_identification')
-            @elseif(Route::is('front_office.pre_identification.page'))
-                @yield('pre_identification_abonnes_mobile')
-            @elseif(Route::is('front_office.pre_identification.consultation'))
-                @yield('consultation_pre_identification')
-            @endif
+            @yield('content')
             {{-- Footer --}}
             @include('sections.footer')
             {{-- Scripts --}}

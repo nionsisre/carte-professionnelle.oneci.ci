@@ -2,7 +2,19 @@
 
 @section('title', 'Pré-Identification Abonné Mobile')
 
-@section('pre_identification_abonnes_mobile')
+@section('scripts')
+    @include('sections.scripts.recaptcha')
+    @include('sections.scripts.form-masks')
+    @include('sections.scripts.smart-wizard')
+    @include('sections.scripts.custom-input-file')
+    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-pre-identification')
+    @include('sections.scripts.copy-to-clipboard')
+    @if(session()->has('abonne'))
+        @include('sections.scripts.payment-processing')
+    @endif
+@endsection
+
+@section('content')
     <!-- begin page title -->
     <section id="page-title">
         <div class="container clearfix">
