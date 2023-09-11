@@ -15,7 +15,7 @@
         if (idx_msisdn > 1) {
             jQuery('#ct-msisdn-' + idx_msisdn).append('<a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-' + (idx_msisdn) + '`)" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>');
         }
-        jQuery('#content').height( jQuery("#content").height() - 230);
+        jQuery("#content").resize();
     }
     jQuery("#add-msisdn").click(function () {
         if(idx_msisdn < max_msisdn) {
@@ -55,7 +55,7 @@
                         <a class="button red one-fourth" href="javascript:void(0)" id="rm-msisdn" onclick="rmMsisdn(`ct-msisdn-'+(idx_msisdn+1)+'`)" style="width: 8em; margin-top: 1em; display: inline-block;"><i class="fa fa-minus mr10 text-white"></i> &nbsp; Retirer</a>\n\
                     </div>';
             jQuery('#msisdn-container').append(html);
-            jQuery('#content').height( jQuery("#content").height() + 230);
+            jQuery("#content").resize();
             idx_msisdn++;
             jQuery(".msisdn").mask('99 99 99 99 99');
             jQuery(".good-select").select2();
