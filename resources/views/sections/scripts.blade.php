@@ -1,6 +1,3 @@
-@if(config('services.recaptcha.enabled'))
-<script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
-@endif
 <script src="{{ URL::asset('assets/js/select2.min.js') }}" type='text/javascript'></script>
 <script src="{{ URL::asset('assets/js/countrySelect.js') }}" type='text/javascript'></script>
 <script>

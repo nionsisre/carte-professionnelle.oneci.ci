@@ -1,4 +1,5 @@
 @if(config('services.recaptcha.enabled'))
+<script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
 <script>
     {{--
     |--------------------------------------------------------------------------

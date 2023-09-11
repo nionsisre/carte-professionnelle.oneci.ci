@@ -13,6 +13,7 @@
     @if(session()->has('abonne_numeros'))
         @include('sections.scripts.otp-verification')
     @endif
+    @include('sections.scripts.webcam-with-face-detection')
 @endsection
 
 @section('content')
@@ -181,6 +182,7 @@
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+                                    <div id="modalSnp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard" class="mb-3">
                                         <ul class="nav">
                                             <li><a class="nav-link" href="#etape-1"><i class="fa fa-sim-card text-white"></i>
@@ -499,7 +501,7 @@
                                                     <br/>
                                                 </div>
                                                 <br/><br/>
-                                                <h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
+                                                {{--<h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
                                                 Veuillez cliquer sur le bouton ci-dessous afin de charger <b>une photo récente</b> de <b>vous</b>.<br/>
                                                 Sur cette photo, le <b>document justificatif</b> ainsi que la <b>photo contenue sur ce document</b> doivent être <b>visible</b>.<br/><br/>
                                                 <div class="form-group" id="selfie-img-field">
@@ -519,24 +521,24 @@
                                                         <em>Votre photo doit être au format <b>*.jpg</b> ou <b>*.png</b> et ne doit pas excéder <b>3 Mo</b>.</em>
                                                     </label>
                                                     <br/>
-                                                </div>
-                                                {{--<h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
+                                                </div>--}}
+                                                <h2><i class="fa fa-portrait"></i> &nbsp; Photo d'identité :</h2>
                                                 Veuillez <b>cliquer</b> sur le bouton ci-dessous puis <b>autoriser</b> l'utilisation de votre <b>caméra</b> par le navigateur afin de capturer <b>une photo</b> de <b>vous</b>.<br/>
                                                 Sur cette photo, le <b>document justificatif</b> ainsi que la <b>photo contenue sur ce document</b> doivent être <b>visible</b>.<br/><br/>
                                                 <div class="form-group" id="selfie-img-field">
                                                     <div class="col-sm-10">
                                                         <div class="box">
-                                                            <input type="text" name="selfie_img" id="selfie-img-input" style="display: none">
+                                                            <input type="hidden" name="selfie_img_txt" id="selfie-img-input" style="display: none">
                                                             <label for="selfie-img-input" class="atcl-inv hoverable"
                                                                    style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;" id="selfie-img-label" onclick="openSnp()">
-                                                                <img src="{{ asset('assets/images/selfie-icon.svg') }}" style="width: 14em;" />
+                                                                <img id="selfie-overview" src="{{ asset('assets/images/selfie-icon.svg') }}" style="width: 14em;" alt="Aperçu Photo"/>
                                                                 <!--<i class="fad fa-user fa-3x mr10" style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i>--><br/>
                                                                 <i class="fa fa-camera"></i> &nbsp; <span>Prendre ma photo...</span>
                                                             </label>
                                                         </div>
                                                     </div><br/><br/>
                                                     <br/>
-                                                </div>--}}
+                                                </div>
                                             </div>
                                             <div id="etape-4" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
@@ -576,7 +578,7 @@
                                                         Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Photo selfie récente : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
+                                                        Photo récente : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Numéro du document : <b><span id="recap-document-number"></span></b>

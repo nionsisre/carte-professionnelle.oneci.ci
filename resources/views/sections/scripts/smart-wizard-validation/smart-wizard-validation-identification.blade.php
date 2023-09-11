@@ -27,7 +27,7 @@
     });
     jQuery('.blocker').css('z-index','2');
     {{-- Variables --}}
-    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Detection de l'operateur telephonique a la volee lors du copier/coller du numero de telephone --}}
     jQuery(document.querySelectorAll('[name="msisdn[]"]')).bind('paste', function(e) {
         {{-- var _this = this; --}}
@@ -575,6 +575,7 @@
                     doc_type = document.querySelectorAll('[name="doc-type"]');
                     document_number = document.querySelectorAll('[name="document-number"]');
                     document_expiry = document.querySelectorAll('[name="document-expiry"]');
+                    selfie_img_txt = document.querySelectorAll('[name="selfie_img_txt"]');
                     {{-- doc_type --}}
                     if(!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
@@ -597,6 +598,23 @@
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><i class="fa fa-2x fa-asterisk"></i><br/><br/><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- selfie_img_txt --}}
+                    if(!jQuery(selfie_img_txt).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez capturer une photo récente de vous pour continuer</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -669,7 +687,7 @@
                         return false;
                     }
                     {{-- selfie_img --}}
-                    if(!jQuery(selfie_img).val()) {
+                    {{-- if(!jQuery(selfie_img).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez charger une photo selfie récente de vous</h3></div>\n\
@@ -684,9 +702,9 @@
                         jQuery('.blocker').css('z-index','2');
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
-                    }
+                    } --}}
                     {{-- selfie_img_size --}}
-                    var selffSExt = ["Octets", "Ko", "Mo", "Go"];
+                    {{-- var selffSExt = ["Octets", "Ko", "Mo", "Go"];
                     selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
                     if(selfie_img_size >= 3145728) {
                         jQuery('#modalError').html(
@@ -703,7 +721,7 @@
                         jQuery('.blocker').css('z-index','2');
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
-                    }
+                    } --}}
                     {{-- RECAP --}}
                     var msisdn_list = "";
                     for(let i=0; i<msisdn.length; i++) {
@@ -738,7 +756,8 @@
                         jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
                     }
                     jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2]+" ("+jQuery(doc_type).select2('data')[0].text+") - "+((Math.round(fSize*100)/100)+" "+fSExt[i]));
-                    jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));
+                    {{--jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));--}}
+                    jQuery('#recap-selfie-img').text(jQuery(first_name).val().toLowerCase().replace(/'/g, "")+".jpg");
                     jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
                     if(jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
