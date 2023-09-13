@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
+use App\Rules\Base64Image;
 
 /**
  * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -130,7 +131,12 @@ class IdentificationController extends Controller {
             'email' => ['nullable', 'string', 'max:150'],
             'doc-type' => ['required', 'string', 'max:150'],
             'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-            'selfie_img_txt' => ['nullable', 'string', 'max:1000000'],
+            'selfie_img_txt' => [
+                'nullable',
+                'string',
+                'max:10000000',
+                new Base64Image,
+            ],
             'document-number' => ['required', 'string', 'max:150'],
             'document-expiry' => ['nullable', 'string', 'max:11'],
         ]);
@@ -159,6 +165,7 @@ class IdentificationController extends Controller {
             'date_expiration_document' => $request->input('document-expiry'),
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni,
+            'photo_selfie' => '',
             'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
         ]);
         $telco = $request->input('telco');
