@@ -96,7 +96,8 @@
         img.style.display = "block";
 
         const snpInput = document.querySelector('[name="selfie_img_txt"]');
-        snpInput.value = snpData;
+        snpInput.value = 'empty';
+        {{--snpInput.value = snpData;--}}
 
         const stream = video.srcObject;
         const tracks = stream.getTracks();

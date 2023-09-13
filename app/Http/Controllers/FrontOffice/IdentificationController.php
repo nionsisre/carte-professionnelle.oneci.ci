@@ -135,7 +135,7 @@ class IdentificationController extends Controller {
                 'nullable',
                 'string',
                 'max:10000000',
-                new Base64Image,
+                /*new Base64Image,*/
             ],
             'document-number' => ['required', 'string', 'max:150'],
             'document-expiry' => ['nullable', 'string', 'max:11'],
