@@ -57,8 +57,8 @@
                         setInterval(async () => {
                             const detections = await faceapi
                             {{--.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())--}}
-                                .detectAllFaces(vsnp, new faceapi.TinyFaceDetectorOptions())
-                                .withFaceLandmarks()
+                            .detectAllFaces(vsnp, new faceapi.TinyFaceDetectorOptions())
+                            .withFaceLandmarks()
                             {{--.withFaceExpressions();--}}
 
                             const resizedDetections = faceapi.resizeResults(detections, {
@@ -90,14 +90,14 @@
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const img = document.getElementById("selfie-overview");
+        {{--let snpData = canvas.toDataURL("image/png", 0.4); //Check compression quality here --}}
         let snpData = canvas.toDataURL("image/png");
 
         img.src = snpData;
         img.style.display = "block";
 
         const snpInput = document.querySelector('[name="selfie_img_txt"]');
-        snpInput.value = 'empty';
-        {{--snpInput.value = snpData;--}}
+        snpInput.value = snpData;
 
         const stream = video.srcObject;
         const tracks = stream.getTracks();
