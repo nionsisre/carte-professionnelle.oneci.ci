@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\FrontOffice\PreIdentificationController;
+use App\Http\Controllers\OstatPlus\ReportController;
+use App\Http\Controllers\OstatPlus\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 |--------------------------------------------------------------------------
 */
 Route::post('/user', [PreIdentificationController::class, 'userAppLogin'])->name('front_office.pre_identification.api.user');
+Route::post('/ostatplus/login', [UserController::class, 'userAppLogin'])->name('api.user');
+Route::post('/ostatplus/agence-list', [ReportController::class, 'getAgenciesList'])->name('api.agence');
+Route::get('/ostatplus/report', [ReportController::class, 'getReport'])->name('api.report');
+Route::post('/ostatplus/report', [ReportController::class, 'createReport'])->name('api.report.create');
+Route::put('/ostatplus/report', [ReportController::class, 'editReport'])->name('api.report.edit');
 
 /*
 |--------------------------------------------------------------------------
