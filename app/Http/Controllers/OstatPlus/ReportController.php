@@ -67,27 +67,7 @@ class ReportController extends Controller {
                 ], Response::HTTP_OK);
             }
         }
-        return response([
-            'has_error' => true,
-            'message' => 'Erreur Client',
-            'data' => [
-                'id' => 0,
-                'role_id' => 0,
-                'zone_code' => '',
-                'uid' => '',
-                'login' => '',
-                'status_id' => 0,
-                'monitored' => 0,
-                'first_name' => '',
-                'last_name' => '',
-                'phone_number' => '',
-                'phone_number_2' => '',
-                'phone_number_3' => '',
-                'email' => '',
-                'creation_date' => '',
-                'update_date' => ''
-            ]
-        ], Response::HTTP_OK);
+        return response(['errors' => $validator->errors()->all()], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
 }
