@@ -19,7 +19,7 @@ class UserController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Téléchargement du certificat d'identification au format PDF<br/><br/>
+     * Authentification de l'utilisateur OSTAT PLUS<br/><br/>
      * <b>Response</b> userAppLogin(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
