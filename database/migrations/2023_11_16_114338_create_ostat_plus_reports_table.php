@@ -17,6 +17,7 @@ class CreateOstatPlusReportsTable extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\OstatPlusService::class)->nullable();
             $table->foreignIdFor(\App\Models\OstatPlusTypeService::class)->nullable();
+            $table->string('date',20);
             $table->string('value',50);
             $table->string('status',100);
             $table->string('reason',200);
