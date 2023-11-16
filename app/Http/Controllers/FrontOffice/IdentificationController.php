@@ -135,7 +135,7 @@ class IdentificationController extends Controller {
                 'nullable',
                 'string',
                 'max:10000000',
-                /*new Base64Image,*/
+                new Base64Image
             ],
             'document-number' => ['required', 'string', 'max:150'],
             'document-expiry' => ['nullable', 'string', 'max:11'],
@@ -165,7 +165,7 @@ class IdentificationController extends Controller {
             'date_expiration_document' => $request->input('document-expiry'),
             'numero_document' => $request->input('document-number'),
             'type_cni' => $type_cni,
-            'photo_selfie' => '',
+            'photo_selfie' => $request->input('selfie_img_txt'),
             'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
         ]);
         $telco = $request->input('telco');
