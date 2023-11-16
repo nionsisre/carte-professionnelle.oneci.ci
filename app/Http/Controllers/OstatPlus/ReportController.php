@@ -87,24 +87,46 @@ class ReportController extends Controller {
         ]);
         if (!$validator->fails()) {
             /* Accéder aux variables soumises dans le corps JSON */
+            $user_uid = $jsonData['user_uid'];
             $code_unique_centre = $jsonData['code_unique_centre'];
             /* Obtention des informations sur l'utilisateur */
-            $centre_list = (!empty($code_unique_centre) && $code_unique_centre !== "null") ?
-                DB::table('stats_centres_et_codifications')
-                    ->select('*')
-                    ->where('code_unique_centre', 'LIKE', $code_unique_centre)
-                    ->orderByDesc('id')
-                    ->get()
-                :
-                DB::table('stats_centres_et_codifications')
-                    ->select('*')
-                    ->orderByDesc('id')
-                    ->get();
-            if (!empty($centre_list)) {
+            if (!empty($code_unique_centre) && $code_unique_centre !== "null") {
+                if(!empty($jsonData['selected_date2']) && $jsonData['selected_date2'] !== ""  && $jsonData['selected_date2'] !== "null") {
+                    // Date interval case
+                    $start_date = date('Y-m-d', strtotime($jsonData['selected_date']." 00:00:00"));
+                    $end_date = date('Y-m-d', strtotime($jsonData['selected_date2']." 00:00:00"));
+                    $reports = DB::table('ostat_plus_reports opr')
+                        ->select('opr.id, os.name, ots.name, opr.date, SUM(opr.value) value, opr.status, opr.reason, opr.created_at, opr.updated_at')
+                        ->join('ostat_plus_services os', 'os.id', '=', 'opr.ostat_plus_service_id')
+                        ->join('ostat_plus_type_services ots', 'ots.id', '=', 'opr.ostat_plus_type_service_id')
+                        ->whereRaw('DATE(opr.date) BETWEEN DATE(?) AND DATE(?)', [$start_date,$end_date])
+                        ->orderByDesc('opr.id')
+                        ->get();
+                } else {
+                    // One Date only
+                    $reports = DB::table('ostat_plus_reports opr')
+                        ->select('opr.id, os.name, ots.name, opr.date, opr.value, opr.status, opr.reason, opr.created_at, opr.updated_at')
+                        ->join('ostat_plus_services os', 'os.id', '=', 'opr.ostat_plus_service_id')
+                        ->join('ostat_plus_type_services ots', 'ots.id', '=', 'opr.ostat_plus_type_service_id')
+                        ->where('date', 'LIKE', $code_unique_centre)
+                        ->orderByDesc('opr.id')
+                        ->get();
+                }
+            } else {
+                if($code_unique_centre == "000000000000") {
+                    $reports = DB::table('stats_centres_et_codifications')
+                        ->select('*')
+                        ->orderByDesc('id')
+                        ->get();
+                } else {
+                    $reports = "";
+                }
+            }
+            if (!empty($reports)) {
                 return response([
                     'has_error' => false,
                     'message' => 'Ok',
-                    'data' => $centre_list
+                    'data' => $reports
                 ], Response::HTTP_OK);
             } else {
                 return response([

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class OstatPlusReport extends Model
 {
     use HasFactory;
+
+    public $guarded = ['id'];
 }

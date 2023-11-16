@@ -8,5 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class OstatPlusService extends Model
 {
     use HasFactory;
+
+    public $guarded = ['id'];
     public $timestamps = false;
 }
