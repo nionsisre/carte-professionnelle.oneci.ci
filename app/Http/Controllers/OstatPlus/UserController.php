@@ -51,28 +51,14 @@ class UserController extends Controller {
             } else {
                 return response([
                     'has_error' => true,
-                    'message' => 'Identifiant ou mot de passe incorrect !',
-                    'data' => [
-                        'id' => 0,
-                        'role_id' => 0,
-                        'zone_code' => '',
-                        'uid' => '',
-                        'login' => '',
-                        'status_id' => 0,
-                        'monitored' => 0,
-                        'first_name' => '',
-                        'last_name' => '',
-                        'phone_number' => '',
-                        'phone_number_2' => '',
-                        'phone_number_3' => '',
-                        'email' => '',
-                        'creation_date' => '',
-                        'update_date' => ''
-                    ]
+                    'message' => 'Identifiant ou mot de passe incorrect !'
                 ], Response::HTTP_OK);
             }
         } else {
-            return response(['errors' => $validator->errors()->all()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response([
+                'has_error' => true,
+                'message' => $validator->errors()->all()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 

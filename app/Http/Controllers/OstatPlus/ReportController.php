@@ -39,11 +39,17 @@ class ReportController extends Controller {
             /* Accéder aux variables soumises dans le corps JSON */
             $zone_code = $jsonData['zone_code'];
             /* Obtention des informations sur l'utilisateur */
-            $centre_list = DB::table('stats_centres_et_codifications')
+            $centre_list = (!empty($zone_code) && $zone_code !== "null") ?
+                DB::table('stats_centres_et_codifications')
                 ->select('*')
                 ->where('code_unique_centre', 'LIKE', $zone_code)
                 ->orderByDesc('id')
-                ->get();
+                ->get()
+            :
+                DB::table('stats_centres_et_codifications')
+                    ->select('*')
+                    ->orderByDesc('id')
+                    ->get();
             if (!empty($centre_list)) {
                 return response([
                     'has_error' => false,
@@ -53,12 +59,14 @@ class ReportController extends Controller {
             } else {
                 return response([
                     'has_error' => true,
-                    'message' => 'Erreur Interne',
-                    'data' => []
+                    'message' => 'Erreur Interne'
                 ], Response::HTTP_OK);
             }
         }
-        return response(['errors' => $validator->errors()->all()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        return response([
+            'has_error' => true,
+            'message' => $validator->errors()->all()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
 }
