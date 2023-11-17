@@ -17,10 +17,13 @@ class CreateOstatPlusReportsTable extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\OstatPlusService::class)->nullable();
             $table->foreignIdFor(\App\Models\OstatPlusTypeService::class)->nullable();
+            $table->string('code_centre',100);
             $table->string('date',20);
             $table->string('value',50);
-            $table->string('status',100);
-            $table->string('reason',200);
+            $table->string('status',100)->nullable();
+            $table->string('doer_uid',100)->nullable();
+            $table->string('doer_name',200)->nullable();
+            $table->string('reason',200)->nullable();
             $table->timestamps();
         });
     }
