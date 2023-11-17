@@ -25,7 +25,8 @@ class CinetPayAPI {
     public function getPaymentLink($customer_informations, $payment_type='', $price=1000, $iframe_view_enabled=false) {
         $client = new Client();
         try {
-            $transaction_id = date('Y', time()). (new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
+            //$transaction_id = date('Y', time()). (new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
+            $transaction_id = date('Y', time()).$customer_informations->numero_dossier;
             $response = $client->request('POST', 'https://api-checkout-oneci.cinetpay.com/v2/payment', [
                 'verify' => false,
                 'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
