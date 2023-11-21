@@ -5,6 +5,7 @@ namespace App\Http\Controllers\OstatPlus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -225,10 +226,21 @@ class ReportController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+
+        /*$filePath = 'android_query_logs.txt';
+        // Vérifier si le fichier existe déjà
+        if (Storage::disk('local')->exists($filePath)) {
+            // Si le fichier existe, ajouter les données à la suite
+            Storage::disk('local')->append($filePath, json_encode($request->all()));
+        } else {
+            // Si le fichier n'existe pas, le créer et y écrire les données
+            Storage::disk('local')->put($filePath, json_encode($request->all()));
+        }*/
+
         $user_uid = $request->input('user_uid'); // pour le monitoring
         $code_unique_centre = $request->input('code_unique_centre');
-        $start_date = date('Y-m-d', strtotime($request->input('selected_date') . " 00:00:00"));
-        $end_date = date('Y-m-d', strtotime($request->input('selected_date_2') . " 00:00:00"));
+        $start_date = $request->input('selected_date');
+        $end_date = $request->input('selected_date_2');
 
         $services = DB::table('ostat_plus_services')->select('*')->get();
         $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
@@ -254,6 +266,12 @@ class ReportController extends Controller {
                     ->where('ostat_plus_service_id', $service->id)
                     ->where('ostat_plus_type_service_id', $type_service->id)
                     ->where('code_centre', 'LIKE', $code_unique_centre . '%')
+                    /*->when(!$end_date, function ($query) use ($start_date) {
+                        return $query->where('date', 'LIKE', $start_date);
+                    })
+                    ->when($end_date, function ($query) use ($start_date, $end_date) {
+                        return $query->whereBetween('date', [$start_date, $end_date]);
+                    })*/
                     ->when(!$end_date, function ($query) use ($start_date) {
                         return $query->where('date', 'LIKE', $start_date);
                     })
@@ -292,16 +310,21 @@ class ReportController extends Controller {
     }
 
     function addOrEditReport(Request $request) {
-
-        /* Récupérer les données JSON soumises */
         $data = $request->json()->all();
 
-        /* Valider les variables de l'API */
         $validator = Validator::make($data, [
-            'uid' => ['required', 'string', 'max:100'],
-            'code_unique_centre' => ['nullable', 'string', 'max:20'],
+            'agency.centre' => ['required', 'string', 'max:100'],
+            'agency.code_unique_centre' => ['required', 'string', 'max:20'],
             'selected_date' => ['required', 'string', 'max:20'],
-            'selected_date_2' => ['nullable', 'string']
+            'report.*.code_centre' => ['required', 'string', 'max:100'],
+            'report.*.date' => ['required', 'string', 'max:20'],
+            'report.*.value' => ['required', 'string', 'max:50'],
+            'report.*.status' => ['nullable', 'string', 'max:100'],
+            'report.*.doer_uid' => ['nullable', 'string', 'max:100'],
+            'report.*.doer_name' => ['nullable', 'string', 'max:200'],
+            'report.*.reason' => ['nullable', 'string', 'max:200'],
+            'report.*.service_name' => ['required', 'string', 'max:100'],
+            'report.*.type_service_name' => ['required', 'string', 'max:100'],
         ]);
 
         if ($validator->fails()) {
@@ -311,56 +334,69 @@ class ReportController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        foreach ($data as $item) {
+        /*
+        $filePath = 'android_query_logs.txt';
+        // Vérifier si le fichier existe déjà
+        if (Storage::disk('local')->exists($filePath)) {
+            // Si le fichier existe, ajouter les données à la suite
+            Storage::disk('local')->append($filePath, json_encode($data));
+        } else {
+            // Si le fichier n'existe pas, le créer et y écrire les données
+            Storage::disk('local')->put($filePath, json_encode($data));
+        }*/
 
-            $user = DB::table('users')
-                ->where('uid', $item['doer_uid'])
-                ->first();
-            $service = DB::table('ostat_plus_services')
-                ->where('label', $item['service_name'])
-                ->first();
-            $type_service = DB::table('ostat_plus_type_services')
-                ->where('label', $item['type_service_name'])
-                ->first();
+        foreach ($data['report'] as $item) {
+            $user = DB::table('users')->where('uid', $item['doer_uid'])->first();
+            $service = DB::table('ostat_plus_services')->where('label', $item['service_name'])->first();
+            $type_service = DB::table('ostat_plus_type_services')->where('label', $item['type_service_name'])->first();
+
             $existingRecord = DB::table('ostat_plus_reports')
                 ->where('date', $item['date'])
                 ->where('code_centre', $item['code_centre'])
+                ->where('ostat_plus_service_id', $service->id ?? null)
+                ->where('ostat_plus_type_service_id', $type_service->id ?? null)
                 ->first();
 
             if ($existingRecord) {
+                // Mise à jour de l'enregistrement existant
                 DB::table('ostat_plus_reports')
                     ->where('date', $item['date'])
                     ->where('code_centre', $item['code_centre'])
+                    ->where('ostat_plus_service_id', $service->id ?? null)
+                    ->where('ostat_plus_type_service_id', $type_service->id ?? null)
                     ->update([
                         'value' => $item['value'],
                         'status' => $item['status'],
                         'doer_uid' => $item['doer_uid'] ?? '',
-                        'doer_name' => $user->last_name.' '.$user->first_name ?? '',
-                        'reason' => $item['reason'],
+                        'doer_name' => $user ? $user->last_name . ' ' . $user->first_name : '',
+                        'reason' => $user ? "Données publiées par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
+                        //'reason' => $item['reason'],
                         'updated_at' => now()
                     ]);
             } else {
+                // Insertion d'un nouvel enregistrement
                 DB::table('ostat_plus_reports')->insert([
-                    'ostat_plus_service_id' => $service->id,
-                    'ostat_plus_type_service_id' => $type_service->id,
+                    'ostat_plus_service_id' => $service ? $service->id : null,
+                    'ostat_plus_type_service_id' => $type_service ? $type_service->id : null,
                     'code_centre' => $item['code_centre'],
                     'date' => $item['date'],
                     'value' => $item['value'],
                     'status' => $item['value'],
                     'doer_uid' => $item['doer_uid'] ?? '',
-                    'doer_name' => $user->last_name." ".$user->first_name ?? '',
-                    'reason' => $item['reason'] ?? '',
+                    'doer_name' => $user ? $user->last_name . ' ' . $user->first_name : '',
+                    'reason' => $user ? "Données publiées par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
+                    //'reason' => $item['reason'] ?? '',
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
             }
-
         }
 
         return response([
-            'has_error' => true,
+            'has_error' => false,
             'message' => 'Données mises à jour avec succès !'
         ], Response::HTTP_OK);
     }
+
 
 }
