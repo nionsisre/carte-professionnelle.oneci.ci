@@ -76,140 +76,6 @@ class ReportController extends Controller {
      * <b>Response</b> getReport(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
-    /*function getReport(Request $request) {
-        // Valider les variables de l'API
-        $validator = Validator::make($request->all(), [
-            'uid' => ['required', 'string', 'max:100'], // Uid
-            'code_unique_centre' => ['nullable', 'string', 'max:20'], // Code Unique Centre
-            'selected_date' => ['required', 'string', 'max:20'], // Uid
-            'selected_date_2' => ['nullable', 'string'] // Login
-        ]);
-        if (!$validator->fails()) {
-            // Accéder aux variables soumises
-            $user_uid = $request->input('user_uid');
-            $code_unique_centre = $request->input('code_unique_centre');
-            $start_date = date('Y-m-d', strtotime($request->input('selected_date')." 00:00:00"));
-            $end_date = date('Y-m-d', strtotime($request->input('selected_date2')." 00:00:00"));
-            // Obtention des données du jour
-            $services = DB::table('ostat_plus_services')
-                ->select('*')
-                ->get();
-            $type_services = DB::table('ostat_plus_type_services')
-                ->select('*')
-                ->get();
-            $reports = [];
-            foreach ($services as $indexService => $service) {
-                foreach ($type_services as $indexTypeService => $type_service) {
-                    if (!empty($code_unique_centre) && $code_unique_centre !== "null") {
-                        if(empty($end_date)) {
-                            $query = DB::table('ostat_plus_reports')
-                                ->select(['ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'value', 'status', 'reason', 'created_at', 'updated_at'])
-                                ->where('ostat_plus_service_id',$service->id)
-                                ->where('ostat_plus_type_service_id',$type_service->id)
-                                ->where('code_centre','LIKE',$code_unique_centre.'%')
-                                ->where('date','LIKE',$start_date)
-                                ->first();
-                        } else {
-                            $query = DB::table('ostat_plus_reports')
-                                ->select(['ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'SUM(value) value', 'status', 'reason', 'created_at', 'updated_at'])
-                                ->where('ostat_plus_service_id',$service->id)
-                                ->where('ostat_plus_type_service_id',$type_service->id)
-                                ->where('code_centre','LIKE',$code_unique_centre.'%')
-                                ->whereBetween('DATE(date)', ['DATE('.$start_date.')', 'DATE('.$end_date.')'])
-                                ->groupBy('SUM(value)')
-                                ->first();
-                        }
-                    } else {
-                        if(empty($end_date)) {
-                            $query = DB::table('ostat_plus_reports')
-                                ->select(['ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'SUM(value) value', 'status', 'reason', 'created_at', 'updated_at'])
-                                ->where('date','LIKE',$start_date)
-                                ->first();
-                        } else {
-                            $query = DB::table('ostat_plus_reports')
-                                ->select(['ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'SUM(value) value', 'status', 'reason', 'created_at', 'updated_at'])
-                                ->whereBetween('DATE(date)', ['DATE('.$start_date.')', 'DATE('.$end_date.')'])
-                                ->first();
-                        }
-                    }
-                    $reports[] = array(
-                        "id" => (($indexService * sizeof($type_services)) + $indexTypeService) + 1,
-                        "service_name" => $service->label,
-                        "type_service_name" => $type_service->label,
-                        "date" => (empty($end_date)) ? $start_date : $end_date,
-                        "value" => (!empty($query->value)) ? $query->value : 0,
-                        "status" => $query->status,
-                        "reason" => $query->reason,
-                        "created_at" => $query->created_at,
-                        "updated_at" => $query->updated_at
-                    );
-                }
-            }
-            if (!empty($code_unique_centre) && $code_unique_centre !== "null") {
-                if(!empty($request->input('selected_date2')) && $request->input('selected_date2') !== ""  && $request->input('selected_date2') !== "null") {
-                    // Date interval case
-                    $reports = DB::table('ostat_plus_reports')
-                        ->select(['ostat_plus_reports.id', 'ostat_plus_services.label','ostat_plus_type_services.label','ostat_plus_reports.date','SUM(ostat_plus_reports.value)','ostat_plus_reports.status','ostat_plus_reports.reason','ostat_plus_reports.created_at','ostat_plus_reports.updated_at'])
-                        ->join('ostat_plus_services', 'ostat_plus_services.id', '=', 'ostat_plus_reports.ostat_plus_service_id')
-                        ->join('ostat_plus_type_services', 'ostat_plus_type_services.id', '=', 'ostat_plus_reports.ostat_plus_type_service_id')
-                        ->whereRaw('DATE(opr.date) BETWEEN DATE(?) AND DATE(?)', [$start_date,$end_date])
-                        ->orderByDesc('ostat_plus_reports.id')
-                        ->get();
-                } else {
-                    // One Date only
-                    $reports = DB::table('ostat_plus_reports')
-                        ->select(['ostat_plus_reports.id', 'ostat_plus_services.label','ostat_plus_type_services.label','ostat_plus_reports.date','ostat_plus_reports.value','ostat_plus_reports.status','ostat_plus_reports.reason','ostat_plus_reports.created_at','ostat_plus_reports.updated_at'])
-                        ->join('ostat_plus_services', 'ostat_plus_services.id', '=', 'ostat_plus_reports.ostat_plus_service_id')
-                        ->join('ostat_plus_type_services', 'ostat_plus_type_services.id', '=', 'ostat_plus_reports.ostat_plus_type_service_id')
-                        ->where('date', 'LIKE', $code_unique_centre)
-                        ->orderByDesc('ostat_plus_reports.id')
-                        ->get();
-                }
-            } else {
-                if($code_unique_centre == "000000000000") {
-                    $reports = DB::table('stats_centres_et_codifications')
-                        ->select('*')
-                        ->orderByDesc('id')
-                        ->get();
-                } else {
-                    $reports = "";
-                }
-            }
-            if(!is_array($reports) || sizeof($reports) !== 0) {
-                $services = DB::table('ostat_plus_services')
-                    ->select('*')
-                    ->get();
-                $type_services = DB::table('ostat_plus_type_services')
-                    ->select('*')
-                    ->get();
-                $reports = [];
-                foreach ($services as $indexService => $service) {
-                    foreach ($type_services as $indexTypeService => $type_service) {
-                        $reports[] = array(
-                            "id" => (($indexService * sizeof($type_services)) + $indexTypeService) + 1,
-                            "service_name" => $service->label,
-                            "type_service_name" => $type_service->label,
-                            "date" => $start_date,
-                            "value" => 0,
-                            "status" => "",
-                            "reason" => "",
-                            "created_at" => "",
-                            "updated_at" => ""
-                        );
-                    }
-                }
-            }
-            return response([
-                'has_error' => false,
-                'message' => 'Ok',
-                'data' => $reports
-            ], Response::HTTP_OK);
-        }
-        return response([
-            'has_error' => true,
-            'message' => $validator->errors()->all()
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
-    }*/
     function getReport(Request $request) {
 
         $validator = Validator::make($request->all(), [
@@ -249,36 +115,68 @@ class ReportController extends Controller {
 
         foreach ($services as $service) {
             foreach ($type_services as $type_service) {
-                $query = DB::table('ostat_plus_reports')
-                    ->select([
-                        'ostat_plus_service_id',
-                        'ostat_plus_type_service_id',
-                        'code_centre',
-                        'date',
-                        DB::raw('SUM(value) as value'),
-                        'status',
-                        'doer_uid',
-                        'doer_name',
-                        'reason',
-                        'created_at',
-                        'updated_at'
-                    ])
-                    ->where('ostat_plus_service_id', $service->id)
-                    ->where('ostat_plus_type_service_id', $type_service->id)
-                    ->where('code_centre', 'LIKE', $code_unique_centre . '%')
-                    /*->when(!$end_date, function ($query) use ($start_date) {
-                        return $query->where('date', 'LIKE', $start_date);
-                    })
-                    ->when($end_date, function ($query) use ($start_date, $end_date) {
-                        return $query->whereBetween('date', [$start_date, $end_date]);
-                    })*/
-                    ->when(!$end_date, function ($query) use ($start_date) {
-                        return $query->where('date', 'LIKE', $start_date);
-                    })
-                    ->when($end_date, function ($query) use ($start_date, $end_date) {
-                        return $query->whereBetween('date', [$start_date, $end_date]);
-                    });
-
+                if($code_unique_centre !== "000000000000") {
+                    $query = DB::table('ostat_plus_reports')
+                        ->select([
+                            'ostat_plus_service_id',
+                            'ostat_plus_type_service_id',
+                            'code_centre',
+                            'date',
+                            DB::raw('SUM(value) as value'),
+                            'status',
+                            'doer_uid',
+                            'doer_name',
+                            'reason',
+                            'created_at',
+                            'updated_at'
+                        ])
+                        ->where('ostat_plus_service_id', $service->id)
+                        ->where('ostat_plus_type_service_id', $type_service->id)
+                        ->where('code_centre', 'LIKE', $code_unique_centre . '%')
+                        /*->when(!$end_date, function ($query) use ($start_date) {
+                            return $query->where('date', 'LIKE', $start_date);
+                        })
+                        ->when($end_date, function ($query) use ($start_date, $end_date) {
+                            return $query->whereBetween('date', [$start_date, $end_date]);
+                        })*/
+                        ->when(!$end_date, function ($query) use ($start_date) {
+                            return $query->where('date', 'LIKE', $start_date);
+                        })
+                        ->when($end_date, function ($query) use ($start_date, $end_date) {
+                            return $query->whereBetween('date', [$start_date, $end_date]);
+                        });
+                } else {
+                    $code_unique_centre = "";
+                    $query = DB::table('ostat_plus_reports')
+                        ->select([
+                            'ostat_plus_service_id',
+                            'ostat_plus_type_service_id',
+                            'code_centre',
+                            'date',
+                            DB::raw('SUM(value) as value'),
+                            'status',
+                            'doer_uid',
+                            'doer_name',
+                            'reason',
+                            'created_at',
+                            'updated_at'
+                        ])
+                        ->where('ostat_plus_service_id', $service->id)
+                        ->where('ostat_plus_type_service_id', $type_service->id)
+                        ->where('code_centre', 'LIKE', $code_unique_centre . '%')
+                        /*->when(!$end_date, function ($query) use ($start_date) {
+                            return $query->where('date', 'LIKE', $start_date);
+                        })
+                        ->when($end_date, function ($query) use ($start_date, $end_date) {
+                            return $query->whereBetween('date', [$start_date, $end_date]);
+                        })*/
+                        ->when(!$end_date, function ($query) use ($start_date) {
+                            return $query->where('date', 'LIKE', $start_date);
+                        })
+                        ->when($end_date, function ($query) use ($start_date, $end_date) {
+                            return $query->whereBetween('date', [$start_date, $end_date]);
+                        });
+                }
                 $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
 
                 $query = $query->first();
