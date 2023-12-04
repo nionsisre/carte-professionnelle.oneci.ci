@@ -9,6 +9,7 @@ use App\Http\Controllers\FrontOffice\OTPVerificationController;
 use App\Http\Controllers\FrontOffice\PreIdentificationController;
 use App\Http\Controllers\FrontOffice\QrCartesProfessionnellesController;
 use App\Http\Controllers\FrontOffice\QrCodeController;
+use App\Http\Controllers\FrontOffice\SpecialCANController;
 use App\Http\Services\CinetPayAPI;
 use Illuminate\Support\Facades\Route;
 
@@ -41,12 +42,17 @@ Route::get('/reclamation-paiement', [IdentificationController::class, 'showRecla
 Route::get('/menu-pre-identification', [PreIdentificationController::class, 'showMenuPreIdentification'])->name('front_office.pre_identification.menu');
 Route::get('/pre-identification-abonnes-mobile', [PreIdentificationController::class, 'showPreIdentification'])->name('front_office.pre_identification.page');
 Route::get('/consultation-pre-identification', [PreIdentificationController::class, 'showConsultation'])->name('front_office.pre_identification.consultation');
+    /* --- Formulaire Spécial CAN --- */
+Route::get('/menu-special-can', [SpecialCANController::class, 'showMenuSpecialCAN'])->name('front_office.special_can.menu');
+Route::get('/identification-special-can', [SpecialCANController::class, 'showIdentificationSpecialCAN'])->name('front_office.special_can.consultation');
 
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');
 Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('front_office.form.consulter_statut_identification');
 Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('front_office.form.soumettre_pre_identification');
 Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('front_office.form.soumettre_reclamation_paiement');
+Route::post('/consulter-nni-special-can', [SpecialCANController::class, 'consulterInfoNNI'])->name('front_office.form.consulter_nni_special_can');
+Route::post('/'.md5('soumettre-identification-special-can'.date('d')), [SpecialCANController::class, 'submit'])->name('front_office.form.soumettre_identification_special_can');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
 Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');

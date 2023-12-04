@@ -21,6 +21,9 @@
             <li>
                 <a href="{{ route('front_office.identification.menu') }}">Identification</a>
             </li>
+            <li>
+                <a href="{{ route('front_office.special_can.menu') }}">Spécial CAN 2023 &nbsp; <i class="fa fa-trophy-alt text-black mr10"></i></a>
+            </li>
             {{--<li>
                 <a href="{{ route('front_office.page.consultation') }}">Consultation</a>
             </li>
