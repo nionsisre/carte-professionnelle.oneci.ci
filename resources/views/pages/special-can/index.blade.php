@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Consultation statut identification')
+@section('title', 'Identification Spécial CAN 2023')
 
 @section('scripts')
     @include('sections.scripts.recaptcha')
