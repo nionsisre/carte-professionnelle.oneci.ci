@@ -13,6 +13,7 @@ use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -101,67 +102,130 @@ class SpecialCANController extends Controller {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
                 redirect()->route('front_office.special_can.consultation')->with((new GoogleRecaptchaV3())->verify($request));
         }
-        dd($request);
         /* Valider les variables du formulaire */
-        request()->validate([
-            'first-name' => ['required', 'string', 'max:70'],
-            'spouse-name' => ['nullable', 'string', 'max:70'],
-            'last-name' => ['required', 'string', 'max:70'],
-            'birth-date' => ['required', 'string', 'max:11'],
-            'residence' => ['required', 'string', 'max:70'],
-            'profession' => ['required', 'string', 'max:70'],
-            'country' => ['required', 'string', 'max:70'],
-            'email' => ['nullable', 'string', 'max:150'],
-            'doc-type' => ['required', 'string', 'max:150'],
-            'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-            'selfie_img_txt' => [
-                'nullable',
-                'string',
-                'max:10000000',
-                new Base64Image
-            ],
-            'document-number' => ['required', 'string', 'max:150'],
-            'document-expiry' => ['nullable', 'string', 'max:11'],
+        $validator = Validator::make(request()->all(), [
+            'cli' => ['required', 'string', 'max:100'], // Url du client
+            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
+            'nit' => ['required', 'numeric', 'digits:11'],
+            'msisdn' => ['required', 'string', 'max:70'],
+            'telco' => ['nullable', 'string', 'max:70']
         ]);
+        if ($validator->fails()) {
+            return redirect()->route('front_office.special_can.consultation')->withErrors(["Erreur lors de l'identification : Veuillez recommencer votre identification (Formulaire mal renseigné)"]);
+        }
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
-        $document_justificatif_filename = 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension();
+        /*$document_justificatif_filename = 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension();
         $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
         $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
             DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
             : $request->input('birth-place-2');
-        $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
+        $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';*/
+
+        $demandecrtcan = DB::connection('maria_db_oneci_special_can')
+            ->table('demandecrtcans')
+            ->select('*')
+            //->join('piececans', 'demandecrtcans.id', '=', 'piececans.demandecrt_id')
+            ->where('demandecrtcans.nit', '=', $request->input('nni'))
+            ->get();
+        if(sizeof($demandecrtcan) === 0) {
+            return redirect()->route('front_office.special_can.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+        }
+
+        $demandecrtcan = $demandecrtcan[0];
+        $abonne_numeros = [
+            "numero_de_telephone" => $request->input('msisdn'),
+            "otp_code" => null,
+            "otp_sms" => null,
+            "transaction_id" => null,
+            "cinetpay_api_response_id" => null,
+            "cinetpay_code" => null,
+            "cinetpay_message" => null,
+            "cinetpay_data_amount" => null,
+            "cinetpay_data_currency" => null,
+            "cinetpay_data_status" => null,
+            "cinetpay_data_payment_method" => null,
+            "cinetpay_data_description" => null,
+            "cinetpay_data_metadata" => null,
+            "cinetpay_data_operator_id" => null,
+            "cinetpay_data_payment_date" => null,
+            "certificate_download_link" => null,
+            "created_at" => date("Y-m-d H:i:s"),
+            "updated_at" => date("Y-m-d H:i:s"),
+            //"abonne_id" => 5,
+            "abonnes_operateur_id" => 3,
+            "abonnes_statut_id" => 2,
+            "observation" => null,
+            "user_validation" => null,
+            "date_validation" => null,
+            "libelle_operateur" => null,
+            "code_statut" => "NNV",
+            "libelle_statut" => "Numéro non-vérifié",
+            "icone" => "phone-slash",
+            "numero_dossier" => $numero_dossier,
+            "nom" => $demandecrtcan->nom,
+            "nom_epouse" => "",
+            "prenoms" => $demandecrtcan->prenom,
+            "date_de_naissance" => $demandecrtcan->datenaissance,
+            "lieu_de_naissance" => $demandecrtcan->lieunaissance,
+            "genre" => $demandecrtcan->genre,
+            "domicile" => $demandecrtcan->adresse,
+            "profession" => $demandecrtcan->profession,
+            "nationalite" => $demandecrtcan->nationalite,
+            "email" => $demandecrtcan->email,
+            "document_justificatif" => "media/...",
+            "numero_document" => $demandecrtcan->nit,
+            "date_expiration_document" => $demandecrtcan->dateretour,
+            "type_cni" => null,
+            "photo_selfie" => null,
+            "uniqid" => sha1($demandecrtcan->numerodossier.strtoupper($demandecrtcan->nom).$demandecrtcan->datenaissance.$demandecrtcan->lieunaissance),
+            "abonnes_type_piece_id" => 5,
+            "code_type_piece" => "CRT",
+            "libelle_piece" => "Carte de résident temporaire"
+        ];
+
         $abonne = Abonne::create([
             'numero_dossier' => $numero_dossier,
-            'nom' => strtoupper($request->input('first-name')),
-            'nom_epouse' => strtoupper($request->input('spouse-name')),
-            'prenoms' => strtoupper($request->input('last-name')),
-            'date_de_naissance' => $request->input('birth-date'),
-            'lieu_de_naissance' => $civil_status_center,
-            'genre' => $request->input('gender'),
-            'domicile' => strtoupper($request->input('residence')),
-            'profession' => strtoupper($request->input('profession')),
-            'nationalite' => $request->input('country'),
-            'email' => $request->input('email'),
-            'abonnes_type_piece_id' => $request->input('doc-type'),
-            'document_justificatif' => $document_justificatif,
-            'date_expiration_document' => $request->input('document-expiry'),
-            'numero_document' => $request->input('document-number'),
-            'type_cni' => $type_cni,
-            'photo_selfie' => $request->input('selfie_img_txt'),
-            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
+            'nom' => strtoupper($abonne_numeros['nom']),
+            'nom_epouse' => strtoupper($abonne_numeros['nom_epouse']),
+            'prenoms' => strtoupper($abonne_numeros['prenoms']),
+            'date_de_naissance' => $abonne_numeros['date_de_naissance'],
+            'lieu_de_naissance' => $abonne_numeros['lieu_de_naissance'],
+            'genre' => $abonne_numeros['genre'],
+            'domicile' => strtoupper($abonne_numeros['domicile']),
+            'profession' => strtoupper($abonne_numeros['profession']),
+            'nationalite' => $abonne_numeros['nationalite'],
+            'email' => $abonne_numeros['email'],
+            'abonnes_type_piece_id' => 5,
+            'document_justificatif' => "",
+            'date_expiration_document' => $abonne_numeros['date_expiration_document'],
+            'numero_document' => $abonne_numeros['numero_document'],
+            'photo_selfie' => "",
+            'uniqid' => sha1($numero_dossier.strtoupper($abonne_numeros['nom']).$abonne_numeros['date_de_naissance'].$abonne_numeros['lieu_de_naissance'])
         ]);
         $telco = $request->input('telco');
         $msisdn = $request->input('msisdn');
-        for ($i = 0; $i < sizeof($telco); $i++) {
-            AbonnesNumero::create([
-                'abonne_id' => $abonne->id,
-                'abonnes_operateur_id' => $telco[$i],
-                'abonnes_statut_id' => 1,
-                'numero_de_telephone' => str_replace(' ', '', $msisdn[$i])
-            ]);
-            $msisdn[$i] = $msisdn[$i] . ' (' . AbonnesOperateur::find($telco[$i])->libelle_operateur . ') | ';
-        }
+        AbonnesNumero::create([
+            'abonne_id' => $abonne->id,
+            'abonnes_operateur_id' => $telco,
+            'abonnes_statut_id' => 3,
+            'numero_de_telephone' => str_replace(' ', '', $msisdn),
+            'transaction_id' => date('Y', time()).$numero_dossier,
+            'cinetpay_api_response_id' => "0000000000.0000",
+            'cinetpay_code' => "00",
+            'cinetpay_message' => "SUCCES",
+            'cinetpay_data_amount' => "0",
+            'cinetpay_data_currency' => "XOF",
+            'cinetpay_data_status' => "ACCEPTED",
+            'cinetpay_data_payment_method' => "OM",
+            'cinetpay_data_description' => "Paiement Certificat Identification Spécial CAN 2023",
+            'cinetpay_data_metadata' => $numero_dossier,
+            'cinetpay_data_operator_id' => "00000000.0000.000000",
+            'cinetpay_data_payment_date' => "2023-11-12 15:51:36",
+            'certificate_download_link' => md5($numero_dossier . (date('Y', time()).$numero_dossier) . "00000000.0000.000000"),
+        ]);
+        $msisdn = $msisdn . ' (' . AbonnesOperateur::find($telco)->libelle_operateur . ')';
+
         /* Envoi de mail */
         if(!empty($request->input('email'))) {
             MailONECI::sendMailTemplate('layouts.recu-identification', [
@@ -197,7 +261,7 @@ class SpecialCANController extends Controller {
             session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.special_can.consultation')->with('abonne_numeros', $abonne_numeros);
+        return redirect()->route('front_office.page.identification')->with('abonne_numeros', $abonne_numeros);
     }
 
     /**
@@ -208,73 +272,13 @@ class SpecialCANController extends Controller {
      * @return Application|Factory|View|\Illuminate\Http\RedirectResponse
      */
     public function consulterInfoNNI(Request $request) {
-        /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
-        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après l'identification)" */
-        if(empty($request->get('nni')) && empty($request->get('nni'))) {
-            /* Si le service de vérification Google reCAPTCHA v3 est actif */
-            if(config('services.recaptcha.enabled')) {
-                (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                    redirect()->route('front_office.special_can.consultation')->with((new GoogleRecaptchaV3())->verify($request));
-            }
-            /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
-            $search_with_msisdn = $request->input('tsch');
-            if ($search_with_msisdn == '0') {
-                request()->validate([
-                    'nni' => ['required', 'numeric', 'digits:11'],
-                ]);
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
-                    ->get();
-            } else {
-                request()->validate([
-                    'msisdn' => ['required', 'string', 'min:14', 'max:14'],
-                    'first-name' => ['required', 'string', 'min:2', 'max:150'],
-                    'birth-date' => ['required', 'string', 'min:10', 'max:10'],
-                ]);
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
-                    ->whereRaw('UCASE(abonnes.nom) = (?)', [strtoupper($request->input('first-name'))])
-                    ->where('abonnes.date_de_naissance', '=', $request->input('birth-date'))
-                    ->get();
-            }
-            /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
-            if(sizeof($abonne_numeros) !== 0) {
-                return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
-            } else {
-                return redirect()->route('front_office.special_can.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
-            }
-        } elseif (!empty($request->get('nni')) && !empty($request->get('nni'))) {
-            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
-            (numéro de dossier <f> + token d'authentification <t>) */
+        /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation spécial CAN" */
+        $request->validate([
+            'nni' => ['required', 'numeric', 'digits:11']
+        ]);
+        if (!empty($request->input('nni')) && !empty($request->input('nni'))) {
             $demandecrtcan = DB::connection('maria_db_oneci_special_can')
                 ->table('demandecrtcans')
-                /*->select([
-                    DB::raw('numerodossier as numero_dossier'),
-                    'nom',
-                    DB::raw('prenom as prenoms'),
-                    DB::raw('datenaissance as date_de_naissance'),
-                    DB::raw('lieunaissance as lieu_de_naissance'),
-                    'genre',
-                    DB::raw('adresse as domicile'),
-                    'profession',
-                    'nationalite',
-                    'email',
-                    DB::raw('nit as numero_document'),
-                    DB::raw('datenaissance as date_expiration_document'),
-                    DB::raw('datenaissance as type_cni'),
-                    DB::raw('datenaissance as photo_selfie'),
-                    DB::raw('nit as numero_document')
-                ])*/
                 ->select('*')
                 //->join('piececans', 'demandecrtcans.id', '=', 'piececans.demandecrt_id')
                 ->where('demandecrtcans.nit', '=', $request->get('nni'))
@@ -333,21 +337,14 @@ class SpecialCANController extends Controller {
                 ];
                 $abonne_numeros = array((object)$abonne_numeros);
 
-                /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-                //return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros, 'front_office.special_can.consultation');
-                //return redirect()->route('front_office.special_can.consultation')->with('abonne_numeros', $abonne_numeros[0]);
-
                 $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
-
                 $abonnes_operateurs = AbonnesOperateur::all();
-                $civil_status_center = DB::table('civil_status_center')->get();
                 $abonnes_type_pieces = AbonnesTypePiece::all();
 
                 return view('pages.special-can.index', [
                     'abonne_numeros' => $abonne_numeros,
                     'abonnes_operateurs' => $abonnes_operateurs,
                     'abonnes_type_pieces' => $abonnes_type_pieces,
-                    'civil_status_center' => $civil_status_center,
                     'mobile_header_enabled' => $mobile_header_enabled,
                 ]);
 

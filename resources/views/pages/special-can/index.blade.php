@@ -10,6 +10,24 @@
         @include('sections.scripts.otp-verification')
         @include('sections.scripts.payment-processing')
     @endif
+    <script>
+        jQuery(document.querySelectorAll('[name="msisdn"]')).keypress(function(e) {
+            msisdn = document.querySelectorAll('[name="msisdn"]');
+            telco = document.querySelectorAll('[name="telco"]');
+            if (jQuery(msisdn).val().length >= 2) {
+                if (jQuery(msisdn).val().substring(0, 2) === "07") {
+                    jQuery(telco).val("1");
+                    jQuery(telco).trigger('change');
+                } else if (jQuery(msisdn).val().substring(0, 2) === "05") {
+                    jQuery(telco).val("2");
+                    jQuery(telco).trigger('change');
+                } else if (jQuery(msisdn).val().substring(0, 2) === "01") {
+                    jQuery(telco).val("3");
+                    jQuery(telco).trigger('change');
+                }
+            }
+        });
+    </script>
 @endsection
 
 @section('content')
@@ -64,7 +82,7 @@
                             <br/><div>
                                 <p style="padding: 0em 0em 2em">
                                     Nom Complet : &nbsp; <br/><b style="font-size: 1rem">{{ $abonne_numeros[0]->prenoms.' '.$abonne_numeros[0]->nom }}</b><br/><br/>
-                                    Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $abonne_numeros[0]->numero_dossier }}</b><br/><br/>
+                                    Numéro de validation temporaire : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $abonne_numeros[0]->numero_dossier }}</b><br/><br/>
                                     Document justificatif : &nbsp; <br/><b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $abonne_numeros[0]->libelle_piece }}</b><br/><b style="font-size: 1rem">{{ "(N° ".$abonne_numeros[0]->numero_document.")" }}</b>
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
                                         @if(session()->has('success'))
@@ -118,7 +136,7 @@
                                                     <td style="vertical-align: middle;">
                                                         <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp;
                                                         <select class="form-control good-select"
-                                                                id="telco-input-1" name="telco[]"
+                                                                id="telco-input-1" name="telco"
                                                                 required="required" readonly="readonly"
                                                                 style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                             <option value="" selected disabled>Opérateur téléphonique</option>
@@ -134,6 +152,7 @@
                                                             <input type="hidden" name="cli" value="{{ url()->current() }}">
                                                             <input type="hidden" name="fn" value="{{ $abonne_numeros[0]->numero_dossier }}">
                                                             <input type="hidden" name="idx" value="0">
+                                                            <input type="hidden" name="nit" value="{{ $abonne_numeros[0]->numero_document }}">
                                                             <div class="column-last">
                                                                 <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-0" style="margin-bottom: 0">
                                                                     <i class="fa fa-check text-white"></i> &nbsp; Identifier ce numéro de téléphone

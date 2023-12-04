@@ -29,6 +29,10 @@ class AbonnesTypePieceSeeder extends Seeder {
             'code_type_piece' => 'AEB',
             'libelle_piece' => 'Attestation d\'enrôlement biométrique'
         ]);
+        AbonnesTypePiece::create([
+            'code_type_piece' => 'CRT',
+            'libelle_piece' => 'Carte de résident temporaire'
+        ]);
         /*AbonnesTypePiece::create([
             'code_type_piece' => 'PSP',
             'libelle_piece' => 'Passeport'
