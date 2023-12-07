@@ -108,8 +108,11 @@ class SpecialCANController extends Controller {
             'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
             'nit' => ['required', 'numeric', 'digits:11'],
             'msisdn' => ['required', 'string', 'max:70'],
-            'telco' => ['nullable', 'string', 'max:70']
+            'telco' => ['nullable', 'string', 'max:70'],
+            'city' => ['required', 'string', 'max:50'], // Ville de résidence de l'abonné
+            'address-details' => ['required', 'string', 'max:100'], // Détails de l'adresse de résidence de l'abonné
         ]);
+        /* Redirection en cas d'échec de la validation */
         if ($validator->fails()) {
             return redirect()->route('front_office.special_can.consultation')->withErrors(["Erreur lors de l'identification : Veuillez recommencer votre identification (Formulaire mal renseigné)"]);
         }
@@ -126,8 +129,9 @@ class SpecialCANController extends Controller {
             ->table('demandecrtcans')
             ->select('*')
             //->join('piececans', 'demandecrtcans.id', '=', 'piececans.demandecrt_id')
-            ->where('demandecrtcans.nit', '=', $request->input('nni'))
+            ->where('demandecrtcans.nit', '=', $request->input('nit'))
             ->get();
+
         if(sizeof($demandecrtcan) === 0) {
             return redirect()->route('front_office.special_can.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
         }
@@ -169,7 +173,7 @@ class SpecialCANController extends Controller {
             "date_de_naissance" => $demandecrtcan->datenaissance,
             "lieu_de_naissance" => $demandecrtcan->lieunaissance,
             "genre" => $demandecrtcan->genre,
-            "domicile" => $demandecrtcan->adresse,
+            "domicile" => $request->input('city').", ".$request->input('address-details'),
             "profession" => $demandecrtcan->profession,
             "nationalite" => $demandecrtcan->nationalite,
             "email" => $demandecrtcan->email,
@@ -205,63 +209,69 @@ class SpecialCANController extends Controller {
         ]);
         $telco = $request->input('telco');
         $msisdn = $request->input('msisdn');
-        AbonnesNumero::create([
-            'abonne_id' => $abonne->id,
-            'abonnes_operateur_id' => $telco,
-            'abonnes_statut_id' => 3,
-            'numero_de_telephone' => str_replace(' ', '', $msisdn),
-            'transaction_id' => date('Y', time()).$numero_dossier,
-            'cinetpay_api_response_id' => "0000000000.0000",
-            'cinetpay_code' => "00",
-            'cinetpay_message' => "SUCCES",
-            'cinetpay_data_amount' => "0",
-            'cinetpay_data_currency' => "XOF",
-            'cinetpay_data_status' => "ACCEPTED",
-            'cinetpay_data_payment_method' => "OM",
-            'cinetpay_data_description' => "Paiement Certificat Identification Spécial CAN 2023",
-            'cinetpay_data_metadata' => $numero_dossier,
-            'cinetpay_data_operator_id' => "00000000.0000.000000",
-            'cinetpay_data_payment_date' => "2023-11-12 15:51:36",
-            'certificate_download_link' => md5($numero_dossier . (date('Y', time()).$numero_dossier) . "00000000.0000.000000"),
-        ]);
-        $msisdn = $msisdn . ' (' . AbonnesOperateur::find($telco)->libelle_operateur . ')';
+        $is_msisdn_exists = AbonnesNumero::where('numero_de_telephone', str_replace(' ', '', $msisdn))->get();
+        if(sizeof($is_msisdn_exists) == 0) {
+            AbonnesNumero::create([
+                'abonne_id' => $abonne->id,
+                'abonnes_operateur_id' => $telco,
+                'abonnes_statut_id' => 3,
+                'numero_de_telephone' => str_replace(' ', '', $msisdn),
+                'transaction_id' => date('Y', time()) . $numero_dossier,
+                'cinetpay_api_response_id' => "0000000000.0000",
+                'cinetpay_code' => "00",
+                'cinetpay_message' => "SUCCES",
+                'cinetpay_data_amount' => "0",
+                'cinetpay_data_currency' => "XOF",
+                'cinetpay_data_status' => "ACCEPTED",
+                'cinetpay_data_payment_method' => "OM",
+                'cinetpay_data_description' => "Paiement Certificat Identification Spécial CAN 2023",
+                'cinetpay_data_metadata' => $numero_dossier,
+                'cinetpay_data_operator_id' => "00000000.0000.000000",
+                'cinetpay_data_payment_date' => "2023-11-12 15:51:36",
+                'certificate_download_link' => md5($numero_dossier . (date('Y', time()) . $numero_dossier) . "00000000.0000.000000"),
+            ]);
+            $msisdn = $msisdn . ' (' . AbonnesOperateur::find($telco)->libelle_operateur . ')';
 
-        /* Envoi de mail */
-        if(!empty($request->input('email'))) {
-            MailONECI::sendMailTemplate('layouts.recu-identification', [
-                'title' => 'Reçu d\'identification',
-                'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
-                'numero_dossier' => $abonne->numero_dossier,
-                'uniqid' => $abonne->uniqid,
-                'msisdn_list' => $msisdn,
-                'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
-                'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
-                'lieu_de_residence' => $abonne->domicile,
-                'nationalite' => $abonne->nationalite,
-                'profession' => $abonne->profession,
-                'email' => $abonne->email,
-                'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
-            ], "À propos de votre identification d'abonné mobile ONECI");
-        }
-        /* Obtention des informations sur l'abonné et ses numéros */
-        $abonne_numeros = DB::table('abonnes_numeros')
-            ->select('*')
-            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-            ->where('abonnes.numero_dossier', '=', $abonne->numero_dossier)
-            ->get();
-        /* Si le service d'envoi de SMS est actif */
-        if(config('services.sms.enabled')) {
-            /* Génération d'un token OTP pour chaque numéro de téléphone en session */
-            for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
-                $otp_msisdn_tokens[$i] = (new GeneratedTokensOrIDs())->createToken(0);
+            /* Envoi de mail */
+            if (!empty($request->input('email'))) {
+                MailONECI::sendMailTemplate('layouts.recu-identification', [
+                    'title' => 'Reçu d\'identification',
+                    'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
+                    'numero_dossier' => $abonne->numero_dossier,
+                    'uniqid' => $abonne->uniqid,
+                    'msisdn_list' => $msisdn,
+                    'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
+                    'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
+                    'lieu_de_residence' => $abonne->domicile,
+                    'nationalite' => $abonne->nationalite,
+                    'profession' => $abonne->profession,
+                    'email' => $abonne->email,
+                    'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
+                ], "À propos de votre identification d'abonné mobile ONECI");
             }
-            session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+            /* Obtention des informations sur l'abonné et ses numéros */
+            $abonne_numeros = DB::table('abonnes_numeros')
+                ->select('*')
+                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                ->where('abonnes.numero_dossier', '=', $abonne->numero_dossier)
+                ->get();
+            /* Si le service d'envoi de SMS est actif */
+            if (config('services.sms.enabled')) {
+                /* Génération d'un token OTP pour chaque numéro de téléphone en session */
+                for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
+                    $otp_msisdn_tokens[$i] = (new GeneratedTokensOrIDs())->createToken(0);
+                }
+                session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
+            }
+            /* Retourner vue resultat */
+            return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros);
         }
-        /* Retourner vue resultat */
-        return redirect()->route('front_office.page.identification')->with('abonne_numeros', $abonne_numeros);
+
+        return redirect()->route('front_office.special_can.consultation')->withErrors(["Erreur lors de l'identification : Veuillez recommencer votre identification (Numéro déjà identifié)"]);
+
     }
 
     /**

@@ -116,6 +116,7 @@
                                         <tr style="font-size: 0.75em;">
                                             <th scope="col">Numéro de téléphone à identifier</th>
                                             <th scope="col">Opérateur téléphonique</th>
+                                            <th scope="col">Ville de résidence & Description adresse du résidence</th>
                                             <th scope="col">Statut de l'identification</th>
                                             <th scope="col">Action</th>
                                         </tr>
@@ -124,7 +125,6 @@
                                             <form id="ctptch-frm-id-0" class="content-form" method="post" action="{{ route('front_office.form.soumettre_identification_special_can') }}">
                                                 <tr>
                                                     <td style="vertical-align: middle;">
-                                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp;
                                                         <b>
                                                             <input type="text" class="form-control msisdn"
                                                                    id="msisdn-input-1" name="msisdn"
@@ -134,7 +134,6 @@
                                                         </b>
                                                     </td>
                                                     <td style="vertical-align: middle;">
-                                                        <i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp;
                                                         <select class="form-control good-select"
                                                                 id="telco-input-1" name="telco"
                                                                 required="required" readonly="readonly"
@@ -144,6 +143,22 @@
                                                                 <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
                                                             @endforeach
                                                         </select>
+                                                    </td>
+                                                    <td style="vertical-align: middle;">
+                                                        <select class="form-control good-select"
+                                                                id="city-input" name="city"
+                                                                required="required" readonly="readonly"
+                                                                style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                            <option value="" selected disabled>Sélectionner la ville</option>
+                                                            <option value="Abidjan">Abidjan</option>
+                                                            <option value="Yamoussoukro">Yamoussoukro</option>
+                                                            <option value="Korhogo">Korhogo</option>
+                                                            <option value="Bouake">Bouake</option>
+                                                            <option value="San-Pédro">San-Pédro</option>
+                                                        </select><br/><br/>
+                                                        <textarea type="text" id="address-details-input" name="address-details"
+                                                                  placeholder="Décrivez votre adresse de résidence ici..." maxlength="100"
+                                                                  style="width: 268px; text-align: center; height: 57px; resize: none"></textarea>
                                                     </td>
                                                     <td style="vertical-align: middle;"><i class="fad fa-{{ $abonne_numeros[0]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ $abonne_numeros[0]->libelle_statut }}</b></td>
                                                     <td style="vertical-align: middle;">
