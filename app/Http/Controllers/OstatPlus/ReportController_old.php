@@ -41,33 +41,14 @@ class ReportController extends Controller {
             $zone_code = $jsonData['zone_code'];
             /* Obtention des informations sur l'utilisateur */
             $centre_list = (!empty($zone_code) && $zone_code !== "null") ?
-                DB::table('centre_unified')
-                ->select([
-                    "id", "zone",
-                    "code_zone", DB::raw('region_label as region_coordination'),
-                    "code_region", DB::raw('department_label as departement'),
-                    "code_departement", "sous_prefecture_commune",
-                    "code_sp_commune", DB::raw('area_label as localite'),
-                    DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
-                    DB::raw('location_code as code_centre'), "code_unique_centre",
-                    DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
-                ])
+                DB::table('stats_centres_et_codifications')
+                ->select('*')
                 ->where('code_unique_centre', 'LIKE', $zone_code)
                 ->orderByDesc('id')
                 ->get()
             :
-                DB::table('centre_unified')
-                    ->select([
-                        "id", "zone",
-                        "code_zone", DB::raw('region_label as region_coordination'),
-                        "code_region", DB::raw('department_label as departement'),
-                        "code_departement", "sous_prefecture_commune",
-                        "code_sp_commune", DB::raw('area_label as localite'),
-                        DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
-                        DB::raw('location_code as code_centre'), "code_unique_centre",
-                        DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
-                    ])
-                    ->whereNotNull('code_unique_centre')
+                DB::table('stats_centres_et_codifications')
+                    ->select('*')
                     ->orderByDesc('id')
                     ->get();
             if (!empty($centre_list)) {
@@ -126,7 +107,7 @@ class ReportController extends Controller {
         $code_unique_centre = ($request->input('code_unique_centre') === "000000000000") ? "" : $request->input('code_unique_centre');
         $start_date = $request->input('selected_date');
         //$end_date = (empty($request->input('selected_date_2')) || $request->input('selected_date_2') == "null") ? "" : $request->input('selected_date_2');
-        $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
+        $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || $request->input('selected_date_2') == $request->input('selected_date')) ? "" : $request->input('selected_date_2');
 
         $services = DB::table('ostat_plus_services')->select('*')->get();
         $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
@@ -152,10 +133,10 @@ class ReportController extends Controller {
                     ->where('ostat_plus_service_id', $service->id)
                     ->where('ostat_plus_type_service_id', $type_service->id)
                     ->where('code_centre', 'LIKE', $code_unique_centre . '%')
-                    ->when(empty($end_date), function ($query) use ($start_date) {
+                    ->when($end_date, function ($query) use ($start_date) {
                         return $query->where('date', 'LIKE', $start_date);
                     })
-                    ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                    ->when(!$end_date, function ($query) use ($start_date, $end_date) {
                         return $query->whereBetween('date', [$start_date, $end_date]);
                     });
                 $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
@@ -172,7 +153,7 @@ class ReportController extends Controller {
                     "status" => $query->status ?? '',
                     "doer_uid" => $query->doer_uid ?? '',
                     "doer_name" => $query->doer_name ?? '',
-                    "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                    "reason" => ($code_unique_centre != "" && $end_date != "") ? ($query->reason ?? 'Non renseigné') : "",
                     "created_at" => $query->created_at ?? '',
                     "updated_at" => $query->updated_at ?? ''
                 ];
