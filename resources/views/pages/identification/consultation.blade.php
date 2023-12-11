@@ -151,7 +151,7 @@
                                                         @if(session()->get('abonne_numeros')[$i]->cinetpay_data_status==='ACCEPTED' && !empty(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date) &&
                                                             date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date))))
                                                             {{-- Si le jour du paiement n'est pas encore passé l'otp est inactif --}}
-                                                            @if(date('Y-m-d', time()) === date('Y-m-d', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date)))
+                                                            @if(date('Y-m-d', time()) === date('Y-m-d', strtotime(session()->get('abonne_numeros')[$i]->cinetpay_data_payment_date)) || session()->get('abonne_numeros')[$i]->cinetpay_data_operator_id === "00000000.0000.000000")
                                                                 <a href="{{ route('front_office.download.certificat_identification.pdf').'?n='.session()->get('abonne_numeros')[$i]->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
                                                             @else
                                                                 {{-- Sinon activation de l'otp avant chaque téléchargement --}}
