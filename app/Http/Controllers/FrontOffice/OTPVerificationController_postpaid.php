@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev
  */
-class OTPVerificationController extends Controller {
+class OTPVerificationController_postpaid extends Controller {
 
     private const MAX_ATTEMPTS = 5;
     private const OTP_DIGITS = 6;
