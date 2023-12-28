@@ -16,10 +16,10 @@
                 <a href="https://www.oneci.ci/accueil">Accueil</a>
             </li>
             <li>
-                <a href="{{ route('front_office.pre_identification.menu') }}">Pré-identification</a>
+                <a href="{{ route('front_office.pre_identification.menu') }}">Pré-identification <br> je n'ai pas de carte sim</a>
             </li>
             <li>
-                <a href="{{ route('front_office.identification.menu') }}">Identification</a>
+                <a href="{{ route('front_office.identification.menu') }}">Identification <br> j'ai une carte sim</a>
             </li>
             <li>
                 <a href="{{ route('front_office.special_can.menu') }}">Spécial CAN 2023 &nbsp; <i class="fa fa-trophy-alt text-black mr10"></i></a>
