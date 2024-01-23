@@ -52,7 +52,7 @@ class ReportController extends Controller {
                     DB::raw('location_code as code_centre'), "code_unique_centre",
                     DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
                 ])
-                ->where('code_unique_centre', 'LIKE', $zone_code)
+                ->where('code_unique_centre', 'LIKE', $zone_code."%")
                 ->orderByDesc('id')
                 ->get()
             :
@@ -135,6 +135,9 @@ class ReportController extends Controller {
 
         foreach ($services as $service) {
             foreach ($type_services as $type_service) {
+
+                //DB::enableQueryLog(); // Enable query log
+
                 $query = DB::table('ostat_plus_reports')
                     ->select([
                         'ostat_plus_service_id',
@@ -160,7 +163,18 @@ class ReportController extends Controller {
                     });
                 $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
 
-                $query = $query->first();
+                $query = $query->get();
+
+                //dd($this->str_replace_array('?', DB::getQueryLog()[0]['bindings'], DB::getQueryLog()[0]['query'])); // Show results of log
+
+                $report_value = 0;
+                $qtemp = [];
+                foreach ($query as $qr) {
+                    $tmpvalue = $qr->value ?? 0;
+                    $report_value += $tmpvalue;
+                    $qtemp = $qr;
+                }
+                $query = $qtemp;
 
                 $reports[] = [
                     "id" => $id,
@@ -168,7 +182,7 @@ class ReportController extends Controller {
                     "type_service_name" => $type_service->label,
                     "code_centre" => $query->code_centre ?? '',
                     "date" => (empty($end_date)) ? $start_date : $end_date,
-                    "value" => $query->value ?? 0,
+                    "value" => $report_value,
                     "status" => $query->status ?? '',
                     "doer_uid" => $query->doer_uid ?? '',
                     "doer_name" => $query->doer_name ?? '',
@@ -277,5 +291,40 @@ class ReportController extends Controller {
         ], Response::HTTP_OK);
     }
 
+    /**
+     * A str_replace_array for PHP
+     *
+     * As described in http://php.net/str_replace this wouldnot make sense
+     * However there are chances that we need it, so often !
+     * See https://wiki.php.net/rfc/cyclic-replace
+     *
+     * @author Jitendra Adhikari | adhocore <jiten.adhikary@gmail.com>
+     *
+     * @param string $search  The search string
+     * @param array  $replace The array to replace $search in cyclic order
+     * @param string $subject The subject on which to search and replace
+     *
+     * @return string
+     */
+    function str_replace_array($search, array $replace, $subject)
+    {
+        if (0 === $tokenc = substr_count($subject, $search)) {
+            return $subject;
+        }
+
+        $string  = '';
+        if (count($replace) >= $tokenc) {
+            $replace = array_slice($replace, 0, $tokenc);
+            $tokenc += 1;
+        } else {
+            $tokenc = count($replace) + 1;
+        }
+
+        foreach(explode($search, $subject, $tokenc) as $part) {
+            $string .= $part.array_shift($replace);
+        }
+
+        return $string;
+    }
 
 }
