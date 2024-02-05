@@ -40,23 +40,23 @@ class ReportController extends Controller {
             /* Accéder aux variables soumises dans le corps JSON */
             $zone_code = $jsonData['zone_code'];
             /* Obtention des informations sur l'utilisateur */
-            $centre_list = (!empty($zone_code) && $zone_code !== "null") ?
-                DB::table('centre_unified')
-                ->select([
-                    "id", "zone",
-                    "code_zone", DB::raw('region_label as region_coordination'),
-                    "code_region", DB::raw('department_label as departement'),
-                    "code_departement", "sous_prefecture_commune",
-                    "code_sp_commune", DB::raw('area_label as localite'),
-                    DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
-                    DB::raw('location_code as code_centre'), "code_unique_centre",
-                    DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
-                ])
-                ->where('code_unique_centre', 'LIKE', $zone_code."%")
-                ->orderByDesc('id')
-                ->get()
-            :
-                DB::table('centre_unified')
+            if (!empty($zone_code) && $zone_code !== "null") {
+                $centre_list = DB::table('centre_unified')
+                    ->select([
+                        "id", "zone",
+                        "code_zone", DB::raw('region_label as region_coordination'),
+                        "code_region", DB::raw('department_label as departement'),
+                        "code_departement", "sous_prefecture_commune",
+                        "code_sp_commune", DB::raw('area_label as localite'),
+                        DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
+                        DB::raw('location_code as code_centre'), "code_unique_centre",
+                        DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
+                    ])
+                    ->where('code_unique_centre', 'LIKE', $zone_code."%")
+                    ->orderByDesc('id')
+                    ->get();
+            } else {
+                $centre_list = DB::table('centre_unified')
                     ->select([
                         "id", "zone",
                         "code_zone", DB::raw('region_label as region_coordination'),
@@ -70,6 +70,7 @@ class ReportController extends Controller {
                     ->whereNotNull('code_unique_centre')
                     ->orderByDesc('id')
                     ->get();
+            }
             if (!empty($centre_list)) {
                 return response([
                     'has_error' => false,
