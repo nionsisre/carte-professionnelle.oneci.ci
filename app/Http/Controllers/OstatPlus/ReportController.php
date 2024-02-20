@@ -172,7 +172,11 @@ class ReportController extends Controller {
                 $qtemp = [];
                 foreach ($query as $qr) {
                     $tmpvalue = $qr->value ?? 0;
-                    $report_value += $tmpvalue;
+                    if($qr->ostat_plus_type_service_id == 9) {
+                        $report_value = $tmpvalue;
+                    } else {
+                        $report_value += $tmpvalue;
+                    }
                     $qtemp = $qr;
                 }
                 $query = $qtemp;
