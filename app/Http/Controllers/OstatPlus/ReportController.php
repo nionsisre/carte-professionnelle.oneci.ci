@@ -267,7 +267,7 @@ class ReportController extends Controller {
                         'status' => $item['status'],
                         'doer_uid' => $item['doer_uid'] ?? '',
                         'doer_name' => $user ? $user->last_name . ' ' . $user->first_name : '',
-                        'reason' => $user ? "Modifié par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
+                        'reason' => $user ? "Données du ".date('d/m/Y', strtotime($item['date']))." modifié par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
                         //'reason' => $item['reason'],
                         'updated_at' => now()
                     ]);
@@ -282,7 +282,7 @@ class ReportController extends Controller {
                     'status' => $item['value'],
                     'doer_uid' => $item['doer_uid'] ?? '',
                     'doer_name' => $user ? $user->last_name . ' ' . $user->first_name : '',
-                    'reason' => $user ? "Données publiées par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
+                    'reason' => $user ? "Données du ".date('d/m/Y', strtotime($item['date']))." publiées par ".$user->last_name . ' ' . $user->first_name .' le '.date('d/m/Y').' à '.date('H:i:s') : '',
                     //'reason' => $item['reason'] ?? '',
                     'created_at' => now(),
                     'updated_at' => now()
