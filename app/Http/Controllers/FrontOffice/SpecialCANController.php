@@ -128,7 +128,6 @@ class SpecialCANController extends Controller {
         $demandecrtcan = DB::connection('maria_db_oneci_special_can')
             ->table('demandecrtcans')
             ->select('*')
-            //->join('piececans', 'demandecrtcans.id', '=', 'piececans.demandecrt_id')
             ->where('demandecrtcans.nit', '=', $request->input('nit'))
             ->get();
 
