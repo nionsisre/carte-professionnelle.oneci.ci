@@ -11,4 +11,9 @@ class OstatPlusService extends Model
 
     public $guarded = ['id'];
     public $timestamps = false;
+
+    public function ostatplustypesperservice() {
+        return $this->belongsTo(OstatPlusTypesPerService::class);
+    }
+
 }
