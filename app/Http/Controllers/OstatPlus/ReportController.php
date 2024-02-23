@@ -134,6 +134,18 @@ class ReportController extends Controller {
         $reports = [];
         $id = 1;
 
+        /*if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
+            // Les codes de centres sont sous la forme "CODE1;CODE2"
+            $codes_uniques_centres = explode(';', $code_unique_centre);
+            // Utilisez les codes individuels ici, par exemple :
+            foreach ($codes_uniques_centres as $code) {
+                // Effectuez les opérations nécessaires avec chaque code de centre
+            }
+        } else {
+            // Le code de centre est unique, utilisez-le directement
+            // Effectuez les opérations nécessaires avec le code unique de centre
+        }*/
+
         foreach ($services as $service) {
             foreach ($type_services as $type_service) {
 
