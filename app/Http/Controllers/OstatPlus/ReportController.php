@@ -41,20 +41,47 @@ class ReportController extends Controller {
             $zone_code = $jsonData['zone_code'];
             /* Obtention des informations sur l'utilisateur */
             if (!empty($zone_code) && $zone_code !== "null") {
-                $centre_list = DB::table('centre_unified')
-                    ->select([
-                        "id", "zone",
-                        "code_zone", DB::raw('region_label as region_coordination'),
-                        "code_region", DB::raw('department_label as departement'),
-                        "code_departement", "sous_prefecture_commune",
-                        "code_sp_commune", DB::raw('area_label as localite'),
-                        DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
-                        DB::raw('location_code as code_centre'), "code_unique_centre",
-                        DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
-                    ])
-                    ->where('code_unique_centre', 'LIKE', $zone_code."%")
-                    ->orderByDesc('id')
-                    ->get();
+                // Vérification si le code_unique_centre contient plusieurs codes de centres
+                if(!empty($zone_code) && strpos($zone_code, ';') !== false) {
+                    $zone_codes = explode(';', $zone_code);
+                    // Initialiser un tableau pour stocker les résultats
+                    $centre_list = [];
+                    // Traiter chaque code de zone individuellement
+                    foreach ($zone_codes as $code) {
+                        $centres = DB::table('centre_unified')
+                            ->select([
+                                "id", "zone",
+                                "code_zone", DB::raw('region_label as region_coordination'),
+                                "code_region", DB::raw('department_label as departement'),
+                                "code_departement", "sous_prefecture_commune",
+                                "code_sp_commune", DB::raw('area_label as localite'),
+                                DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
+                                DB::raw('location_code as code_centre'), "code_unique_centre",
+                                DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
+                            ])
+                            ->where('code_unique_centre', 'LIKE', $code."%")
+                            ->orderByDesc('id')
+                            ->get();
+                        // Fusionner les résultats dans le tableau principal
+                        $centre_list = array_merge($centre_list, $centres->toArray());
+                    }
+                } else {
+                    // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
+                    $centre_list = DB::table('centre_unified')
+                        ->select([
+                            "id", "zone",
+                            "code_zone", DB::raw('region_label as region_coordination'),
+                            "code_region", DB::raw('department_label as departement'),
+                            "code_departement", "sous_prefecture_commune",
+                            "code_sp_commune", DB::raw('area_label as localite'),
+                            DB::raw('area_code as code_localite'), DB::raw('location_label as centre'),
+                            DB::raw('location_code as code_centre'), "code_unique_centre",
+                            DB::raw('lon as date_ouverture'), DB::raw('lat as date_fermeture')
+                        ])
+                        ->where('code_unique_centre', 'LIKE', $zone_code."%")
+                        ->orderByDesc('id')
+                        ->get();
+                }
             } else {
                 $centre_list = DB::table('centre_unified')
                     ->select([
@@ -112,21 +139,17 @@ class ReportController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $code_unique_centre = $request->input('code_unique_centre');
 
-        /*$filePath = 'android_query_logs.txt';
-        // Vérifier si le fichier existe déjà
-        if (Storage::disk('local')->exists($filePath)) {
-            // Si le fichier existe, ajouter les données à la suite
-            Storage::disk('local')->append($filePath, json_encode($request->all()));
+        // Vérification si le code_unique_centre contient plusieurs codes de centres
+        if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
+            $codes_uniques_centres = explode(';', $code_unique_centre);
         } else {
-            // Si le fichier n'existe pas, le créer et y écrire les données
-            Storage::disk('local')->put($filePath, json_encode($request->all()));
-        }*/
+            // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
+            $codes_uniques_centres = [$code_unique_centre];
+        }
 
-        $user_uid = $request->input('user_uid'); // pour le monitoring
-        $code_unique_centre = ($request->input('code_unique_centre') === "000000000000") ? "" : $request->input('code_unique_centre');
         $start_date = $request->input('selected_date');
-        //$end_date = (empty($request->input('selected_date_2')) || $request->input('selected_date_2') == "null") ? "" : $request->input('selected_date_2');
         $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
 
         $services = DB::table('ostat_plus_services')->select('*')->get();
@@ -134,81 +157,67 @@ class ReportController extends Controller {
         $reports = [];
         $id = 1;
 
-        /*if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
-            // Les codes de centres sont sous la forme "CODE1;CODE2"
-            $codes_uniques_centres = explode(';', $code_unique_centre);
-            // Utilisez les codes individuels ici, par exemple :
-            foreach ($codes_uniques_centres as $code) {
-                // Effectuez les opérations nécessaires avec chaque code de centre
-            }
-        } else {
-            // Le code de centre est unique, utilisez-le directement
-            // Effectuez les opérations nécessaires avec le code unique de centre
-        }*/
-
         foreach ($services as $service) {
             foreach ($type_services as $type_service) {
 
-                //DB::enableQueryLog(); // Enable query log
+                foreach ($codes_uniques_centres as $code) {
+                    $query = DB::table('ostat_plus_reports')
+                        ->select([
+                            'ostat_plus_service_id',
+                            'ostat_plus_type_service_id',
+                            'code_centre',
+                            'date',
+                            DB::raw('SUM(value) as value'),
+                            'status',
+                            'doer_uid',
+                            'doer_name',
+                            'reason',
+                            'created_at',
+                            'updated_at'
+                        ])
+                        ->where('ostat_plus_service_id', $service->id)
+                        ->where('ostat_plus_type_service_id', $type_service->id)
+                        ->where('code_centre', 'LIKE', $code . '%')
+                        ->when(empty($end_date), function ($query) use ($start_date) {
+                            return $query->where('date', 'LIKE', $start_date);
+                        })
+                        ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                            return $query->whereBetween('date', [$start_date, $end_date]);
+                        });
+                    $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
 
-                $query = DB::table('ostat_plus_reports')
-                    ->select([
-                        'ostat_plus_service_id',
-                        'ostat_plus_type_service_id',
-                        'code_centre',
-                        'date',
-                        DB::raw('SUM(value) as value'),
-                        'status',
-                        'doer_uid',
-                        'doer_name',
-                        'reason',
-                        'created_at',
-                        'updated_at'
-                    ])
-                    ->where('ostat_plus_service_id', $service->id)
-                    ->where('ostat_plus_type_service_id', $type_service->id)
-                    ->where('code_centre', 'LIKE', $code_unique_centre . '%')
-                    ->when(empty($end_date), function ($query) use ($start_date) {
-                        return $query->where('date', 'LIKE', $start_date);
-                    })
-                    ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
-                        return $query->whereBetween('date', [$start_date, $end_date]);
-                    });
-                $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+                    $query = $query->get();
 
-                $query = $query->get();
-
-                //dd($this->str_replace_array('?', DB::getQueryLog()[0]['bindings'], DB::getQueryLog()[0]['query'])); // Show results of log
-
-                $report_value = 0;
-                $qtemp = [];
-                foreach ($query as $qr) {
-                    $tmpvalue = $qr->value ?? 0;
-                    if($qr->ostat_plus_type_service_id == 9) {
-                        $report_value = $tmpvalue;
-                    } else {
-                        $report_value += $tmpvalue;
+                    $report_value = 0;
+                    $qtemp = [];
+                    foreach ($query as $qr) {
+                        $tmpvalue = $qr->value ?? 0;
+                        if($qr->ostat_plus_type_service_id == 9) {
+                            $report_value = $tmpvalue;
+                        } else {
+                            $report_value += $tmpvalue;
+                        }
+                        $qtemp = $qr;
                     }
-                    $qtemp = $qr;
+                    $query = $qtemp;
+
+                    $reports[] = [
+                        "id" => $id,
+                        "service_name" => $service->label,
+                        "type_service_name" => $type_service->label,
+                        "code_centre" => $query->code_centre ?? '',
+                        "date" => (empty($end_date)) ? $start_date : $end_date,
+                        "value" => $report_value,
+                        "status" => $query->status ?? '',
+                        "doer_uid" => $query->doer_uid ?? '',
+                        "doer_name" => $query->doer_name ?? '',
+                        "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                        "created_at" => $query->created_at ?? '',
+                        "updated_at" => $query->updated_at ?? ''
+                    ];
+
+                    $id++;
                 }
-                $query = $qtemp;
-
-                $reports[] = [
-                    "id" => $id,
-                    "service_name" => $service->label,
-                    "type_service_name" => $type_service->label,
-                    "code_centre" => $query->code_centre ?? '',
-                    "date" => (empty($end_date)) ? $start_date : $end_date,
-                    "value" => $report_value,
-                    "status" => $query->status ?? '',
-                    "doer_uid" => $query->doer_uid ?? '',
-                    "doer_name" => $query->doer_name ?? '',
-                    "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
-                    "created_at" => $query->created_at ?? '',
-                    "updated_at" => $query->updated_at ?? ''
-                ];
-
-                $id++;
             }
         }
 
