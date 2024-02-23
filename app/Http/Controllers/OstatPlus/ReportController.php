@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OstatPlus;
 
 use App\Http\Controllers\Controller;
+use App\Models\OstatPlusReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -253,8 +254,7 @@ class ReportController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        /*
-        $filePath = 'android_query_logs.txt';
+        /*$filePath = 'android_query_logs.txt';
         // Vérifier si le fichier existe déjà
         if (Storage::disk('local')->exists($filePath)) {
             // Si le fichier existe, ajouter les données à la suite
@@ -274,7 +274,34 @@ class ReportController extends Controller {
                 ->where('code_centre', $item['code_centre'])
                 ->where('ostat_plus_service_id', $service->id ?? null)
                 ->where('ostat_plus_type_service_id', $type_service->id ?? null)
-                ->first();
+                ->get();
+
+            if(sizeof($existingRecord) > 1) {
+                // Existence de doublons dans la base de données si on rentre ici
+                /*$doublons = OstatPlusReport::select('code_centre','date','ostat_plus_service_id','ostat_plus_type_service_id','value')
+                    ->groupBy('code_centre','date','ostat_plus_service_id','ostat_plus_type_service_id','value')
+                    ->havingRaw('COUNT(*) > 1')
+                    ->get();*/
+                $latestRecordId = $existingRecord->max('id'); // Récupérer l'ID de l'enregistrement le plus récent parmi les doublons
+                // Supprimer les enregistrements plus anciens que l'enregistrement le plus récent
+                DB::table('ostat_plus_reports')
+                    ->where('date', $item['date'])
+                    ->where('code_centre', $item['code_centre'])
+                    ->where('ostat_plus_service_id', $service->id ?? null)
+                    ->where('ostat_plus_type_service_id', $type_service->id ?? null)
+                    ->where('id', '<', $latestRecordId)
+                    ->delete();
+
+                // Conserver uniquement l'enregistrement le plus récent
+                $existingRecord = DB::table('ostat_plus_reports')->find($latestRecordId);
+            } else {
+                $existingRecord = DB::table('ostat_plus_reports')
+                    ->where('date', $item['date'])
+                    ->where('code_centre', $item['code_centre'])
+                    ->where('ostat_plus_service_id', $service->id ?? null)
+                    ->where('ostat_plus_type_service_id', $type_service->id ?? null)
+                    ->first();
+            }
 
             if ($existingRecord) {
                 // Mise à jour de l'enregistrement existant
