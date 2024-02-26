@@ -43,6 +43,11 @@ class UserController extends Controller {
                 ->where('users.password', md5(sha1("\$@lty" . $password . "\$@lt")))
                 ->first();
             if (!empty($user)) {
+                // is_admin reçoit 1 si le compte kernel est celui d'un admin
+                $user->is_admin = ($user->role_id <= 2) ? 1 : 0;
+                // is_readonly reçoit 1 si le compte kernel n'a pas le droit de modification dans OStat Plus
+                $user->is_readonly = ($user->role_id >= 1) ? 0 : 1;
+
                 return response([
                     'has_error' => false,
                     'message' => 'Ok',
