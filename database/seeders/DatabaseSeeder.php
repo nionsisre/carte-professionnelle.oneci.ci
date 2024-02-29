@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AbonnesNumerosOtpSeeder::class);*/
         $this->call(OstatPlusServiceSeeder::class);
         $this->call(OstatPlusTypeServiceSeeder::class);
+        $this->call(OstatPlusTypesPerServiceSeeder::class);
     }
 }

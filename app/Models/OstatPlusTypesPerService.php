@@ -15,6 +15,7 @@ class OstatPlusTypesPerService extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+    public $timestamps = false;
 
     public function ostatplusservice() {
         return $this->hasMany(OstatPlusService::class);

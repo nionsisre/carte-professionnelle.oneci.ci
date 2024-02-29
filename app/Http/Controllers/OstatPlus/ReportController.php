@@ -4,6 +4,9 @@ namespace App\Http\Controllers\OstatPlus;
 
 use App\Http\Controllers\Controller;
 use App\Models\OstatPlusReport;
+use App\Models\OstatPlusService;
+use App\Models\OstatPlusTypeService;
+use App\Models\OstatPlusTypesPerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -125,7 +128,6 @@ class ReportController extends Controller {
      * @param Request $request <p>Client Request object.</p>
      */
     function getReport(Request $request) {
-
         $validator = Validator::make($request->all(), [
             'uid' => ['required', 'string', 'max:100'],
             'code_unique_centre' => ['nullable', 'string', 'max:20'],
@@ -153,80 +155,128 @@ class ReportController extends Controller {
         $start_date = $request->input('selected_date');
         $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
 
+        $types_per_services = DB::table('ostat_plus_types_per_services')
+            ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
+            ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
+            ->select('ostat_plus_services.id as service_id', 'ostat_plus_type_services.id as type_service_id')
+            ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
+            ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
+            ->get();
+        //$types_per_services = OstatPlusTypesPerService::with(['ostatplusservice','ostatplustypeservice'])->get();
+
         $services = DB::table('ostat_plus_services')->select('*')->get();
         $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
         $reports = [];
         $id = 1;
 
-        foreach ($services as $service) {
-            foreach ($type_services as $type_service) {
+        foreach ($codes_uniques_centres as $code) {
+            foreach ($types_per_services as $type_per_service) {
 
-                foreach ($codes_uniques_centres as $code) {
-                    $query = DB::table('ostat_plus_reports')
-                        ->select([
-                            'ostat_plus_service_id',
-                            'ostat_plus_type_service_id',
-                            'code_centre',
-                            'date',
-                            DB::raw('SUM(value) as value'),
-                            'status',
-                            'doer_uid',
-                            'doer_name',
-                            'reason',
-                            'created_at',
-                            'updated_at'
-                        ])
-                        ->where('ostat_plus_service_id', $service->id)
-                        ->where('ostat_plus_type_service_id', $type_service->id)
-                        ->where('code_centre', 'LIKE', $code . '%')
-                        ->when(empty($end_date), function ($query) use ($start_date) {
-                            return $query->where('date', 'LIKE', $start_date);
-                        })
-                        ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
-                            return $query->whereBetween('date', [$start_date, $end_date]);
-                        });
-                    $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+                $query = DB::table('ostat_plus_reports')
+                    ->select([
+                        'ostat_plus_service_id',
+                        'ostat_plus_type_service_id',
+                        'code_centre',
+                        'date',
+                        DB::raw('SUM(value) as value'),
+                        'status',
+                        'doer_uid',
+                        'doer_name',
+                        'reason',
+                        'created_at',
+                        'updated_at'
+                    ])
+                    ->where('ostat_plus_service_id', $type_per_service->service_id)
+                    ->where('ostat_plus_type_service_id', $type_per_service->type_service_id)
+                    //->where('ostat_plus_service_id', $service->id)
+                    //->where('ostat_plus_type_service_id', $type_service->id)
+                    ->where('code_centre', 'LIKE', $code . '%')
+                    ->when(empty($end_date), function ($query) use ($start_date) {
+                        return $query->where('date', 'LIKE', $start_date);
+                    })
+                    ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                        return $query->whereBetween('date', [$start_date, $end_date]);
+                    });
+                $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
 
-                    $query = $query->get();
+                $query = $query->get();
 
-                    $report_value = 0;
-                    $qtemp = [];
-                    foreach ($query as $qr) {
-                        $tmpvalue = $qr->value ?? 0;
-                        if($qr->ostat_plus_type_service_id == 9) {
-                            $report_value = $tmpvalue;
-                        } else {
-                            $report_value += $tmpvalue;
-                        }
-                        $qtemp = $qr;
+                $report_value = 0;
+                $qtemp = [];
+                foreach ($query as $qr) {
+                    $tmpvalue = $qr->value ?? 0;
+                    if($qr->ostat_plus_type_service_id == 9) {
+                        $report_value = $tmpvalue;
+                    } else {
+                        $report_value += $tmpvalue;
                     }
-                    $query = $qtemp;
-
-                    $reports[] = [
-                        "id" => $id,
-                        "service_name" => $service->label,
-                        "type_service_name" => $type_service->label,
-                        "code_centre" => $query->code_centre ?? '',
-                        "date" => (empty($end_date)) ? $start_date : $end_date,
-                        "value" => $report_value,
-                        "status" => $query->status ?? '',
-                        "doer_uid" => $query->doer_uid ?? '',
-                        "doer_name" => $query->doer_name ?? '',
-                        "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
-                        "created_at" => $query->created_at ?? '',
-                        "updated_at" => $query->updated_at ?? ''
-                    ];
-
-                    $id++;
+                    $qtemp = $qr;
                 }
+                $query = $qtemp;
+
+                $reports[] = [
+                    "id" => $id,
+                    'service_id' => OstatPlusService::where('id', $type_per_service->service_id)->value('id'),
+                    'service_name' => OstatPlusService::where('id', $type_per_service->service_id)->value('label'),
+                    'type_service_id' => OstatPlusTypeService::where('id', $type_per_service->type_service_id)->value('id'),
+                    'type_service_name' => OstatPlusTypeService::where('id', $type_per_service->type_service_id)->value('label'),
+                    //"service_name" => $service->label,
+                    //"type_service_name" => $type_service->label,
+                    "code_centre" => $query->code_centre ?? '',
+                    "date" => (empty($end_date)) ? $start_date : $end_date,
+                    "value" => $report_value,
+                    "status" => $query->status ?? '',
+                    "doer_uid" => $query->doer_uid ?? '',
+                    "doer_name" => $query->doer_name ?? '',
+                    "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                    "created_at" => $query->created_at ?? '',
+                    "updated_at" => $query->updated_at ?? ''
+                ];
+
+                $id++;
+
             }
         }
 
-        return response([
-            'has_error' => false,
-            'message' => 'Ok',
-            'data' => $reports
-        ], Response::HTTP_OK);
+        if($request->input('client') === null) {
+            return response([
+                'has_error' => false,
+                'message' => "Ok",
+                'data' => $reports
+            ], Response::HTTP_OK);
+        } else {
+            switch ($request->input('client')) {
+                case "OSTAT_PLUS_10100":
+                    return response([
+                        'has_error' => false,
+                        'message' => "Ok",
+                        'data' => (object) [
+                            'reports' => $reports,
+                            'insights' => [
+                                [
+                                    'title' => "texte 1",
+                                    'content' => "contenu 1"
+                                ],
+                                [
+                                    'title' => "texte 2",
+                                    'content' => "contenu 2"
+                                ]
+                            ],
+                            'welcome_message' => (object) [
+                                'title' => "",
+                                'content' => ""
+                            ]
+                        ]
+                    ], Response::HTTP_OK);
+                default:
+                    return response([
+                        'has_error' => true,
+                        'message' => "Client Inconnu"
+                    ], Response::HTTP_UNAUTHORIZED);
+            }
+
+        }
+
     }
 
     function addOrEditReport(Request $request) {

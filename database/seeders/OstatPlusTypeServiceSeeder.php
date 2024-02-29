@@ -18,5 +18,12 @@ class OstatPlusTypeServiceSeeder extends Seeder
         OstatPlusTypeService::create(['label' => 'Duplicata', 'icon' => '']);
         OstatPlusTypeService::create(['label' => 'Correction', 'icon' => '']);
         OstatPlusTypeService::create(['label' => 'Réclamation', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Distribution', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Modification', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Carte en stock', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => "Carte reçue aujourd'hui", 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Agent', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Ré-enrôlement', 'icon' => '']);
+        OstatPlusTypeService::create(['label' => 'Pénalité', 'icon' => '']);
     }
 }

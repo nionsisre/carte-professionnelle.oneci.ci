@@ -9,7 +9,7 @@ class OstatPlusService extends Model
 {
     use HasFactory;
 
-    public $guarded = ['id'];
+    public $guarded = [];
     public $timestamps = false;
 
     public function ostatplustypesperservice() {
