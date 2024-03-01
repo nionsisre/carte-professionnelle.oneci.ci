@@ -229,6 +229,7 @@ class ReportController extends Controller {
                     "doer_uid" => $query->doer_uid ?? '',
                     "doer_name" => $query->doer_name ?? '',
                     "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                    'icon' => OstatPlusService::where('id', $type_per_service->service_id)->value('icon'),
                     "created_at" => $query->created_at ?? '',
                     "updated_at" => $query->updated_at ?? ''
                 ];
@@ -254,10 +255,12 @@ class ReportController extends Controller {
                             'reports' => $reports,
                             'insights' => [
                                 [
+                                    'icon' => "https://www.oneci.ci/assets/images/oneci_logo.png",
                                     'title' => "texte 1",
                                     'content' => "contenu 1"
                                 ],
                                 [
+                                    'icon' => "",
                                     'title' => "texte 2",
                                     'content' => "contenu 2"
                                 ]
