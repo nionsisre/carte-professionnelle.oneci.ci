@@ -240,7 +240,7 @@ class ReportController extends Controller {
 
             // Requêtes depuis OStat Plus v2+
             switch ($request->input('client')) {
-                case "OSTAT_PLUS_10100":
+                case "OSTAT_PLUS_20000":
                     $types_per_services = DB::table('ostat_plus_types_per_services')
                         ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
                         ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
