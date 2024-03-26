@@ -219,7 +219,7 @@ class ReportController extends Controller {
                                 $query = $qtemp;
 
                                 $reason_tmp = "";
-                                if($end_date == "") {
+                                if($code_unique_centre !== "000000000000") {
                                     if (!empty($code_unique_centre) && empty($end_date)) {
                                         if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
                                             $reason_tmp = $query->reason." | Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
@@ -230,6 +230,8 @@ class ReportController extends Controller {
                                     } else {
                                         $reason_tmp = "Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                     }
+                                } else {
+                                    $reason_tmp = "Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                 }
 
                                 $reports[] = [
