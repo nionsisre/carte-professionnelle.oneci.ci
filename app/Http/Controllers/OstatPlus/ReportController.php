@@ -220,7 +220,7 @@ class ReportController extends Controller {
 
                                 $reason_tmp = "";
                                 if (!empty($code_unique_centre) && empty($end_date)) {
-                                    if(property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
+                                    if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
                                         $reason_tmp = $query->reason." | Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                     } else {
                                         //$reason_tmp = "Non renseigné";
@@ -240,6 +240,7 @@ class ReportController extends Controller {
                                     "status" => $query->status ?? '',
                                     "doer_uid" => $query->doer_uid ?? '',
                                     "doer_name" => $query->doer_name ?? '',
+                                    //"reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
                                     "reason" => $reason_tmp,
                                     "created_at" => $query->created_at ?? '',
                                     "updated_at" => $query->updated_at ?? ''
