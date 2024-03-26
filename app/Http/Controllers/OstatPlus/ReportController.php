@@ -223,11 +223,11 @@ class ReportController extends Controller {
                                     if(property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
                                         $reason_tmp = $query->reason." | Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                     } else {
-                                        //$reason_tmp = "MNon renseigné";
+                                        //$reason_tmp = "Non renseigné";
                                         $reason_tmp = "Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                     }
                                 } else {
-                                    $reason_tmp = "";
+                                    $reason_tmp = "Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
                                 }
 
                                 $reports[] = [
