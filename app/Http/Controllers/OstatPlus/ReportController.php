@@ -128,39 +128,41 @@ class ReportController extends Controller {
      * @param Request $request <p>Client Request object.</p>
      */
     function getReport(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'uid' => ['required', 'string', 'max:100'],
-            'code_unique_centre' => ['nullable', 'string', 'max:20'],
-            'selected_date' => ['required', 'string', 'max:20'],
-            'selected_date_2' => ['nullable', 'string']
-        ]);
-
-        if ($validator->fails()) {
-            return response([
-                'has_error' => true,
-                'message' => $validator->errors()->all()
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $code_unique_centre = $request->input('code_unique_centre');
-
-        // Vérification si le code_unique_centre contient plusieurs codes de centres
-        if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
-            $codes_uniques_centres = explode(';', $code_unique_centre);
-        } else {
-            // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
-            if($code_unique_centre == "000000000") {
-                $codes_uniques_centres = [""];
-            } else {
-                $codes_uniques_centres = [$code_unique_centre];
-            }
-        }
-
-        $start_date = $request->input('selected_date');
-        $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
 
         // Requêtes depuis OStat Plus < v1.1.0
         if($request->input('client') === null) {
+
+
+            $validator = Validator::make($request->all(), [
+                'uid' => ['required', 'string', 'max:100'],
+                'code_unique_centre' => ['nullable', 'string', 'max:20'],
+                'selected_date' => ['required', 'string', 'max:20'],
+                'selected_date_2' => ['nullable', 'string']
+            ]);
+
+            if ($validator->fails()) {
+                return response([
+                    'has_error' => true,
+                    'message' => $validator->errors()->all()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $code_unique_centre = $request->input('code_unique_centre');
+
+            // Vérification si le code_unique_centre contient plusieurs codes de centres
+            if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
+                $codes_uniques_centres = explode(';', $code_unique_centre);
+            } else {
+                // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
+                if($code_unique_centre == "000000000000") {
+                    $codes_uniques_centres = [""];
+                } else {
+                    $codes_uniques_centres = [$code_unique_centre];
+                }
+            }
+
+            $start_date = $request->input('selected_date');
+            $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
 
             $services = DB::table('ostat_plus_services')->select('*')->get();
             $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
@@ -168,66 +170,75 @@ class ReportController extends Controller {
             $id = 1;
 
             foreach ($services as $service) {
-                foreach ($type_services as $type_service) {
 
-                    foreach ($codes_uniques_centres as $code) {
-                        $query = DB::table('ostat_plus_reports')
-                            ->select([
-                                'ostat_plus_service_id',
-                                'ostat_plus_type_service_id',
-                                'code_centre',
-                                'date',
-                                DB::raw('SUM(value) as value'),
-                                'status',
-                                'doer_uid',
-                                'doer_name',
-                                'reason',
-                                'created_at',
-                                'updated_at'
-                            ])
-                            ->where('ostat_plus_service_id', $service->id)
-                            ->where('ostat_plus_type_service_id', $type_service->id)
-                            ->where('code_centre', 'LIKE', $code . '%')
-                            ->when(empty($end_date), function ($query) use ($start_date) {
-                                return $query->where('date', 'LIKE', $start_date);
-                            })
-                            ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
-                                return $query->whereBetween('date', [$start_date, $end_date]);
-                            });
-                        $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+                if($service->id != 15) {
 
-                        $query = $query->get();
+                    foreach ($type_services as $type_service) {
 
-                        $report_value = 0;
-                        $qtemp = [];
-                        foreach ($query as $qr) {
-                            $tmpvalue = $qr->value ?? 0;
-                            if($qr->ostat_plus_type_service_id == 9) {
-                                $report_value = $tmpvalue;
-                            } else {
-                                $report_value += $tmpvalue;
+                        foreach ($codes_uniques_centres as $code) {
+                            if ($type_service->id != 14 && $type_service->id != 15 && $type_service->id != 16 && $type_service->id != 17) {
+
+                                $query = DB::table('ostat_plus_reports')
+                                    ->select([
+                                        'ostat_plus_service_id',
+                                        'ostat_plus_type_service_id',
+                                        'code_centre',
+                                        'date',
+                                        DB::raw('SUM(value) as value'),
+                                        'status',
+                                        'doer_uid',
+                                        'doer_name',
+                                        'reason',
+                                        'created_at',
+                                        'updated_at'
+                                    ])
+                                    ->where('ostat_plus_service_id', $service->id)
+                                    ->where('ostat_plus_type_service_id', $type_service->id)
+                                    ->where('code_centre', 'LIKE', $code . '%')
+                                    ->when(empty($end_date), function ($query) use ($start_date) {
+                                        return $query->where('date', 'LIKE', $start_date);
+                                    })
+                                    ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                                        return $query->whereBetween('date', [$start_date, $end_date]);
+                                    });
+                                $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+
+                                $query = $query->get();
+
+                                $report_value = 0;
+                                $qtemp = [];
+                                foreach ($query as $qr) {
+                                    $tmpvalue = $qr->value ?? 0;
+                                    if ($qr->ostat_plus_type_service_id == 9) {
+                                        $report_value = $tmpvalue;
+                                    } else {
+                                        $report_value += $tmpvalue;
+                                    }
+                                    $qtemp = $qr;
+                                }
+                                $query = $qtemp;
+
+                                $reports[] = [
+                                    "id" => $id,
+                                    "service_name" => $service->label,
+                                    "type_service_name" => $type_service->label,
+                                    "code_centre" => $query->code_centre ?? '',
+                                    "date" => (empty($end_date)) ? $start_date : $end_date,
+                                    "value" => $report_value,
+                                    "status" => $query->status ?? '',
+                                    "doer_uid" => $query->doer_uid ?? '',
+                                    "doer_name" => $query->doer_name ?? '',
+                                    "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                                    "created_at" => $query->created_at ?? '',
+                                    "updated_at" => $query->updated_at ?? ''
+                                ];
+
+                                $id++;
+
                             }
-                            $qtemp = $qr;
                         }
-                        $query = $qtemp;
-
-                        $reports[] = [
-                            "id" => $id,
-                            "service_name" => $service->label,
-                            "type_service_name" => $type_service->label,
-                            "code_centre" => $query->code_centre ?? '',
-                            "date" => (empty($end_date)) ? $start_date : $end_date,
-                            "value" => $report_value,
-                            "status" => $query->status ?? '',
-                            "doer_uid" => $query->doer_uid ?? '',
-                            "doer_name" => $query->doer_name ?? '',
-                            "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
-                            "created_at" => $query->created_at ?? '',
-                            "updated_at" => $query->updated_at ?? ''
-                        ];
-
-                        $id++;
                     }
+
                 }
             }
 
@@ -236,11 +247,46 @@ class ReportController extends Controller {
                 'message' => 'Ok',
                 'data' => $reports
             ], Response::HTTP_OK);
+
+
         } else {
+
 
             // Requêtes depuis OStat Plus v2+
             switch ($request->input('client')) {
                 case "OSTAT_PLUS_20000":
+
+                    $validator = Validator::make($request->all(), [
+                        'uid' => ['required', 'string', 'max:100'],
+                        'code_unique_centre' => ['nullable', 'string', 'max:20'],
+                        'selected_date' => ['required', 'string', 'max:20'],
+                        'selected_date_2' => ['nullable', 'string']
+                    ]);
+
+                    if ($validator->fails()) {
+                        return response([
+                            'has_error' => true,
+                            'message' => $validator->errors()->all()
+                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+
+                    $code_unique_centre = $request->input('code_unique_centre');
+
+                    // Vérification si le code_unique_centre contient plusieurs codes de centres
+                    if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
+                        $codes_uniques_centres = explode(';', $code_unique_centre);
+                    } else {
+                        // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
+                        if($code_unique_centre == "000000000000") {
+                            $codes_uniques_centres = [""];
+                        } else {
+                            $codes_uniques_centres = [$code_unique_centre];
+                        }
+                    }
+
+                    $start_date = $request->input('selected_date');
+                    $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
+
                     $types_per_services = DB::table('ostat_plus_types_per_services')
                         ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
                         ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
@@ -343,12 +389,12 @@ class ReportController extends Controller {
                                 ]*/
                             ],
                             'welcome_message' => [
-                                'icon' => "",
+                                /*'icon' => "",
                                 'title' => "",
-                                'content' => ""
-                                /*'icon' => "https://www.oneci.ci/assets/images/oneci_logo.png",
-                                'title' => "Test Message Welcome",
-                                'content' => "Bienvenue sur OStat Plus 2.0 !!" */
+                                'content' => "" */
+                                'icon' => "", //"https://www.oneci.ci/assets/images/oneci_logo.png",
+                                'title' => "OStat+ v2.0.0",
+                                'content' => "Bienvenue sur OStat Plus 2 !! De nombreuses améliorations d'ergonomie, de sécurité et de performance ont été effectuées par la DSI dans cette version de l'application. Bon service !"
                             ]
                         ]
                     ], Response::HTTP_OK);
@@ -358,6 +404,7 @@ class ReportController extends Controller {
                         'message' => "Client Inconnu"
                     ], Response::HTTP_UNAUTHORIZED);
             }
+
 
         }
 
