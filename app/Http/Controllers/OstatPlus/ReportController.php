@@ -219,7 +219,7 @@ class ReportController extends Controller {
                                 $query = $qtemp;
 
                                 $reason_tmp = "";
-                                if($code_unique_centre !== "000000000000") {
+                                if($code_unique_centre !== "000000000000" && $end_date === "") {
                                     if (!empty($code_unique_centre) && empty($end_date)) {
                                         if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
                                             $reason_tmp = $query->reason." | Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
@@ -363,6 +363,17 @@ class ReportController extends Controller {
                             }
                             $query = $qtemp;
 
+                            $reason_tmp = "";
+                            if($code_unique_centre !== "000000000000" && $end_date === "") {
+                                if (!empty($code_unique_centre) && empty($end_date)) {
+                                    if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
+                                        $reason_tmp = $query->reason." | Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
+                                    } else {
+                                        $reason_tmp = "Non renseigné";
+                                    }
+                                }
+                            }
+
                             $reports[] = [
                                 "id" => $id,
                                 'service_id' => OstatPlusService::where('id', $type_per_service->service_id)->value('id'),
@@ -377,7 +388,8 @@ class ReportController extends Controller {
                                 "status" => $query->status ?? '',
                                 "doer_uid" => $query->doer_uid ?? '',
                                 "doer_name" => $query->doer_name ?? '',
-                                "reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                                //"reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                                "reason" => $reason_tmp,
                                 'icon' => OstatPlusService::where('id', $type_per_service->service_id)->value('icon'),
                                 "created_at" => $query->created_at ?? '',
                                 "updated_at" => $query->updated_at ?? ''
