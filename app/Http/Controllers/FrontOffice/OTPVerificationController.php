@@ -4,6 +4,7 @@ namespace App\Http\Controllers\FrontOffice;
 
 use App\Helpers\GeneratedTokensOrIDs;
 use App\Helpers\QrCode;
+use App\Helpers\Utils;
 use App\Http\Controllers\Controller;
 use App\Models\AbonnesNumerosOtp;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -382,40 +383,23 @@ class OTPVerificationController extends Controller {
     public function sendSMS($msisdn_infos) {
         /* OTP SMS rendering */
         $otp_code = str_pad(rand(0, pow(10, $this::OTP_DIGITS)-1), $this::OTP_DIGITS, '0', STR_PAD_LEFT); // Generate random OTP Code
-        $sms_msisdn = "225".str_replace(" ", "", $msisdn_infos->numero_de_telephone); // SMS Sender msisdn
+        $sms_msisdn = str_replace(" ", "", $msisdn_infos->numero_de_telephone); // SMS Sender msisdn
         $sms_title = "Vérification de Numéro de téléphone"; // SMS Title message
         $message = "Le code de vérification de votre numéro de téléphone est : ".$otp_code; // SMS Text message
         /* SMS sending using MTN API */
         $client = new Client();
         try {
-            $response = $client->get('https://smspro.mtn.ci/bms/Soap/Messenger.asmx/HTTP_SendSms', [
-                'verify' => false,
-                'stream' => true,
-                'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
-                'query' => [
-                    'customerID' => env('SMS_CUSTOMER_ID'),
-                    'userName' => env('SMS_USERNAME'),
-                    'userPassword' => env('SMS_PASSWORD'),
-                    'originator' => env('SMS_ORIGINATOR'),
-                    'messageType' => 'ArabicWithLatinNumbers',
-                    'defDate' => '',
-                    'blink' => 'false',
-                    'flash' => 'false',
-                    'Private' => 'false',
-                    'recipientPhone' => $sms_msisdn,
-                    'smsText' => $message
+            $response = $client->request('POST', 'https://kernel.oneci.ci/sms-api', [
+                'headers' => ['Accept' => 'application/json'],
+                'form_params' => [
+                    'client' => 'ABONNES_MOBILE',
+                    'msisdn' => $sms_msisdn,
+                    'message' => $message
                 ]
             ]);
-            // Read bytes off of the stream until the end of the stream is reached
-            $body = $response->getBody();
-            $contents = ''; while (!$body->eof()) $contents .= $body->read(1024);
-            // Parse stream content into a xml object
-            $xml = simplexml_load_string($contents);
-            if($xml){
-                //@TODO: Créer des colonnes pour sauvegarder aussi le retour XML en base
-                /*$xml->Result;
-                $xml->TransactionID;
-                $xml->NetPoints;*/
+            // Convertir la chaîne JSON en tableau associatif
+            $sms_result = json_decode((new Utils())->removeInvisibleBOMContentsOnJSONString($response->getBody()->getContents()), true);
+            if (isset($sms_result['success']) && $sms_result['success'] == 1) {
                 AbonnesNumerosOtp::create([
                     'msisdn' => $msisdn_infos->numero_de_telephone,
                     'form_number' => $msisdn_infos->numero_dossier,
@@ -424,24 +408,16 @@ class OTPVerificationController extends Controller {
                     'otp_sms_message' => $message,
                     'otp_verification_status' => 1
                 ]);
-                if($xml->Result == 'OK') {
-                    return [
-                        'has_error' => false,
-                        'message' => 'SMS successfully sent !',
-                        'data' => $xml
-                    ];
-                } else {
-                    return [
-                        'has_error' => true,
-                        'message' => $xml->Result.' ['.$xml->TransactionID.']'
-                    ];
-                }
-            } else {
                 return [
-                    'has_error' => true,
-                    'message' => 'Empty response'
+                    'has_error' => false,
+                    'message' => 'SMS successfully sent !',
+                    'data' => $sms_result
                 ];
             }
+            return [
+                'has_error' => true,
+                'message' => $sms_result['error_msg'] ?? "Empty response"
+            ];
         } catch (GuzzleException $guzzle_exception) {
             /* Moving here if something is wrong with MTN SMS API */
             return [
