@@ -1,4 +1,4 @@
-@if(config('services.cinetpay.enabled'))
+@if(config('services.cinetpay.enabled') || config('services.ngser.enabled'))
 <script>
     {{--
     |--------------------------------------------------------------------------
@@ -27,6 +27,7 @@
                     't': t,
                     'ti': ti{{ $i }},
                     'fn': fn,
+                    'pt': "{{ env('PAYMENT_TYPE_1') }}",
                     'msisdn': msisdn
                 },
                 success: function(res){
@@ -54,7 +55,7 @@
                     cli: cli,
                     tn: "{{ (session()->has('certificate_msisdn_tokens')) ? session()->get('certificate_msisdn_tokens')[$i]['value'] : '' }}",
                     fn: fn,
-                    idx: idx
+                    idx: idx,
                 },
                 dataType: "json",
                 beforeSend: function () {
@@ -63,6 +64,7 @@
                 },
                 success: function (data) {
                     ti{{ $i }} = data.transaction_id;
+                    pt{{ $i }} = data.payment_type;
                     animatedTimer{{ $i }} = setInterval(cp{{ $i }}, 1000);
                     jQuery('#modalBox').html(
                         '<center> \
@@ -136,6 +138,7 @@
                     't': t,
                     'ti': ti,
                     'fn': fn,
+                    'pt': "{{ env('PAYMENT_TYPE_2') }}"
                 },
                 success: function(res){
                     if(!res.has_error) {

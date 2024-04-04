@@ -11,6 +11,7 @@ use App\Http\Controllers\FrontOffice\QrCartesProfessionnellesController;
 use App\Http\Controllers\FrontOffice\QrCodeController;
 use App\Http\Controllers\FrontOffice\SpecialCANController;
 use App\Http\Services\CinetPayAPI;
+use App\Http\Services\NGSerAPI;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 
 /* Front Office Main Pages Routes */
     /* --- Home --- */
-Route::get('/', [MainController::class, 'index']);
+Route::get('/', [MainController::class, 'index'])->name('home');
     /* --- Identification --- */
 Route::get('/menu-identification', [IdentificationController::class, 'showMenuIdentification'])->name('front_office.identification.menu');
 Route::get('/identification-abonnes-mobile', [IdentificationController::class, 'showIdentification'])->name('front_office.page.identification');
@@ -81,6 +82,11 @@ Route::get('/telecharger-qrcode-carte-professionnelle', [QrCartesProfessionnelle
 Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('front_office.cinetpay.notify');
 Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('front_office.cinetpay.return');
 Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('front_office.cinetpay.cancel');
+
+/* Front Office CinetPAY routes */
+Route::post('/check-status-payment', [NGSerAPI::class, 'notify'])->name('front_office.nsger.notify');
+Route::get('/notification-post-payment', [NGSerAPI::class, 'return'])->name('front_office.ngser.return');
+
 
 /*
 |--------------------------------------------------------------------------

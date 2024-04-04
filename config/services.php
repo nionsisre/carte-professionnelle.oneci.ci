@@ -43,4 +43,8 @@ return [
         'enabled' => env('CINETPAY_API_ENABLED', false),
     ],
 
+    'ngser' => [
+        'enabled' => env('NGSER_API_ENABLED', false)
+    ],
+
 ];

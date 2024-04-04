@@ -7,6 +7,7 @@ use App\Helpers\QrCode;
 use App\Http\Controllers\Controller;
 use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
+use App\Http\Services\NGSerAPI;
 use App\Mail\MailONECI;
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
@@ -384,8 +385,12 @@ class IdentificationController extends Controller {
                 }
                 /* Récupération du numéro de telephone valide */
                 $abonne_numero = $abonne_numeros[$request->input('idx')];
-                /* Obtention du lien de paiement via l'API CinetPay */
-                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne_numero, 'Paiement Certificat Identification', env('CINETPAY_SERVICE_AMOUNT'), true);
+                /* Obtention du lien de paiement via l'API Aggrégateur */
+                if(config('services.ngser.enabled')) {
+                    $payment_link_obtained = (new NGSerAPI())->getPaymentLink($abonne_numero, env('PAYMENT_TYPE_1'), env('NGSER_SERVICE_AMOUNT'), true);
+                } else if(config('services.cinetpay.enabled')) {
+                    $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne_numero, env('PAYMENT_TYPE_1'), env('CINETPAY_SERVICE_AMOUNT'), true);
+                }
                 if ($payment_link_obtained['has_error']) {
                     return response([
                         'has_error' => true,
@@ -426,7 +431,9 @@ class IdentificationController extends Controller {
             'ti' => ['nullable', 'string', 'max:100'], // ID de transaction
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
             'msisdn' => ['required', 'string', 'max:20'], // Numero de telephone
+            'pt' => ['nullable', 'string', 'max:100'], // Type de paiement
         ]);
+
         /* Vérification du Token générique */
         if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
             return response([
@@ -434,27 +441,51 @@ class IdentificationController extends Controller {
                 'message' => 'Payment in progress...'
             ], Response::HTTP_UNAUTHORIZED);
         } else {
-            /* Vérification de l'ID de transaction chez CinetPAY */
-            $payment_data = (new CinetPayAPI())->verify($request->input('ti'));
-            if ($payment_data['has_error']) {
-                return response([
-                    'has_error' => true,
-                    'message' => 'Paiement en cours...'
-                ], Response::HTTP_OK);
-            } else {
-                $res_data = (new CinetPayAPI())->notify(
-                    $request->replace([
-                        'cpm_site_id' => env('CINETPAY_SERVICE_KEY'), // Token generique
-                        'cpm_trans_id' => $request->input('ti'), // ID de transaction
-                        'cpm_custom' => $request->input('fn'), // Numero de dossier contenu dans la variable Metadata
-                        'cpm_designation' => $request->input('msisdn'), // Numero de telephone a actualiser
-                    ])
-                );
-                return response([
-                    'has_error' => $res_data->original['has_error'],
-                    'data' => $res_data->original,
-                    'message' => $res_data->original['message']
-                ], Response::HTTP_OK);
+            /* Vérification de l'ID de transaction chez l'aggrégateur de paiement */
+            if(config('services.ngser.enabled')) {
+                $payment_data = (new NGSerAPI())->verify($request->input('ti'), $request->input('pt'));
+                if ($payment_data['has_error']) {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Paiement en cours...'
+                    ], Response::HTTP_OK);
+                } else {
+                    // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
+                    $res_data = (new NGSerAPI())->notify(
+                        $request->replace([
+                            'order_id' => $payment_data["transaction_id"], // ID de transaction
+                            'payment_type' => $request->input('pt'), // Type de paiement effectué
+                        ])
+                    );
+
+                    return response([
+                        'has_error' => $res_data->original['has_error'],
+                        'data' => $res_data->original,
+                        'message' => $res_data->original['message']
+                    ], Response::HTTP_OK);
+                }
+            } else if(config('services.cinetpay.enabled')) {
+                $payment_data = (new CinetPayAPI())->verify($request->input('ti'));
+                if ($payment_data['has_error']) {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Paiement en cours...'
+                    ], Response::HTTP_OK);
+                } else {
+                    $res_data = (new CinetPayAPI())->notify(
+                        $request->replace([
+                            'cpm_site_id' => env('CINETPAY_SERVICE_KEY'), // Token generique
+                            'cpm_trans_id' => $request->input('ti'), // ID de transaction
+                            'cpm_custom' => $request->input('fn'), // Numero de dossier contenu dans la variable Metadata
+                            'cpm_designation' => $request->input('msisdn'), // Numero de telephone a actualiser
+                        ])
+                    );
+                    return response([
+                        'has_error' => $res_data->original['has_error'],
+                        'data' => $res_data->original,
+                        'message' => $res_data->original['message']
+                    ], Response::HTTP_OK);
+                }
             }
         }
     }
