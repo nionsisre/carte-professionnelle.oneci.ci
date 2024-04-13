@@ -7,7 +7,7 @@ use App\Models\OstatPlusReport;
 use App\Models\OstatPlusService;
 use App\Models\OstatPlusTypeService;
 use App\Models\OstatPlusTypesPerService;
-use http\Client\Curl\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -296,7 +296,7 @@ class ReportController extends Controller {
                     // Si l'utilisateur demande une liste complète de tous les centres :
                     if($code_unique_centre == "OOOOOOOOOOOO") {
                         // On cherchera d'abord à savoir s'il n'est pas un délégué régional d'abord ayant plusieurs code région
-                        $user = User::where('uid', $request->input('uid'))->latest()->first();
+                        $user = User::where('uid', $request->input('uid'))->first();
                         if (!empty($user)) {
                             if (!empty($user->zone_code) && strpos($user->zone_code, ';') !== false) {
                                 // Il s'agit ici alors d'un délégué régional qui demande quelque chose
