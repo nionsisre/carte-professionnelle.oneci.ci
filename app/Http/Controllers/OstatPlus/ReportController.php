@@ -309,88 +309,96 @@ class ReportController extends Controller {
                         }
                     // Sinon si l'utilisateur demande une liste spécifique de centres :
                     } else {
+                        $flag = false;
                         // Si le code de centre envoyé est un code de centre filtré
                         if (strpos($code_unique_centre, "AL-") === 0) { // Centre ou Agence
                             $type_de_centre = "AL";
                             $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
                         } elseif (strpos($code_unique_centre, "AG-") === 0) { // Agence uniquement
                             $type_de_centre = "AG";
                             $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
                         } elseif (strpos($code_unique_centre, "CE-") === 0) { // Centre uniquement
                             $type_de_centre = "CE";
                             $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
                         } else {
                             $type_de_centre = "AL";
                         }
-                        $cuc = $code_unique_centre;
-                        $code_zone = "";
-                        $code_region = "";
-                        $code_departement = "";
-                        if (strpos($cuc, "OO") === 0) { // Si la zone est random
-                            // Récupération du code de zone
-                            //$code_zone = "";
-                            $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
-                            if (strpos($cuc, "OO") === 0) { // Si la région est random
-                                // Récupération du code de region
-                                //$code_region = "";
-                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
-                                if (strpos($cuc, "OO") === 0) { // Si le département est random
-                                    $cuc = substr($cuc, 2); // on retire les caractères du département
-                                    //$code_departement = "";
-                                } else {
-                                    // Récupération du code de département
-                                    $code_departement = substr($cuc, 0, 2);
+                        if($flag) {
+                            $cuc = $code_unique_centre;
+                            $code_zone = "";
+                            $code_region = "";
+                            $code_departement = "";
+                            if (strpos($cuc, "OO") === 0) { // Si la zone est random
+                                // Récupération du code de zone
+                                //$code_zone = "";
+                                $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                                if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                    // Récupération du code de region
+                                    //$code_region = "";
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                } else { // S'il s'agit d'un code de region existant en base
+                                    // Récupération du code de region
+                                    $code_region = substr($cuc, 0, 2);
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
                                 }
-                            } else { // S'il s'agit d'un code de region existant en base
-                                // Récupération du code de region
-                                $code_region = substr($cuc, 0, 2);
-                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
-                                if (strpos($cuc, "OO") === 0) { // Si le département est random
-                                    $cuc = substr($cuc, 2); // on retire les caractères du département
-                                    //$code_departement = "";
-                                } else {
-                                    // Récupération du code de département
-                                    $code_departement = substr($cuc, 0, 2);
+                            } else { // S'il s'agit d'un code de zone existant en base
+                                // Récupération du code de zone
+                                $code_zone = substr($cuc, 0, 2);
+                                $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                                if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                    // Récupération du code de region
+                                    //$code_region = "";
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                } else { // S'il s'agit d'un code de region existant en base
+                                    // Récupération du code de region
+                                    $code_region = substr($cuc, 0, 2);
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
                                 }
                             }
-                        } else { // S'il s'agit d'un code de zone existant en base
-                            // Récupération du code de zone
-                            $code_zone = substr($cuc, 0, 2);
-                            $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
-                            if (strpos($cuc, "OO") === 0) { // Si la région est random
-                                // Récupération du code de region
-                                //$code_region = "";
-                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
-                                if (strpos($cuc, "OO") === 0) { // Si le département est random
-                                    $cuc = substr($cuc, 2); // on retire les caractères du département
-                                    //$code_departement = "";
-                                } else {
-                                    // Récupération du code de département
-                                    $code_departement = substr($cuc, 0, 2);
-                                }
-                            } else { // S'il s'agit d'un code de region existant en base
-                                // Récupération du code de region
-                                $code_region = substr($cuc, 0, 2);
-                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
-                                if (strpos($cuc, "OO") === 0) { // Si le département est random
-                                    $cuc = substr($cuc, 2); // on retire les caractères du département
-                                    //$code_departement = "";
-                                } else {
-                                    // Récupération du code de département
-                                    $code_departement = substr($cuc, 0, 2);
-                                }
-                            }
+                            // @TODO: Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
+                            //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
+                            $centres = DB::table('centre_unified')
+                                ->select(["code_unique_centre"])
+                                ->where('code_zone', 'LIKE', $code_zone."%")
+                                ->where('code_region', 'LIKE', $code_region."%")
+                                ->where('code_departement', 'LIKE', $code_departement."%")
+                                ->get();
+                            // Fusionner les résultats dans le tableau principal
+                            $codes_uniques_centres = $centres->toArray();
+                        } else {
+                            $codes_uniques_centres = [$code_unique_centre];
                         }
-                        // @TODO: Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
-                        //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
-                        $centres = DB::table('centre_unified')
-                            ->select(["code_unique_centre"])
-                            ->where('code_zone', 'LIKE', $code_zone."%")
-                            ->where('code_region', 'LIKE', $code_region."%")
-                            ->where('code_departement', 'LIKE', $code_departement."%")
-                            ->get();
-                        // Fusionner les résultats dans le tableau principal
-                        $codes_uniques_centres = $centres->toArray();
                     }
 
                     $start_date = $request->input('selected_date');
