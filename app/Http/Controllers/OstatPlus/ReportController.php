@@ -388,14 +388,31 @@ class ReportController extends Controller {
                             }
                             // @TODO: Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
                             //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
-                            $centres = DB::table('centre_unified')
-                                ->select(["code_unique_centre"])
-                                ->where('code_zone', 'LIKE', $code_zone."%")
-                                ->where('code_region', 'LIKE', $code_region."%")
-                                ->where('code_departement', 'LIKE', $code_departement."%")
-                                ->get();
+                            $centres = [];
+                            if($type_de_centre == "AL") { // Requete pour tous les types de centres
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->get();
+                            } elseif($type_de_centre == "AG") { // Requete pour les agences uniquement
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->get();
+                            } elseif($type_de_centre == "CE") { // Requete pour les centres d'enrolement uniquement
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->get();
+                            }
                             // Fusionner les résultats dans le tableau principal
-                            $codes_uniques_centres = $centres->toArray();
+                            $codes_uniques_centres = $centres->pluck('code_unique_centre')->toArray();
                         } else {
                             $codes_uniques_centres = [$code_unique_centre];
                         }
