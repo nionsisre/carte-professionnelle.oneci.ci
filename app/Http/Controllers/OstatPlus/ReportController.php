@@ -7,6 +7,7 @@ use App\Models\OstatPlusReport;
 use App\Models\OstatPlusService;
 use App\Models\OstatPlusTypeService;
 use App\Models\OstatPlusTypesPerService;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -288,17 +289,108 @@ class ReportController extends Controller {
                     }
 
                     $code_unique_centre = $request->input('code_unique_centre');
+                    $codes_uniques_centres = [];
+                    $type_de_centre = "";
+                    $selection_liste = "";
 
-                    // Vérification si le code_unique_centre contient plusieurs codes de centres
-                    if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
-                        $codes_uniques_centres = explode(';', $code_unique_centre);
-                    } else {
-                        // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
-                        if($code_unique_centre == "000000000000") {
-                            $codes_uniques_centres = [""];
-                        } else {
-                            $codes_uniques_centres = [$code_unique_centre];
+                    // Si l'utilisateur demande une liste complète de tous les centres :
+                    if($code_unique_centre == "OOOOOOOOOOOO") {
+                        // On cherchera d'abord à savoir s'il n'est pas un délégué régional d'abord ayant plusieurs code région
+                        $user = User::where('uid', $request->input('uid'))->latest()->first();
+                        if (!empty($user)) {
+                            if (!empty($user->zone_code) && strpos($user->zone_code, ';') !== false) {
+                                // Il s'agit ici alors d'un délégué régional qui demande quelque chose
+                                $codes_uniques_centres = explode(';', $user->zone_code);
+                            } else {
+                                // Il s'agit d'un utilisateur qui demande des informations complètes sur tous les centres
+                                // Le retour de tous les centres doit donc se faire selon le contenu de son zone code
+                                $codes_uniques_centres = [$user->zone_code];
+                            }
                         }
+                    // Sinon si l'utilisateur demande une liste spécifique de centres :
+                    } else {
+                        // Si le code de centre envoyé est un code de centre filtré
+                        if (strpos($code_unique_centre, "AL-") === 0) { // Centre ou Agence
+                            $type_de_centre = "AL";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                        } elseif (strpos($code_unique_centre, "AG-") === 0) { // Agence uniquement
+                            $type_de_centre = "AG";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                        } elseif (strpos($code_unique_centre, "CE-") === 0) { // Centre uniquement
+                            $type_de_centre = "CE";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                        } else {
+                            $type_de_centre = "AL";
+                        }
+                        $cuc = $code_unique_centre;
+                        $code_zone = "";
+                        $code_region = "";
+                        $code_departement = "";
+                        if (strpos($cuc, "OO") === 0) { // Si la zone est random
+                            // Récupération du code de zone
+                            //$code_zone = "";
+                            $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                            if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                // Récupération du code de region
+                                //$code_region = "";
+                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                    $cuc = substr($cuc, 2); // on retire les caractères du département
+                                    //$code_departement = "";
+                                } else {
+                                    // Récupération du code de département
+                                    $code_departement = substr($cuc, 0, 2);
+                                }
+                            } else { // S'il s'agit d'un code de region existant en base
+                                // Récupération du code de region
+                                $code_region = substr($cuc, 0, 2);
+                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                    $cuc = substr($cuc, 2); // on retire les caractères du département
+                                    //$code_departement = "";
+                                } else {
+                                    // Récupération du code de département
+                                    $code_departement = substr($cuc, 0, 2);
+                                }
+                            }
+                        } else { // S'il s'agit d'un code de zone existant en base
+                            // Récupération du code de zone
+                            $code_zone = substr($cuc, 0, 2);
+                            $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                            if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                // Récupération du code de region
+                                //$code_region = "";
+                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                    $cuc = substr($cuc, 2); // on retire les caractères du département
+                                    //$code_departement = "";
+                                } else {
+                                    // Récupération du code de département
+                                    $code_departement = substr($cuc, 0, 2);
+                                }
+                            } else { // S'il s'agit d'un code de region existant en base
+                                // Récupération du code de region
+                                $code_region = substr($cuc, 0, 2);
+                                $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                    $cuc = substr($cuc, 2); // on retire les caractères du département
+                                    //$code_departement = "";
+                                } else {
+                                    // Récupération du code de département
+                                    $code_departement = substr($cuc, 0, 2);
+                                }
+                            }
+                        }
+                        // @TODO: Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
+                        //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
+                        $centres = DB::table('centre_unified')
+                            ->select(["code_unique_centre"])
+                            ->where('code_zone', 'LIKE', $code_zone."%")
+                            ->where('code_region', 'LIKE', $code_region."%")
+                            ->where('code_departement', 'LIKE', $code_departement."%")
+                            ->get();
+                        // Fusionner les résultats dans le tableau principal
+                        $codes_uniques_centres = $centres->toArray();
                     }
 
                     $start_date = $request->input('selected_date');
