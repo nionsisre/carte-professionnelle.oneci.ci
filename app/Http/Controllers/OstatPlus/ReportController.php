@@ -292,6 +292,7 @@ class ReportController extends Controller {
                     $codes_uniques_centres = [];
                     $type_de_centre = "";
                     $selection_liste = "";
+                    $flag = false;
 
                     // Si l'utilisateur demande une liste complète de tous les centres :
                     if($code_unique_centre == "OOOOOOOOOOOO") {
@@ -309,7 +310,6 @@ class ReportController extends Controller {
                         }
                     // Sinon si l'utilisateur demande une liste spécifique de centres :
                     } else {
-                        $flag = false;
                         // Si le code de centre envoyé est un code de centre filtré
                         if (strpos($code_unique_centre, "AL-") === 0) { // Centre ou Agence
                             $type_de_centre = "AL";
@@ -386,7 +386,7 @@ class ReportController extends Controller {
                                     }
                                 }
                             }
-                            // @TODO: Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
+                            // Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
                             //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
                             $centres = [];
                             if($type_de_centre == "AL") { // Requete pour tous les types de centres
@@ -481,7 +481,7 @@ class ReportController extends Controller {
                             $query = $qtemp;
 
                             $reason_tmp = "";
-                            if($code_unique_centre !== "000000000000" && $end_date === "") {
+                            if($code_unique_centre !== "OOOOOOOOOOOO" && $end_date === "") {
                                 if (!empty($code_unique_centre) && empty($end_date)) {
                                     if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
                                         $reason_tmp = $query->reason;
