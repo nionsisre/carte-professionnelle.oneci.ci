@@ -301,11 +301,11 @@ class ReportController extends Controller {
                         if (!empty($user)) {
                             if (!empty($user->zone_code) && strpos($user->zone_code, ';') !== false) {
                                 // Il s'agit ici alors d'un délégué régional qui demande quelque chose
-                                $codes_uniques_centres = explode(';', $user->zone_code);
+                                $codes_uniques_centres = explode(';', trim($user->zone_code));
                             } else {
                                 // Il s'agit d'un utilisateur qui demande des informations complètes sur tous les centres
                                 // Le retour de tous les centres doit donc se faire selon le contenu de son zone code
-                                $codes_uniques_centres = [$user->zone_code];
+                                $codes_uniques_centres = [trim($user->zone_code)];
                             }
                         }
                     // Sinon si l'utilisateur demande une liste spécifique de centres :
@@ -421,21 +421,114 @@ class ReportController extends Controller {
                     $start_date = $request->input('selected_date');
                     $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
 
-                    $types_per_services = DB::table('ostat_plus_types_per_services')
-                        ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
-                        ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
-                        ->select('ostat_plus_services.id as service_id', 'ostat_plus_type_services.id as type_service_id')
-                        ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
-                        ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
-                        ->get();
-                    //$types_per_services = OstatPlusTypesPerService::with(['ostatplusservice','ostatplustypeservice'])->get();
 
-                    $services = DB::table('ostat_plus_services')->select('*')->get();
-                    $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
-                    $reports = [];
-                    $id = 1;
+                    if($code_unique_centre !== "OOOOOOOOOOOO" && sizeof($codes_uniques_centres) === 1 && strlen($codes_uniques_centres[0]) === 12 && $end_date == "") {
 
-                    foreach ($codes_uniques_centres as $code) {
+                        $query = DB::table('ostat_plus_reports', 'opr')
+                            ->select([
+                                DB::raw('CAST(ROW_NUMBER() OVER (ORDER BY opr.id) AS UNSIGNED INTEGER) AS id'),
+                                DB::raw("opr.ostat_plus_service_id as service_id"),
+                                DB::raw("ostat_plus_services.label as service_name"),
+                                DB::raw("opr.ostat_plus_type_service_id as type_service_id"),
+                                DB::raw("ostat_plus_type_services.label as type_service_name"),
+                                'opr.code_centre',
+                                'opr.date',
+                                'opr.value',
+                                'opr.status',
+                                'opr.doer_uid',
+                                'opr.doer_name',
+                                'opr.reason',
+                                DB::raw("ostat_plus_services.icon as icon"),
+                                'opr.created_at',
+                                'opr.updated_at'
+                            ])
+                            ->join('ostat_plus_services', 'ostat_plus_services.id', '=', 'opr.ostat_plus_service_id')
+                            ->join('ostat_plus_type_services', 'ostat_plus_type_services.id', '=', 'opr.ostat_plus_type_service_id')
+                            //->where('ostat_plus_service_id', $type_per_service->service_id)
+                            //->where('ostat_plus_type_service_id', $type_per_service->type_service_id)
+                            //->where('ostat_plus_service_id', $service->id)
+                            //->where('ostat_plus_type_service_id', $type_service->id)
+                            //->whereIn('code_centre', $codes_uniques_centres)
+                            ->where(function ($query) use ($codes_uniques_centres) {
+                                foreach ($codes_uniques_centres as $code) {
+                                    $query->orWhere('opr.code_centre', 'LIKE', $code . '%');
+                                }
+                            })
+                            //->where('code_centre', 'LIKE', $code . '%')
+                            ->when(empty($end_date), function ($query) use ($start_date) {
+                                return $query->where('date', 'LIKE', $start_date);
+                            })
+                            //->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                            //    return $query->whereBetween('date', [$start_date, $end_date]);
+                            //})
+                            ->get();
+
+                    } else {
+
+                        $query = DB::table('ostat_plus_reports', 'opr')
+                            ->select([
+                                DB::raw('CAST(ROW_NUMBER() OVER (ORDER BY opr.id) AS UNSIGNED INTEGER) AS id'),
+                                DB::raw("opr.ostat_plus_service_id as service_id"),
+                                DB::raw("ostat_plus_services.label as service_name"),
+                                DB::raw("opr.ostat_plus_type_service_id as type_service_id"),
+                                DB::raw("ostat_plus_type_services.label as type_service_name"),
+                                DB::raw("'OOOOOOOOOOOO' as code_centre"),
+                                DB::raw("'".$start_date."' as date"),
+                                //DB::raw("CAST(SUM(CASE WHEN opr.ostat_plus_type_service_id != 9 AND opr.ostat_plus_type_service_id != 11 THEN opr.value ELSE (SELECT value FROM ostat_plus_reports where opr.ostat_plus_type_service_id = 9 AND opr.ostat_plus_type_service_id = 11) END) AS UNSIGNED INTEGER) as value"),
+                                //DB::raw('CAST(CASE WHEN opr.ostat_plus_type_service_id != 9 AND opr.ostat_plus_type_service_id != 11 THEN opr.value ELSE (SELECT SUM(value) FROM ostat_plus_reports) END AS UNSIGNED INTEGER) as value'),
+                                //DB::raw('CAST(SUM(CASE WHEN opr_filter.ostat_plus_type_service_id != 9 THEN opr_filter.value ELSE 0 END) AS UNSIGNED INTEGER) as value'),
+                                DB::raw('CAST(SUM(CASE WHEN opr.ostat_plus_type_service_id != 9 AND opr.ostat_plus_type_service_id != 11 THEN opr.value ELSE 0 END) AS UNSIGNED INTEGER) as value'),
+                                DB::raw("'1' as status"),
+                                DB::raw("'' as doer_uid"),
+                                DB::raw("'' as doer_name"),
+                                DB::raw("'' as reason"),
+                                DB::raw("ostat_plus_services.icon as icon"),
+                                DB::raw("'' as created_at"),
+                                DB::raw("'' as updated_at")
+                            ])
+                            ->join('ostat_plus_services', 'ostat_plus_services.id', '=', 'opr.ostat_plus_service_id')
+                            ->join('ostat_plus_type_services', 'ostat_plus_type_services.id', '=', 'opr.ostat_plus_type_service_id')
+                            /*->leftJoin('ostat_plus_reports as opr_filter', function ($join) {
+                                $join->on('opr.ostat_plus_service_id', '=', 'opr_filter.ostat_plus_service_id')
+                                    ->where('opr_filter.ostat_plus_type_service_id', '!=', 9);
+                            })*/
+                            ->where(function ($query) use ($codes_uniques_centres) {
+                                foreach ($codes_uniques_centres as $code) {
+                                    $query->orWhere('opr.code_centre', 'LIKE', $code . '%');
+                                }
+                            })
+                            ->when(empty($end_date), function ($query) use ($start_date) {
+                                return $query->where('opr.date', 'LIKE', $start_date);
+                            })
+                            ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                                return $query->whereBetween('opr.date', [$start_date, $end_date]);
+                            })
+                            ->groupBy('opr.ostat_plus_service_id', 'opr.ostat_plus_type_service_id', 'ostat_plus_services.label', 'ostat_plus_type_services.label', 'ostat_plus_services.icon')
+                            ->get();
+
+                    }
+
+                    // Convertir le résultat obtenu de tableau d'objets à tableau de tableaux
+                    $reports = $query->map(function ($item) {
+                        return (array) $item;
+                    })->toArray();
+
+                    // Si reports est vide
+                    if(sizeof($reports) == 0) {
+
+                        $types_per_services = DB::table('ostat_plus_types_per_services')
+                            ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
+                            ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
+                            ->select('ostat_plus_services.id as service_id', 'ostat_plus_type_services.id as type_service_id')
+                            ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
+                            ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
+                            ->get();
+
+                        $services = DB::table('ostat_plus_services')->select('*')->get();
+                        $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
+                        $reports = [];
+                        $id = 1;
+
                         foreach ($types_per_services as $type_per_service) {
 
                             $query = DB::table('ostat_plus_reports')
@@ -456,7 +549,7 @@ class ReportController extends Controller {
                                 ->where('ostat_plus_type_service_id', $type_per_service->type_service_id)
                                 //->where('ostat_plus_service_id', $service->id)
                                 //->where('ostat_plus_type_service_id', $type_service->id)
-                                ->where('code_centre', 'LIKE', $code . '%')
+                                ->where('code_centre', 'LIKE', 3)
                                 ->when(empty($end_date), function ($query) use ($start_date) {
                                     return $query->where('date', 'LIKE', $start_date);
                                 })
@@ -515,6 +608,446 @@ class ReportController extends Controller {
                             $id++;
 
                         }
+
+                    }
+
+                    return response([
+                        'has_error' => false,
+                        'message' => "Ok",
+                        'data' => (object) [
+                            'reports' => $reports,
+                            'insights' => [
+                                /*[
+                                    'icon' => "https://www.oneci.ci/assets/images/oneci_logo.png",
+                                    'title' => "texte 1",
+                                    'content' => "contenu 1"
+                                ],
+                                [
+                                    'icon' => "",
+                                    'title' => "texte 2",
+                                    'content' => "contenu 2"
+                                ]*/
+                            ],
+                            'welcome_message' => [
+                                /*'icon' => "",
+                                'title' => "",
+                                'content' => "" */
+                                'icon' => "", //"https://www.oneci.ci/assets/images/oneci_logo.png",
+                                'title' => "OStat+ v2.0.0",
+                                'content' => "Bienvenue sur OStat Plus 2 !! De nombreuses améliorations d'ergonomie, de sécurité et de performance ont été effectuées par la DSI dans cette version de l'application. Bon service !"
+                            ]
+                        ]
+                    ], Response::HTTP_OK);
+
+                default:
+                    return response([
+                        'has_error' => true,
+                        'message' => "Client Inconnu"
+                    ], Response::HTTP_UNAUTHORIZED);
+            }
+
+
+        }
+
+    }
+
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Obtention des données statistiques selon la date ou la période<br/><br/>
+     * <b>Response</b> getReport(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     */
+    function getReportOld(Request $request) {
+
+        // Requêtes depuis OStat Plus < v1.1.0
+        if($request->input('client') === null) {
+
+
+            $validator = Validator::make($request->all(), [
+                'uid' => ['required', 'string', 'max:100'],
+                'code_unique_centre' => ['nullable', 'string', 'max:20'],
+                'selected_date' => ['required', 'string', 'max:20'],
+                'selected_date_2' => ['nullable', 'string']
+            ]);
+
+            if ($validator->fails()) {
+                return response([
+                    'has_error' => true,
+                    'message' => $validator->errors()->all()
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            $code_unique_centre = $request->input('code_unique_centre');
+
+            // Vérification si le code_unique_centre contient plusieurs codes de centres
+            if(!empty($code_unique_centre) && strpos($code_unique_centre, ';') !== false) {
+                $codes_uniques_centres = explode(';', $code_unique_centre);
+            } else {
+                // S'il n'y a qu'un seul code, le met dans un tableau pour un traitement uniforme
+                if($code_unique_centre == "000000000000") {
+                    $codes_uniques_centres = [""];
+                } else {
+                    $codes_uniques_centres = [$code_unique_centre];
+                }
+            }
+
+            $start_date = $request->input('selected_date');
+            $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
+
+            $services = DB::table('ostat_plus_services')->select('*')->get();
+            $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
+            $reports = [];
+            $id = 1;
+
+            foreach ($services as $service) {
+
+                if($service->id != 15) {
+
+                    foreach ($type_services as $type_service) {
+
+                        foreach ($codes_uniques_centres as $code) {
+                            if ($type_service->id != 14 && $type_service->id != 15 && $type_service->id != 16 && $type_service->id != 17) {
+
+                                $query = DB::table('ostat_plus_reports')
+                                    ->select([
+                                        'ostat_plus_service_id',
+                                        'ostat_plus_type_service_id',
+                                        'code_centre',
+                                        'date',
+                                        DB::raw('SUM(value) as value'),
+                                        'status',
+                                        'doer_uid',
+                                        'doer_name',
+                                        'reason',
+                                        'created_at',
+                                        'updated_at'
+                                    ])
+                                    ->where('ostat_plus_service_id', $service->id)
+                                    ->where('ostat_plus_type_service_id', $type_service->id)
+                                    ->where('code_centre', 'LIKE', $code . '%')
+                                    ->when(empty($end_date), function ($query) use ($start_date) {
+                                        return $query->where('date', 'LIKE', $start_date);
+                                    })
+                                    ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                                        return $query->whereBetween('date', [$start_date, $end_date]);
+                                    });
+                                $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+
+                                $query = $query->get();
+
+                                $report_value = 0;
+                                $qtemp = [];
+                                foreach ($query as $qr) {
+                                    $tmpvalue = $qr->value ?? 0;
+                                    if ($qr->ostat_plus_type_service_id == 9) {
+                                        $report_value = $tmpvalue;
+                                    } else {
+                                        $report_value += $tmpvalue;
+                                    }
+                                    $qtemp = $qr;
+                                }
+                                $query = $qtemp;
+
+                                $reason_tmp = "";
+                                if($code_unique_centre !== "000000000000" && $end_date === "") {
+                                    if (!empty($code_unique_centre) && empty($end_date)) {
+                                        if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
+                                            $reason_tmp = $query->reason." | Info : Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
+                                        } else {
+                                            //$reason_tmp = "Non renseigné";
+                                            $reason_tmp = "Non renseigné | Info : Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
+                                        }
+                                    } else {
+                                        $reason_tmp = "Info : Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
+                                    }
+                                } else {
+                                    $reason_tmp = "Info : Mise à jour version OStat+ v2.0.0 disponible ! Veuillez contacter le service support SVP";
+                                }
+
+                                $reports[] = [
+                                    "id" => $id,
+                                    "service_name" => $service->label,
+                                    "type_service_name" => $type_service->label,
+                                    "code_centre" => $query->code_centre ?? '',
+                                    "date" => (empty($end_date)) ? $start_date : $end_date,
+                                    "value" => $report_value,
+                                    "status" => $query->status ?? '',
+                                    "doer_uid" => $query->doer_uid ?? '',
+                                    "doer_name" => $query->doer_name ?? '',
+                                    //"reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
+                                    "reason" => $reason_tmp,
+                                    "created_at" => $query->created_at ?? '',
+                                    "updated_at" => $query->updated_at ?? ''
+                                ];
+
+                                $id++;
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return response([
+                'has_error' => false,
+                'message' => 'Ok',
+                'data' => $reports
+            ], Response::HTTP_OK);
+
+
+        } else {
+
+            switch ($request->input('client')) {
+                case "OSTAT_PLUS_20000":
+
+                    $validator = Validator::make($request->all(), [
+                        'uid' => ['required', 'string', 'max:100'],
+                        'code_unique_centre' => ['nullable', 'string', 'max:20'],
+                        'selected_date' => ['required', 'string', 'max:20'],
+                        'selected_date_2' => ['nullable', 'string']
+                    ]);
+
+                    if ($validator->fails()) {
+                        return response([
+                            'has_error' => true,
+                            'message' => $validator->errors()->all()
+                        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+
+                    $code_unique_centre = $request->input('code_unique_centre');
+                    $codes_uniques_centres = [];
+                    $type_de_centre = "";
+                    $selection_liste = "";
+                    $flag = false;
+
+                    // Si l'utilisateur demande une liste complète de tous les centres :
+                    if($code_unique_centre == "OOOOOOOOOOOO") {
+                        // On cherchera d'abord à savoir s'il n'est pas un délégué régional d'abord ayant plusieurs code région
+                        $user = User::where('uid', $request->input('uid'))->first(['zone_code']);
+                        if (!empty($user)) {
+                            if (!empty($user->zone_code) && strpos($user->zone_code, ';') !== false) {
+                                // Il s'agit ici alors d'un délégué régional qui demande quelque chose
+                                $codes_uniques_centres = explode(';', $user->zone_code);
+                            } else {
+                                // Il s'agit d'un utilisateur qui demande des informations complètes sur tous les centres
+                                // Le retour de tous les centres doit donc se faire selon le contenu de son zone code
+                                $codes_uniques_centres = [$user->zone_code];
+                            }
+                        }
+                        // Sinon si l'utilisateur demande une liste spécifique de centres :
+                    } else {
+                        // Si le code de centre envoyé est un code de centre filtré
+                        if (strpos($code_unique_centre, "AL-") === 0) { // Centre ou Agence
+                            $type_de_centre = "AL";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
+                        } elseif (strpos($code_unique_centre, "AG-") === 0) { // Agence uniquement
+                            $type_de_centre = "AG";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
+                        } elseif (strpos($code_unique_centre, "CE-") === 0) { // Centre uniquement
+                            $type_de_centre = "CE";
+                            $code_unique_centre = substr($code_unique_centre, 3);
+                            $flag = true;
+                        } else {
+                            $type_de_centre = "AL";
+                        }
+                        if($flag) {
+                            $cuc = $code_unique_centre;
+                            $code_zone = "";
+                            $code_region = "";
+                            $code_departement = "";
+                            if (strpos($cuc, "OO") === 0) { // Si la zone est random
+                                // Récupération du code de zone
+                                //$code_zone = "";
+                                $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                                if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                    // Récupération du code de region
+                                    //$code_region = "";
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                } else { // S'il s'agit d'un code de region existant en base
+                                    // Récupération du code de region
+                                    $code_region = substr($cuc, 0, 2);
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                }
+                            } else { // S'il s'agit d'un code de zone existant en base
+                                // Récupération du code de zone
+                                $code_zone = substr($cuc, 0, 2);
+                                $cuc = substr($cuc, 2); // on retire les caractères de la zone et on vérifie le code region
+                                if (strpos($cuc, "OO") === 0) { // Si la région est random
+                                    // Récupération du code de region
+                                    //$code_region = "";
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                } else { // S'il s'agit d'un code de region existant en base
+                                    // Récupération du code de region
+                                    $code_region = substr($cuc, 0, 2);
+                                    $cuc = substr($cuc, 2); // on retire les caractères de la région et on vérifie le code département
+                                    if (strpos($cuc, "OO") === 0) { // Si le département est random
+                                        $cuc = substr($cuc, 2); // on retire les caractères du département
+                                        //$code_departement = "";
+                                    } else {
+                                        // Récupération du code de département
+                                        $code_departement = substr($cuc, 0, 2);
+                                    }
+                                }
+                            }
+                            // Faire une requête select qui retourne la liste des codes de centres where $code_zone like code_zone and $code_region like code_region and $code_departement like code_departement;
+                            //        Puis retourner le résultat de cette requête dans le tableau $codes_uniques_centres = [$codes_uniques_centres]; utilisé ci-dessous.
+                            $centres = [];
+                            if($type_de_centre == "AL") { // Requete pour tous les types de centres
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->get();
+                            } elseif($type_de_centre == "AG") { // Requete pour les agences uniquement
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->where('type_centre', 'AG')
+                                    ->get();
+                            } elseif($type_de_centre == "CE") { // Requete pour les centres d'enrolement uniquement
+                                $centres = DB::table('centre_unified')
+                                    ->select(["code_unique_centre"])
+                                    ->where('code_zone', 'LIKE', $code_zone."%")
+                                    ->where('code_region', 'LIKE', $code_region."%")
+                                    ->where('code_departement', 'LIKE', $code_departement."%")
+                                    ->where('type_centre', 'CE')
+                                    ->get();
+                            }
+                            // Fusionner les résultats dans le tableau principal
+                            $codes_uniques_centres = $centres->pluck('code_unique_centre')->toArray();
+                        } else {
+                            $codes_uniques_centres = [$code_unique_centre];
+                        }
+                    }
+
+                    $start_date = $request->input('selected_date');
+                    $end_date = ($request->input('selected_date_2') == "null" || $request->input('selected_date_2') == null || empty($request->input('selected_date_2'))) ? "" : $request->input('selected_date_2');
+
+                    // Récupérer les services et les types de services en une seule requête pour éviter les N+1 queries
+                    $services_and_types = DB::table('ostat_plus_types_per_services')
+                        ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
+                        ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
+                        ->select('ostat_plus_services.*', 'ostat_plus_type_services.*')
+                        ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
+                        ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
+                        ->get();
+
+                    $reports = [];
+                    $id = 1;
+
+                    // Regrouper les services et les types de services par code de centre pour optimiser les requêtes
+                    $grouped_services_and_types = [];
+                    foreach ($services_and_types as $service_and_type) {
+                        $grouped_services_and_types[$service_and_type->code_centre][] = $service_and_type;
+                    }
+
+                    foreach ($codes_uniques_centres as $code) {
+                        if (isset($grouped_services_and_types[$code])) {
+                            $services_and_types_for_centre = $grouped_services_and_types[$code];
+                        } else {
+                            continue;
+                        }
+
+                        foreach ($services_and_types_for_centre as $service_and_type) {
+                            $query = DB::table('ostat_plus_reports')
+                                ->select([
+                                    'ostat_plus_service_id',
+                                    'ostat_plus_type_service_id',
+                                    'code_centre',
+                                    'date',
+                                    DB::raw('SUM(value) as value'),
+                                    'status',
+                                    'doer_uid',
+                                    'doer_name',
+                                    'reason',
+                                    'created_at',
+                                    'updated_at'
+                                ])
+                                ->where('ostat_plus_service_id', $service_and_type->id)
+                                ->where('ostat_plus_type_service_id', $service_and_type->id)
+                                ->where('code_centre', 'LIKE', $code . '%')
+                                ->when(empty($end_date), function ($query) use ($start_date) {
+                                    return $query->where('date', 'LIKE', $start_date);
+                                })
+                                ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                                    return $query->whereBetween('date', [$start_date, $end_date]);
+                                });
+                            $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
+
+                            $query = $query->get();
+
+                            $report_value = 0;
+                            $qtemp = [];
+                            foreach ($query as $qr) {
+                                $tmpvalue = $qr->value ?? 0;
+                                if($qr->ostat_plus_type_service_id == 9) {
+                                    $report_value = $tmpvalue;
+                                } else {
+                                    $report_value += $tmpvalue;
+                                }
+                                $qtemp = $qr;
+                            }
+                            $query = $qtemp;
+
+                            $reason_tmp = "";
+                            if($code_unique_centre !== "OOOOOOOOOOOO" && $end_date === "") {
+                                if (!empty($code_unique_centre) && empty($end_date)) {
+                                    if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
+                                        $reason_tmp = $query->reason;
+                                    } else {
+                                        $reason_tmp = "Non renseigné";
+                                    }
+                                }
+                            }
+
+                            $reports[] = [
+                                "id" => $id,
+                                'service_id' => $service_and_type->id,
+                                'service_name' => $service_and_type->label,
+                                'type_service_id' => $service_and_type->id,
+                                'type_service_name' => $service_and_type->label,
+                                "code_centre" => $query->code_centre ?? '',
+                                "date" => (empty($end_date)) ? $start_date : $end_date,
+                                "value" => $report_value,
+                                "status" => $query->status ?? '',
+                                "doer_uid" => $query->doer_uid ?? '',
+                                "doer_name" => $query->doer_name ?? '',
+                                "reason" => $reason_tmp,
+                                'icon' => $service_and_type->icon,
+                                "created_at" => $query->created_at ?? '',
+                                "updated_at" => $query->updated_at ?? ''
+                            ];
+
+                            $id++;
+                        }
                     }
 
                     return response([
@@ -550,8 +1083,6 @@ class ReportController extends Controller {
                         'message' => "Client Inconnu"
                     ], Response::HTTP_UNAUTHORIZED);
             }
-
-
         }
 
     }
