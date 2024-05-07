@@ -513,102 +513,52 @@ class ReportController extends Controller {
                         return (array) $item;
                     })->toArray();
 
-                    // Si reports est vide
-                    if(sizeof($reports) == 0) {
+                    $types_per_services = DB::table('ostat_plus_types_per_services')
+                        ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
+                        ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
+                        ->select('ostat_plus_services.id as service_id', 'ostat_plus_services.label as service_label', 'ostat_plus_type_services.id as type_service_id', 'ostat_plus_type_services.label as type_service_label')
+                        ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
+                        ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
+                        ->get();
 
-                        $types_per_services = DB::table('ostat_plus_types_per_services')
-                            ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
-                            ->join('ostat_plus_type_services', 'ostat_plus_types_per_services.ostat_plus_type_service_id', '=', 'ostat_plus_type_services.id')
-                            ->select('ostat_plus_services.id as service_id', 'ostat_plus_type_services.id as type_service_id')
-                            ->orderBy('ostat_plus_types_per_services.ostat_plus_service_id')
-                            ->orderBy('ostat_plus_types_per_services.ostat_plus_type_service_id')
-                            ->get();
+                    $services = DB::table('ostat_plus_services')->select('*')->get();
+                    $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
+                    //$reports = [];
 
-                        $services = DB::table('ostat_plus_services')->select('*')->get();
-                        $type_services = DB::table('ostat_plus_type_services')->select('*')->get();
-                        $reports = [];
-                        $id = 1;
+                    $id = sizeof($reports);
 
-                        foreach ($types_per_services as $type_per_service) {
-
-                            $query = DB::table('ostat_plus_reports')
-                                ->select([
-                                    'ostat_plus_service_id',
-                                    'ostat_plus_type_service_id',
-                                    'code_centre',
-                                    'date',
-                                    DB::raw('SUM(value) as value'),
-                                    'status',
-                                    'doer_uid',
-                                    'doer_name',
-                                    'reason',
-                                    'created_at',
-                                    'updated_at'
-                                ])
-                                ->where('ostat_plus_service_id', $type_per_service->service_id)
-                                ->where('ostat_plus_type_service_id', $type_per_service->type_service_id)
-                                //->where('ostat_plus_service_id', $service->id)
-                                //->where('ostat_plus_type_service_id', $type_service->id)
-                                ->where('code_centre', 'LIKE', 3)
-                                ->when(empty($end_date), function ($query) use ($start_date) {
-                                    return $query->where('date', 'LIKE', $start_date);
-                                })
-                                ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
-                                    return $query->whereBetween('date', [$start_date, $end_date]);
-                                });
-                            $query->groupBy('ostat_plus_service_id', 'ostat_plus_type_service_id', 'code_centre', 'date', 'status', 'doer_uid', 'doer_name', 'reason', 'created_at', 'updated_at');
-
-                            $query = $query->get();
-
-                            $report_value = 0;
-                            $qtemp = [];
-                            foreach ($query as $qr) {
-                                $tmpvalue = $qr->value ?? 0;
-                                if($qr->ostat_plus_type_service_id == 9) {
-                                    $report_value = $tmpvalue;
-                                } else {
-                                    $report_value += $tmpvalue;
-                                }
-                                $qtemp = $qr;
-                            }
-                            $query = $qtemp;
-
-                            $reason_tmp = "";
-                            if($code_unique_centre !== "OOOOOOOOOOOO" && $end_date === "") {
-                                if (!empty($code_unique_centre) && empty($end_date)) {
-                                    if(!empty($query) && property_exists($query, 'reason') && !empty($query->reason) ?? 'Non renseigné') {
-                                        $reason_tmp = $query->reason;
-                                    } else {
-                                        $reason_tmp = "Non renseigné";
-                                    }
+                    foreach ($types_per_services as $type_per_service) {
+                        $type_per_service_found = false;
+                        if (sizeof($reports) !== 0) {
+                            foreach ($reports as $report) {
+                                if ($report["service_id"] === $type_per_service->service_id && $report["type_service_id"] === $type_per_service->type_service_id) {
+                                    $type_per_service_found = true;
                                 }
                             }
-
-                            $reports[] = [
+                        }
+                        if (sizeof($reports) == 0 || !$type_per_service_found) {
+                            $reports[$id] = [
                                 "id" => $id,
-                                'service_id' => OstatPlusService::where('id', $type_per_service->service_id)->value('id'),
-                                'service_name' => OstatPlusService::where('id', $type_per_service->service_id)->value('label'),
-                                'type_service_id' => OstatPlusTypeService::where('id', $type_per_service->type_service_id)->value('id'),
-                                'type_service_name' => OstatPlusTypeService::where('id', $type_per_service->type_service_id)->value('label'),
+                                'service_id' => $type_per_service->service_id,
+                                'service_name' => $type_per_service->service_label,
+                                'type_service_id' => $type_per_service->type_service_id,
+                                'type_service_name' => $type_per_service->type_service_label,
                                 //"service_name" => $service->label,
                                 //"type_service_name" => $type_service->label,
-                                "code_centre" => $query->code_centre ?? '',
+                                "code_centre" => $code_unique_centre ?? '',
                                 "date" => (empty($end_date)) ? $start_date : $end_date,
-                                "value" => $report_value,
-                                "status" => $query->status ?? '',
-                                "doer_uid" => $query->doer_uid ?? '',
-                                "doer_name" => $query->doer_name ?? '',
+                                "value" => 0,
+                                "status" => '',
+                                "doer_uid" => '',
+                                "doer_name" => '',
                                 //"reason" => (!empty($code_unique_centre) && empty($end_date)) ? ($query->reason ?? 'Non renseigné') : "",
-                                "reason" => $reason_tmp,
+                                "reason" => "Non-renseigné",
                                 'icon' => OstatPlusService::where('id', $type_per_service->service_id)->value('icon'),
-                                "created_at" => $query->created_at ?? '',
-                                "updated_at" => $query->updated_at ?? ''
+                                "created_at" => '',
+                                "updated_at" => ''
                             ];
-
                             $id++;
-
                         }
-
                     }
 
                     return response([
