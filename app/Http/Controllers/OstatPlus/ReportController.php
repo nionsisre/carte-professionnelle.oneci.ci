@@ -535,10 +535,8 @@ class ReportController extends Controller {
                                     $type_per_service_found = true;
                                 }
                             }
-                        } else {
-                            $type_per_service_found = true;
                         }
-                        if (!$type_per_service_found) {
+                        if ($id == 0 || !$type_per_service_found) {
                             $reports[$id] = [
                                 "id" => $id,
                                 'service_id' => $type_per_service->service_id,
