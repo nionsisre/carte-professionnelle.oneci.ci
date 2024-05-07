@@ -530,12 +530,30 @@ class ReportController extends Controller {
                     foreach ($types_per_services as $type_per_service) {
                         $type_per_service_found = false;
                         if (sizeof($reports) !== 0) {
-                            foreach ($reports as $report) {
+                            foreach ($reports as $index => $report) {
                                 if ($report["service_id"] === $type_per_service->service_id && $report["type_service_id"] === $type_per_service->type_service_id) {
                                     $type_per_service_found = true;
+                                    if($report["type_service_id"] == 9 || $report["type_service_id"] == 11 || $report["service_id"] == 15) {
+                                        $report_values = DB::table('ostat_plus_reports', 'opr')
+                                            ->select(['value'])
+                                            ->where('ostat_plus_service_id', $report["service_id"])
+                                            ->where('ostat_plus_type_service_id', $report["type_service_id"])
+                                            ->where('date', $end_date ?? $start_date)
+                                            ->where(function ($query) use ($codes_uniques_centres) {
+                                                foreach ($codes_uniques_centres as $code) {
+                                                    $query->orWhere('opr.code_centre', 'LIKE', $code . '%');
+                                                }
+                                            })
+                                            ->get()
+                                            ->pluck('value'); // Pluck pour obtenir une collection contenant uniquement les valeurs 'value'
+                                            //->value('value');
+                                        $total_value = $report_values->sum(); // Calculer la somme des valeurs
+                                        $reports[$index]["value"] = $total_value ?? 0;
+                                    }
                                 }
                             }
                         }
+                        // Ajout des services non-renseignés
                         if ($id == 0 || !$type_per_service_found) {
                             $reports[$id] = [
                                 "id" => $id,
