@@ -506,12 +506,58 @@ class ReportController extends Controller {
                             ->groupBy('opr.ostat_plus_service_id', 'opr.ostat_plus_type_service_id', 'ostat_plus_services.label', 'ostat_plus_type_services.label', 'ostat_plus_services.icon')
                             ->get();
 
+                        // Correction stock
+                        $query_stock = DB::table('ostat_plus_reports', 'opr')
+                            ->select([
+                                DB::raw('CAST(ROW_NUMBER() OVER (ORDER BY opr.id) AS UNSIGNED INTEGER) AS id'),
+                                DB::raw('CAST(ROW_NUMBER() OVER (PARTITION BY opr.ostat_plus_service_id, opr.ostat_plus_type_service_id ORDER BY opr.date DESC) AS UNSIGNED INTEGER) AS row_number'),
+                                DB::raw("opr.ostat_plus_service_id as service_id"),
+                                DB::raw("ostat_plus_services.label as service_name"),
+                                DB::raw("opr.ostat_plus_type_service_id as type_service_id"),
+                                DB::raw("ostat_plus_type_services.label as type_service_name"),
+                                DB::raw("'OOOOOOOOOOOO' as code_centre"),
+                                DB::raw("'".$start_date."' as date"),
+                                DB::raw('CAST(opr.value AS UNSIGNED INTEGER) as value'),
+                                DB::raw("'1' as status"),
+                                DB::raw("'' as doer_uid"),
+                                DB::raw("'' as doer_name"),
+                                DB::raw("'' as reason"),
+                                DB::raw("ostat_plus_services.icon as icon"),
+                                DB::raw("'' as created_at"),
+                                DB::raw("'' as updated_at")
+                            ])
+                            ->join('ostat_plus_services', 'ostat_plus_services.id', '=', 'opr.ostat_plus_service_id')
+                            ->join('ostat_plus_type_services', 'ostat_plus_type_services.id', '=', 'opr.ostat_plus_type_service_id')
+                            ->where(function ($query) use ($codes_uniques_centres) {
+                                foreach ($codes_uniques_centres as $code) {
+                                    $query->orWhere('opr.code_centre', 'LIKE', $code . '%');
+                                }
+                            })
+                            ->when(empty($end_date), function ($query) use ($start_date) {
+                                return $query->where('opr.date', 'LIKE', $start_date);
+                            })
+                            ->when(!empty($end_date), function ($query) use ($start_date, $end_date) {
+                                return $query->whereBetween('opr.date', [$start_date, $end_date]);
+                            })
+                            ->orderBy('opr.date', 'DESC') // Assurez-vous que les données sont triées par date décroissante
+                            ->get();
+                        // Filtrer uniquement les lignes ayant un numéro de ligne égal à 1 (c'est-à-dire les dernières valeurs par groupes de service_id et type_service_id)
+                        $query_stock = $query_stock->filter(function ($item) {
+                            return $item->row_number == 1;
+                        });
+
                     }
 
                     // Convertir le résultat obtenu de tableau d'objets à tableau de tableaux
                     $reports = $query->map(function ($item) {
                         return (array) $item;
                     })->toArray();
+
+                    $reports_stock = (isset($query_stock)) ? $query_stock->map(function ($item) {
+                        return (array) $item;
+                    })->toArray() : "";
+
+                    $reports_stock = (!empty($query_stock)) ? array_values($reports_stock) : "";
 
                     $types_per_services = DB::table('ostat_plus_types_per_services')
                         ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
@@ -533,22 +579,8 @@ class ReportController extends Controller {
                             foreach ($reports as $index => $report) {
                                 if ($report["service_id"] === $type_per_service->service_id && $report["type_service_id"] === $type_per_service->type_service_id) {
                                     $type_per_service_found = true;
-                                    if($report["type_service_id"] == 9 || $report["type_service_id"] == 11 || $report["service_id"] == 15) {
-                                        $report_values = DB::table('ostat_plus_reports', 'opr')
-                                            ->select(['value'])
-                                            ->where('ostat_plus_service_id', $report["service_id"])
-                                            ->where('ostat_plus_type_service_id', $report["type_service_id"])
-                                            ->where('date', $end_date ?? $start_date)
-                                            ->where(function ($query) use ($codes_uniques_centres) {
-                                                foreach ($codes_uniques_centres as $code) {
-                                                    $query->orWhere('opr.code_centre', 'LIKE', $code . '%');
-                                                }
-                                            })
-                                            ->get()
-                                            ->pluck('value'); // Pluck pour obtenir une collection contenant uniquement les valeurs 'value'
-                                            //->value('value');
-                                        $total_value = $report_values->sum(); // Calculer la somme des valeurs
-                                        $reports[$index]["value"] = $total_value ?? 0;
+                                    if($report["type_service_id"] == 9 || $report["type_service_id"] == 11 || $report["type_service_id"] == 14 || $report["type_service_id"] == 15 || $report["type_service_id"] == 16 || $report["type_service_id"] == 17) {
+                                        $reports[$index]["value"] = $reports_stock[$index]["value"];
                                     }
                                 }
                             }
