@@ -546,18 +546,18 @@ class ReportController extends Controller {
                             return $item->row_number == 1;
                         });
 
+                        $reports_stock = (isset($query_stock)) ? $query_stock->map(function ($item) {
+                            return (array) $item;
+                        })->toArray() : "";
+
+                        $reports_stock = (!empty($query_stock)) ? array_values($reports_stock) : "";
+
                     }
 
                     // Convertir le résultat obtenu de tableau d'objets à tableau de tableaux
                     $reports = $query->map(function ($item) {
                         return (array) $item;
                     })->toArray();
-
-                    $reports_stock = (isset($query_stock)) ? $query_stock->map(function ($item) {
-                        return (array) $item;
-                    })->toArray() : "";
-
-                    $reports_stock = (!empty($query_stock)) ? array_values($reports_stock) : "";
 
                     $types_per_services = DB::table('ostat_plus_types_per_services')
                         ->join('ostat_plus_services', 'ostat_plus_types_per_services.ostat_plus_service_id', '=', 'ostat_plus_services.id')
@@ -572,6 +572,7 @@ class ReportController extends Controller {
                     //$reports = [];
 
                     $id = sizeof($reports);
+                    $set_value = isset($reports_stock);
 
                     foreach ($types_per_services as $type_per_service) {
                         $type_per_service_found = false;
@@ -579,8 +580,10 @@ class ReportController extends Controller {
                             foreach ($reports as $index => $report) {
                                 if ($report["service_id"] === $type_per_service->service_id && $report["type_service_id"] === $type_per_service->type_service_id) {
                                     $type_per_service_found = true;
-                                    if($report["type_service_id"] == 9 || $report["type_service_id"] == 11 || $report["type_service_id"] == 14 || $report["type_service_id"] == 15 || $report["type_service_id"] == 16 || $report["type_service_id"] == 17) {
-                                        $reports[$index]["value"] = $reports_stock[$index]["value"];
+                                    if($set_value) {
+                                        if($report["type_service_id"] == 9 || $report["type_service_id"] == 11 || $report["type_service_id"] == 14 || $report["type_service_id"] == 15 || $report["type_service_id"] == 16 || $report["type_service_id"] == 17) {
+                                            $reports[$index]["value"] = $reports_stock[$index]["value"];
+                                        }
                                     }
                                 }
                             }
