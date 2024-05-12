@@ -39,10 +39,6 @@ return [
         'enabled' => env('SMS_SERVICE_ENABLED', false),
     ],
 
-    'cinetpay' => [
-        'enabled' => env('CINETPAY_API_ENABLED', false),
-    ],
-
     'ngser' => [
         'enabled' => env('NGSER_API_ENABLED', false)
     ],
