@@ -202,7 +202,7 @@
                                                     &nbsp; Etape 1 : Possession NNI</a></li>
                                             <li><a class="nav-link" href="#etape-2"><i
                                                         class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
-                                                    Informations de l'usager</a></li>
+                                                    Informations</a></li>
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 3 : Documents justificatifs</a></li>
                                             <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
@@ -228,7 +228,7 @@
                                                     </div><br/>
                                                 </div>
                                                 <div class="form-group column-last" id="nni-field">
-                                                    <label class="col-sm-2 control-label" id="nni-label">
+                                                    <label class="col-sm-2 co@ntrol-label" id="nni-label">
                                                         Numéro NNI<span style="color: #d9534f">*</span> :
                                                     </label>
                                                     <div class="col-sm-10">
@@ -253,7 +253,7 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
-                                                                   placeholder="Prénom(s)..." maxlength="70"
+                                                                   placeholder="NOM..." maxlength="70"
                                                                    autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 16em; text-align: center"/>
@@ -314,6 +314,104 @@
                                                         <br/>
                                                     </div>
                                                 </div>
+                                                <br/><br/>
+                                                <h2>Informations modifiées sur décision de justice :</h2>
+                                                <br/>
+                                                <div class="container clearfix">
+                                                    <div class="form-group one-third column-last" id="decision-last-name-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            NOM sur la décision <br/>de justice<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="decision-last-name-input" name="decision-last-name" value="{{ old('decision-last-name') }}"
+                                                                   placeholder="NOM sur décision..." maxlength="70"
+                                                                   autocomplete="off"
+                                                                   required="required"
+                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="decision-first-name-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Prénom(s) sur la décision de justice<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="decision-first-name-input" name="decision-first-name" value="{{ old('decision-first-name') }}"
+                                                                   placeholder="Prénom(s) sur décision..." maxlength="25"
+                                                                   required="required"
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="decision-birth-date-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Date de Naissance sur la décision<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="date" id="decision-birth-date-input" name="decision-birth-date" value="{{ old('decision-birth-date') }}"
+                                                                   placeholder="Date de Naissance sur la décision..." required="required"
+                                                                   max="{{ date('Y-m-d', strtotime('-10 years')) }}"
+                                                                   style="width: 10.5em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                                <div class="container clearfix">
+                                                    <div class="form-group one-third column-last" id="decision-lieu-naissance-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Lieu de naissance<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="decision-lieu-naissance-input" name="decision-lieu-naissance" value="{{ old('decision-lieu-naissance') }}"
+                                                                   placeholder="Lieu de naissance..." maxlength="70"
+                                                                   autocomplete="off"
+                                                                   required="required"
+                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="numero-decision-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Numéro de la décision<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="numero-decision-input" name="numero-decision" value="{{ old('numero-decision') }}"
+                                                                   placeholder="Numéro de la décision..." maxlength="25"
+                                                                   required="required"
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="decision-date-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Date de la décision<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="date" id="decision-date-input" name="decision-date" value="{{ old('decision-date-date') }}"
+                                                                   placeholder="Date la décision..." required="required"
+                                                                   max="{{ date('Y-m-d') }}"
+                                                                   style="width: 10.5em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                                <div class="container clearfix">
+                                                    <div class="form-group col-sm-12 column-last" id="lieu-delivrance-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Lieu de délivrance<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <span style="display: none" id="err-toast"></span>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control good-select"
+                                                                    id="lieu-delivrance" name="lieu-delivrance" required="required"
+                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Lieu de délivrance</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div><br/><br/><br/>
                                             </div>
                                             <div id="etape-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>

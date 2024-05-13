@@ -10,20 +10,7 @@
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return regex.test(email);
     }
-    {{-- Variables --}}
-    var isBusy = false, nni_data="", msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
-    {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
-    jQuery('input[name="possession_nni"]').click(function() {
-        if(jQuery('#possession-nni-oui').is(':checked')) {
-            jQuery("#nni-field").show();
-            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
-            {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
-        } else if(jQuery('#possession-nni-non').is(':checked')) {
-            jQuery("#nni-input").val("");
-            jQuery("#nni-field").hide();
-            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
-        }
-    });
+    {{-- Fonction Ajax pour checker le NNI --}}
     function checkNNI(){
         @if(config('services.verifapi.enabled'))
         let nni = jQuery("#nni-input").val();
@@ -52,6 +39,7 @@
                 return true;
             }, error: function(xhr) {
                 isBusy = false;
+                nni_data = "";
                 jQuery('#nni-check-spinner').hide();
                 jQuery('#nni-check-result').html('<i class="fa fa-times" style="color: #f44336"></i>');
                 jQuery('#nni-check-result').show();
@@ -59,6 +47,25 @@
         });
         @endif
     }
+    {{-- Variables --}}
+    var isBusy = false, nni_data="", msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
+    jQuery('input[name="possession_nni"]').click(function() {
+        if(jQuery('#possession-nni-oui').is(':checked')) {
+            nni_data = "";
+            jQuery("#nni-field").show();
+            jQuery('#nni-check-result').hide();
+            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
+        } else if(jQuery('#possession-nni-non').is(':checked')) {
+            nni_data = "";
+            jQuery("#nni-input").val("");
+            jQuery("#nni-field").hide();
+            jQuery('#nni-check-result').hide();
+            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+        }
+    });
+    {{-- Checker le NNI au remplissage de l'input ou au copier coller du NNI --}}
     jQuery("#nni-field").bind("paste", function(e){
         // access the clipboard using the api
         let pastedData = e.originalEvent.clipboardData.getData('text');
@@ -73,31 +80,6 @@
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
         }
     })
-    {{-- Changement dynamique du libelle pour le NNI --}}
-    jQuery('input[type="radio"]').click(function() {
-        if(jQuery('#new-format-card').is(':checked')) {
-            jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-            jQuery("#document-number-input").attr('placeholder','___________');
-            jQuery("#document-number-input").mask('99999999999');
-        } else {
-            jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-            jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
-            jQuery("#document-number-input").attr('placeholder','__________');
-            jQuery("#document-number-input").unmask().attr('maxlength', 20);
-            jQuery('#modalInfo').html(
-                '<center> <div class="notification-box notification-box-info">\n\
-                <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-            );
-            jQuery('#modalInfo').modal({
-                escapeClose: false,
-                clickClose: false,
-                showClose: false
-            });
-            jQuery('.blocker').css('z-index','2');
-        }
-    });
     {{-- L'evenement "leaveStep" est utilise pour valider le formulaire --}}
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         {{-- Validation uniquement que quand le sens de l'etape est suivant --}}
@@ -129,6 +111,7 @@
                         jQuery('#birth-date-input').val(nni_data.BIRTH_DATE).prop('disabled', true);
                         jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME).prop('disabled', true);
                         jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME).prop('disabled', true);
+                        {{-- Enable next button --}}
                     } else if(jQuery('#possession-nni-non').is(':checked')) {
                         {{-- Empty and Enable All fields --}}
                         jQuery('#last-name-input').val("").prop('disabled', false);
@@ -136,42 +119,21 @@
                         jQuery('#birth-date-input').val("").prop('disabled', false);
                         jQuery('#mother-last-name-input').val("").prop('disabled', false);
                         jQuery('#mother-first-name-input').val("").prop('disabled', false);
+                        {{-- Disable next button --}}
                     }
-                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 {{-- Step 2 --}}
                 case 1:
-                    first_name = document.querySelectorAll('[name="first-name"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
-                    spouse_name = jQuery(document.querySelectorAll('[name="spouse-name"]'));
+                    first_name = document.querySelectorAll('[name="first-name"]');
                     birth_date = document.querySelectorAll('[name="birth-date"]');
                     country = jQuery(document.querySelectorAll('[name="country"]')).val();
                     birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') : document.querySelectorAll('[name="birth-place"]');
                     residence = document.querySelectorAll('[name="residence"]');
                     profession = document.querySelectorAll('[name="profession"]');
-                    gender = document.querySelectorAll('[name="gender"]:checked');
                     email = jQuery(document.querySelectorAll('[name="email"]')).val();
-                    {{-- gender --}}
-                    if (!jQuery('#gender-input-male').is(':checked') && !jQuery('#gender-input-female').is(':checked')) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-venus-mars"></i><br/><br/><h3>Veuillez correctement renseigner votre genre SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    if (jQuery(gender).val().toUpperCase() === 'M') {
-                        jQuery(spouse_name).val('');
-                    }
                     {{-- first_name --}}
                     if (!jQuery(first_name).val()) {
                         jQuery('#modalError').html(
@@ -216,132 +178,6 @@
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner votre date de naissance</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- birth_place --}}
-                    if (!jQuery(birth_place).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de naissance SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- residence --}}
-                    if (!jQuery(residence).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-home"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de résidence SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- profession --}}
-                    if (!jQuery(profession).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-briefcase"></i><br/><br/><h3>Veuillez correctement renseigner votre profession SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    if (country === "Côte d’Ivoire") {
-                        if (jQuery("#doc-type").val() === "2") {
-                            jQuery("#cni-type-field").show();
-                            if (jQuery('#new-format-card').is(':checked')) {
-                                jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-                                jQuery("#document-number-input").attr('placeholder', 'Numéro NNI...');
-                                jQuery("#document-number-input").attr('placeholder', '___________');
-                                jQuery("#document-number-input").mask('99999999999');
-                                jQuery('#modalInfo').html(
-                                    '<center> <div class="notification-box notification-box-info">\n\
-                                    <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte nationale d\'identité.</h3></div>\n\
-                                    </div><div class="modal-footer">\n\
-                                    <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                                );
-                                jQuery('#modalInfo').modal({
-                                    escapeClose: false,
-                                    clickClose: false,
-                                    showClose: false
-                                });
-                                jQuery('.blocker').css('z-index', '2');
-                            } else {
-                                jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                                jQuery("#document-number-input").attr('placeholder', 'Numéro pièce identité...');
-                                jQuery("#document-number-input").attr('placeholder', '__________');
-                                jQuery("#document-number-input").unmask().attr('maxlength', 20);
-                            }
-                        } else if (jQuery("#doc-type").val() === "3") {
-                            jQuery("#cni-type-field").hide();
-                            jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-                            jQuery("#document-number-input").attr('placeholder', 'Numéro NNI...');
-                            jQuery("#document-number-input").attr('placeholder', '___________');
-                            jQuery("#document-number-input").mask('99999999999');
-                            jQuery('#modalInfo').html(
-                                '<center> <div class="notification-box notification-box-info">\n\
-                                <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte de résident.</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalInfo').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index', '2');
-                        } else {
-                            jQuery("#cni-type-field").hide();
-                            jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                            jQuery("#document-number-input").attr('placeholder', 'Numéro pièce identité...');
-                            jQuery("#document-number-input").attr('placeholder', '__________');
-                            jQuery("#document-number-input").unmask().attr('maxlength', 20);
-                        }
-                    } else {
-                        jQuery("#cni-type-field").hide();
-                        jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                        jQuery("#document-number-input").attr('placeholder', 'Numéro pièce identité...');
-                        jQuery("#document-number-input").attr('placeholder', '__________');
-                        jQuery("#document-number-input").unmask().attr('maxlength', 20);
-                    }
-                    {{-- email --}}
-                    if (email !== "" && !isEmail(email)) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-envelope"></i><br/><br/><h3>Veuillez correctement renseigner votre adresse mail SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -470,7 +306,7 @@
                         fSize /= 1024;
                         i++;
                     }
-                    console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]);
+                    //console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]);
                     if (pdf_doc_size >= 1048576) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
