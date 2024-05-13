@@ -49,7 +49,6 @@
                 jQuery('#nni-check-result').html('<i class="fa fa-check" style="color: #4caf50"></i>');
                 jQuery('#nni-check-result').show();
                 nni_data = res.data;
-                console.log(res.data);
                 return true;
             }, error: function(xhr) {
                 isBusy = false;
@@ -106,23 +105,39 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
-                    {{-- check_nni --}}
-                    {{--if(!jQuery(first_name).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }--}}
+                    if(jQuery('#possession-nni-oui').is(':checked')) {
+                        {{-- check_nni --}}
+                        if(!jQuery('#nni-input').val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-barcode"></i><br/><br/><h3>Veuillez correctement renseigner votre numéro NNI SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- Assign values and Disable All fields if NNI OK --}}
+                        jQuery('#last-name-input').val(nni_data.LAST_NAME).prop('disabled', true);
+                        jQuery('#first-name-input').val(nni_data.FIRST_NAME).prop('disabled', true);
+                        jQuery('#birth-date-input').val(nni_data.BIRTH_DATE).prop('disabled', true);
+                        jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME).prop('disabled', true);
+                        jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME).prop('disabled', true);
+                    } else if(jQuery('#possession-nni-non').is(':checked')) {
+                        {{-- Empty and Enable All fields --}}
+                        jQuery('#last-name-input').val("").prop('disabled', false);
+                        jQuery('#first-name-input').val("").prop('disabled', false);
+                        jQuery('#birth-date-input').val("").prop('disabled', false);
+                        jQuery('#mother-last-name-input').val("").prop('disabled', false);
+                        jQuery('#mother-first-name-input').val("").prop('disabled', false);
+                    }
+                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
                     break;
                 {{-- Step 2 --}}

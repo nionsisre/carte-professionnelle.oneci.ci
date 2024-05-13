@@ -247,22 +247,9 @@
                                                 <h2>Informations sur l'usager :</h2>
                                                 <br/>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-third column-last" id="first-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Nom<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                   placeholder="Nom" maxlength="25"
-                                                                   required="required"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
                                                     <div class="form-group one-third column-last" id="last-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Prénom(s)<span style="color: #d9534f">*</span> :
+                                                            NOM<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
@@ -270,6 +257,19 @@
                                                                    autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                        </div>
+                                                        <br/>
+                                                    </div>
+                                                    <div class="form-group one-third column-last" id="first-name-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Prénom(s)<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
+                                                                   placeholder="Prénom(s)" maxlength="25"
+                                                                   required="required"
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
@@ -287,30 +287,29 @@
                                                     </div>
                                                 </div>
                                                 <div class="container clearfix">
-
-                                                    <div class="form-group one-half column-last" id="first-name-field">
+                                                    <div class="form-group one-half column-last" id="mother-last-name-field">
                                                         <label class="col-sm-2 control-label">
                                                             Nom de la mère<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                   placeholder="Nom" maxlength="25"
-                                                                   required="required"
+                                                            <input type="text" id="mother-last-name-input" name="mother-last-name" value="{{ old('mother-last-name') }}"
+                                                                   placeholder="NOM de la mère..." maxlength="70"
                                                                    autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                                   required="required"
+                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-half column-last" id="last-name-field">
+                                                    <div class="form-group one-half column-last" id="mother-first-name-field">
                                                         <label class="col-sm-2 control-label">
                                                             Prénom(s) de la mère<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
-                                                                   placeholder="Prénom(s)..." maxlength="70"
-                                                                   autocomplete="off"
+                                                            <input type="text" id="mother-first-name-input" name="mother-first-name" value="{{ old('mother-first-name') }}"
+                                                                   placeholder="Prénom(s) de la mère..." maxlength="25"
                                                                    required="required"
-                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
