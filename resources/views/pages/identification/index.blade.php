@@ -238,6 +238,7 @@
                                                     </div>
                                                     <br/>
                                                 </div>
+                                                <div id="nni-check-spinner"></div>
                                                 <br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">

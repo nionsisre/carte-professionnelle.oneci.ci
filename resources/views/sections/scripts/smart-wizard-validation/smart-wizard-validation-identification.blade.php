@@ -26,7 +26,29 @@
     });
     jQuery("#nni-field").keyup(function() {
         if(jQuery("#nni-input").val().length >= 11) {
-
+            @if(config('services.verifapi.enabled'))
+                let nni = jQuery("#nni-input").val();
+                let url = '{{ route('verifapi.nni') }}';
+                let cli = "{{ url()->current() }}";
+                $.ajax({
+                    url: url,
+                    async:false,
+                    data: {
+                        '_token': "{{ csrf_token() }}",
+                        cli: cli,
+                        nni: nni,
+                    }, beforeSend: function(res) {
+                        jQuery('#nni-check-spinner').html('<i class="fa fa-spinner fa-spin"></i>');
+                    }, success: function(res) {
+                        jQuery('#nni-check-spinner').html('<i class="fa fa-check text-success"></i>');
+                        {{-- @TODO: Autoremplir les champs du step suivant --}}
+                        return true;
+                    }, error: function(xhr) {
+                        jQuery('#nni-check-spinner').html('<i class="fa fa-times text-danger"></i>');
+                        console.log(xhr.statusText + xhr.responseText);
+                    }
+                });
+            @endif
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         } else {
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);

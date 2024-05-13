@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\BackOffice\AdminController;
 use App\Http\Controllers\BackOffice\LoginController;
-use App\Http\Controllers\FrontOffice\IdentificationController;
+use App\Http\Controllers\FrontOffice\CertificatConformiteController;
 use App\Http\Controllers\FrontOffice\ReclamationController;
 use App\Http\Controllers\FrontOffice\MainController;
 use App\Http\Controllers\FrontOffice\OTPVerificationController;
@@ -34,12 +34,13 @@ use Illuminate\Support\Facades\Route;
 /* Front Office Main Pages Routes */
     /* --- Home --- */
 Route::get('/', [MainController::class, 'index'])->name('home');
-    /* --- Identification --- */
-Route::get('/menu-certificat', [IdentificationController::class, 'showMenuIdentification'])->name('certificat.menu');
-Route::get('/formulaire', [IdentificationController::class, 'showIdentification'])->name('certificat.index');
-Route::get('/consultation', [IdentificationController::class, 'showConsultation'])->name('certificat.consultation');
-Route::get('/reclamation-paiement', [IdentificationController::class, 'showReclamationPaiement'])->name('certificat.reclamation_paiement');
-
+    /* --- Certificat Conformite --- */
+Route::get('/menu-certificat', [CertificatConformiteController::class, 'showMenu'])->name('certificat.menu');
+Route::get('/formulaire', [CertificatConformiteController::class, 'showFormulaire'])->name('certificat.index');
+Route::get('/consultation', [CertificatConformiteController::class, 'showConsultation'])->name('certificat.consultation');
+//Route::get('/reclamation-paiement', [CertificatConformiteController::class, 'showReclamationPaiement'])->name('certificat.reclamation_paiement');
+    /* NNI Verif API Gateway */
+Route::get('/'.md5('verifapi'.date('Y-m-d').env('APP_KEY')), [CertificatConformiteController::class, 'verifapi'])->name('verifapi.nni');
 
 
 /* --- Pré-identification --- */
@@ -53,17 +54,17 @@ Route::get('/identification-special-can', [SpecialCANController::class, 'showIde
 
 
 /* Front Office Form Submit Routes URL */
-Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');
-Route::post('/consulter-statut-identification', [IdentificationController::class, 'search'])->name('front_office.form.consulter_statut_identification');
+Route::post('/soumettre-identification', [CertificatConformiteController::class, 'submit'])->name('front_office.form.soumettre_identification');
+Route::post('/consulter-statut-identification', [CertificatConformiteController::class, 'search'])->name('front_office.form.consulter_statut_identification');
 Route::post('/soumettre-pre-identification', [PreIdentificationController::class, 'submit'])->name('front_office.form.soumettre_pre_identification');
 Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('front_office.form.soumettre_reclamation_paiement');
 Route::post('/consulter-nni-special-can', [SpecialCANController::class, 'consulterInfoNNI'])->name('front_office.form.consulter_nni_special_can');
 Route::post('/'.md5('soumettre-identification-special-can'.date('d')), [SpecialCANController::class, 'submit'])->name('front_office.form.soumettre_identification_special_can');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
-Route::post('/'.md5('cimiai'.date('m')), [IdentificationController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
-Route::post('/'.md5('gcpl'.date('m')), [IdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
-Route::post('/'.md5('avipid'.date('m')), [IdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
+Route::post('/'.md5('cimiai'.date('m')), [CertificatConformiteController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
+Route::post('/'.md5('gcpl'.date('m')), [CertificatConformiteController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
+Route::post('/'.md5('avipid'.date('m')), [CertificatConformiteController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
 Route::post('/'.md5('soc'.date('m')), [OTPVerificationController::class, 'sendOTP'])->name('front_office.scripts.otp_code.send');
 Route::post('/'.md5('voc'.date('m')), [OTPVerificationController::class, 'verifyOTP'])->name('front_office.scripts.otp_code.verify');
 Route::post('/'.md5('gpcpl'.date('m')), [PreIdentificationController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_pre_identification.payment_link.get');
@@ -71,14 +72,14 @@ Route::post('/'.md5('avippid'.date('m')), [PreIdentificationController::class, '
 Route::get('/'.md5('get-pi'.date('m')), [PreIdentificationController::class, 'search'])->name('front_office.pre_identification.script.payment.done');
 
 /* Front Office URLs on readable QR Code Routes */
-Route::get('/get', [IdentificationController::class, 'search'])->name('front_office.auth.recu_identification.url');
+Route::get('/get', [CertificatConformiteController::class, 'search'])->name('front_office.auth.recu_identification.url');
 Route::get('/get-pi', [PreIdentificationController::class, 'search'])->name('front_office.auth.recu_pre_identification.url');
-Route::get('/check-certificat-identification', [IdentificationController::class, 'checkCertificate'])->name('front_office.auth.certificat_identification.url');
+Route::get('/check-certificat-identification', [CertificatConformiteController::class, 'checkCertificate'])->name('front_office.auth.certificat_identification.url');
 Route::get('/'.md5('ccpi'), [PreIdentificationController::class, 'checkCertificate'])->name('front_office.auth.certificat_pre_identification.url');
 
 /* Front Office File Downloads Routes */
-Route::get('/telecharger-recu-identification-pdf', [IdentificationController::class, 'downloadRecuIdentificationPDF'])->name('front_office.download.recu_identification.pdf');
-Route::get('/telecharger-certificat-identification-pdf', [IdentificationController::class, 'downloadCertificateIdentificationPDF'])->name('front_office.download.certificat_identification.pdf');
+Route::get('/telecharger-recu-identification-pdf', [CertificatConformiteController::class, 'downloadRecuIdentificationPDF'])->name('front_office.download.recu_identification.pdf');
+Route::get('/telecharger-certificat-identification-pdf', [CertificatConformiteController::class, 'downloadCertificateIdentificationPDF'])->name('front_office.download.certificat_identification.pdf');
 Route::get('/telecharger-fiche-pre-identification-pdf', [PreIdentificationController::class, 'downloadCertificatePreIdentificationPDF'])->name('front_office.download.certificat_pre_identification.pdf');
 Route::get('/qrcode', [QrCodeController::class, 'downloadQrCodeImage'])->name('front_office.download.qrcode_image');
 Route::get('/telecharger-qrcode-carte-professionnelle', [QrCartesProfessionnellesController::class, 'downloadQrCodesAsZip'])->name('front_office.download.qrcode.zip');

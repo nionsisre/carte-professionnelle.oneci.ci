@@ -15,6 +15,7 @@ use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -33,12 +34,12 @@ use App\Rules\Base64Image;
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev
  */
-class IdentificationController extends Controller {
+class CertificatConformiteController extends Controller {
 
     /**
      * @return Application|Factory|View
      */
-    public function showMenuIdentification() {
+    public function showMenu() {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
@@ -52,7 +53,7 @@ class IdentificationController extends Controller {
     /**
      * @return Application|Factory|View
      */
-    public function showIdentification() {
+    public function showFormulaire() {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
@@ -105,6 +106,116 @@ class IdentificationController extends Controller {
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
 
+    }
+
+    /**
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Cette méthode est appelée automatiquement par le listener javascript du navigateur du client
+     * après avoir saisi son NNI afin de pré-remplir les informations de l'utilisateur<br/><br/>
+     * <b>RedirectResponse</b> verifapi(<b>Request</b> $request)<br/>
+     * @param Request $request <p>Client Request object.</p>
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    public function verifapi(Request $request) {
+        /* Valider les variables du formulaire */
+        request()->validate([
+            'cli' => ['required', 'string', 'max:100'], // Url du client
+            'nni' => ['required', 'string', 'max:11'], // Numero de telephone
+        ]);
+        /* Vérification du NNI */
+        if(config('services.verifapi.enabled')) {
+            $client = new Client();
+            try {
+                $response = $client->request('GET', env('VERIF_API_LINK'), [
+                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
+                    'form_params' => [
+                        'nni' => $request->input('nni'),
+                        'attributeNames' => [
+                            "UIN",
+                            "FIRST_NAME",
+                            "LAST_NAME",
+                            "BIRTH_DATE",
+                            "GENDER",
+                            "BIRTH_TOWN",
+                            "BIRTH_COUNTRY",
+                            "NATIONALITY",
+                            "RESIDENCE_ADR_1",
+                            "RESIDENCE_ADR_2",
+                            "RESIDENCE_TOWN",
+                            "MOTHER_UIN",
+                            "FATHER_UIN",
+                            "ID_CARD_NUMBER",
+                            "SPOUSE_NAME",
+                            "FATHER_FIRST_NAME",
+                            "FATHER_LAST_NAME",
+                            "FATHER_BIRTH_DATE",
+                            "MOTHER_FIRST_NAME",
+                            "MOTHER_LAST_NAME",
+                            "MOTHER_BIRTH_DATE",
+                            "PROFESSION"
+                        ]
+                    ]
+                ]);
+            } catch(\Exception $e) {
+                return response([
+                    'has_error' => true,
+                    'message' => 'Payment in progress...'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+        }
+        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
+            return response([
+                'has_error' => true,
+                'message' => 'Payment in progress...'
+            ], Response::HTTP_UNAUTHORIZED);
+        } else {
+            /* Vérification de l'ID de transaction chez l'aggrégateur de paiement */
+            if(config('services.ngser.enabled')) {
+                $payment_data = (new NGSerAPI())->verify($request->input('ti'), $request->input('pt'));
+                if ($payment_data['has_error']) {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Paiement en cours...'
+                    ], Response::HTTP_OK);
+                } else {
+                    // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
+                    $res_data = (new NGSerAPI())->notify(
+                        $request->replace([
+                            'order_id' => $payment_data["transaction_id"], // ID de transaction
+                            'payment_type' => $request->input('pt'), // Type de paiement effectué
+                        ])
+                    );
+
+                    return response([
+                        'has_error' => $res_data->original['has_error'],
+                        'data' => $res_data->original,
+                        'message' => $res_data->original['message']
+                    ], Response::HTTP_OK);
+                }
+            } else if(config('services.cinetpay.enabled')) {
+                $payment_data = (new CinetPayAPI())->verify($request->input('ti'));
+                if ($payment_data['has_error']) {
+                    return response([
+                        'has_error' => true,
+                        'message' => 'Paiement en cours...'
+                    ], Response::HTTP_OK);
+                } else {
+                    $res_data = (new CinetPayAPI())->notify(
+                        $request->replace([
+                            'cpm_site_id' => env('CINETPAY_SERVICE_KEY'), // Token generique
+                            'cpm_trans_id' => $request->input('ti'), // ID de transaction
+                            'cpm_custom' => $request->input('fn'), // Numero de dossier contenu dans la variable Metadata
+                            'cpm_designation' => $request->input('msisdn'), // Numero de telephone a actualiser
+                        ])
+                    );
+                    return response([
+                        'has_error' => $res_data->original['has_error'],
+                        'data' => $res_data->original,
+                        'message' => $res_data->original['message']
+                    ], Response::HTTP_OK);
+                }
+            }
+        }
     }
 
     /**
@@ -301,7 +412,7 @@ class IdentificationController extends Controller {
      * identifié en base de données<br/><br/>
      * <b>RedirectResponse</b> checkIfMsisdnIsAlreadyIdentifed(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function checkIfMsisdnIsAlreadyIdentifed(Request $request) {
         /* Valider les variables du formulaire */
@@ -341,7 +452,7 @@ class IdentificationController extends Controller {
      * l'intégrateur de paiement<br/><br/>
      * <b>RedirectResponse</b> getCertificatePaymentLink(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function getCertificatePaymentLink(Request $request) {
         /* Valider les variables du formulaire */
@@ -421,7 +532,7 @@ class IdentificationController extends Controller {
      * auprès de l'intégrateur de paiement<br/><br/>
      * <b>RedirectResponse</b> autoVerifyIfPaymentIsDone(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
      */
     public function autoVerifyIfPaymentIsDone(Request $request) {
         /* Valider les variables du formulaire */
@@ -607,7 +718,7 @@ class IdentificationController extends Controller {
      * Controle par scan QR Code du certificat d'identification<br/><br/>
      * <b>RedirectResponse</b> checkCertificate(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     * @return Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
