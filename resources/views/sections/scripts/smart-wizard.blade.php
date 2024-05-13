@@ -4,14 +4,14 @@
     | Initialize smartwizard library
     |--------------------------------------------------------------------------
     --}}
-    window.location.hash = '#etape-1';
+    window.location.hash = '';
     jQuery('#smartwizard').smartWizard({
         selected: 0, {{-- Initial selected step, 0 = first step --}}
         theme: 'arrows', {{-- theme for the wizard, related css need to include for other than default theme --}}
         justified: true, {{-- Nav menu justification. true/false --}}
         autoAdjustHeight: false, {{-- Automatically adjust content height --}}
         backButtonSupport: true, {{-- Enable the back button support --}}
-        enableUrlHash: true, {{-- Enable selection of the step based on url hash --}}
+        enableUrlHash: false, {{-- Enable selection of the step based on url hash --}}
         transition: {
         animation: 'none', {{-- Animation effect on navigation, none|fade|slideHorizontal|slideVertical|slideSwing|css(Animation CSS class also need to specify) --}}
         speed: '400', {{-- Animation speed. Not used if animation is 'css' --}}

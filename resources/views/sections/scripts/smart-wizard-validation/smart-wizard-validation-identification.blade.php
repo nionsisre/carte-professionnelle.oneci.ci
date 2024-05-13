@@ -4,10 +4,7 @@
     | Validation étapes formulaire
     |--------------------------------------------------------------------------
     --}}
-    {{-- Fonction utile pour compter les nombre d'occurences identiques dans un tableau (pour détecter si quelqu'un entre 2 fois le même numéro --}}
-    function elementCount(arr, element){
-        return arr.filter((currentElement) => currentElement === element).length;
-    };
+
     {{-- Fonction pour valider l'adresse email --}}
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -15,64 +12,25 @@
     }
     {{-- Variables --}}
     var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
-    {{-- Detection de l'operateur telephonique a la volee lors du copier/coller du numero de telephone --}}
-    jQuery(document.querySelectorAll('[name="msisdn[]"]')).bind('paste', function(e) {
-        {{-- var _this = this; --}}
-        {{-- Short pause to wait for paste to complete --}}
-        setTimeout(function() {
-            {{-- var text = jQuery(_this).val();
-            jQuery(".display").html(text); --}}
-            msisdn = document.querySelectorAll('[name="msisdn[]"]');
-            telco = document.querySelectorAll('[name="telco[]"]');
-            for(let i=0; i<msisdn.length; i++) {
-                if (jQuery(msisdn[i]).val().length >= 2) {
-                    if (jQuery(msisdn[i]).val().substring(0, 2) === "07") {
-                        jQuery(telco[i]).val("1");
-                        jQuery(telco[i]).trigger('change');
-                    } else if (jQuery(msisdn[i]).val().substring(0, 2) === "05") {
-                        jQuery(telco[i]).val("2");
-                        jQuery(telco[i]).trigger('change');
-                    } else if (jQuery(msisdn[i]).val().substring(0, 2) === "01") {
-                        jQuery(telco[i]).val("3");
-                        jQuery(telco[i]).trigger('change');
-                    }
-                }
-            }
-        }, 100);
-    });
-    {{-- Detection de l'operateur telephonique a la volee lors de la saisie du numero de telephone --}}
-    jQuery(document.querySelectorAll('[name="msisdn[]"]')).keypress(function(e) {
-        msisdn = document.querySelectorAll('[name="msisdn[]"]');
-        telco = document.querySelectorAll('[name="telco[]"]');
-        for(let i=0; i<msisdn.length; i++) {
-            if (jQuery(msisdn[i]).val().length >= 2) {
-                if (jQuery(msisdn[i]).val().substring(0, 2) === "07") {
-                    jQuery(telco[i]).val("1");
-                    jQuery(telco[i]).trigger('change');
-                } else if (jQuery(msisdn[i]).val().substring(0, 2) === "05") {
-                    jQuery(telco[i]).val("2");
-                    jQuery(telco[i]).trigger('change');
-                } else if (jQuery(msisdn[i]).val().substring(0, 2) === "01") {
-                    jQuery(telco[i]).val("3");
-                    jQuery(telco[i]).trigger('change');
-                }
-            }
+    {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
+    jQuery('input[name="possession_nni"]').click(function() {
+        if(jQuery('#possession-nni-oui').is(':checked')) {
+            jQuery("#nni-field").show();
+            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
+        } else if(jQuery('#possession-nni-non').is(':checked')) {
+            jQuery("#nni-field").hide();
+            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         }
     });
-    {{-- Apparition ou non du champ nom épouse selon que le genre soit masculin ou feminin --}}
-    jQuery('input[type="radio"]').click(function() {
-        if(jQuery('#gender-input-male').is(':checked')) {
-            jQuery("#spouse-name-field").hide();
-            jQuery("#first-name-field").attr('class','form-group one-half column-last');
-            jQuery("#last-name-field").attr('class','form-group one-half column-last');
-            jQuery("#spouse-name-field").attr('class','form-group one-half column-last');
-        } else if(jQuery('#gender-input-female').is(':checked')) {
-            jQuery("#first-name-field").attr('class','form-group one-third column-last');
-            jQuery("#last-name-field").attr('class','form-group one-third column-last');
-            jQuery("#spouse-name-field").attr('class','form-group one-third column-last');
-            jQuery("#spouse-name-field").show();
+    jQuery("#nni-field").keyup(function() {
+        if(jQuery("#nni-input").val().length >= 11) {
+            console.log(jQuery("#nni-input").val().length);
+            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+        } else {
+            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
         }
-    });
+    })
     {{-- Changement des types de champs pour le lieu de naissance selon le choix du pays --}}
     jQuery("#country-input").change(function () {
         var selected_country = this.value;

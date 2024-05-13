@@ -14,6 +14,20 @@
         @include('sections.scripts.otp-verification')
     @endif
     @include('sections.scripts.webcam-with-face-detection')
+    <script>
+        {{--jQuery('.sw-btn-next').each(function () {
+            jQuery(this).addClass('disabled');
+        })
+        --}}
+        jQuery(document).ready(function () {
+            {{-- Désactive le bouton suivant du wizard --}}
+            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            {{--
+            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+            --}}
+        });
+    </script>
 @endsection
 
 @section('content')
@@ -36,7 +50,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-sim-card text-black mr10"></i> &nbsp; Identification du numéro de téléphone en ligne
+                <h2><i class="fa fa-file-certificate text-black mr10"></i> &nbsp; Obtention du certificat de conformité
                 </h2>
                 @if(session()->has('abonne_numeros'))
                     @if(!config('services.sms.enabled'))
@@ -172,8 +186,7 @@
                             </div>
                         </center>
                     @endif
-                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'identifier votre/vos numéro(s) de
-                        téléphone(s) en ligne<br/></h5>
+                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre certificat de conformité<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
                             <div id="tvi-preorder-container">
@@ -185,68 +198,47 @@
                                     <div id="modalSnp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard" class="mb-3">
                                         <ul class="nav">
-                                            <li><a class="nav-link" href="#etape-1"><i class="fa fa-sim-card text-white"></i>
-                                                    &nbsp; Etape 1 : Numéro(s) à identifier</a></li>
+                                            <li><a class="nav-link" href="#etape-1"><i class="fa fa-barcode text-white"></i>
+                                                    &nbsp; Etape 1 : Possession NNI</a></li>
                                             <li><a class="nav-link" href="#etape-2"><i
                                                         class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
-                                                    Informations sur l'abonné</a></li>
+                                                    Informations de l'usager</a></li>
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
-                                                    &nbsp; Etape 3 : Document justificatif</a></li>
+                                                    &nbsp; Etape 3 : Documents justificatifs</a></li>
                                             <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
                                                     &nbsp; Etape 4 : Récapitulatif</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2>Numéro(s) à identifier :</h2>
-                                                <center>
-                                                    <div class="notification-box notification-box-info">
-                                                        <div class="modal-header">
-                                                            <h3><i class="fa fa-sim-card"></i> &nbsp; Merci de vous rassurer que le numéro est le votre et est accessible. <br/>Il sera utilisé pour les confirmations nécessaires.</h3>
+                                                <h2>Avez vous un numéro NNI ?</h2>
+                                                <div class="form-group column-last" id="possession-nni-field">
+                                                    <div class="form-group">
+                                                        <div class="col-sm-12 container clearfix">
+                                                            <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
+                                                                <input type="radio" name="possession_nni" id="possession-nni-oui" value="O" style="width: auto; box-shadow:none" checked/>
+                                                                <label for="possession-nni-oui" style="display: inline-block; padding-right: 2em" class="col-sm-5"><b> &nbsp; Oui</b></label>
+                                                            </div>
+                                                            <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
+                                                                <input type="radio" name="possession_nni" id="possession-nni-non" value="N" style="width: auto; box-shadow:none" />
+                                                                <label for="possession-nni-non" style="display: inline-block;" class="col-sm-5 pl-2"><b> &nbsp; Non</b></label>
+                                                            </div>
+                                                            <br/>
                                                         </div>
+                                                    </div><br/>
+                                                </div>
+                                                <div class="form-group column-last" id="nni-field">
+                                                    <label class="col-sm-2 control-label" id="nni-label">
+                                                        Numéro NNI<span style="color: #d9534f">*</span> :
+                                                    </label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="nni-input" class="nni" name="nni"
+                                                               placeholder="___________" maxlength="11" required="required"
+                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
-                                                    <div class="modal-footer"></div>
-                                                </center>
+                                                    <br/>
+                                                </div>
                                                 <br/>
-                                                {{--                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>--}}
-                                                <div id="msisdn-container">
-                                                    <div class="container clearfix" id="ct-msisdn-1" style="background-color: #ccc; padding: 2em 2em">
-                                                        <div class="form-group one-half column-last" id="msisdn-field-1">
-                                                            <div class="col-sm-12">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Numéro de téléphone<span
-                                                                        style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <span style="display: none" id="err-toast"></span>
-                                                                <div class="col-sm-10"><span style="width: 2em">+ 225</span>
-                                                                    &nbsp;
-                                                                    <input type="text" class="form-control msisdn"
-                                                                           id="msisdn-input-1" name="msisdn[]"
-                                                                           placeholder="__ __ __ __ __" maxlength="14"
-                                                                           style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                           required="required" autocomplete="off" /></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group one-half column-last" id="telco-field-1">
-                                                            <label class="col-sm-2 control-label">
-                                                                Opérateur téléphonique<span style="color: #d9534f">*</span> :
-                                                            </label>
-                                                            <span style="display: none" id="err-toast"></span>
-                                                            <div class="col-sm-10">
-                                                                <select class="form-control good-select"
-                                                                        id="telco-input-1" name="telco[]"
-                                                                        required="required" readonly="readonly"
-                                                                        style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                    <option value="" selected disabled>Opérateur téléphonique</option>
-                                                                    @foreach($abonnes_operateurs as $abonnes_operateur)
-                                                                        <option value="{{ $abonnes_operateur->id }}">{{ $abonnes_operateur->libelle_operateur }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div><br/><br/>
-                                                <a class="button blue" href="javascript:void(0)" id="add-msisdn"><i class="fa fa-plus mr10 text-white"></i> &nbsp; Ajouter un numéro supplémentaire</a>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
