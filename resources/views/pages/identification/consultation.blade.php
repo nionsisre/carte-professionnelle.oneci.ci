@@ -32,7 +32,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de l'identification
+                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de votre demande de certificat de conformité
                 </h2>
                 @if(session()->has('abonne_numeros'))
                     @php($abonne_numeros = session('abonne_numeros')->all())
@@ -233,7 +233,7 @@
                         </div>
                     @endif
                 @else
-                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre identification<br/></h5>
+                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre demande de certificat de conformité<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         @if(session()->has('error') && session()->get('error'))
                             <center>
@@ -261,57 +261,19 @@
                                 <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
-                                        Entrez le numéro de validation reçu lors de votre identification<span style="color: #d9534f">*</span> :
+                                        Entrez le numéro de validation reçu lors après remplissage du formulaire<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
                                         <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="10" minlength="10" style="width: 23.4em; text-align: center" value="{{ old('form-number') }}" autocomplete="off" required="required"/>
                                     </div>
                                     <br/>
                                 </div>
-                                <!-- With MSISDN -->
-                                <div id="msisdn-container">
-                                    <div class="form-group" id="msisdn-field" style="display: none">
-                                        <label class="col-sm-2 control-label">
-                                            Entrez votre numéro de téléphone<span style="color: #d9534f">*</span> :
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="msisdn-input" class="msisdn" name="msisdn" placeholder="__ __ __ __ __" maxlength="14" minlength="14" style="width: 23.4em; text-align: center" value="{{ old('msisdn') }}" autocomplete="off" />
-                                        </div>
-                                        <br/>
-                                    </div>
-                                    <div class="form-group" id="first-name-field" style="display: none">
-                                        <label class="col-sm-2 control-label">
-                                            Nom de l'abonné<span style="color: #d9534f">*</span> :
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                   placeholder="Nom de l'abonné..." maxlength="25"
-                                                   autocomplete="off"
-                                                   style="text-transform: uppercase; width: 23.4em; text-align: center"/>
-                                        </div>
-                                        <br/>
-                                    </div>
-                                    <div class="form-group" id="birth-date-field" style="display: none">
-                                        <label class="col-sm-2 control-label">
-                                            Date de naissance de l'abonné<span
-                                                style="color: #d9534f">*</span> :
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
-                                                   placeholder="Date de Naissance"
-                                                   max="{{ date('Y-m-d', strtotime('-10 years')) }}"
-                                                   style="width: 23.4em; text-align: center"/>
-                                        </div>
-                                        <br/>
-                                    </div>
-                                </div>
-                                <div id="no-form-number" style="margin-bottom: 2.5em;"><i class="fa fa-sim-card"></i> &nbsp; <span id="no-form-number-text" style="font-size: 1.1em; font-weight: bold; text-decoration: underline; cursor: pointer; font-style: italic;">Vérifier plutôt avec mon numéro de téléphone</span></div>
                                 <!-- Captcha and submit -->
                                 <br/><br/>
                                 <div class="form-group">
                                     <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                     <div class="col-sm-12">
-                                        <button type="submit" value="Submit" class="button" style="width: 100%;padding: 1em;"><i class="fa fa-search "></i> &nbsp; Consulter le statut de l'identification</button>
+                                        <button type="submit" value="Submit" class="button" style="width: 100%;padding: 1em;"><i class="fa fa-search "></i> &nbsp; Consulter le statut de la demande</button>
                                     </div>
                                 </div>
                                 <br/>

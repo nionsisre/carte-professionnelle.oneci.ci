@@ -26,7 +26,7 @@
     });
     jQuery("#nni-field").keyup(function() {
         if(jQuery("#nni-input").val().length >= 11) {
-            console.log(jQuery("#nni-input").val().length);
+
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         } else {
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
