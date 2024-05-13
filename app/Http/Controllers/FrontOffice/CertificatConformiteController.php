@@ -124,97 +124,66 @@ class CertificatConformiteController extends Controller {
         ]);
         /* Vérification du NNI */
         if(config('services.verifapi.enabled')) {
+            /*
+                Verif ONECI getting authentication token
+            */
             $client = new Client();
             try {
-                $response = $client->request('GET', env('VERIF_API_LINK'), [
-                    'headers' => ['Content-type' => 'application/x-www-form-urlencoded'],
-                    'form_params' => [
-                        'nni' => $request->input('nni'),
-                        'attributeNames' => [
-                            "UIN",
-                            "FIRST_NAME",
-                            "LAST_NAME",
-                            "BIRTH_DATE",
-                            "GENDER",
-                            "BIRTH_TOWN",
-                            "BIRTH_COUNTRY",
-                            "NATIONALITY",
-                            "RESIDENCE_ADR_1",
-                            "RESIDENCE_ADR_2",
-                            "RESIDENCE_TOWN",
-                            "MOTHER_UIN",
-                            "FATHER_UIN",
-                            "ID_CARD_NUMBER",
-                            "SPOUSE_NAME",
-                            "FATHER_FIRST_NAME",
-                            "FATHER_LAST_NAME",
-                            "FATHER_BIRTH_DATE",
-                            "MOTHER_FIRST_NAME",
-                            "MOTHER_LAST_NAME",
-                            "MOTHER_BIRTH_DATE",
-                            "PROFESSION"
-                        ]
+                $response_token = $client->post(env('VERIF_API_LINK').'/api/v1/authenticate', [
+                    'verify' => false,
+                    'headers' => [
+                        'Content-type' => 'application/json',
+                        'Cache-Control' => 'no-cache'
+                    ],
+                    'json' => [
+                        "apiKey" => env('VERIF_API_KEY'),
+                        "secretKey" => env('VERIF_API_SECRET_KEY')
                     ]
                 ]);
+                $response_token = json_decode($response_token->getBody()->getContents(),true);
+                if(!empty($response_token["bearerToken"])) {
+                    /*
+                        Verif ONECI NNI Verification
+                    */
+                    try {
+                        $options = "?attributeNames=FIRST_NAME&attributeNames=LAST_NAME&attributeNames=BIRTH_DATE&attributeNames=GENDER&attributeNames=BIRTH_TOWN&attributeNames=BIRTH_COUNTRY&attributeNames=NATIONALITY&attributeNames=RESIDENCE_ADR_1&attributeNames=RESIDENCE_ADR_2&attributeNames=RESIDENCE_TOWN&attributeNames=MOTHER_UIN&attributeNames=FATHER_UIN&attributeNames=ID_CARD_NUMBER&attributeNames=SPOUSE_NAME&attributeNames=NATIONALITY&attributeNames=RESIDENCE_TOWN&attributeNames=FATHER_FIRST_NAME&attributeNames=FATHER_LAST_NAME&attributeNames=FATHER_BIRTH_DATE&attributeNames=MOTHER_FIRST_NAME&attributeNames=MOTHER_LAST_NAME&attributeNames=MOTHER_BIRTH_DATE&attributeNames=UIN";
+                        $response = $client->request('GET', env('VERIF_API_LINK')."/api/v1/oneci/persons/".$request->input('nni').$options, [
+                            'headers' => [
+                                'Authorization' => 'Bearer '.$response_token["bearerToken"],
+                                'Content-type' => 'application/x-www-form-urlencoded',
+                            ]
+                        ]);
+                        $nni_check_result = json_decode($response->getBody(),true);
+                        if ($response->getStatusCode() == 200) {
+                            return response([
+                                'error' => false,
+                                'message' => 'Ok',
+                                'data' => $nni_check_result,
+                            ], Response::HTTP_OK);
+                        } else {
+                            return response([
+                                'error' => false,
+                                'message' => 'Aucune donnée trouvé',
+                            ], Response::HTTP_NOT_FOUND);
+                        }
+                    } catch(\Exception $e) {
+                        return response([
+                            'has_error' => true,
+                            'message' => $e->getMessage()
+                        ], Response::HTTP_SERVICE_UNAVAILABLE);
+                    }
+                }
             } catch(\Exception $e) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Payment in progress...'
-                ], Response::HTTP_UNAUTHORIZED);
+                    'message' => $e->getMessage()
+                ], Response::HTTP_SERVICE_UNAVAILABLE);
             }
-        }
-        if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
-            return response([
-                'has_error' => true,
-                'message' => 'Payment in progress...'
-            ], Response::HTTP_UNAUTHORIZED);
         } else {
-            /* Vérification de l'ID de transaction chez l'aggrégateur de paiement */
-            if(config('services.ngser.enabled')) {
-                $payment_data = (new NGSerAPI())->verify($request->input('ti'), $request->input('pt'));
-                if ($payment_data['has_error']) {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Paiement en cours...'
-                    ], Response::HTTP_OK);
-                } else {
-                    // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
-                    $res_data = (new NGSerAPI())->notify(
-                        $request->replace([
-                            'order_id' => $payment_data["transaction_id"], // ID de transaction
-                            'payment_type' => $request->input('pt'), // Type de paiement effectué
-                        ])
-                    );
-
-                    return response([
-                        'has_error' => $res_data->original['has_error'],
-                        'data' => $res_data->original,
-                        'message' => $res_data->original['message']
-                    ], Response::HTTP_OK);
-                }
-            } else if(config('services.cinetpay.enabled')) {
-                $payment_data = (new CinetPayAPI())->verify($request->input('ti'));
-                if ($payment_data['has_error']) {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Paiement en cours...'
-                    ], Response::HTTP_OK);
-                } else {
-                    $res_data = (new CinetPayAPI())->notify(
-                        $request->replace([
-                            'cpm_site_id' => env('CINETPAY_SERVICE_KEY'), // Token generique
-                            'cpm_trans_id' => $request->input('ti'), // ID de transaction
-                            'cpm_custom' => $request->input('fn'), // Numero de dossier contenu dans la variable Metadata
-                            'cpm_designation' => $request->input('msisdn'), // Numero de telephone a actualiser
-                        ])
-                    );
-                    return response([
-                        'has_error' => $res_data->original['has_error'],
-                        'data' => $res_data->original,
-                        'message' => $res_data->original['message']
-                    ], Response::HTTP_OK);
-                }
-            }
+            return response([
+                'error' => false,
+                'message' => 'Aucune donnée trouvé',
+            ], Response::HTTP_NOT_FOUND);
         }
     }
 

@@ -238,46 +238,14 @@
                                                     </div>
                                                     <br/>
                                                 </div>
-                                                <div id="nni-check-spinner"></div>
+                                                <div id="nni-check-spinner" style="display: none"><i class="fa fa-spinner fa-spin"></i></div>
+                                                <div id="nni-check-result"></div>
                                                 <br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Informations sur l'usager :</h2>
                                                 <br/>
-                                                <div class="container clearfix">
-                                                    <span style="display: none" id="err-toast"></span>
-                                                    <div class="form-group column-last" id="gender-field">
-                                                        <label class="col-sm-4 control-label">
-                                                            Genre<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="form-group">
-                                                            <div class="col-sm-12 container clearfix">
-                                                                <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
-                                                                    <input type="radio" name="gender" id="gender-input-male" value="M" style="width: auto; box-shadow:none" />
-                                                                    <label for="gender-input-male" style="display: inline-block;" class="col-sm-5"> &nbsp; <i class="fa fa-mars"></i><b> &nbsp; Masculin</b></label>
-                                                                </div>
-                                                                <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
-                                                                    <input type="radio" name="gender" id="gender-input-female" value="F" style="width: auto; box-shadow:none" />
-                                                                    <label for="gender-input-female" style="display: inline-block;" class="col-sm-5"> &nbsp; <i class="fa fa-venus"></i><b> &nbsp; Feminin</b></label>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                        </div><br/>
-                                                        <!--<div class="col-sm-10">
-                                                            <select class="form-control good-select" id="gender-input"
-                                                                    name="gender"
-                                                                    required="required"
-                                                                    style="width: 11.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Choix du genre</option>
-                                                                <option value="M">Masculin</option>
-                                                                <option value="F">Feminin</option>
-                                                            </select>
-                                                        </div>-->
-                                                        <br/>
-                                                    </div>
-                                                </div>
                                                 <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="first-name-field">
                                                         <label class="col-sm-2 control-label">
@@ -305,24 +273,9 @@
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-third column-last" id="spouse-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            <em>Nom d'épouse (facultatif) :</em>
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="spouse-name-input" name="spouse-name" value="{{ old('spouse-name') }}"
-                                                                   placeholder="Nom d'épouse..." maxlength="70"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                </div>
-                                                <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="birth-date-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Date de naissance<span
-                                                                style="color: #d9534f">*</span> :
+                                                            Né(e) le<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
@@ -332,87 +285,33 @@
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-third column-last" id="country-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Nationalité<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="country-input" name="country"
-                                                                   placeholder="Nationalité..." maxlength="70"
-                                                                   autocomplete="off" required="required"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="birth-place-field">
-                                                        <label class="col-sm-4 control-label">
-                                                            Lieu de naissance<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control good-select" id="birth-place-input"
-                                                                    name="birth-place"
-                                                                    style="width: 11.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Choisir le lieu de
-                                                                    naissance
-                                                                </option>
-                                                                @foreach($civil_status_center as $csc)
-                                                                    <option value="{{ $csc->civil_status_center_id }}">{{ $csc->civil_status_center_label }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="birth-place-field-2" style="display: none">
-                                                        <label class="col-sm-2 control-label">
-                                                            Lieu de naissance<span
-                                                                style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="birth-place-input-2" name="birth-place-2" value="{{ old('birth-place-2') }}"
-                                                                   placeholder="Lieu de naissance..." maxlength="70"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-third column-last" id="residence-field">
+
+                                                    <div class="form-group one-half column-last" id="first-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Lieu de résidence<span
-                                                                style="color: #d9534f">*</span> :
+                                                            Nom de la mère<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="residence-input" name="residence" value="{{ old('residence') }}"
-                                                                   placeholder="Lieu de résidence..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
+                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
+                                                                   placeholder="Nom" maxlength="25"
+                                                                   required="required"
+                                                                   autocomplete="off"
+                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group one-third column-last" id="profession-field">
+                                                    <div class="form-group one-half column-last" id="last-name-field">
                                                         <label class="col-sm-2 control-label">
-                                                            Profession<span
-                                                                style="color: #d9534f">*</span> :
+                                                            Prénom(s) de la mère<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="profession-input" name="profession" value="{{ old('profession') }}"
-                                                                   placeholder="Profession..." maxlength="70" required="required"
-                                                                   style="text-transform: uppercase; width: 11.4em; text-align: center"/>
+                                                            <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
+                                                                   placeholder="Prénom(s)..." maxlength="70"
+                                                                   autocomplete="off"
+                                                                   required="required"
+                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
                                                         </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="email-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            <em>Adresse email (facultatif) :</em>
-                                                        </label>
-                                                        <span style="display: none" id="err-mail-toast"></span>
-                                                        <div><input type="email" class="form-control" value="{{ old('email') }}"
-                                                                    id="email-input" name="email"
-                                                                    autocomplete="off"
-                                                                    placeholder="Adresse Mail..." maxlength="150"
-                                                                    style="width: 21.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;" /></div>
                                                         <br/>
                                                     </div>
                                                 </div>

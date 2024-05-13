@@ -11,7 +11,7 @@
         return regex.test(email);
     }
     {{-- Variables --}}
-    var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var isBusy = false, nni_data="", msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
     jQuery('input[name="possession_nni"]').click(function() {
         if(jQuery('#possession-nni-oui').is(':checked')) {
@@ -24,117 +24,56 @@
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         }
     });
-    jQuery("#nni-field").keyup(function() {
-        if(jQuery("#nni-input").val().length >= 11) {
-            @if(config('services.verifapi.enabled'))
-                let nni = jQuery("#nni-input").val();
-                let url = '{{ route('verifapi.nni') }}';
-                let cli = "{{ url()->current() }}";
-                $.ajax({
-                    url: url,
-                    async:false,
-                    data: {
-                        '_token': "{{ csrf_token() }}",
-                        cli: cli,
-                        nni: nni,
-                    }, beforeSend: function(res) {
-                        jQuery('#nni-check-spinner').html('<i class="fa fa-spinner fa-spin"></i>');
-                    }, success: function(res) {
-                        jQuery('#nni-check-spinner').html('<i class="fa fa-check text-success"></i>');
-                        {{-- @TODO: Autoremplir les champs du step suivant --}}
-                        return true;
-                    }, error: function(xhr) {
-                        jQuery('#nni-check-spinner').html('<i class="fa fa-times text-danger"></i>');
-                        console.log(xhr.statusText + xhr.responseText);
-                    }
-                });
-            @endif
+    function checkNNI(){
+        @if(config('services.verifapi.enabled'))
+        let nni = jQuery("#nni-input").val();
+        let url = '{{ route('verifapi.nni') }}';
+        let cli = "{{ url()->current() }}";
+        jQuery('#nni-check-spinner').show();
+        jQuery('#nni-check-result').hide();
+        $.ajax({
+            url: url,
+            data: {
+                '_token': "{{ csrf_token() }}",
+                cli: cli,
+                nni: nni,
+            }, beforeSend: function(res) {
+                isBusy = true;
+                jQuery('#nni-check-spinner').show();
+                jQuery('#nni-check-result').hide();
+                jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            }, success: function(res) {
+                isBusy = false;
+                jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+                jQuery('#nni-check-spinner').hide();
+                jQuery('#nni-check-result').html('<i class="fa fa-check" style="color: #4caf50"></i>');
+                jQuery('#nni-check-result').show();
+                nni_data = res.data;
+                console.log(res.data);
+                return true;
+            }, error: function(xhr) {
+                isBusy = false;
+                jQuery('#nni-check-spinner').hide();
+                jQuery('#nni-check-result').html('<i class="fa fa-times" style="color: #f44336"></i>');
+                jQuery('#nni-check-result').show();
+            }
+        });
+        @endif
+    }
+    jQuery("#nni-field").bind("paste", function(e){
+        // access the clipboard using the api
+        let pastedData = e.originalEvent.clipboardData.getData('text');
+        if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
+            checkNNI();
+        }
+    }).keyup(function() {
+        if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
+            checkNNI();
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         } else {
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
         }
     })
-    {{-- Changement des types de champs pour le lieu de naissance selon le choix du pays --}}
-    jQuery("#country-input").change(function () {
-        var selected_country = this.value;
-        if(selected_country !== "Côte d’Ivoire") {
-            jQuery("#birth-place-field").hide();
-            jQuery("#birth-place-field-2").show();
-        } else {
-            jQuery("#birth-place-field").show();
-            jQuery("#birth-place-field-2").hide();
-        }
-        {{--jQuery("#checkboxSuccess_1").prop('checked', false);--}}
-    });
-    {{-- Modification des libelles NNI au changement des types de documents --}}
-    jQuery("#doc-type").on("change", function (e) {
-        if(country === "Côte d’Ivoire") {
-            if (jQuery("#doc-type").val() === "2") {
-                jQuery("#cni-type-field").show();
-                jQuery('#new-format-card').prop('checked', true);
-                jQuery('#modalInfo').html(
-                    '<center> <div class="notification-box notification-box-info">\n\
-                    <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte nationale d\'identité.</h3></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                );
-                jQuery('#modalInfo').modal({
-                    escapeClose: false,
-                    clickClose: false,
-                    showClose: false
-                });
-                jQuery('.blocker').css('z-index','2');
-                jQuery("#document-number-input").focus();
-                if(jQuery('#new-format-card').is(':checked')) {
-                    jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-                    jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
-                    jQuery("#document-number-input").attr('placeholder','___________');
-                    jQuery("#document-number-input").mask('99999999999');
-                } else {
-                    jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                    jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
-                    jQuery("#document-number-input").attr('placeholder','__________');
-                    jQuery("#document-number-input").unmask().attr('maxlength', 20);
-                    jQuery('#modalInfo').html(
-                        '<center> <div class="notification-box notification-box-info">\n\
-                        <div class="modal-header"><img src="{{ URL::asset('assets/images/sensibilisation-nni-illustration.jpg') }}" style="width: 100%"></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                    );
-                    jQuery('#modalInfo').modal({
-                        escapeClose: false,
-                        clickClose: false,
-                        showClose: false
-                    });
-                    jQuery('.blocker').css('z-index','2');
-                }
-            } else if (jQuery("#doc-type").val() === "3") {
-                jQuery("#cni-type-field").hide();
-                jQuery("#document-number-label").html('Numéro NNI<span style="color: #d9534f">*</span> :');
-                jQuery("#document-number-input").attr('placeholder','Numéro NNI...');
-                jQuery("#document-number-input").attr('placeholder','___________');
-                jQuery("#document-number-input").mask('99999999999');
-                jQuery('#modalInfo').html(
-                    '<center> <div class="notification-box notification-box-info">\n\
-                    <div class="modal-header"><img src="{{ URL::asset('assets/images/nni-illustration.png') }}" style="width: 15em"> <br/><br/><h3>NB : Le numéro de NNI à renseigner se situe au verso de votre carte de résident.</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                );
-                jQuery('#modalInfo').modal({
-                    escapeClose: false,
-                    clickClose: false,
-                    showClose: false
-                });
-                jQuery('.blocker').css('z-index','2');
-            } else {
-                jQuery("#cni-type-field").hide();
-                jQuery("#document-number-label").html('Numéro de la pièce d\'identité<span style="color: #d9534f">*</span> :');
-                jQuery("#document-number-input").attr('placeholder','Numéro pièce identité...');
-                jQuery("#document-number-input").attr('placeholder','__________');
-                jQuery("#document-number-input").unmask().attr('maxlength', 20);
-            }
-        }
-    });
     {{-- Changement dynamique du libelle pour le NNI --}}
     jQuery('input[type="radio"]').click(function() {
         if(jQuery('#new-format-card').is(':checked')) {
@@ -167,150 +106,24 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
-                    msisdn = document.querySelectorAll('[name="msisdn[]"]');
-                    let msisdn_val_arr = [];
-                    for(let i=0; i<msisdn.length; i++) {
-                        msisdn_val_arr.push(jQuery(msisdn[i]).val());
-                    }
-                    telco = document.querySelectorAll('[name="telco[]"]');
-                    for(let i=0; i<telco.length; i++) {
-                        if(!jQuery(telco[i]).val()) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez sélectionner tous les opérateurs de vos numéros à identifier !</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        }
-                        jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
-                    }
-                    for(let i=0; i<msisdn.length; i++) {
-                        if(!jQuery(msisdn[i]).val()) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez remplir correctement les champs de tous vos numéros à identifier !</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        } else if (jQuery(msisdn[i]).val().length !== 14 ||
-                            (jQuery(msisdn[i]).val().length === 14 && jQuery(msisdn[i]).val().substring(0, 2) !== "01" && jQuery(msisdn[i]).val().substring(0, 2) !== "05" && jQuery(msisdn[i]).val().substring(0, 2) !== "07")) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner un numéro de téléphone valide !</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        } else if (
-                            (jQuery(telco[i]).val() === "1" && jQuery(msisdn[i]).val().substring(0, 2) !== "07") ||
-                            (jQuery(telco[i]).val() === "2" && jQuery(msisdn[i]).val().substring(0, 2) !== "05") ||
-                            (jQuery(telco[i]).val() === "3" && jQuery(msisdn[i]).val().substring(0, 2) !== "01")
-                        ) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><h3>L\'opérateur téléphonique du numéro : <br/><b>'+jQuery(msisdn[i]).val().replaceAll(" ", "")+'</b><br/>est incorrect !</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        } else if (elementCount(msisdn_val_arr, jQuery(msisdn[i]).val()) >= 2) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><h3>Le numéro <br/><b>'+jQuery(msisdn[i]).val().replaceAll(" ", "")+'</b><br/>est repété '+elementCount(msisdn_val_arr, jQuery(msisdn[i]).val())+' fois !</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        } else {
-                            {{-- Verification du statut de chacun des numeros valides --}}
-                            var am = []; {{-- all_msisdn tableau de numéros à identifier --}}
-                            var im = []; {{-- identified_msisdn tableau destiné à recevoir les numéros déjà identifiés --}}
-                            var ims = ''; {{-- identified_msisdn_string variable destinée à recevoir les numéros déjà identifiés --}}
-                            var iml = 0; {{-- identified_msisdn_length variable destinée à recevoir le nombre de numéros déjà identifiés --}}
-                            for(let i=0; i<msisdn.length; i++) {
-                                (function(index){
-                                    let url = '{{ route('front_office.scripts.msisdn.is_already_identified') }}';
-                                    let cli = "{{ url()->current() }}";
-                                    $.post({
-                                        type: 'POST',
-                                        url: url,
-                                        async:false,
-                                        data: {
-                                            '_token': "{{ csrf_token() }}",
-                                            cli: cli,
-                                            msdn: msisdn_val_arr[index].replaceAll(" ", ""),
-                                        }, success: function(res) {
-                                            am[index] = [msisdn_val_arr[index].replaceAll(" ", ""), false];
-                                            if(res.has_error){
-                                                im[index] = msisdn_val_arr[index].replaceAll(" ", "");
-                                                ims += '<i class="fa fa-sim-card"></i> &nbsp; '+msisdn_val_arr[index].replaceAll(" ", "")+'<br/>';
-                                            }
-                                            return true;
-                                        }
-                                    });
-                                })(i);
-                            }
-                            iml = im.filter(elm => elm).length;
-                            if(iml > 0) {
-                                jQuery('#modalError').html(
-                                    '<center> <div class="notification-box notification-box-error">\n\
-                                    <div class="modal-header">\
-                                        <i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Vous avez saisi '+ iml +' numéro(s) déjà identifié(s) :<br/><br/><b>' + ims + '</b><br/>Souhaitez vous effectuer une réclamation ?<br/></h3>\
-                                        <a href="https://www.oneci.ci/nos-services/retard-de-production?tr=abonne-mobile" class="button"><i class="fa fa-headset text-white"></i> &nbsp; Oui, réclamer ce(s) numéro(s)</a>\
-                                    </div>\n\
-                                    </div><div class="modal-footer">\n\
-                                    <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Non merci, modifier</a></div></center>'
-                                );
-                                jQuery('#modalError').modal({
-                                    escapeClose: false,
-                                    clickClose: false,
-                                    showClose: false
-                                });
-                                jQuery('.blocker').css('z-index','2');
-                                jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                                return false;
-                            } else {
-                                jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
-                            }
-                        }
-                    }
+                    {{-- check_nni --}}
+                    {{--if(!jQuery(first_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }--}}
+                    jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
                     break;
                 {{-- Step 2 --}}
                 case 1:
