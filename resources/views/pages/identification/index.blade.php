@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Identification Abonné Mobile')
+@section('title', 'Certificat de Conformité')
 
 @section('scripts')
     @include('sections.scripts.recaptcha')
@@ -242,7 +242,7 @@
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2>Informations sur l'abonné :</h2>
+                                                <h2>Informations sur l'usager :</h2>
                                                 <br/>
                                                 <div class="container clearfix">
                                                     <span style="display: none" id="err-toast"></span>
@@ -284,7 +284,7 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                   placeholder="Nom de l'abonné..." maxlength="25"
+                                                                   placeholder="Nom" maxlength="25"
                                                                    required="required"
                                                                    autocomplete="off"
                                                                    style="text-transform: uppercase; width: 13.4em; text-align: center"/>
@@ -297,7 +297,7 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
-                                                                   placeholder="Prénom(s) de l'abonné..." maxlength="70"
+                                                                   placeholder="Prénom(s)..." maxlength="70"
                                                                    autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 16em; text-align: center"/>

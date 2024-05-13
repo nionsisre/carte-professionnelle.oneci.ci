@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Menu d\'Identification Abonné Mobile')
+@section('title', 'Menu certificat de conformité')
 
 @section('content')
     <!-- begin page title -->
