@@ -19,6 +19,7 @@
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
             {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
         } else if(jQuery('#possession-nni-non').is(':checked')) {
+            jQuery("#nni-input").val("");
             jQuery("#nni-field").hide();
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         }
