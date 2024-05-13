@@ -89,7 +89,7 @@ class PreIdentificationController extends Controller {
     public function submit(Request $request) {
         /* Vérification CAPTCHA serveur si le service de vérification Google reCAPTCHA v3 est actif */
         (new GoogleRecaptchaV3())->verify($request)['error'] ??
-            redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+            redirect()->route('certificat.consultation')->with((new GoogleRecaptchaV3())->verify($request));
         /* Valider les variables du formulaire */
         request()->validate([
             'first-name' => ['required', 'string', 'max:70'],
@@ -179,7 +179,7 @@ class PreIdentificationController extends Controller {
         if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Vérification CAPTCHA serveur si le service de vérification Google reCAPTCHA v3 est actif */
                 (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('certificat.consultation')->with((new GoogleRecaptchaV3())->verify($request));
             /* Récupération des informations sur l'utilisateur pré-identifié */
             request()->validate([
                 'form-number' => ['required', 'numeric', 'digits:10'],

@@ -53,7 +53,7 @@
                                 </div>
                                 <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
                                 <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
-                                <a href="{{ route('front_office.page.identification') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="{{ route('certificat.index') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
                                 <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
                         </div><br/><br/><br/><br/><br/><br/>
@@ -141,13 +141,13 @@
                                         </tbody>
                                     </table>
                                     <br/>
-                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('front_office.page.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
+                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
                                         <br/><br/><br/>
                                         L'ONECI vous remercie !
                                         <br/><br/><br/><br/>
                                 </div>
                                 <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
-                                <a href="{{ route('front_office.page.identification') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
+                                <a href="{{ route('certificat.index') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
                                 <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
                         </div><br/><br/><br/><br/><br/><br/>

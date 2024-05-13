@@ -295,7 +295,7 @@ class CinetPayAPI {
             }
         }
         /* Sinon retourner sur le formulaire de consultation */
-        return redirect()->route('front_office.page.consultation');
+        return redirect()->route('certificat.consultation');
     }
 
     /**

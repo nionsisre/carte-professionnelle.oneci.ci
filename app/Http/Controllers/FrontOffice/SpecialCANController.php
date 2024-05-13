@@ -266,7 +266,7 @@ class SpecialCANController extends Controller {
                 session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
             }
             /* Retourner vue resultat */
-            return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros);
+            return redirect()->route('certificat.consultation')->with('abonne_numeros', $abonne_numeros);
         }
 
         return redirect()->route('front_office.special_can.consultation')->withErrors(["Erreur lors de l'identification : Veuillez recommencer votre identification (Numéro déjà identifié)"]);
@@ -636,7 +636,7 @@ class SpecialCANController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.consultation')->with([
+        return redirect()->route('certificat.consultation')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
@@ -687,13 +687,13 @@ class SpecialCANController extends Controller {
                     ]);
                 }
             }
-            return redirect()->route('front_office.page.consultation')->with([
+            return redirect()->route('certificat.consultation')->with([
                 'error' => true,
                 'error_message' => 'Ce certificat n\'est pas ou plus valide !'
             ]);
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.consultation')->with([
+        return redirect()->route('certificat.consultation')->with([
             'error' => true,
             'error_message' => 'Certificat incorrect !'
         ]);

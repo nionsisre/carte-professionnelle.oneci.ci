@@ -35,17 +35,22 @@ use Illuminate\Support\Facades\Route;
     /* --- Home --- */
 Route::get('/', [MainController::class, 'index'])->name('home');
     /* --- Identification --- */
-Route::get('/menu-identification', [IdentificationController::class, 'showMenuIdentification'])->name('front_office.identification.menu');
-Route::get('/identification-abonnes-mobile', [IdentificationController::class, 'showIdentification'])->name('front_office.page.identification');
-Route::get('/consultation-statut-identification', [IdentificationController::class, 'showConsultation'])->name('front_office.page.consultation');
-Route::get('/reclamation-paiement', [IdentificationController::class, 'showReclamationPaiement'])->name('front_office.page.reclamation_paiement');
-    /* --- Pré-identification --- */
+Route::get('/menu-certificat', [IdentificationController::class, 'showMenuIdentification'])->name('certificat.menu');
+Route::get('/formulaire', [IdentificationController::class, 'showIdentification'])->name('certificat.index');
+Route::get('/consultation', [IdentificationController::class, 'showConsultation'])->name('certificat.consultation');
+Route::get('/reclamation-paiement', [IdentificationController::class, 'showReclamationPaiement'])->name('certificat.reclamation_paiement');
+
+
+
+/* --- Pré-identification --- */
 Route::get('/menu-pre-identification', [PreIdentificationController::class, 'showMenuPreIdentification'])->name('front_office.pre_identification.menu');
 Route::get('/pre-identification-abonnes-mobile', [PreIdentificationController::class, 'showPreIdentification'])->name('front_office.pre_identification.page');
 Route::get('/consultation-pre-identification', [PreIdentificationController::class, 'showConsultation'])->name('front_office.pre_identification.consultation');
-    /* --- Formulaire Spécial CAN --- */
+/* --- Formulaire Spécial CAN --- */
 Route::get('/menu-special-can', [SpecialCANController::class, 'showMenuSpecialCAN'])->name('front_office.special_can.menu');
 Route::get('/identification-special-can', [SpecialCANController::class, 'showIdentificationSpecialCAN'])->name('front_office.special_can.consultation');
+
+
 
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-identification', [IdentificationController::class, 'submit'])->name('front_office.form.soumettre_identification');

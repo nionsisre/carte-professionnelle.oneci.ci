@@ -118,7 +118,7 @@ class IdentificationController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('front_office.page.identification')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('certificat.index')->with((new GoogleRecaptchaV3())->verify($request));
         }
         /* Valider les variables du formulaire */
         request()->validate([
@@ -215,7 +215,7 @@ class IdentificationController extends Controller {
             session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.identification')->with('abonne_numeros', $abonne_numeros);
+        return redirect()->route('certificat.index')->with('abonne_numeros', $abonne_numeros);
     }
 
     /**
@@ -232,7 +232,7 @@ class IdentificationController extends Controller {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
                 (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                    redirect()->route('front_office.page.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+                    redirect()->route('certificat.consultation')->with((new GoogleRecaptchaV3())->verify($request));
             }
             /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
             $search_with_msisdn = $request->input('tsch');
@@ -269,7 +269,7 @@ class IdentificationController extends Controller {
             if(sizeof($abonne_numeros) !== 0) {
                 return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
             } else {
-                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
@@ -288,11 +288,11 @@ class IdentificationController extends Controller {
                     return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
                 }
             } else {
-                return redirect()->route('front_office.page.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         }
 
-        return redirect()->route('front_office.page.consultation');
+        return redirect()->route('certificat.consultation');
     }
 
     /**
@@ -596,7 +596,7 @@ class IdentificationController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.consultation')->with([
+        return redirect()->route('certificat.consultation')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
@@ -647,13 +647,13 @@ class IdentificationController extends Controller {
                     ]);
                 }
             }
-            return redirect()->route('front_office.page.consultation')->with([
+            return redirect()->route('certificat.consultation')->with([
                 'error' => true,
                 'error_message' => 'Ce certificat n\'est pas ou plus valide !'
             ]);
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.page.consultation')->with([
+        return redirect()->route('certificat.consultation')->with([
             'error' => true,
             'error_message' => 'Certificat incorrect !'
         ]);

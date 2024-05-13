@@ -92,7 +92,7 @@ class GeneratedTokensOrIDs {
             }
             session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
         }
-        return redirect()->route('front_office.page.consultation')->with('abonne_numeros', $abonne_numeros);
+        return redirect()->route('certificat.consultation')->with('abonne_numeros', $abonne_numeros);
     }
 
 }

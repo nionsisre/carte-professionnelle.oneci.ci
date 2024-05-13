@@ -22,7 +22,7 @@ class MainController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function index() {
-        return redirect()->route('front_office.page.identification');
+        return redirect()->route('certificat.menu');
     }
 
 }
