@@ -8,8 +8,6 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo; </li>
-                    <li>Nos services &rsaquo; </li>
                     <li>Certificat Conformité &rsaquo; </li>
                     <li>Menu</li>
                 </ul>

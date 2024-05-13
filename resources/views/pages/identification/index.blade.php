@@ -22,9 +22,9 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li><a href="https://www.oneci.ci">Accueil</a> &rsaquo; </li>
-                    <li>Nos services &rsaquo; </li>
-                    <li>Identification Abonné Mobile</li>
+                    <li>Certificat Conformité &rsaquo; </li>
+                    <li><a href="{{ route('certificat.menu') }}">Menu</a> &rsaquo; </li>
+                    <li>Formulaire</li>
                 </ul>
             </nav>
         </div>

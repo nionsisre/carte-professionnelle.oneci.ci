@@ -13,19 +13,6 @@
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return regex.test(email);
     }
-    {{-- Initialisation et lancement de la fenetre Pop-up au chargement du Smart-Wizard --}}
-    jQuery('#modalInfo').html(
-        '<center> <div class="notification-box notification-box-info">\n\
-        <div class="modal-header"><h3><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: x-large"></i><br/><br/>Merci de vous rassurer que le numéro est le votre et est accessible. <br/><br/>Il sera utilisé pour les confirmations nécessaires.</h3></div>\n\
-        </div><div class="modal-footer">\n\
-        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-    );
-    jQuery('#modalInfo').modal({
-        escapeClose: false,
-        clickClose: false,
-        showClose: false
-    });
-    jQuery('.blocker').css('z-index','2');
     {{-- Variables --}}
     var msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
     {{-- Detection de l'operateur telephonique a la volee lors du copier/coller du numero de telephone --}}
