@@ -582,6 +582,9 @@
                     if(jQuery('#possession-nni-oui').is(':checked')) {
                         jQuery("#nni-field").show();
                         jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+                        if(nni_data.FIRST_NAME !== undefined) {
+                            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+                        }
                         {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
                     } else if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery("#nni-input").val("");
