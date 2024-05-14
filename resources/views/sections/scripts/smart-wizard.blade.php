@@ -37,7 +37,7 @@
         enableDoneStateNavigation: true {{-- Enable/Disable the done state navigation --}}
         },
         keyboard: {
-        keyNavigation: true, {{-- Enable/Disable keyboard navigation(left and right keys are used if enabled) --}}
+        keyNavigation: false, {{-- Enable/Disable keyboard navigation(left and right keys are used if enabled) --}}
         keyLeft: [37], {{-- Left key code --}}
         keyRight: [39] {{-- Right key code --}}
         },

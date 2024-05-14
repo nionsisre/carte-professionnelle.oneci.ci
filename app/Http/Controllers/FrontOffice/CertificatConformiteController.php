@@ -45,7 +45,7 @@ class CertificatConformiteController extends Controller {
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
         /* Retourner vue resultat */
-        return view('pages.identification.menu', [
+        return view('pages.certificat.menu', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
 
@@ -72,7 +72,7 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        return view('pages.identification.consultation', [
+        return view('pages.certificat.consultation', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
     }
