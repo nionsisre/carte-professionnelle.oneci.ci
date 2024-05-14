@@ -48,7 +48,13 @@
         @endif
     }
     {{-- Variables --}}
-    var isBusy = false, nni_data="", msisdn="", telco="", first_name="", last_name="", birth_date="", birth_place="", residence="", profession="", doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="", selfSize="", spouse_name="", country="", email="", gender="", document_number="", document_expiry="";
+    var isBusy = false,
+        nni_data="",
+        first_name = "", last_name = "", birth_date = "", mother_first_name = "", mother_last_name = "",
+        decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
+        numero_decision = "", decision_date = "", lieu_delivrance = "",
+        doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="",
+        selfSize="", country="", email="", document_number="", document_expiry="";
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
     jQuery('input[name="possession_nni"]').click(function() {
         if(jQuery('#possession-nni-oui').is(':checked')) {
@@ -121,24 +127,28 @@
                         jQuery('#mother-first-name-input').val("").prop('disabled', false);
                         {{-- Disable next button --}}
                     }
-                    jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 {{-- Step 2 --}}
                 case 1:
-                    last_name = document.querySelectorAll('[name="last-name"]');
                     first_name = document.querySelectorAll('[name="first-name"]');
+                    last_name = document.querySelectorAll('[name="last-name"]');
                     birth_date = document.querySelectorAll('[name="birth-date"]');
-                    country = jQuery(document.querySelectorAll('[name="country"]')).val();
-                    birth_place = (country !== "Côte d’Ivoire") ? document.querySelectorAll('[name="birth-place-2"]') : document.querySelectorAll('[name="birth-place"]');
-                    residence = document.querySelectorAll('[name="residence"]');
-                    profession = document.querySelectorAll('[name="profession"]');
-                    email = jQuery(document.querySelectorAll('[name="email"]')).val();
+                    mother_first_name = document.querySelectorAll('[name="mother-first-name"]');
+                    mother_last_name = document.querySelectorAll('[name="mother-last-name"]');
+                    decision_first_name = document.querySelectorAll('[name="decision-first-name"]');
+                    decision_last_name = document.querySelectorAll('[name="decision-last-name"]');
+                    decision_birth_date = document.querySelectorAll('[name="decision-birth-date"]');
+                    decision_lieu_naissance = document.querySelectorAll('[name="decision-lieu-naissance"]');
+                    numero_decision = document.querySelectorAll('[name="numero-decision"]');
+                    decision_date = document.querySelectorAll('[name="decision-date"]');
+                    lieu_delivrance = document.querySelectorAll('[name="lieu-delivrance"]');
+                    {{-- email = jQuery(document.querySelectorAll('[name="email"]')).val(); --}}
                     {{-- first_name --}}
                     if (!jQuery(first_name).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -155,7 +165,7 @@
                     if (!jQuery(last_name).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -168,7 +178,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                {{-- birth_date --}}
+                    {{-- birth_date --}}
                     var birthdateFormatted = new Date(jQuery(birth_date).val());
                     var maxdate = new Date();
                     var mindate = new Date();
@@ -190,7 +200,179 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    {{-- mother_first_name --}}
+                    if (!jQuery(mother_first_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le/les prénom(s) de votre mère SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- mother_last_name --}}
+                    if (!jQuery(mother_last_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le nom de votre mère SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- decision_first_name --}}
+                    if (!jQuery(decision_first_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) sur la décision de justice SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- decision_last_name --}}
+                    if (!jQuery(decision_last_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom sur la décision de justice SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- decision_birth_date --}}
+                    var decisionBirthdateFormatted = new Date(jQuery(decision_birth_date).val());
+                    var decisionMaxdate = new Date();
+                    var decisionMindate = new Date();
+                    decisionMaxdate.setFullYear(decisionMaxdate.getFullYear() - 10);
+                    decisionMindate.setFullYear(decisionMindate.getFullYear() - 140);
+                    if (!jQuery(decision_birth_date).val() || decisionBirthdateFormatted.getTime() < decisionMindate.getTime() || decisionBirthdateFormatted.getTime() > decisionMaxdate.getTime()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner votre date de naissance sur la décision de justice</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- decision_lieu_naissance --}}
+                    if (!jQuery(decision_lieu_naissance).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de naissance sur la décision de justice SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- numero_decision --}}
+                    if (!jQuery(numero_decision).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-barcode"></i><br/><br/><h3>Veuillez correctement renseigner le numéro de la décision SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- decision_date --}}
+                    var decisionDateFormatted = new Date(jQuery(decision_date).val());
+                    var decisionDateMaxdate = new Date();
+                    var decisionDateMindate = new Date();
+                    decisionDateMaxdate.setFullYear(decisionDateMaxdate.getFullYear() - 10);
+                    decisionDateMindate.setFullYear(decisionDateMindate.getFullYear() - 140);
+                    if (!jQuery(decision_date).val() || decisionDateFormatted.getTime() < decisionDateMindate.getTime() || decisionDateFormatted.getTime() > decisionDateMaxdate.getTime()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner la date de la décision</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- lieu_delivrance --}}
+                    if (!jQuery(lieu_delivrance).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de délivrance SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
+                    break;
+                {{-- Step 3 --}}
+                case 2:
+                    doc_type = document.querySelectorAll('[name="doc-type"]');
+                    document_number = document.querySelectorAll('[name="document-number"]');
+                    document_expiry = document.querySelectorAll('[name="document-expiry"]');
+                    selfie_img_txt = document.querySelectorAll('[name="selfie_img_txt"]');
+
+
                     {{-- Declenchement la detection de la taille du document a charger --}}
                         pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
                     $(pdf_doc).on('change', function () {
@@ -201,13 +383,7 @@
                     $(selfie_img).on('change', function () {
                         selfie_img_size = this.files[0].size;
                     });
-                    break;
-                {{-- Step 3 --}}
-                case 2:
-                    doc_type = document.querySelectorAll('[name="doc-type"]');
-                    document_number = document.querySelectorAll('[name="document-number"]');
-                    document_expiry = document.querySelectorAll('[name="document-expiry"]');
-                    selfie_img_txt = document.querySelectorAll('[name="selfie_img_txt"]');
+
                     {{-- doc_type --}}
                     if (!jQuery(doc_type).val()) {
                         jQuery('#modalError').html(
@@ -259,7 +435,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                {{-- document_expiry --}}
+                    {{-- document_expiry --}}
                     var documentExpiryFormatted = new Date(jQuery(document_expiry).val());
                     var maxExpiryDate = new Date();
                     var minExpiryDate = new Date();
