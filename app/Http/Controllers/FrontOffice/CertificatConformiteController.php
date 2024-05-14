@@ -13,6 +13,7 @@ use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
+use App\Models\Juridiction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use GuzzleHttp\Client;
@@ -56,16 +57,11 @@ class CertificatConformiteController extends Controller {
     public function showFormulaire() {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
+        $juridictions = Juridiction::all();
 
-        $abonnes_operateurs = AbonnesOperateur::all();
-        $civil_status_center = DB::table('civil_status_center')->get();
-        $abonnes_type_pieces = AbonnesTypePiece::all();
-
-        return view('pages.identification.index', [
-            'abonnes_type_pieces' => $abonnes_type_pieces,
-            'abonnes_operateurs' => $abonnes_operateurs,
-            'civil_status_center' => $civil_status_center,
+        return view('pages.certificat.index', [
             'mobile_header_enabled' => $mobile_header_enabled,
+            'juridictions' => $juridictions,
         ]);
     }
 
@@ -76,14 +72,7 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        $abonnes_operateurs = AbonnesOperateur::all();
-        $civil_status_center = DB::table('civil_status_center')->get();
-        $abonnes_type_pieces = AbonnesTypePiece::all();
-
         return view('pages.identification.consultation', [
-            'abonnes_type_pieces' => $abonnes_type_pieces,
-            'abonnes_operateurs' => $abonnes_operateurs,
-            'civil_status_center' => $civil_status_center,
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
     }

@@ -7,7 +7,6 @@
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
-    @include('sections.scripts.dynamic-msisdn')
     @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
     @include('sections.scripts.copy-to-clipboard')
     @if(session()->has('abonne_numeros'))
@@ -408,6 +407,9 @@
                                                                     id="lieu-delivrance" name="lieu-delivrance" required="required"
                                                                     style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Lieu de délivrance</option>
+                                                                @foreach($juridictions as $juridiction)
+                                                                    <option value="{{ $juridiction->id }}">{{ $juridiction->libelle.", ".$juridiction->region }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
@@ -426,9 +428,6 @@
                                                                 id="doc-type" name="doc-type" required="required"
                                                                 style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                             <option value="" selected disabled>Type de pièce d'identité</option>
-                                                            @foreach($abonnes_type_pieces as $abonnes_type_piece)
-                                                                <option value="{{ $abonnes_type_piece->id }}">{{ $abonnes_type_piece->libelle_piece }}</option>
-                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div><br/>

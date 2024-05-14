@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOstatPlusTypeServicesTable extends Migration
+class CreateJuridictionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateOstatPlusTypeServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ostat_plus_type_services', function (Blueprint $table) {
+        Schema::create('juridictions', function (Blueprint $table) {
             $table->id();
-            $table->string('label',100)->nullable();
-            $table->text('icon')->nullable();
+            $table->string('code')->nullable();
+            $table->string('region')->nullable();
+            $table->string('libelle')->nullable();
         });
     }
 
@@ -27,6 +28,6 @@ class CreateOstatPlusTypeServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ostat_plus_type_services');
+        Schema::dropIfExists('juridictions');
     }
 }
