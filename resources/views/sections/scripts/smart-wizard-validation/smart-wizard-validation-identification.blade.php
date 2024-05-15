@@ -81,7 +81,6 @@
     }).keyup(function() {
         if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
             checkNNI();
-            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
         } else {
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
         }
