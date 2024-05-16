@@ -12,7 +12,6 @@
     @if(session()->has('abonne_numeros'))
         @include('sections.scripts.otp-verification')
     @endif
-    @include('sections.scripts.webcam-with-face-detection')
     <script>
         {{--jQuery('.sw-btn-next').each(function () {
             jQuery(this).addClass('disabled');
@@ -477,7 +476,7 @@
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
                                                     <label class="col-sm-2 control-label">
-                                                        Numéro(s) à Identifier<span style="color: #d9534f">*</span> : <br/><b><span id="recap-msisdn"></span></b>
+                                                        Numéro NNI<span style="color: #d9534f">*</span> : <br/><b><span id="recap-nni"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Nom : <b><span id="recap-first-name"></span></b>
@@ -486,34 +485,40 @@
                                                         Prénom(s) : <b><span id="recap-last-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Genre : <b><span id="recap-gender"></span></b>
+                                                        Né(e) le : <b><span id="recap-birth-date"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Date de naissance: <b><span id="recap-birth-date"></span></b>
+                                                        Nom de la mère : <b><span id="recap-mother-last-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Lieu de naissance : <b><span id="recap-birth-place"></span></b>
+                                                        Prénom(s) de la mère : <b><span id="recap-mother-first-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Lieu de résidence : <b><span id="recap-residence"></span></b>
+                                                        Nom sur la décision de justice : <b><span id="recap-decision-last-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Nationalité : <b><span id="recap-country"></span></b>
+                                                        Prénom(s) sur la décision de justice : <b><span id="recap-decision-first-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Profession : <b><span id="recap-profession"></span></b>
-                                                    </label>
-                                                    <label class="col-sm-2 control-label">
-                                                        Email : <b><span id="recap-email"></span></b>
+                                                        Date de Naissance sur la décision : <b><span id="recap-decision-birth-date"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Document justificatif : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                        Lieu de naissance : &nbsp; <b><span id="recap-decision-birth-place"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Photo récente : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
+                                                        Numéro de la décision : &nbsp; <b><span id="recap-numero-decision"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Numéro du document : <b><span id="recap-document-number"></span></b>
+                                                        Date de la décision : <b><span id="recap-decision-date"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Lieu de délivrance : <b><span id="recap-lieu-delivrance"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Lieu de naissance : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Numéro de la décision : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
                                                     </label><br/><br/>
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
@@ -529,7 +534,7 @@
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
                                                             style="width: 100%;padding: 1em; display: none"><i
-                                                            class="fa fa-sim-card"></i> &nbsp; Terminer et soumettre votre identification
+                                                            class="fa fa-sim-card"></i> &nbsp; Terminer et soumettre votre demande
                                                     </button>
                                                 </div>
                                             </div>

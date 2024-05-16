@@ -53,8 +53,11 @@
         first_name = "", last_name = "", birth_date = "", mother_first_name = "", mother_last_name = "",
         decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
         numero_decision = "", decision_date = "", lieu_delivrance = "",
-        doc_type="", pdf_doc="", pdf_doc_size="", fSize="", selfie_img="", selfie_img_size="", selfie_img_txt="",
-        selfSize="", country="", email="", document_number="", document_expiry="";
+        cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="",
+        recap_nni = "", recap_first_name = "", recap_last_name = "", recap_birth_date = "", recap_mother_last_name = "",
+        recap_mother_first_name = "", recap_decision_last_name = "", recap_decision_first_name = "", recap_decision_birth_date = "",
+        recap_decision_birth_place = "", recap_numero_decision = "", recap_decision_date = "", recap_lieu_delivrance = "",
+        email="";
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
     jQuery('input[name="possession_nni"]').click(function() {
         if(jQuery('#possession-nni-oui').is(':checked')) {
@@ -362,100 +365,140 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    if(jQuery('#possession-nni-non').is(':checked')) {
+                        jQuery('#cni-number-container').show();
+                        {{--
+                        jQuery('#cni-number-container').html('<br/><br/>\n\
+                            <h2><i class="fa fa-id-card"></i> &nbsp; Pièce d\'identité :</h2>\n\
+                            <div class="form-group column-last" id="cni-number-field">\n\
+                                <label class="col-sm-2 control-label" id="cni-number-label">\n\
+                                Numéro de la Carte Nationale d\'Identité<span style="color: #d9534f">*</span> :\n\
+                                </label>\n\
+                                <div class="col-sm-10">\n\
+                                    <input type="text" id="cni-number-input" name="cni-number"\n\
+                                           placeholder="___________" maxlength="11" required="required"\n\
+                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>\n\
+                                </div>\n\
+                                <br/>\n\
+                            </div>\n\
+                            <div class="form-group" id="cni-doc-field">\n\
+                                <div class="col-sm-10">\n\
+                                    <div class="box">\n\
+                                        <input type="file" name="pdf_doc" id="cni-doc-input"\n\
+                                            class="inputfile" accept="application/pdf, image/jpeg, image/png"\n\
+                                            style="display: none">\n\
+                                        <label for="cni-doc-input" class="atcl-inv hoverable"\n\
+                                            style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i\n\
+                                            class="fad fa-id-card fa-3x mr10"\n\
+                                            style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger la CNI…</span></label>\n\
+                                    </div>\n\
+                                </div><br/>\n\
+                                <label for="cni-doc-input" class="col-sm-2 control-label">\n\
+                                    Le document à charger doit être un scan <b>recto verso</b> de la Carte Nationale d\'Identité <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,\n\
+                                    avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.\n\
+                                </label>\n\
+                                <br/>\n\
+                            </div>');
+                            --}}
+                    } else if(jQuery('#possession-nni-oui').is(':checked')) {
+                        jQuery('#cni-number-container').hide();
+                        {{--
+                        jQuery('#cni-number-container').html('');
+                        --}}
+                    }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 {{-- Step 3 --}}
                 case 2:
-                    doc_type = document.querySelectorAll('[name="doc-type"]');
-                    document_number = document.querySelectorAll('[name="document-number"]');
-                    document_expiry = document.querySelectorAll('[name="document-expiry"]');
-                    selfie_img_txt = document.querySelectorAll('[name="selfie_img_txt"]');
+                    cni_number = document.querySelectorAll('[name="cni-number"]');
+                    recap_nni = document.querySelectorAll('[name="recap-nni"]');
+                    recap_first_name = document.querySelectorAll('[name="recap-first-name"]');
+                    recap_last_name = document.querySelectorAll('[name="recap-last-name"]');
+                    recap_birth_date = document.querySelectorAll('[name="recap-birth-date"]');
+                    recap_mother_last_name = document.querySelectorAll('[name="recap-mother-last-name"]');
+                    recap_mother_first_name = document.querySelectorAll('[name="recap-mother-first-name"]');
+                    recap_decision_last_name = document.querySelectorAll('[name="recap-decision-last-name"]');
+                    recap_decision_first_name = document.querySelectorAll('[name="recap-decision-first-name"]');
+                    recap_decision_birth_date = document.querySelectorAll('[name="recap-decision-birth-date"]');
+                    recap_decision_birth_place = document.querySelectorAll('[name="recap-decision-birth-place"]');
+                    recap_numero_decision = document.querySelectorAll('[name="recap-numero-decision"]');
+                    recap_decision_date = document.querySelectorAll('[name="recap-decision-date"]');
+                    recap_lieu_delivrance = document.querySelectorAll('[name="recap-lieu-delivrance"]');
 
-
+                    {{-- Declenchement la detection de la taille de la CNI a charger --}}
+                    cni_doc = document.querySelectorAll('[name="cni-doc"]');
+                    $(cni_doc).on('change', function () {
+                        cni_doc = this.files[0].size;
+                    });
                     {{-- Declenchement la detection de la taille du document a charger --}}
-                        pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
+                    pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
                     $(pdf_doc).on('change', function () {
                         pdf_doc_size = this.files[0].size;
                     });
-                    {{-- Declenchement la detection de la taille du selfie a charger --}}
-                        selfie_img = document.querySelectorAll('[name="selfie_img"]');
-                    $(selfie_img).on('change', function () {
-                        selfie_img_size = this.files[0].size;
-                    });
 
-                    {{-- doc_type --}}
-                    if (!jQuery(doc_type).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez selectionner votre type de document justificatif</h3></div>\n\
+                    {{-- filtre_cas_non_nni --}}
+                    if(jQuery('#possession-nni-non').is(':checked')) {
+                        {{-- cni_number --}}
+                        if (!jQuery(cni_number).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-asterisk"></i><br/><br/><h3>Veuillez renseigner votre numéro de CNI SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- cni_doc --}}
+                        if (!jQuery(cni_doc).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez charger votre Carte Nationale d\'Identité</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{--cni_doc_size --}}
+                        var cnifSExt = ["Octets", "Ko", "Mo", "Go"];
+                        cni_fsize = cni_doc_size;
+                        i = 0;
+                        while (cni_fsize > 900) {
+                            cni_fsize /= 1024;
+                            i++;
+                        }
+                        //console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]);
+                        if (cni_doc_size >= 1048576) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>' + ((Math.round(cni_fsize * 100) / 100) + ' ' + cnifSExt[i]) + '</b></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
                     }
-                    {{-- document_number --}}
-                    if (!jQuery(document_number).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-asterisk"></i><br/><br/><h3>Veuillez renseigner votre numéro de document SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- selfie_img_txt --}}
-                    if (!jQuery(selfie_img_txt).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez capturer une photo récente de vous pour continuer</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- document_expiry --}}
-                    var documentExpiryFormatted = new Date(jQuery(document_expiry).val());
-                    var maxExpiryDate = new Date();
-                    var minExpiryDate = new Date();
-                    maxExpiryDate.setFullYear(maxExpiryDate.getFullYear() + 20);
-                    minExpiryDate.setFullYear(minExpiryDate.getFullYear() - 5);
-                    if (jQuery(document_expiry).val() === '' || (documentExpiryFormatted.getTime() < minExpiryDate.getTime() || documentExpiryFormatted.getTime() > maxExpiryDate.getTime())) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-calendar-day"></i><br/><br/><h3>Veuillez renseigner une date d\'expiration valide SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
+
                     {{-- pdf_doc --}}
                     if (!jQuery(pdf_doc).val()) {
                         jQuery('#modalError').html(
@@ -473,7 +516,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                {{-- pdf_doc_size --}}
+                    {{-- pdf_doc_size --}}
                     var fSExt = ["Octets", "Ko", "Mo", "Go"];
                     fSize = pdf_doc_size;
                     i = 0;
@@ -498,48 +541,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                {{-- selfie_img --}}
-                {{-- if(!jQuery(selfie_img).val()) {
-                    jQuery('#modalError').html(
-                        '<center> <div class="notification-box notification-box-error">\n\
-                        <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>Veuillez charger une photo selfie récente de vous</h3></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                    );
-                    jQuery('#modalError').modal({
-                        escapeClose: false,
-                        clickClose: false,
-                        showClose: false
-                    });
-                    jQuery('.blocker').css('z-index','2');
-                    jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                    return false;
-                } --}}
-                {{-- selfie_img_size --}}
-                {{-- var selffSExt = ["Octets", "Ko", "Mo", "Go"];
-                selfSize = selfie_img_size; i=0;while(selfSize>900){selfSize/=1024;i++;}
-                if(selfie_img_size >= 3145728) {
-                    jQuery('#modalError').html(
-                        '<center> <div class="notification-box notification-box-error">\n\
-                        <div class="modal-header"><i class="fa fa-2x fa-portrait"></i><br/><br/><h3>La taille de votre photo excède 3 Mo</h3>Taille actuelle du fichier : <b>'+((Math.round(selfSize*100)/100)+' '+selffSExt[i])+'</b></div>\n\
-                        </div><div class="modal-footer">\n\
-                        <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                    );
-                    jQuery('#modalError').modal({
-                        escapeClose: false,
-                        clickClose: false,
-                        showClose: false
-                    });
-                    jQuery('.blocker').css('z-index','2');
-                    jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                    return false;
-                } --}}
-                {{-- RECAP --}}
-                    var msisdn_list = "";
-                    for (let i = 0; i < msisdn.length; i++) {
-                        msisdn_list += '<i class="fa fa-sim-card"></i> &nbsp; ' + jQuery(msisdn[i]).val() + ' (' + jQuery(telco[i]).select2('data')[0].text + ')<br/>';
-                    }
-                    jQuery('#recap-msisdn').html(msisdn_list);
+                    {{-- RECAP --}}
                     if (jQuery(spouse_name).val()) {
                         jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase() + ' epse ' + jQuery(spouse_name).val().toUpperCase());
                     } else {

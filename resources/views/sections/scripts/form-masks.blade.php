@@ -5,7 +5,6 @@
     |--------------------------------------------------------------------------
     --}}
     jQuery(".msisdn").mask('99 99 99 99 99');
-    jQuery("#form-number-input").mask('9999999999');
     jQuery(".nni").mask('99999999999');
     jQuery(".good-select").select2();
 </script>
