@@ -231,7 +231,7 @@
                                                     </label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="nni-input" class="nni" name="nni"
-                                                               placeholder="___________" maxlength="11" required="required"
+                                                               placeholder="___________" maxlength="11"
                                                                style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                     </div>
                                                     <br/>
@@ -432,7 +432,7 @@
                                                     <div class="form-group" id="cni-doc-field">
                                                         <div class="col-sm-10">
                                                             <div class="box">
-                                                                <input type="file" name="pdf_doc" id="cni-doc-input"
+                                                                <input type="file" name="cni-doc" id="cni-doc-input"
                                                                        class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                        style="display: none">
                                                                 <label for="cni-doc-input" class="atcl-inv hoverable"
@@ -454,7 +454,7 @@
                                                     <div class="form-group" id="pdf-doc-field">
                                                         <div class="col-sm-10">
                                                             <div class="box">
-                                                                <input type="file" name="pdf_doc" id="pdf-doc-input"
+                                                                <input type="file" name="pdf-doc" id="pdf-doc-input"
                                                                        class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                        style="display: none">
                                                                 <label for="pdf-doc-input" class="atcl-inv hoverable"
@@ -475,14 +475,14 @@
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
-                                                    <label class="col-sm-2 control-label">
-                                                        Numéro NNI<span style="color: #d9534f">*</span> : <br/><b><span id="recap-nni"></span></b>
+                                                    <label class="col-sm-2 control-label" id="recap-nni-container">
+                                                        Numéro NNI<br/><b><span id="recap-nni"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Nom : <b><span id="recap-first-name"></span></b>
+                                                        Nom : <b><span id="recap-last-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Prénom(s) : <b><span id="recap-last-name"></span></b>
+                                                        Prénom(s) : <b><span id="recap-first-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Né(e) le : <b><span id="recap-birth-date"></span></b>
@@ -514,11 +514,11 @@
                                                     <label class="col-sm-2 control-label">
                                                         Lieu de délivrance : <b><span id="recap-lieu-delivrance"></span></b>
                                                     </label><br/>
-                                                    <label class="col-sm-2 control-label">
-                                                        Lieu de naissance : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
+                                                    <label class="col-sm-2 control-label" id="recap-cni-doc-container">
+                                                        Carte Nationale d'Identité : &nbsp; <b><i class="fa fa-id-card"></i> &nbsp; <span id="recap-cni-doc"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Numéro de la décision : &nbsp; <b><i class="fa fa-portrait"></i> &nbsp; <span id="recap-selfie-img"></span></b>
+                                                        Décision Judiciaire : &nbsp; <b><i class="fa fa-balance-scale"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
                                                     </label><br/><br/>
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
@@ -534,7 +534,7 @@
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
                                                             style="width: 100%;padding: 1em; display: none"><i
-                                                            class="fa fa-sim-card"></i> &nbsp; Terminer et soumettre votre demande
+                                                            class="fa fa-file-certificate"></i> &nbsp; Terminer et soumettre votre demande
                                                     </button>
                                                 </div>
                                             </div>

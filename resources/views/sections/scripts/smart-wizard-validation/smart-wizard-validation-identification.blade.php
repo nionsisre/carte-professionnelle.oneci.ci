@@ -53,10 +53,7 @@
         first_name = "", last_name = "", birth_date = "", mother_first_name = "", mother_last_name = "",
         decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
         numero_decision = "", decision_date = "", lieu_delivrance = "",
-        cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="",
-        recap_nni = "", recap_first_name = "", recap_last_name = "", recap_birth_date = "", recap_mother_last_name = "",
-        recap_mother_first_name = "", recap_decision_last_name = "", recap_decision_first_name = "", recap_decision_birth_date = "",
-        recap_decision_birth_place = "", recap_numero_decision = "", recap_decision_date = "", recap_lieu_delivrance = "",
+        cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="", nni="",
         email="";
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
     jQuery('input[name="possession_nni"]').click(function() {
@@ -95,9 +92,10 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
+                    nni = document.querySelectorAll('#nni-input');
                     if(jQuery('#possession-nni-oui').is(':checked')) {
                         {{-- check_nni --}}
-                        if(!jQuery('#nni-input').val()) {
+                        if(!jQuery(nni).val()) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
                                 <div class="modal-header"><i class="fa fa-2x fa-barcode"></i><br/><br/><h3>Veuillez correctement renseigner votre numéro NNI SVP</h3></div>\n\
@@ -411,29 +409,18 @@
                 {{-- Step 3 --}}
                 case 2:
                     cni_number = document.querySelectorAll('[name="cni-number"]');
-                    recap_nni = document.querySelectorAll('[name="recap-nni"]');
-                    recap_first_name = document.querySelectorAll('[name="recap-first-name"]');
-                    recap_last_name = document.querySelectorAll('[name="recap-last-name"]');
-                    recap_birth_date = document.querySelectorAll('[name="recap-birth-date"]');
-                    recap_mother_last_name = document.querySelectorAll('[name="recap-mother-last-name"]');
-                    recap_mother_first_name = document.querySelectorAll('[name="recap-mother-first-name"]');
-                    recap_decision_last_name = document.querySelectorAll('[name="recap-decision-last-name"]');
-                    recap_decision_first_name = document.querySelectorAll('[name="recap-decision-first-name"]');
-                    recap_decision_birth_date = document.querySelectorAll('[name="recap-decision-birth-date"]');
-                    recap_decision_birth_place = document.querySelectorAll('[name="recap-decision-birth-place"]');
-                    recap_numero_decision = document.querySelectorAll('[name="recap-numero-decision"]');
-                    recap_decision_date = document.querySelectorAll('[name="recap-decision-date"]');
-                    recap_lieu_delivrance = document.querySelectorAll('[name="recap-lieu-delivrance"]');
 
                     {{-- Declenchement la detection de la taille de la CNI a charger --}}
-                    cni_doc = document.querySelectorAll('[name="cni-doc"]');
+                    cni_doc = document.querySelectorAll('#cni-doc-input');
                     $(cni_doc).on('change', function () {
-                        cni_doc = this.files[0].size;
+                        cni_doc_size = this.files[0].size;
+                        console.log(cni_doc_size);
                     });
                     {{-- Declenchement la detection de la taille du document a charger --}}
-                    pdf_doc = document.querySelectorAll('[name="pdf_doc"]');
+                    pdf_doc = document.querySelectorAll('#pdf-doc-input');
                     $(pdf_doc).on('change', function () {
                         pdf_doc_size = this.files[0].size;
+                        console.log(pdf_doc_size);
                     });
 
                     {{-- filtre_cas_non_nni --}}
@@ -475,7 +462,7 @@
                         {{--cni_doc_size --}}
                         var cnifSExt = ["Octets", "Ko", "Mo", "Go"];
                         cni_fsize = cni_doc_size;
-                        i = 0;
+                        var i = 0;
                         while (cni_fsize > 900) {
                             cni_fsize /= 1024;
                             i++;
@@ -484,7 +471,7 @@
                         if (cni_doc_size >= 1048576) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>' + ((Math.round(cni_fsize * 100) / 100) + ' ' + cnifSExt[i]) + '</b></div>\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>La taille de votre fichier de CNI excède 1 Mo</h3>Taille actuelle du fichier : <b>' + ((Math.round(cni_fsize * 100) / 100) + ' ' + cnifSExt[i]) + '</b></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                             );
@@ -503,7 +490,7 @@
                     if (!jQuery(pdf_doc).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>Veuillez charger un document justificatif</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-balance-scale"></i><br/><br/><h3>Veuillez charger la décision judiciaire</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -528,7 +515,7 @@
                     if (pdf_doc_size >= 1048576) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-paperclip"></i><br/><br/><h3>La taille de votre fichier excède 1 Mo</h3>Taille actuelle du fichier : <b>' + ((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]) + '</b></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-balance-scale"></i><br/><br/><h3>La taille de votre fichier de décision judiciaire excède 1 Mo</h3>Taille actuelle du fichier : <b>' + ((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]) + '</b></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -542,37 +529,38 @@
                         return false;
                     }
                     {{-- RECAP --}}
-                    if (jQuery(spouse_name).val()) {
-                        jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase() + ' epse ' + jQuery(spouse_name).val().toUpperCase());
-                    } else {
-                        jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase());
-                    }
+                    cni_number = document.querySelectorAll('[name="cni-number"]');
                     jQuery('#recap-last-name').text(jQuery(last_name).val().toUpperCase());
-                    if (jQuery(gender).val().toUpperCase() === 'M') {
-                        jQuery('#recap-gender').html('<i class="fa fa-mars"></i> &nbsp; Masculin');
-                    } else if (jQuery(gender).val().toUpperCase() === 'F') {
-                        jQuery('#recap-gender').html('<i class="fa fa-venus"></i> &nbsp; Feminin');
-                    } else {
-                        jQuery('#recap-gender').html('<i class="fa fa-venus-mars"></i> &nbsp; Indéfini');
-                    }
+                    jQuery('#recap-first-name').text(jQuery(first_name).val().toUpperCase());
                     jQuery('#recap-birth-date').text(jQuery(birth_date).val());
-                    if (country !== "Côte d’Ivoire") {
-                        jQuery('#recap-birth-place').text(jQuery(birth_place).val());
-                    } else {
-                        jQuery('#recap-birth-place').text(jQuery(birth_place).select2('data')[0].text);
+                    jQuery('#recap-mother-last-name').text(jQuery(mother_last_name).val().toUpperCase());
+                    jQuery('#recap-mother-first-name').text(jQuery(mother_first_name).val().toUpperCase());
+                    jQuery('#recap-decision-last-name').text(jQuery(decision_last_name).val().toUpperCase());
+                    jQuery('#recap-decision-first-name').text(jQuery(decision_first_name).val().toUpperCase());
+                    jQuery('#recap-decision-birth-date').text(jQuery(decision_birth_date).val().toUpperCase());
+                    jQuery('#recap-decision-birth-place').text(jQuery(decision_lieu_naissance).val().toUpperCase());
+                    jQuery('#recap-numero-decision').text(jQuery(numero_decision).val().toUpperCase());
+                    jQuery('#recap-decision-date').text(jQuery(decision_date).val().toUpperCase());
+                    jQuery('#recap-lieu-delivrance').text(jQuery(lieu_delivrance).select2('data')[0].text);
+                    if(jQuery('#possession-nni-non').is(':checked')) {
+                        jQuery('#recap-nni').text("");
+                        jQuery('#recap-nni-container').hide();
+                        jQuery('#recap-cni-doc').text(jQuery(cni_doc).val().split("\\")[2] + " - " + ((Math.round(cni_fsize * 100) / 100) + " " + cnifSExt[i]));
+                        jQuery('#recap-cni-doc-container').show();
+                    } else if(jQuery('#possession-nni-oui').is(':checked')) {
+                        jQuery('#recap-nni').text(jQuery(nni).val());
+                        jQuery('#recap-nni-container').show();
+                        jQuery('#recap-cni-doc-container').hide();
+                        jQuery('#recap-cni-doc').text("");
                     }
-                    jQuery('#recap-residence').text(jQuery(residence).val().toUpperCase());
-                    jQuery('#recap-country').text(country.toUpperCase());
-                    jQuery('#recap-profession').text(jQuery(profession).val().toUpperCase());
+                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2] + " - " + ((Math.round(fSize * 100) / 100) + " " + fSExt[i]));
+                    {{--
                     if (email === '') {
                         jQuery('#recap-email').text('...');
                     } else {
                         jQuery('#recap-email').html('<i class="fa fa-envelope"></i> &nbsp; ' + email);
                     }
-                    jQuery('#recap-pdf-doc').text(jQuery(pdf_doc).val().split("\\")[2] + " (" + jQuery(doc_type).select2('data')[0].text + ") - " + ((Math.round(fSize * 100) / 100) + " " + fSExt[i]));
-                    {{--jQuery('#recap-selfie-img').text(jQuery(selfie_img).val().split("\\")[2]+" - "+((Math.round(selfSize*100)/100)+" "+selffSExt[i]));--}}
-                    jQuery('#recap-selfie-img').text(jQuery(first_name).val().toLowerCase().replace(/'/g, "") + ".jpg");
-                    jQuery('#recap-document-number').text(jQuery(document_number).val().toUpperCase() + ' (Expire le ' + jQuery(document_expiry).val() + ')');
+                    --}}
                     if (jQuery("#agreement-input").is(':checked')) {
                         jQuery("#cptch-sbmt-btn").show();
                     } else {

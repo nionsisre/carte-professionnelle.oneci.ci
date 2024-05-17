@@ -189,6 +189,7 @@ class CertificatConformiteController extends Controller {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
                 redirect()->route('certificat.index')->with((new GoogleRecaptchaV3())->verify($request));
         }
+        dd($request->all());
         /* Valider les variables du formulaire */
         request()->validate([
             'first-name' => ['required', 'string', 'max:70'],
