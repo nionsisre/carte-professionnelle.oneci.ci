@@ -545,13 +545,15 @@
                     if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery('#recap-nni').text("");
                         jQuery('#recap-nni-container').hide();
-                        jQuery('#recap-nni').text("");
+                        jQuery('#recap-cni').text(jQuery(cni_number).val());
                         jQuery('#recap-cni-container').show();
                         jQuery('#recap-cni-doc').text(jQuery(cni_doc).val().split("\\")[2] + " - " + ((Math.round(cni_fsize * 100) / 100) + " " + cnifSExt[i]));
                         jQuery('#recap-cni-doc-container').show();
                     } else if(jQuery('#possession-nni-oui').is(':checked')) {
                         jQuery('#recap-nni').text(jQuery(nni).val());
                         jQuery('#recap-nni-container').show();
+                        jQuery('#recap-cni').text("");
+                        jQuery('#recap-cni-container').hide();
                         jQuery('#recap-cni-doc-container').hide();
                         jQuery('#recap-cni-doc').text("");
                     }
