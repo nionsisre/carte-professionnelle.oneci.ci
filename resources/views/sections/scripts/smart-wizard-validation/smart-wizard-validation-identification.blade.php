@@ -443,7 +443,7 @@
                             return false;
                         }
                         {{-- cni_doc --}}
-                        if (!jQuery(cni_doc).val()) {
+                        if (!escape(jQuery(cni_doc).val())) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
                                 <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez charger votre Carte Nationale d\'Identité</h3></div>\n\
@@ -487,7 +487,7 @@
                     }
 
                     {{-- pdf_doc --}}
-                    if (!jQuery(pdf_doc).val()) {
+                    if (!escape(jQuery(pdf_doc).val())) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><i class="fa fa-2x fa-balance-scale"></i><br/><br/><h3>Veuillez charger la décision judiciaire</h3></div>\n\
@@ -545,6 +545,8 @@
                     if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery('#recap-nni').text("");
                         jQuery('#recap-nni-container').hide();
+                        jQuery('#recap-nni').text("");
+                        jQuery('#recap-cni-container').show();
                         jQuery('#recap-cni-doc').text(jQuery(cni_doc).val().split("\\")[2] + " - " + ((Math.round(cni_fsize * 100) / 100) + " " + cnifSExt[i]));
                         jQuery('#recap-cni-doc-container').show();
                     } else if(jQuery('#possession-nni-oui').is(':checked')) {

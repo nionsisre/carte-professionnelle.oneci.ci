@@ -209,7 +209,7 @@
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
-                                                <h2>Avez vous un numéro NNI ?</h2>
+                                                <h2>Avez-vous un numéro NNI ?</h2>
                                                 <div class="form-group column-last" id="possession-nni-field">
                                                     <div class="form-group">
                                                         <div class="col-sm-12 container clearfix">
@@ -313,7 +313,7 @@
                                                     </div>
                                                 </div>
                                                 <br/><br/>
-                                                <h2>Informations modifiées sur décision de justice :</h2>
+                                                <h2>Informations modifiées sur la décision de justice :</h2>
                                                 <br/>
                                                 <div class="container clearfix">
                                                     <div class="form-group one-third column-last" id="decision-last-name-field">
@@ -475,6 +475,9 @@
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
+                                                    <label class="col-sm-2 control-label" id="recap-cni-container">
+                                                        Numéro CNI<br/><b><span id="recap-cni"></span></b>
+                                                    </label>
                                                     <label class="col-sm-2 control-label" id="recap-nni-container">
                                                         Numéro NNI<br/><b><span id="recap-nni"></span></b>
                                                     </label><br/>
