@@ -16,7 +16,7 @@
                 <a href="{{ route('certificat.menu') }}">&nbsp;<br/>Accueil</a>
             </li>
             <li>
-                <a href="{{ route('certificat.index') }}">Formulaire Certificat <br/>de conformité</a>
+                <a href="{{ route('certificat.formulaire') }}">Formulaire Certificat <br/>de conformité</a>
             </li>
             <li>
                 <a href="{{ route('certificat.consultation') }}">Consultation <br/>certificat de conformité</a>

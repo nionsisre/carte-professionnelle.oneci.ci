@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\Abonne;
 use App\Models\AbonnesNumero;
 use App\Models\AbonnesPreIdentifie;
+use App\Models\Client;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -21,9 +22,7 @@ class GeneratedTokensOrIDs {
         $unique_number_id = time();
         switch ($type) {
             case 'numero_dossier':
-                return (Abonne::where('numero_dossier', $unique_number_id)->exists() || AbonnesPreIdentifie::where('numero_dossier', $unique_number_id)->exists()) ? $this->generateUniqueNumberID($type) : $unique_number_id;
-            case 'transaction_id':
-                return (AbonnesNumero::where('transaction_id', $unique_number_id)->exists() || AbonnesPreIdentifie::where('transaction_id', $unique_number_id)->exists()) ? $this->generateUniqueNumberID($type) : $unique_number_id;
+                return (Client::where('numero_dossier', $unique_number_id)->exists()) ? $this->generateUniqueNumberID($type) : $unique_number_id;
             default:
                 return $unique_number_id;
         }

@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Juridiction extends Model {
+class Client extends Model
+{
     use HasFactory;
 
     public $guarded = [];
-    public $timestamps = false;
 
-    public function clients() {
-        return $this->hasMany(Client::class, 'id', 'lieu_decision');
+    public function juridiction() {
+        return $this->belongsTo(Juridiction::class, 'lieu_decision', 'id');
     }
 }

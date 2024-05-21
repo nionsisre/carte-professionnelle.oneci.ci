@@ -50,120 +50,23 @@
             <div class="column-last">
                 <h2><i class="fa fa-file-certificate text-black mr10"></i> &nbsp; Obtention du certificat de conformité
                 </h2>
-                @if(session()->has('abonne_numeros'))
-                    @if(!config('services.sms.enabled'))
-                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
-                            <center>
-                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i>
-                                <br/><div>
-                                    <p style="padding: 0 0 3em">
-                                        Votre demande d'identification a bien été soumise avec succès !<br/><br/>
-                                        Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('abonne_numeros')[0]->numero_dossier }}</span></b> &nbsp;<br/><br/>
-                                        Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande d'identification...<br/><br/>
-                                        L'ONECI vous remercie !
-                                    </p>
-                                </div>
-                                <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le reçu d'identification</a><br/>
-                                <a href="{{ route('certificat.index') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour à la rubrique identification</a>
-                                <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
-                            </center>
-                        </div><br/><br/><br/><br/><br/><br/>
-                    @else
-                        <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
-                            <center>
-                                <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 8em;margin: 0.3em 0 0.2em;"></i>
-                                <br/>
-                                <div>
-                                    Votre demande d'identification a bien été soumise avec succès !<br/><br><br>
-                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('abonne_numeros')[0]->numero_dossier }}</span></b> &nbsp; <br/><br/><br/>
-                                    <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                    Veuillez procéder à la vérification de vos numéros de téléphone ci-dessous afin que votre demande fasse l'objet d'une analyse par l'ONECI avant d'être validée :<br/><br>
-                                    <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
-                                        @if(session()->has('success'))
-                                            <center>
-                                                <div class="notification-box notification-box-success">
-                                                    <div class="modal-header">
-                                                        <h6 style="color: #1b5e20"><i class="fa fa-check-circle mr10"></i> &nbsp; {{ session()->get('success')['message'] }}</h6>
-                                                    </div>
-                                                </div>
-                                            </center>
-                                        @endif
-                                        @if(session()->has('error') && session()->get('error'))
-                                            <center>
-                                                <div class="notification-box notification-box-error">
-                                                    <div class="modal-header">
-                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ session()->get('error_message') }}</h6>
-                                                    </div>
-                                                </div>
-                                            </center>
-                                        @endif
-                                        @if($errors->any())
-                                            <center>
-                                                <div class="notification-box notification-box-error">
-                                                    <div class="modal-header">
-                                                        <h6 style="color: #f44336"><i class="fa fa-exclamation-triangle fa-flip-horizontal mr10"></i> &nbsp; {{ $errors->first() }}</h6>
-                                                    </div>
-                                                </div>
-                                            </center>
-                                        @endif
-                                        <thead>
-                                        <tr style="font-size: 0.75em;">
-                                            <th scope="col">Numéro(s) de téléphone</th>
-                                            <th scope="col">Statut de l'identification</th>
-                                            <th scope="col">Vérification OTP</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @for($i=0;$i<sizeof(session()->get('abonne_numeros'));$i++)
-                                            <tr>
-                                                <td style="vertical-align: middle;"><i class="fad fa-sim-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->numero_de_telephone }}</b> ({{ session()->get('abonne_numeros')[$i]->libelle_operateur }})</td>
-                                                <td style="vertical-align: middle;"><i class="fad fa-{{ session()->get('abonne_numeros')[$i]->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ session()->get('abonne_numeros')[$i]->libelle_statut }}</b></td>
-                                                <td style="vertical-align: middle;">
-                                                    @if(session()->get('abonne_numeros')[$i]->abonnes_statut_id == 1)
-                                                    <div id="otp-send-link-container" class="one-third" style="display: block; margin-bottom: 1em">
-                                                        <span id="otp-send-counter-{{ $i }}" style="display: none">0:00</span>
-                                                        <a id="otp-send-link-{{ $i }}" href="javascript:void(0);" class="button blue otp-send-link" style="margin-bottom: 0"><i class="fa fa-envelope text-white"></i> &nbsp; Recevoir code par SMS</a>
-                                                    </div>
-                                                    <form id="ctptch-frm-id-{{ $i }}" class="content-form" method="post" action="{{ route('front_office.scripts.otp_code.verify') }}">
-                                                        {{ csrf_field() }}
-                                                        <input type="hidden" name="cli" value="{{ url()->current() }}">
-                                                        <input type="hidden" name="fn" value="{{ session()->get('abonne_numeros')[$i]->numero_dossier }}">
-                                                        <input type="hidden" name="idx" value="{{ $i }}">
-                                                        <div class="form-group one-third" id="otp-code-field" style="display: block; margin-bottom: 1em">
-                                                            <label class="col-sm-2 control-label" for="otp-code-{{ $i }}">
-                                                                Code de vérification reçu
-                                                            </label>
-                                                            <div class="col-sm-10">
-                                                                <input type="text" id="otp-code-{{ $i }}" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center"/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="one-third column-last">
-                                                            <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn-{{ $i }}" style="margin-bottom: 0">
-                                                                <i class="fa fa-check text-white"></i> &nbsp; Vérifier ce numéro de téléphone
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                    @else
-                                                    <i class="fa fa-check"></i> &nbsp; Vérification effectuée
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endfor
-                                        </tbody>
-                                    </table>
-                                    <br/>
-                                    <b style="color: #f44336"><i class="fa fa-exclamation-triangle"></i> &nbsp; NB : La vérification des numéros de téléphone est aussi accessible depuis la rubrique &nbsp; << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>.</b>
-                                        <br/><br/><br/>
-                                        L'ONECI vous remercie !
-                                        <br/><br/><br/><br/>
-                                </div>
-                                <a href="{{ route('front_office.download.recu_identification.pdf').'?n='.session()->get('abonne_numeros')[0]->numero_dossier }}" class="button blue"><i class="fa fa-download text-white"></i> &nbsp; Télécharger votre reçu d'identification</a><br/><br/><br/>
-                                <a href="{{ route('certificat.index') }}" class="button black"><i class="fa fa-arrow-alt-left text-white"></i> &nbsp; Retour à la rubrique identification</a>
-                                <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
-                            </center>
-                        </div><br/><br/><br/><br/><br/><br/>
-                    @endif
+                @if(session()->has('client'))
+                    <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
+                        <center>
+                            <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i>
+                            <br/><div>
+                                <p style="padding: 0 0 3em">
+                                    Votre demande de certificat de conformité a bien été soumise avec succès !<br/><br/>
+                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')[0]->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                    Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
+                                    L'ONECI vous remercie !
+                                </p>
+                            </div>
+                            <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
+                            <a href="{{ route('certificat.formulaire') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour au menu certificat de conformité</a>
+                            <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                        </center>
+                    </div><br/><br/><br/><br/><br/><br/>
                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                 @else
                     @if($errors->any())
@@ -187,9 +90,9 @@
                     <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre certificat de conformité<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
-                            <div id="tvi-preorder-container">
+                            <div>
                                 <form id="ctptch-frm-id" class="content-form" method="post"
-                                      action="{{ route('front_office.form.soumettre_identification') }}" enctype="multipart/form-data">
+                                      action="{{ route('certificat.formulaire.submit') }}" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
@@ -241,76 +144,78 @@
                                                 <br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
-                                                <br/><br/>
-                                                <h2>Informations sur l'usager :</h2>
-                                                <br/>
-                                                <div class="container clearfix">
-                                                    <div class="form-group one-third column-last" id="last-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            NOM<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
-                                                                   placeholder="NOM..." maxlength="70"
-                                                                   autocomplete="off"
-                                                                   required="required"
-                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                <div id="npdl-container">
+                                                    <br/><br/>
+                                                    <h2>Informations sur l'usager :</h2>
+                                                    <br/>
+                                                        <div class="container clearfix">
+                                                            <div class="form-group one-third column-last" id="last-name-field">
+                                                                <label class="col-sm-2 control-label">
+                                                                    NOM<span style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
+                                                                           placeholder="NOM..." maxlength="70"
+                                                                           autocomplete="off"
+                                                                           required="required"
+                                                                           style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
+                                                            <div class="form-group one-third column-last" id="first-name-field">
+                                                                <label class="col-sm-2 control-label">
+                                                                    Prénom(s)<span style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
+                                                                           placeholder="Prénom(s)" maxlength="150"
+                                                                           required="required"
+                                                                           autocomplete="off"
+                                                                           style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
+                                                            <div class="form-group one-third column-last" id="birth-date-field">
+                                                                <label class="col-sm-2 control-label">
+                                                                    Né(e) le<span style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
+                                                                           placeholder="Date de Naissance" required="required"
+                                                                           max="{{ date('Y-m-d', strtotime('-10 years')) }}"
+                                                                           style="width: 10.5em; text-align: center"/>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
                                                         </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="first-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Prénom(s)<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                   placeholder="Prénom(s)" maxlength="25"
-                                                                   required="required"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                        <div class="container clearfix">
+                                                            <div class="form-group one-half column-last" id="mother-last-name-field">
+                                                                <label class="col-sm-2 control-label">
+                                                                    Nom de la mère<span style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="mother-last-name-input" name="mother-last-name" value="{{ old('mother-last-name') }}"
+                                                                           placeholder="NOM de la mère..." maxlength="70"
+                                                                           autocomplete="off"
+                                                                           required="required"
+                                                                           style="text-transform: uppercase; width: 16em; text-align: center"/>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
+                                                            <div class="form-group one-half column-last" id="mother-first-name-field">
+                                                                <label class="col-sm-2 control-label">
+                                                                    Prénom(s) de la mère<span style="color: #d9534f">*</span> :
+                                                                </label>
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" id="mother-first-name-input" name="mother-first-name" value="{{ old('mother-first-name') }}"
+                                                                           placeholder="Prénom(s) de la mère..." maxlength="150"
+                                                                           required="required"
+                                                                           autocomplete="off"
+                                                                           style="text-transform: uppercase; width: 13.4em; text-align: center"/>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
                                                         </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="birth-date-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Né(e) le<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
-                                                                   placeholder="Date de Naissance" required="required"
-                                                                   max="{{ date('Y-m-d', strtotime('-10 years')) }}"
-                                                                   style="width: 10.5em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                </div>
-                                                <div class="container clearfix">
-                                                    <div class="form-group one-half column-last" id="mother-last-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Nom de la mère<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="mother-last-name-input" name="mother-last-name" value="{{ old('mother-last-name') }}"
-                                                                   placeholder="NOM de la mère..." maxlength="70"
-                                                                   autocomplete="off"
-                                                                   required="required"
-                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-half column-last" id="mother-first-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Prénom(s) de la mère<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="mother-first-name-input" name="mother-first-name" value="{{ old('mother-first-name') }}"
-                                                                   placeholder="Prénom(s) de la mère..." maxlength="25"
-                                                                   required="required"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
                                                 </div>
                                                 <br/><br/>
                                                 <h2>Informations modifiées sur la décision de justice :</h2>
@@ -335,7 +240,7 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="decision-first-name-input" name="decision-first-name" value="{{ old('decision-first-name') }}"
-                                                                   placeholder="Prénom(s) sur décision..." maxlength="25"
+                                                                   placeholder="Prénom(s) sur décision..." maxlength="150"
                                                                    required="required"
                                                                    autocomplete="off"
                                                                    style="text-transform: uppercase; width: 13.4em; text-align: center"/>
@@ -362,7 +267,7 @@
                                                         </label>
                                                         <div class="col-sm-10">
                                                             <input type="text" id="decision-lieu-naissance-input" name="decision-lieu-naissance" value="{{ old('decision-lieu-naissance') }}"
-                                                                   placeholder="Lieu de naissance..." maxlength="70"
+                                                                   placeholder="Lieu de naissance..." maxlength="150"
                                                                    autocomplete="off"
                                                                    required="required"
                                                                    style="text-transform: uppercase; width: 16em; text-align: center"/>
@@ -396,7 +301,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <div class="form-group col-sm-12 column-last" id="lieu-delivrance-field">
+                                                    <div class="form-group one-half column-last" id="lieu-delivrance-field">
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de délivrance<span style="color: #d9534f">*</span> :
                                                         </label>
@@ -408,6 +313,22 @@
                                                                 <option value="" selected disabled>Lieu de délivrance</option>
                                                                 @foreach($juridictions as $juridiction)
                                                                     <option value="{{ $juridiction->id }}">{{ $juridiction->libelle.", ".$juridiction->region }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group one-half column-last" id="lieu-retrait-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Lieu de retrait du certificat de conformité<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <span style="display: none" id="err-toast"></span>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control good-select"
+                                                                    id="lieu-retrait" name="lieu-retrait" required="required"
+                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Lieu de retrait</option>
+                                                                @foreach($centres as $centre)
+                                                                    <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -495,7 +416,7 @@
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Prénom(s) de la mère : <b><span id="recap-mother-first-name"></span></b>
-                                                    </label>
+                                                    </label><br/>
                                                     <label class="col-sm-2 control-label">
                                                         Nom sur la décision de justice : <b><span id="recap-decision-last-name"></span></b>
                                                     </label>
@@ -504,18 +425,21 @@
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Date de Naissance sur la décision : <b><span id="recap-decision-birth-date"></span></b>
-                                                    </label><br/>
-                                                    <label class="col-sm-2 control-label">
-                                                        Lieu de naissance : &nbsp; <b><span id="recap-decision-birth-place"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Numéro de la décision : &nbsp; <b><span id="recap-numero-decision"></span></b>
+                                                        Lieu de naissance : &nbsp; <b><span id="recap-decision-birth-place"></span></b>
                                                     </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Numéro de la décision : &nbsp; <b><span id="recap-numero-decision"></span></b>
+                                                    </label>
                                                     <label class="col-sm-2 control-label">
                                                         Date de la décision : <b><span id="recap-decision-date"></span></b>
-                                                    </label><br/>
+                                                    </label>
                                                     <label class="col-sm-2 control-label">
                                                         Lieu de délivrance : <b><span id="recap-lieu-delivrance"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Lieu de retrait du certificat de conformité : <b><i class="fa fa-map-marker-alt"></i> &nbsp; <span id="recap-lieu-retrait"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label" id="recap-cni-doc-container">
                                                         Carte Nationale d'Identité : &nbsp; <b><i class="fa fa-id-card"></i> &nbsp; <span id="recap-cni-doc"></span></b>

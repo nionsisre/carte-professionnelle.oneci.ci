@@ -253,7 +253,7 @@
                                 </div>
                             </center>
                         @endif
-                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('front_office.form.consulter_statut_identification') }}">
+                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('certificat.consultation.submit') }}">
                             {{ csrf_field() }}
                             <input type="hidden" id="tsch-input" name="tsch" value="0"/>
                             <center>

@@ -25,7 +25,7 @@
                 <section class="container">
                     <div class="one-half" style="width: 48%;">
                         <div class="iconbox icon-top atcl" align="center">
-                            <a href="{{ route('certificat.index') }}" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
+                            <a href="{{ route('certificat.formulaire') }}" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
                                 <div class="iconbox-icon"><i class="fad fa-file-certificate fa-4x mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.5em; margin-top: 0.5em"></i></div>
                                 <h2 class="iconbox-title">Obtenir mon certificat de conformité</h2>
                                 <div class="arrow-box-hover"></div>

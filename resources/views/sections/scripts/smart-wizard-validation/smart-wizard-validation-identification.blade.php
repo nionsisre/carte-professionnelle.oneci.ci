@@ -52,9 +52,21 @@
         nni_data="",
         first_name = "", last_name = "", birth_date = "", mother_first_name = "", mother_last_name = "",
         decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
-        numero_decision = "", decision_date = "", lieu_delivrance = "",
+        numero_decision = "", decision_date = "", lieu_delivrance = "", lieu_retrait = "",
         cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="", nni="",
         email="";
+
+    {{-- Declenchement la detection de la taille de la CNI a charger --}}
+    $('#cni-doc-input').on('change', function () {
+        cni_doc_size = this.files[0].size;
+        console.log(cni_doc_size);
+    });
+    {{-- Declenchement la detection de la taille du document a charger --}}
+    $('#pdf-doc-input').on('change', function () {
+        pdf_doc_size = this.files[0].size;
+        console.log(pdf_doc_size);
+    });
+
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
     jQuery('input[name="possession_nni"]').click(function() {
         if(jQuery('#possession-nni-oui').is(':checked')) {
@@ -62,6 +74,7 @@
             jQuery("#nni-field").show();
             jQuery('#nni-check-result').hide();
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            jQuery("#npdl-container").hide();
             {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
         } else if(jQuery('#possession-nni-non').is(':checked')) {
             nni_data = "";
@@ -69,6 +82,7 @@
             jQuery("#nni-field").hide();
             jQuery('#nni-check-result').hide();
             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+            jQuery("#npdl-container").show();
         }
     });
     {{-- Checker le NNI au remplissage de l'input ou au copier coller du NNI --}}
@@ -117,6 +131,7 @@
                         jQuery('#birth-date-input').val(nni_data.BIRTH_DATE).prop('disabled', true);
                         jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME).prop('disabled', true);
                         jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME).prop('disabled', true);
+                        jQuery("#npdl-container").hide();
                         {{-- Enable next button --}}
                     } else if(jQuery('#possession-nni-non').is(':checked')) {
                         {{-- Empty and Enable All fields --}}
@@ -125,6 +140,7 @@
                         jQuery('#birth-date-input').val("").prop('disabled', false);
                         jQuery('#mother-last-name-input').val("").prop('disabled', false);
                         jQuery('#mother-first-name-input').val("").prop('disabled', false);
+                        jQuery("#npdl-container").show();
                         {{-- Disable next button --}}
                     }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
@@ -143,6 +159,7 @@
                     numero_decision = document.querySelectorAll('[name="numero-decision"]');
                     decision_date = document.querySelectorAll('[name="decision-date"]');
                     lieu_delivrance = document.querySelectorAll('[name="lieu-delivrance"]');
+                    lieu_retrait = document.querySelectorAll('[name="lieu-retrait"]');
                     {{-- email = jQuery(document.querySelectorAll('[name="email"]')).val(); --}}
                     {{-- first_name --}}
                     if (!jQuery(first_name).val()) {
@@ -307,6 +324,23 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    {{-- lieu_retrait --}}
+                    if (!jQuery(lieu_retrait).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-file-certificate"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de retrait de votre certificat de conformité SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
                     {{-- numero_decision --}}
                     if (!jQuery(numero_decision).val()) {
                         jQuery('#modalError').html(
@@ -409,19 +443,8 @@
                 {{-- Step 3 --}}
                 case 2:
                     cni_number = document.querySelectorAll('[name="cni-number"]');
-
-                    {{-- Declenchement la detection de la taille de la CNI a charger --}}
                     cni_doc = document.querySelectorAll('#cni-doc-input');
-                    $(cni_doc).on('change', function () {
-                        cni_doc_size = this.files[0].size;
-                        console.log(cni_doc_size);
-                    });
-                    {{-- Declenchement la detection de la taille du document a charger --}}
                     pdf_doc = document.querySelectorAll('#pdf-doc-input');
-                    $(pdf_doc).on('change', function () {
-                        pdf_doc_size = this.files[0].size;
-                        console.log(pdf_doc_size);
-                    });
 
                     {{-- filtre_cas_non_nni --}}
                     if(jQuery('#possession-nni-non').is(':checked')) {
@@ -542,6 +565,7 @@
                     jQuery('#recap-numero-decision').text(jQuery(numero_decision).val().toUpperCase());
                     jQuery('#recap-decision-date').text(jQuery(decision_date).val().toUpperCase());
                     jQuery('#recap-lieu-delivrance').text(jQuery(lieu_delivrance).select2('data')[0].text);
+                    jQuery('#recap-lieu-retrait').text(jQuery(lieu_retrait).select2('data')[0].text);
                     if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery('#recap-nni').text("");
                         jQuery('#recap-nni-container').hide();
@@ -590,11 +614,13 @@
                         if(nni_data.FIRST_NAME !== undefined) {
                             jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
                         }
+                        jQuery("#npdl-container").hide();
                         {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
                     } else if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery("#nni-input").val("");
                         jQuery("#nni-field").hide();
                         jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
+                        jQuery("#npdl-container").show();
                     }
                     break;
             }

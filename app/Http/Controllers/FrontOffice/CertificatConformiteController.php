@@ -9,14 +9,12 @@ use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
 use App\Mail\MailONECI;
-use App\Models\Abonne;
-use App\Models\AbonnesNumero;
+use App\Models\Client;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
 use App\Models\Juridiction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -58,10 +56,12 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
         $juridictions = Juridiction::all();
+        $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
-        return view('pages.certificat.index', [
+        return view('pages.certificat.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
             'juridictions' => $juridictions,
+            'centres' => $centres
         ]);
     }
 
@@ -116,7 +116,7 @@ class CertificatConformiteController extends Controller {
             /*
                 Verif ONECI getting authentication token
             */
-            $client = new Client();
+            $client = new \GuzzleHttp\Client();
             try {
                 $response_token = $client->post(env('VERIF_API_LINK').'/api/v1/authenticate', [
                     'verify' => false,
@@ -187,105 +187,81 @@ class CertificatConformiteController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('certificat.index')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('certificat.formulaire')->with((new GoogleRecaptchaV3())->verify($request));
         }
-        dd($request->all());
         /* Valider les variables du formulaire */
         request()->validate([
-            'first-name' => ['required', 'string', 'max:70'],
-            'spouse-name' => ['nullable', 'string', 'max:70'],
+            'possession_nni' => ['required', 'string', 'max:10'],
+            'nni' => ['nullable', 'string', 'max:11'],
+            'cni-number' => ['nullable', 'string', 'max:20'],
             'last-name' => ['required', 'string', 'max:70'],
-            'birth-date' => ['required', 'string', 'max:11'],
-            'residence' => ['required', 'string', 'max:70'],
-            'profession' => ['required', 'string', 'max:70'],
-            'country' => ['required', 'string', 'max:70'],
-            'email' => ['nullable', 'string', 'max:150'],
-            'doc-type' => ['required', 'string', 'max:150'],
-            'pdf_doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-            'selfie_img_txt' => [
-                'nullable',
-                'string',
-                'max:10000000',
-                new Base64Image
-            ],
-            'document-number' => ['required', 'string', 'max:150'],
-            'document-expiry' => ['nullable', 'string', 'max:11'],
+            'first-name' => ['required', 'string', 'max:150'],
+            'birth-date' => ['required', 'string', 'max:20'],
+            'mother-last-name' => ['required', 'string', 'max:70'],
+            'mother-first-name' => ['required', 'string', 'max:150'],
+            'decision-last-name' => ['nullable', 'string', 'max:70'],
+            'decision-first-name' => ['required', 'string', 'max:150'],
+            'decision-birth-date' => ['required', 'string', 'max:20'],
+            'decision-lieu-naissance' => ['required', 'string', 'max:150'],
+            'numero-decision' => ['required', 'string', 'max:25'],
+            'decision-date' => ['required', 'string', 'max:20'],
+            'lieu-delivrance' => ['required', 'string', 'max:150'],
+            'cni-doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
+            'pdf-doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
         ]);
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
-        $document_justificatif_filename = 'identification' . '_' . $numero_dossier . '.' . $request->pdf_doc->extension();
-        $document_justificatif = $request->file('pdf_doc')->storeAs('media', $document_justificatif_filename, 'public');
-        $civil_status_center = ($request->input('country') == 'Côte d’Ivoire') ?
-            DB::table('civil_status_center')->where('civil_status_center_id', '=', $request->input('birth-place'))->get()[0]->civil_status_center_label
-            : $request->input('birth-place-2');
-        $type_cni = ($request->input('country') == 'Côte d’Ivoire') ? (($request->input('doc-type') == 2) ? $request->input('id-card-type') : '') : '';
-        $abonne = Abonne::create([
-            'numero_dossier' => $numero_dossier,
-            'nom' => strtoupper($request->input('first-name')),
-            'nom_epouse' => strtoupper($request->input('spouse-name')),
-            'prenoms' => strtoupper($request->input('last-name')),
-            'date_de_naissance' => $request->input('birth-date'),
-            'lieu_de_naissance' => $civil_status_center,
-            'genre' => $request->input('gender'),
-            'domicile' => strtoupper($request->input('residence')),
-            'profession' => strtoupper($request->input('profession')),
-            'nationalite' => $request->input('country'),
-            'email' => $request->input('email'),
-            'abonnes_type_piece_id' => $request->input('doc-type'),
-            'document_justificatif' => $document_justificatif,
-            'date_expiration_document' => $request->input('document-expiry'),
-            'numero_document' => $request->input('document-number'),
-            'type_cni' => $type_cni,
-            'photo_selfie' => $request->input('selfie_img_txt'),
-            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$civil_status_center)
-        ]);
-        $telco = $request->input('telco');
-        $msisdn = $request->input('msisdn');
-        for ($i = 0; $i < sizeof($telco); $i++) {
-            AbonnesNumero::create([
-                'abonne_id' => $abonne->id,
-                'abonnes_operateur_id' => $telco[$i],
-                'abonnes_statut_id' => 1,
-                'numero_de_telephone' => str_replace(' ', '', $msisdn[$i])
-            ]);
-            $msisdn[$i] = $msisdn[$i] . ' (' . AbonnesOperateur::find($telco[$i])->libelle_operateur . ') | ';
+
+        /* Pièces jointes */
+        // Récupération de la décision judiciaire
+        $decision_judiciaire_filename = 'decision' . '_' . $numero_dossier . '.' . $request->file('pdf-doc')->extension();
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+            $decision_judiciaire = $request->file('pdf-doc')->storeAs('data\\decision', $decision_judiciaire_filename, 'public');
+        } else { /* If Current server OS is not windows */
+            $decision_judiciaire = $request->file('pdf-doc')->storeAs('data/decision', $decision_judiciaire_filename, 'public');
         }
-        /* Envoi de mail */
-        if(!empty($request->input('email'))) {
-            MailONECI::sendMailTemplate('layouts.recu-identification', [
-                'title' => 'Reçu d\'identification',
-                'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $abonne->numero_dossier . '&t=' . $abonne->uniqid),
-                'numero_dossier' => $abonne->numero_dossier,
-                'uniqid' => $abonne->uniqid,
-                'msisdn_list' => $msisdn,
-                'nom_complet' => $abonne->prenoms . ' ' . $abonne->nom . ((!empty($abonne->nom_epouse)) ? ' epse ' . $abonne->nom_epouse : ''),
-                'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($abonne->date_de_naissance)) . ' à ' . $abonne->lieu_de_naissance,
-                'lieu_de_residence' => $abonne->domicile,
-                'nationalite' => $abonne->nationalite,
-                'profession' => $abonne->profession,
-                'email' => $abonne->email,
-                'document_justificatif' => $abonne->libelle_piece . ' (' . $abonne->numero_document . ')',
-            ], "À propos de votre identification d'abonné mobile ONECI");
-        }
-        /* Obtention des informations sur l'abonné et ses numéros */
-        $abonne_numeros = DB::table('abonnes_numeros')
-            ->select('*')
-            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-            ->where('abonnes.numero_dossier', '=', $abonne->numero_dossier)
-            ->get();
-        /* Si le service d'envoi de SMS est actif */
-        if(config('services.sms.enabled')) {
-            /* Génération d'un token OTP pour chaque numéro de téléphone en session */
-            for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
-                $otp_msisdn_tokens[$i] = (new GeneratedTokensOrIDs())->createToken(0);
+        // Récupération de la cni si existe
+        if($request->input('possession_nni') == "N") {
+            $cni_filename = 'cni' . '_' . $numero_dossier . '.' . $request->file('cni-doc')->extension();
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
+                $cni = $request->file('cni-doc')->storeAs('data\\cni', $cni_filename, 'public');
+            } else { /* If Current server OS is not windows */
+                $cni = $request->file('cni-doc')->storeAs('data/cni', $cni_filename, 'public');
             }
-            session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
         }
+
+        $client = Client::create([
+            'numero_dossier' => $numero_dossier,
+            'nni' => strtoupper($request->input('nni')),
+            'numero_cni' => strtoupper($request->input('cni-number')),
+            'nom' => strtoupper($request->input('last-name')),
+            'prenom' => $request->input('first-name'),
+            'date_naissance' => $request->input('birth-date'),
+            'lieu_naissance' => "",
+            'nom_mere' => strtoupper($request->input('mother-last-name')),
+            'prenom_mere' => strtoupper($request->input('mother-first-name')),
+            'nom_decision' => $request->input('decision-last-name'),
+            'prenom_decision' => $request->input('decision-first-name'),
+            'date_naissance_decision' => $request->input('decision-birth-date'),
+            'lieu_naissance_decision' => $request->input('decision-lieu-naissance'),
+            'numero_decision' => $request->input('numero-decision'),
+            'date_decision' => $request->input('decision-date'),
+            'lieu_decision' => $request->input("lieu-delivrance"),
+            'cni' => $cni ?? "",
+            'decision_judiciaire' => $decision_judiciaire,
+            'statut' => $request->input('selfie_img_txt'),
+            'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$numero_dossier)
+        ]);
+
+        /* Obtention des informations sur le client enregistré et sa juridiction */
+        $client = Client::with('juridiction')->find($client->id);
+        $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
+
         /* Retourner vue resultat */
-        return redirect()->route('certificat.index')->with('abonne_numeros', $abonne_numeros);
+        return redirect()->route('certificat.formulaire')->with([
+            'client' => $client,
+            'centres' => $centres
+        ]);
     }
 
     /**
@@ -606,7 +582,7 @@ class CertificatConformiteController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('front_office.form.consulter_statut_identification')->with([
+        return redirect()->route('certificat.consultation.submit')->with([
             'error' => true,
             'error_message' => 'Erreur est survenue lors du téléchargement du reçu d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
