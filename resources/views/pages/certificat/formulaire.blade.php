@@ -129,7 +129,7 @@
                                                     </div><br/>
                                                 </div>
                                                 <div class="form-group column-last" id="nni-field">
-                                                    <label class="col-sm-2 co@ntrol-label" id="nni-label">
+                                                    <label class="col-sm-2 control-label" id="nni-label">
                                                         Numéro NNI<span style="color: #d9534f">*</span> :
                                                     </label>
                                                     <div class="col-sm-10">
