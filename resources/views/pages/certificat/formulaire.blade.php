@@ -461,7 +461,7 @@
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
                                                             style="width: 100%;padding: 1em; display: none"><i
-                                                            class="fa fa-file-certificate"></i> &nbsp; Terminer et soumettre votre demande
+                                                            class="fa fa-file-certificate"></i> &nbsp; Procéder au paiement
                                                     </button>
                                                 </div>
                                             </div>
