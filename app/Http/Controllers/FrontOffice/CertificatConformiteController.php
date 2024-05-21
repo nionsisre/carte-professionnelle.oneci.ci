@@ -58,6 +58,32 @@ class CertificatConformiteController extends Controller {
         $juridictions = Juridiction::all();
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
+        /*// Implémentation paynah
+        $data = array(
+            "amount" => $price,
+            "transaction_id" => $transaction_id,
+            "description" => "Paiement Frais de Service VIP",
+            "lang" => "fr",
+            "currency" => "XOF",
+            "channel" => "MOBILE_MONEY",
+            "country_code" => "CI",
+            "notif_url" => "https://www.oneci.ci/paynah/notify",
+            "return_url" => "https://www.oneci.ci/paynah/return"
+        );
+        $payload = json_encode($data);
+        $opts = array(
+            "http" => array(
+                "method" => "POST",
+                "header" => "Content-Type: application/json\r\n" .
+                    "x-api-key: NGNjNDRjMmMtNDY4Ni00OTdkLTkxMDMtYmI5NzQzOGI4ZjNj\r\n" .
+                    "x-api-secret: ZXlKaGJHY2lPaUpJVXpJMU5pSjkuWVRZeE5EQmtNV0V0TVdZeU1DMDBOalV6TFRrNU56Y3RNalU1TWpCaFpUQmxPV1l3LlE0dGotVTh3UlJMcjhJWFNHT1g4WThpZWNOaDN6RHFpWk52aXdhTkVNR0k=\r\n".
+                    "Connection: close\r\n",
+                "content" => $payload
+            )
+        );
+        $context = stream_context_create($opts);
+        $response = file_get_contents('https://payin.api-v2.paynah.com/v2/intents', false, $context); */
+
         return view('pages.certificat.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
             'juridictions' => $juridictions,

@@ -107,7 +107,7 @@
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 3 : Documents justificatifs</a></li>
                                             <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 4 : Récapitulatif</a></li>
+                                                    &nbsp; Etape 4 : Récapitulatif et Paiement</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
@@ -461,7 +461,7 @@
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
                                                             style="width: 100%;padding: 1em; display: none"><i
-                                                            class="fa fa-file-certificate"></i> &nbsp; Procéder au paiement
+                                                            class="fa fa-money-check"></i> &nbsp; Procéder au paiement
                                                     </button>
                                                 </div>
                                             </div>
