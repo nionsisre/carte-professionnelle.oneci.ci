@@ -7,11 +7,9 @@
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
-    @include('sections.scripts.smart-wizard-validation.smart-wizard-validation-identification')
+    @include('sections.scripts.smart-wizard-validation.formulaire')
     @include('sections.scripts.copy-to-clipboard')
-    @if(session()->has('abonne_numeros'))
-        @include('sections.scripts.otp-verification')
-    @endif
+    @include('sections.scripts.form-tools')
     <script>
         {{--jQuery('.sw-btn-next').each(function () {
             jQuery(this).addClass('disabled');
@@ -26,6 +24,7 @@
             --}}
         });
     </script>
+    @include('sections.scripts.payment-processing')
 @endsection
 
 @section('content')
@@ -57,7 +56,7 @@
                             <br/><div>
                                 <p style="padding: 0 0 3em">
                                     Votre demande de certificat de conformité a bien été soumise avec succès !<br/><br/>
-                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')[0]->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>
                                     Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
                                     L'ONECI vous remercie !
                                 </p>
@@ -460,7 +459,7 @@
                                                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
-                                                            style="width: 100%;padding: 1em; display: none"><i
+                                                            style="width: 100%;padding: 1em; display: none" onclick="cancelFormSubmit('#ctptch-frm-id', cp)"><i
                                                             class="fa fa-money-check"></i> &nbsp; Procéder au paiement
                                                     </button>
                                                 </div>

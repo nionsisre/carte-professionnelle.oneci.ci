@@ -59,12 +59,12 @@
     {{-- Declenchement la detection de la taille de la CNI a charger --}}
     $('#cni-doc-input').on('change', function () {
         cni_doc_size = this.files[0].size;
-        console.log(cni_doc_size);
+        {{-- console.log(cni_doc_size); --}}
     });
     {{-- Declenchement la detection de la taille du document a charger --}}
     $('#pdf-doc-input').on('change', function () {
         pdf_doc_size = this.files[0].size;
-        console.log(pdf_doc_size);
+        {{-- console.log(pdf_doc_size); --}}
     });
 
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
@@ -87,7 +87,7 @@
     });
     {{-- Checker le NNI au remplissage de l'input ou au copier coller du NNI --}}
     jQuery("#nni-field").bind("paste", function(e){
-        // access the clipboard using the api
+        {{-- access the clipboard using the api --}}
         let pastedData = e.originalEvent.clipboardData.getData('text');
         if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
             checkNNI();
@@ -490,7 +490,7 @@
                             cni_fsize /= 1024;
                             i++;
                         }
-                        //console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]);
+                        {{-- console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]); --}}
                         if (cni_doc_size >= 1048576) {
                             jQuery('#modalError').html(
                                 '<center> <div class="notification-box notification-box-error">\n\
@@ -534,7 +534,7 @@
                         fSize /= 1024;
                         i++;
                     }
-                    //console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]);
+                    {{-- console.log((Math.round(fSize * 100) / 100) + ' ' + fSExt[i]); --}}
                     if (pdf_doc_size >= 1048576) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\

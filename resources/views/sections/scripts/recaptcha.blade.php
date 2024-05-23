@@ -1,5 +1,5 @@
 @if(config('services.recaptcha.enabled'))
-<script src='https://www.google.com/recaptcha/api.js?render=6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq'></script>
+<script src='https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_CLIENT') }}'></script>
 <script>
     {{--
     |--------------------------------------------------------------------------
@@ -8,7 +8,7 @@
     --}}
     grecaptcha.ready(function () {
         {{-- do request for recaptcha token --}}
-        grecaptcha.execute('6Le0UkweAAAAAO7QZXFPlJWyprDjUA-uxpT3DRIq', {
+        grecaptcha.execute('{{ env('RECAPTCHA_CLIENT') }}', {
             action: 'validate_captcha'
         }).then(function (token) {
             {{-- response is promise with passed token --}}

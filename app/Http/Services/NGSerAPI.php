@@ -28,11 +28,7 @@ class NGSerAPI {
         try {
             //$transaction_id = date('Y', time()). (new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
             //$transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').$customer_informations->numero_de_telephone;
-            if ($payment_type == env('PAYMENT_TYPE_2')) {
-                $transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT_2').date('Y', time()).(new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
-            } else {
-                $transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').$customer_informations->numero_de_telephone.env('NGSER_SERVICE_SALT').date('Y', time()).(new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
-            }
+            $transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').$customer_informations->numero_de_telephone.env('NGSER_SERVICE_SALT').date('Y', time()).(new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
 
             $response = $client->post(env('NGSER_RECETTE_URL').'/v3/sessions', [
                 'verify' => false,
@@ -96,10 +92,8 @@ class NGSerAPI {
     public function verify($transaction_id, $payment_type="") {
 
         // Retrouver le type de paiement, le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
-        if($payment_type == env('PAYMENT_TYPE_1') || strpos($transaction_id, env("NGSER_SERVICE_SALT"))) {
-            $payment_type = env('PAYMENT_TYPE_1');
-        } else if($payment_type == env('PAYMENT_TYPE_2') || strpos($transaction_id, env("NGSER_SERVICE_SALT_2"))) {
-            $payment_type = env('PAYMENT_TYPE_2');
+        if($payment_type == env('PAYMENT_TYPE') || strpos($transaction_id, env("NGSER_SERVICE_SALT"))) {
+            $payment_type = env('PAYMENT_TYPE');
         }
 
         /*
@@ -229,12 +223,7 @@ class NGSerAPI {
                 if(strpos($request->input('order_id'), env("NGSER_SERVICE_SALT"))) {
                     $metadata = explode(env("NGSER_SERVICE_SALT"), $request->input('order_id'));
                     $form_number = $metadata[0];
-                    $msisdn = $metadata[1];
-                    $payment_type = env('PAYMENT_TYPE_1');
-                } else if(strpos($request->input('order_id'), env("NGSER_SERVICE_SALT_2"))) {
-                    $metadata = explode(env("NGSER_SERVICE_SALT_2"), $request->input('order_id'));
-                    $form_number = $metadata[0];
-                    $payment_type = env('PAYMENT_TYPE_2');
+                    $payment_type = env('PAYMENT_TYPE');
                 }
 
                 // Convertir la chaîne en objet DateTime
