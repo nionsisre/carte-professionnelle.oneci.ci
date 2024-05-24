@@ -13,7 +13,7 @@
         function cp(form) { {{-- Check Payment Listener --}}
             console.log(form);
             {{-- $(form).submit(); --}}
-            let url = "{{ route('front_office.pre_identification.script.payment.verify') }}";
+            let url = "{{ route('certificat.payment.verify') }}";
             let cli = "{{ url()->current() }}";
             let t = "{{ md5(sha1('s@lty'.session()->get('client')->numero_dossier.'s@lt'))}}";
             let fn = "{{ session()->get('client')->numero_dossier }}";
@@ -31,7 +31,7 @@
                 success: function(res){
                     if(!res.has_error) {
                         jQuery('#close-modal-btn').click();
-                        location.href = encodeURI("{{ route('front_office.pre_identification.script.payment.done') }}"+"?f="+ "{{ session()->get('client')->numero_dossier }}"+"&t="+"{{ session()->get('client')->uniqid }}");
+                        location.href = encodeURI("{{ route('certificat.payment.done') }}"+"?f="+ "{{ session()->get('client')->numero_dossier }}"+"&t="+"{{ session()->get('client')->uniqid }}");
                     }
                 }
             });

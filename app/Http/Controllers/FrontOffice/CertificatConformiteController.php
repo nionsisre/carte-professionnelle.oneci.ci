@@ -589,7 +589,7 @@ class CertificatConformiteController extends Controller {
                 /* PDF Download document generation */
                 $data = [
                     'title' => 'Reçu d\'identification',
-                    'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.recu_identification.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->uniqid),
+                    'qrcode' => (new QrCode())->generateQrBase64(route('certificat.recu.check.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->uniqid),
                     'numero_dossier' => $identification_resultats->numero_dossier,
                     'uniqid' => $identification_resultats->uniqid,
                     'msisdn_list' => $msisdn,
@@ -639,7 +639,7 @@ class CertificatConformiteController extends Controller {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_identification.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
                         'numero_dossier' => $identification_resultats->numero_dossier,
                         'uniqid' => $identification_resultats->uniqid,
                         'msisdn' => $identification_resultats->numero_de_telephone,
@@ -699,7 +699,7 @@ class CertificatConformiteController extends Controller {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('front_office.auth.certificat_identification.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
                         'numero_dossier' => $identification_resultats->numero_dossier,
                         'uniqid' => $identification_resultats->uniqid,
                         'msisdn' => $identification_resultats->numero_de_telephone,

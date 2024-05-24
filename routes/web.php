@@ -44,27 +44,27 @@ Route::get('/'.md5('verifapi'.date('Y-m-d').env('APP_KEY')), [CertificatConformi
 
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-formulaire', [CertificatConformiteController::class, 'submit'])->name('certificat.formulaire.submit');
-Route::post('/consulter-statut-identification', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit');
-Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('front_office.form.soumettre_reclamation_paiement');
+Route::post('/consulter-statut-certificat', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit');
+Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('certificat.payment.reclamation.submit');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */
-Route::post('/'.md5('cimiai'.date('m')), [CertificatConformiteController::class, 'checkIfMsisdnIsAlreadyIdentifed'])->name('front_office.scripts.msisdn.is_already_identified');
-Route::post('/'.md5('gcpl'.date('m')), [CertificatConformiteController::class, 'getCertificatePaymentLink'])->name('front_office.scripts.certificat_identification.payment_link.get');
-Route::post('/'.md5('avipid'.date('m')), [CertificatConformiteController::class, 'autoVerifyIfPaymentIsDone'])->name('front_office.identification.script.payment.verify');
+Route::post('/'.md5('gcpl'.date('m')), [CertificatConformiteController::class, 'getCertificatePaymentLink'])->name('certificat.payment.get');
+Route::post('/'.md5('avipid'.date('m')), [CertificatConformiteController::class, 'autoVerifyIfPaymentIsDone'])->name('certificat.payment.verify');
+Route::get('/'.md5('get-pi'.date('m')), [CertificatConformiteController::class, 'search'])->name('certificat.payment.done');
 
 /* Front Office URLs on readable QR Code Routes */
-Route::get('/get', [CertificatConformiteController::class, 'search'])->name('front_office.auth.recu_identification.url');
-Route::get('/check-certificat-identification', [CertificatConformiteController::class, 'checkCertificate'])->name('front_office.auth.certificat_identification.url');
+Route::get('/get', [CertificatConformiteController::class, 'search'])->name('certificat.recu.check.url');
+Route::get('/check-certificat-conformite', [CertificatConformiteController::class, 'checkCertificate'])->name('certificat.check.url');
 
 /* Front Office File Downloads Routes */
-Route::get('/telecharger-recu-identification-pdf', [CertificatConformiteController::class, 'downloadRecuIdentificationPDF'])->name('front_office.download.recu_identification.pdf');
-Route::get('/telecharger-certificat-identification-pdf', [CertificatConformiteController::class, 'downloadCertificateIdentificationPDF'])->name('front_office.download.certificat_identification.pdf');
+Route::get('/telecharger-recu-demande-pdf', [CertificatConformiteController::class, 'downloadRecuIdentificationPDF'])->name('certificat.download.recu.pdf');
+Route::get('/telecharger-certificat-conformite-pdf', [CertificatConformiteController::class, 'downloadCertificateIdentificationPDF'])->name('certificat.download.pdf');
 
 /* Front Office CinetPAY routes */
-Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('front_office.cinetpay.notify');
-Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('front_office.cinetpay.return');
-Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('front_office.cinetpay.cancel');
+Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('cinetpay.notify');
+Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('cinetpay.return');
+Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('cinetpay.cancel');
 
 /* Front Office CinetPAY routes */
-Route::post('/check-status-payment', [NGSerAPI::class, 'notify'])->name('front_office.nsger.notify');
-Route::get('/notification-post-payment', [NGSerAPI::class, 'return'])->name('front_office.ngser.return');
+Route::post('/check-status-payment', [NGSerAPI::class, 'notify'])->name('ngser.notify');
+Route::get('/notification-post-payment', [NGSerAPI::class, 'return'])->name('ngser.return');
