@@ -18,11 +18,21 @@
         jQuery(document).ready(function () {
             {{-- Désactive le bouton suivant du wizard --}}
             jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
-            {{--
-            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
-            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
-            --}}
+            {{--jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");--}}
+            @if(session()->has('client'))
+                {{-- Désactive les étapes pré-paiement du wizard --}}
+                jQuery('#smartwizard').smartWizard("setState", [0,1,2,3], "disable");
+                jQuery('#smartwizard').smartWizard("goToStep", 4);
+            @else
+                {{-- Désactive les étapes post-paiement du wizard --}}
+                jQuery('#smartwizard').smartWizard("setState", [4,5], "disable");
+            @endif
         });
+        function lwsbmt(frm_id) {
+            jQuery('#cptch-sbmt-btn').hide();
+            jQuery('#cptch-sbmt-loader').show();
+            jQuery(frm_id).submit();
+        }
     </script>
     @include('sections.scripts.payment-processing')
 @endsection
@@ -52,18 +62,55 @@
                 @if(session()->has('client'))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
-                            <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i>
-                            <br/><div>
-                                <p style="padding: 0 0 3em">
-                                    Votre demande de certificat de conformité a bien été soumise avec succès !<br/><br/>
-                                    Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>
-                                    Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
-                                    L'ONECI vous remercie !
-                                </p>
+                            <div id="smartwizard" class="mb-3">
+                                <ul class="nav">
+                                    <li><a class="nav-link" href="#etape-1"><i class="fa fa-barcode text-white"></i>
+                                            &nbsp; Etape 1 : Possession NNI</a></li>
+                                    <li><a class="nav-link" href="#etape-2"><i
+                                                class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
+                                            Informations</a></li>
+                                    <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
+                                            &nbsp; Etape 3 : Documents justificatifs</a></li>
+                                    <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
+                                            &nbsp; Etape 4 : Récapitulatif</a></li>
+                                    <li><a class="nav-link" href="#etape-5"><i class="fa fa-money-check text-white"></i>
+                                            &nbsp; Etape 5 : Paiement</a></li>
+                                    <li><a class="nav-link" href="#etape-6"><i class="fa fa-check text-white"></i>
+                                            &nbsp; Etape 6 : Terminé</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="etape-1" class="tab-pane" role="tabpanel"></div>
+                                    <div id="etape-2" class="tab-pane" role="tabpanel"></div>
+                                    <div id="etape-3" class="tab-pane" role="tabpanel"></div>
+                                    <div id="etape-4" class="tab-pane" role="tabpanel"></div>
+                                    <div id="etape-5" class="tab-pane" role="tabpanel">
+                                        <br/><br/>
+                                        Veuillez sélectionner un agrégateur de paiement SVP :<br/><br/>
+                                        <section class="container">
+                                            <div class="one-half" style="width: 48%;">
+                                                <div class="iconbox icon-top atcl" align="center">
+                                                    <a href="javascript:void(0)" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
+                                                        <div class="iconbox-icon"><img src="{{ URL::asset('assets/images/logo-paynah.png') }}" alt="Paynah Icon" style="padding: 3em 6em;" /></div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="one-half" style="width: 48%;">
+                                                <div class="iconbox icon-top atcl" align="center">
+                                                    <a href="javascript:void(0)" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
+                                                        <div class="iconbox-icon"><img src="{{ URL::asset('assets/images/logo-ngser.png') }}" alt="NGSer Icon" style="padding: 2.8em 6em;" /></div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </section><br/><br/><br/>
+                                        {{--Après avoir procédé au paiement, <br/><br/>
+                                        Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                        <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
+                                        Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
+                                        L'ONECI vous remercie !--}}
+                                    </div>
+                                </div>
                             </div>
-                            <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                            <a href="{{ route('certificat.formulaire') }}" class="button"><i class="fa fa-sim-card text-white"></i> &nbsp; Retour au menu certificat de conformité</a>
-                            <a href="https://www.oneci.ci" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            {{--<a href="{{ route('certificat.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retour au menu certificat de conformité</a>--}}
                         </center>
                     </div><br/><br/><br/><br/><br/><br/>
                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
@@ -106,7 +153,11 @@
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
                                                     &nbsp; Etape 3 : Documents justificatifs</a></li>
                                             <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 4 : Récapitulatif et Paiement</a></li>
+                                                    &nbsp; Etape 4 : Récapitulatif</a></li>
+                                            <li><a class="nav-link" href="#etape-5"><i class="fa fa-money-check text-white"></i>
+                                                    &nbsp; Etape 5 : Paiement</a></li>
+                                            <li><a class="nav-link" href="#etape-6"><i class="fa fa-check text-white"></i>
+                                                    &nbsp; Etape 6 : Terminé</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
@@ -459,9 +510,10 @@
                                                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                                 <div class="col-sm-12">
                                                     <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn"
-                                                            style="width: 100%;padding: 1em; display: none" onclick="cancelFormSubmit('#ctptch-frm-id', cp)"><i
+                                                            style="width: 100%;padding: 1em; display: none" onclick="cancelFormSubmit('#ctptch-frm-id', lwsbmt)"><i
                                                             class="fa fa-money-check"></i> &nbsp; Procéder au paiement
                                                     </button>
+                                                    <span id="cptch-sbmt-loader" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i><br/></span>
                                                 </div>
                                             </div>
                                         </div>

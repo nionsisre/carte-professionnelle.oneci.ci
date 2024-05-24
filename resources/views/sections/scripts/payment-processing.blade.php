@@ -1,4 +1,4 @@
-@if(config('services.cinetpay.enabled') || config('services.ngser.enabled'))
+@if(config('services.cinetpay.enabled') || config('services.ngser.enabled') || config('services.paynah.enabled'))
 <script>
     {{--
     |--------------------------------------------------------------------------
@@ -6,13 +6,11 @@
     |--------------------------------------------------------------------------
     --}}
     @if(session()->has('client'))
-        {{-- PreIdentification Payment Javascript Process --}}
+        {{-- "Certificat Conformité" Payment Javascript Process --}}
         var ti = 0;
         var animatedTimer;
         var tkn = "{{ csrf_token() }}";
-        function cp(form) { {{-- Check Payment Listener --}}
-            console.log(form);
-            {{-- $(form).submit(); --}}
+        function cp() { {{-- Check Payment Listener --}}
             let url = "{{ route('certificat.payment.verify') }}";
             let cli = "{{ url()->current() }}";
             let t = "{{ md5(sha1('s@lty'.session()->get('client')->numero_dossier.'s@lt'))}}";
@@ -35,17 +33,18 @@
                     }
                 }
             });
+            {{-- $(form).submit(); --}}
         }
         function ccp() { {{-- Close Check Payment Listener --}}
             clearInterval(animatedTimer);
             jQuery("#certificate-get-payment-link-loader").hide();
-            jQuery("#certificate-get-payment-link").show();
+            jQuery("#cptch-sbmt-btn").show();
         }
-        jQuery("#certificate-get-payment-link").click(function () {
+        function gpl(form_id){
             var cli = "{{ url()->current() }}";
             var fn = "{{ session()->get('client')->numero_dossier }}";
             $.ajax({
-                url: "{{ route('front_office.scripts.certificat_pre_identification.payment_link.get') }}",
+                url: "{{ route('certificat.payment.get') }}",
                 type: "POST",
                 data: {
                     '_token': "{{ csrf_token() }}",
@@ -54,7 +53,7 @@
                 },
                 dataType: "json",
                 beforeSend: function () {
-                    jQuery("#certificate-get-payment-link").hide();
+                    jQuery("#cptch-sbmt-btn").hide();
                     jQuery("#certificate-get-payment-link-loader").show();
                 },
                 success: function (data) {
@@ -81,7 +80,7 @@
                 error: function (data) {
                     if(data.responseJSON.has_error) {
                         jQuery("#certificate-get-payment-link-loader").hide();
-                        jQuery("#certificate-get-payment-link").show();
+                        jQuery("#cptch-sbmt-btn").show();
                         jQuery('#modalBox').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><h3>'+data.responseJSON.message+'</h3></div>\n\
@@ -96,7 +95,7 @@
                     }
                 }
             });
-        });
+        }
     @endif
 </script>
 @endif

@@ -43,6 +43,10 @@ return [
         'enabled' => env('NGSER_API_ENABLED', false)
     ],
 
+    'paynah' => [
+        'enabled' => env('PAYNAH_API_ENABLED', false)
+    ],
+
     'verifapi' => [
         'enabled' => env("VERIF_API_ENABLED", false)
     ],
