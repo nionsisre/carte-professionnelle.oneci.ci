@@ -85,8 +85,13 @@
                                     <div id="etape-4" class="tab-pane" role="tabpanel"></div>
                                     <div id="etape-5" class="tab-pane" role="tabpanel">
                                         <br/><br/>
-                                        Veuillez sélectionner un agrégateur de paiement SVP :<br/><br/>
-                                        <section class="container">
+                                        <div id="modalBox" style="display: none"></div>
+                                        Veuillez procéder au paiement ci-dessous afin de poursuivre :
+                                        <span style="display: flex;flex-direction: row;justify-content: flex-end;align-items: center;" onclick="gpl()"><i class="fa fa-sync"></i></span>
+                                        <br/><br/>
+                                        <section id="payment-section">
+                                            <center><i class="fa fa-spinner fa-spin fa-3x"></i></center>
+                                            {{--<iframe id="payment-link" src="{{ session()->get('payment_data')["message"] }}" style="border:1px #d9d9d9 solid;" name="paymentIFrame" height="400px" width="100%" allow="fullscreen"></iframe>
                                             <div class="one-half" style="width: 48%;">
                                                 <div class="iconbox icon-top atcl" align="center">
                                                     <a href="javascript:void(0)" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
@@ -100,7 +105,7 @@
                                                         <div class="iconbox-icon"><img src="{{ URL::asset('assets/images/logo-ngser.png') }}" alt="NGSer Icon" style="padding: 2.8em 6em;" /></div>
                                                     </a>
                                                 </div>
-                                            </div>
+                                            </div>--}}
                                         </section><br/><br/><br/>
                                         {{--Après avoir procédé au paiement, <br/><br/>
                                         Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>

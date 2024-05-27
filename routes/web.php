@@ -65,6 +65,6 @@ Route::post('/cinetpay/notify', [CinetPayAPI::class, 'notify'])->name('cinetpay.
 Route::post('/cinetpay/return', [CinetPayAPI::class, 'return'])->name('cinetpay.return');
 Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('cinetpay.cancel');
 
-/* Front Office CinetPAY routes */
+/* Front Office NGSer routes */
 Route::post('/check-status-payment', [NGSerAPI::class, 'notify'])->name('ngser.notify');
 Route::get('/notification-post-payment', [NGSerAPI::class, 'return'])->name('ngser.return');

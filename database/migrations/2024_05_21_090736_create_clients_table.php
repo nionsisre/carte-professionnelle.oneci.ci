@@ -35,6 +35,20 @@ class CreateClientsTable extends Migration
             $table->string('decision_judiciaire')->nullable();
             $table->string('statut')->nullable();
             $table->string('certificat')->nullable();
+            $table->string('uniqid')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('integrator_api_response_id')->nullable();
+            $table->string('integrator_code')->nullable();
+            $table->string('integrator_message')->nullable();
+            $table->string('integrator_data_amount')->nullable();
+            $table->string('integrator_data_currency')->nullable();
+            $table->string('integrator_data_status')->nullable();
+            $table->string('integrator_data_payment_method')->nullable();
+            $table->string('integrator_data_description')->nullable();
+            $table->string('integrator_data_metadata')->nullable();
+            $table->string('integrator_data_operator_id')->nullable();
+            $table->string('integrator_data_payment_date')->nullable();
+            $table->string('enroll_download_link')->nullable();
             $table->timestamps();
         });
     }

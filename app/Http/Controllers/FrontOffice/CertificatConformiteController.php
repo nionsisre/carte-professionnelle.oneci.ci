@@ -282,11 +282,13 @@ class CertificatConformiteController extends Controller {
         /* Obtention des informations sur le client enregistré et sa juridiction */
         $client = Client::with('juridiction')->find($client->id);
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
+        //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
 
         /* Retourner vue resultat */
         return redirect()->route('certificat.formulaire')->with([
             'client' => $client,
-            'centres' => $centres
+            'centres' => $centres,
+            //'payment_data' => $payment_data
         ]);
     }
 
@@ -369,46 +371,6 @@ class CertificatConformiteController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Cette méthode vérifie si le numéro de téléphone présent dans la requête HTTP GET reçue par la route est déjà
-     * identifié en base de données<br/><br/>
-     * <b>RedirectResponse</b> checkIfMsisdnIsAlreadyIdentifed(<b>Request</b> $request)<br/>
-     * @param Request $request <p>Client Request object.</p>
-     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
-     */
-    public function checkIfMsisdnIsAlreadyIdentifed(Request $request) {
-        /* Valider les variables du formulaire */
-        request()->validate([
-            'cli' => ['required', 'string', 'max:100'], // Url du client
-            'msdn' => ['required', 'string', 'max:14'], // Numero de telephone a verifier
-        ]);
-        /* Récupération des numéros de telephone de l'abonné à partir du numéro de téléphone vérifié */
-        $abonne_numeros = DB::table('abonnes_numeros')
-            ->select('*')
-            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-            ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msdn')))
-            ->get();
-        /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-        if(sizeof($abonne_numeros) > 0) {
-            foreach ($abonne_numeros as $abonne_numero) {
-                if($abonne_numero->code_statut==='NUI') {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Numéro déjà identifié !'
-                    ], Response::HTTP_ACCEPTED);
-                }
-            }
-        }
-        return response([
-            'has_error' => false,
-            'message' => 'Ok'
-        ], Response::HTTP_OK);
-    }
-
-    /**
-     * (PHP 5, PHP 7, PHP 8+)<br/>
      * Cette méthode permet d'obtenir un lien de paiement du certificat d'identification auprès du service de
      * l'intégrateur de paiement<br/><br/>
      * <b>RedirectResponse</b> getCertificatePaymentLink(<b>Request</b> $request)<br/>
@@ -416,74 +378,43 @@ class CertificatConformiteController extends Controller {
      * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function getCertificatePaymentLink(Request $request) {
+
         /* Valider les variables du formulaire */
         request()->validate([
             'cli' => ['required', 'string', 'max:100'], // Url du client
-            'tn' => ['required', 'string', 'max:100'], // Token du client
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
-            'idx' => ['required', 'numeric', 'max:10'], // Index de position du numero de l'abonne
         ]);
-        /* Vérification du Token d'authentification émis par la requête du client avec celui présent en session */
-        try {
-            $client_certificate_msisdn_token = $request->input('tn');
-            $session_certificate_msisdn_tokens = session()->get('certificate_msisdn_tokens');
-            for ($i=0;$i<sizeof($session_certificate_msisdn_tokens);$i++) {
-                if ((new GeneratedTokensOrIDs())->checkToken($client_certificate_msisdn_token, $session_certificate_msisdn_tokens[$i])) {
-                    $is_token_correct = true;
-                    break;
-                }
+        /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
+        $client = Client::where('numero_dossier', '=', $request->input('fn'))->first();
+        if($client->exists()) {
+            /* Obtention du lien de paiement via l'API Aggrégateur */
+            if(config('services.ngser.enabled')) {
+                $payment_link_obtained = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT_TEMP'), true);
+            } else if(config('services.cinetpay.enabled')) {
+                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('CINETPAY_SERVICE_AMOUNT_TEMP'), true);
             }
-            if (!isset($is_token_correct)) {
+            if ($payment_link_obtained['has_error']) {
                 return response([
                     'has_error' => true,
-                    'message' => 'Token invalide ! Veuillez actualiser la page et/ou réessayer plus tard...'
-                ], Response::HTTP_UNAUTHORIZED);
+                    'message' => 'Une erreur est survenue lors de l\'obtention du lien de paiement. Veuillez actualiser la page et/ou réessayer plus tard...',
+                    'message_service' => $payment_link_obtained['message']
+                ], Response::HTTP_SERVICE_UNAVAILABLE);
             } else {
-                /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('fn'))
-                    ->get();
-                /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
-                if(!isset($abonne_numeros[$request->input('idx')]) || $abonne_numeros[$request->input('idx')]->code_statut!=='NUI') {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'What are doing ?'
-                    ], Response::HTTP_BAD_REQUEST);
-                }
-                /* Récupération du numéro de telephone valide */
-                $abonne_numero = $abonne_numeros[$request->input('idx')];
-                /* Obtention du lien de paiement via l'API Aggrégateur */
-                if(config('services.ngser.enabled')) {
-                    $payment_link_obtained = (new NGSerAPI())->getPaymentLink($abonne_numero, env('PAYMENT_TYPE_1'), env('NGSER_SERVICE_AMOUNT'), true);
-                } else if(config('services.cinetpay.enabled')) {
-                    $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($abonne_numero, env('PAYMENT_TYPE_1'), env('CINETPAY_SERVICE_AMOUNT'), true);
-                }
-                if ($payment_link_obtained['has_error']) {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Une erreur est survenue lors de l\'obtention du lien de paiement. Veuillez actualiser la page et/ou réessayer plus tard...',
-                        'message_service' => $payment_link_obtained['message']
-                    ], Response::HTTP_SERVICE_UNAVAILABLE);
-                } else {
-                    return response([
-                        'has_error' => false,
-                        'message' => $payment_link_obtained['message'],
-                        'message_service' => 'OK',
-                        'transaction_id' => $payment_link_obtained['transaction_id']
-                    ], Response::HTTP_OK);
-                }
+                return response([
+                    'has_error' => false,
+                    'message' => $payment_link_obtained['message'],
+                    'message_service' => 'OK',
+                    'transaction_id' => $payment_link_obtained['transaction_id']
+                ], Response::HTTP_OK);
             }
-        } catch (NotFoundExceptionInterface | ContainerExceptionInterface | Exception $e) {
+        } else {
             return response([
                 'has_error' => true,
-                'message' => 'Veuillez actualiser la page et/ou réessayer plus tard SVP'. $e->getMessage()
-            ], Response::HTTP_UNAUTHORIZED);
+                'message' => 'Une erreur est survenue lors de l\'obtention du lien de paiement. Veuillez actualiser la page et/ou réessayer plus tard...',
+                'message_service' => 'Police is watching you...'
+            ], Response::HTTP_NOT_FOUND);
         }
+
     }
 
     /**
@@ -502,7 +433,6 @@ class CertificatConformiteController extends Controller {
             't' => ['required', 'string', 'max:100'], // Token generique
             'ti' => ['nullable', 'string', 'max:100'], // ID de transaction
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier (validation)
-            'msisdn' => ['required', 'string', 'max:20'], // Numero de telephone
             'pt' => ['nullable', 'string', 'max:100'], // Type de paiement
         ]);
 

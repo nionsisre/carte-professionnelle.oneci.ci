@@ -3,14 +3,15 @@
 namespace App\Http\Services;
 
 use App\Helpers\GeneratedTokensOrIDs;
-use App\Models\Client;
-use DateTime;
+use App\Models\AbonnesPreIdentifie;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
-class NGSerAPI {
+class PaynahAPI {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
@@ -22,11 +23,11 @@ class NGSerAPI {
      * @return array Value of result
      */
     public function getPaymentLink($customer_informations, $payment_type='', $price=1000, $iframe_view_enabled=false) {
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
         try {
             //$transaction_id = date('Y', time()). (new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
             //$transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').$customer_informations->numero_de_telephone;
-            $transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').date('Y', time()).(new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
+            $transaction_id = $customer_informations->numero_dossier.env('NGSER_SERVICE_SALT').$customer_informations->numero_de_telephone.env('NGSER_SERVICE_SALT').date('Y', time()).(new GeneratedTokensOrIDs())->generateUniqueNumberID('transaction_id');
 
             $response = $client->post(env('NGSER_RECETTE_URL').'/v3/sessions', [
                 'verify' => false,
@@ -85,37 +86,21 @@ class NGSerAPI {
      * NGSER transaction ID Verification (works in "Staging" and "Production" only, not "Local" environment)<br/><br/>
      * <b>array</b> verify(<b>Request</b> $request)<br/>
      * @param String $transaction_id <p>Transaction ID.</p>
-     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return array Value of result
      */
     public function verify($transaction_id, $payment_type="") {
 
-        // Retrouver le type de paiement, le numéro de dossier à actualiser à partir du numéro de transaction
+        // Retrouver le type de paiement, le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
         if($payment_type == env('PAYMENT_TYPE') || strpos($transaction_id, env("NGSER_SERVICE_SALT"))) {
             $payment_type = env('PAYMENT_TYPE');
         }
-        if(strpos($transaction_id, env("NGSER_SERVICE_SALT"))) {
-            $metadata = explode(env("NGSER_SERVICE_SALT"), $transaction_id);
-            $form_number = $metadata[0];
-            $payment_type = env('PAYMENT_TYPE');
-            $client = Client::where('numero_dossier', '=', $form_number)
-                ->where('integrator_data_status', '=', "ACCEPTED")
-                ->first();
-            if(!empty($client)) {
-                return [
-                    'has_error' => false,
-                    'message' => 'Payment done !',
-                    'data' => $client,
-                    'transaction_id' => $transaction_id,
-                    'payment_type' => $payment_type
-                ];
-            }
-        }
+
         /*
             NGSer getting authentication token
         */
-        $guzzle_client = new \GuzzleHttp\Client();
+        $client = new Client();
         try {
-            $response_token = $guzzle_client->post(env('NGSER_RECETTE_URL').'/service/auth', [
+            $response_token = $client->post(env('NGSER_RECETTE_URL').'/service/auth', [
                 'verify' => false,
                 'headers' => [
                     'Content-type' => 'application/json',
@@ -135,7 +120,7 @@ class NGSerAPI {
                     NGSer transaction Status Verification
                 */
                 try {
-                    $response = $guzzle_client->request('POST', env('NGSER_RECETTE_URL').'/check_payment_status/'.$transaction_id, [
+                    $response = $client->request('POST', env('NGSER_RECETTE_URL').'/check_payment_status/'.$transaction_id, [
                         'verify' => false,
                         'headers' => [
                             'Authorization' => 'Bearer '.$response_token["auth_token"],
@@ -181,10 +166,6 @@ class NGSerAPI {
                     .' -- Code : '.$guzzle_exception->getCode().']'
             ];
         }
-        return response([
-            'has_error' => true,
-            'message' => 'Payment in progress...'
-        ], Response::HTTP_OK);
 
     }
 
@@ -236,7 +217,7 @@ class NGSerAPI {
                     'message' => 'Echec de la synchronisation du paiement, votre numéro de transaction n\'est pas reconnu...'
                 ], Response::HTTP_OK);
             } else {
-                // Retrouver le numéro de dossier et le type de paiement à actualiser à partir du numéro de transaction
+                // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
                 $payment_type = "";
                 if(strpos($request->input('order_id'), env("NGSER_SERVICE_SALT"))) {
                     $metadata = explode(env("NGSER_SERVICE_SALT"), $request->input('order_id'));
@@ -249,11 +230,11 @@ class NGSerAPI {
                 // Formater la date dans le format requis
                 $transaction_date = $date->format('Y-m-d H:i:s');
 
-                if($payment_type === env('PAYMENT_TYPE')) {
+                if($payment_type === env('PAYMENT_TYPE_2')) {
                     /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
                     d'un dossier à celui d'une autre personne */
                     if (!empty($form_number)) {
-                        Client::where('numero_dossier', '=', $form_number)->first()->update([
+                        AbonnesPreIdentifie::where('numero_dossier', '=', $form_number)->first()->update([
                             'transaction_id' => $request->input('order_id'),
                             'integrator_api_response_id' => $payment_data['data']['code'],
                             'integrator_code' => $payment_data['data']['description'],
@@ -262,13 +243,58 @@ class NGSerAPI {
                             'integrator_data_currency' => $payment_data['data']['data']['currency'],
                             'integrator_data_status' => "ACCEPTED", //$payment_data['data']['data']['status'],
                             'integrator_data_payment_method' => $payment_data['data']['data']['wallet'],
-                            'integrator_data_description' => env('PAYMENT_TYPE'),
+                            'integrator_data_description' => env('PAYMENT_TYPE_2'),
                             'integrator_data_metadata' => $form_number, //$payment_data['data']['data']['metadata'],
                             'integrator_data_operator_id' => $payment_data['data']['data']['transaction_id'],
                             'integrator_data_payment_date' => $transaction_date,
                             'enroll_download_link' => md5($form_number . $request->input('order_id') . $payment_data['data']['data']['transaction_id'])
                         ]);
 
+                        return response([
+                            'has_error' => false,
+                            'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
+                        ], Response::HTTP_OK);
+                    }
+                } elseif($payment_type === env('PAYMENT_TYPE_1')) {
+                    /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
+                    d'un dossier à celui d'une autre personne */
+                    if (!empty($form_number) && !empty($msisdn)) {
+                        /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
+                        $abonne_numero = DB::table('abonnes_numeros')
+                            ->select('*')
+                            ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
+                            ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
+                            ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
+                            ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
+                            ->where('abonnes.numero_dossier', '=', $form_number)
+                            ->where('abonnes_numeros.numero_de_telephone', '=', $msisdn)
+                            ->first();
+                        /* Vérification du statut du numéro de téléphone : seuls les numéros valides sont autorisés */
+                        if (!isset($abonne_numero->numero_de_telephone) || $abonne_numero->code_statut !== 'NUI') {
+                            return response([
+                                'has_error' => true,
+                                'message' => 'Echec de la synchronisation du paiement, le numéro de téléphone saisi ne correspond pas au numéro identifié par le dossier : '.$request->input('cpm_custom')
+                            ], Response::HTTP_OK);
+                        }
+                        /* Récupération du numéro de telephone valide et sauvegarde les informations de paiement en base de données */
+                        DB::table('abonnes_numeros')
+                            ->where('abonne_id', '=', $abonne_numero->abonne_id)
+                            ->where('numero_de_telephone', '=', $abonne_numero->numero_de_telephone)
+                            ->update([
+                                'transaction_id' => $request->input('order_id'),
+                                'cinetpay_api_response_id' => $payment_data['data']['code'],
+                                'cinetpay_code' => $payment_data['data']['description'],
+                                'cinetpay_message' => "SUCCES", //$payment_data['data']['message'],
+                                'cinetpay_data_amount' => $payment_data['data']['data']['paid_transaction_amount'],
+                                'cinetpay_data_currency' => $payment_data['data']['data']['currency'],
+                                'cinetpay_data_status' => "ACCEPTED", //$payment_data['data']['data']['status'],
+                                'cinetpay_data_payment_method' => $payment_data['data']['data']['wallet'],
+                                'cinetpay_data_description' => env('PAYMENT_TYPE_1'),
+                                'cinetpay_data_metadata' => $form_number, //$payment_data['data']['data']['metadata'],
+                                'cinetpay_data_operator_id' => $payment_data['data']['data']['transaction_id'],
+                                'cinetpay_data_payment_date' => $transaction_date,
+                                'certificate_download_link' => md5($form_number . $request->input('order_id') . $payment_data['data']['data']['transaction_id'])
+                            ]);
                         return response([
                             'has_error' => false,
                             'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
@@ -293,7 +319,7 @@ class NGSerAPI {
      * Vue de retour après paiement l'API NGSER<br/><br/>
      * <b>RedirectResponse</b> notify(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return Application|Factory|View|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      */
     public function return(Request $request) {
 
@@ -304,6 +330,5 @@ class NGSerAPI {
         ]);
 
     }
-
 
 }
