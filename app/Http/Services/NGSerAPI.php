@@ -168,7 +168,8 @@ class NGSerAPI {
                         'has_error' => true,
                         'message' => 'NGSer API client exception : ['
                             .$ge->getMessage()
-                            .' -- Code : '.$ge->getCode().']'
+                            .' -- Code : '.$ge->getCode().']',
+                        'code' => $ge->getCode()
                     ];
                 }
             }

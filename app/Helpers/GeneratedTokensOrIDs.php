@@ -76,22 +76,4 @@ class GeneratedTokensOrIDs {
         return FALSE;
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $abonne_numeros
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function applyCertificatedTokenToEachMSISDNs(\Illuminate\Support\Collection $abonne_numeros) {
-        for ($i = 0; $i < sizeof($abonne_numeros); $i++) $certificate_msisdn_tokens[$i] = (new GeneratedTokensOrIDs)->createToken(0);
-        session()->put('certificate_msisdn_tokens', $certificate_msisdn_tokens);
-        /* Si le service d'envoi de SMS est actif */
-        if (config('services.sms.enabled')) {
-            /* Génération d'un token OTP pour chaque numéro de téléphone en session */
-            for ($i = 0; $i < sizeof($abonne_numeros); $i++) {
-                $otp_msisdn_tokens[$i] = (new GeneratedTokensOrIDs)->createToken(0);
-            }
-            session()->put('otp_msisdn_tokens', $otp_msisdn_tokens);
-        }
-        return redirect()->route('certificat.consultation')->with('abonne_numeros', $abonne_numeros);
-    }
-
 }

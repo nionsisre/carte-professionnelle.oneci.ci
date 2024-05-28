@@ -291,7 +291,7 @@ class CinetPayAPI {
                 ->get();
             if (sizeof($abonne_numeros) !== 0) {
                 /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-                return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
+                return redirect()->route('certificat.consultation')->with('abonne_numeros', $abonne_numeros);
             }
         }
         /* Sinon retourner sur le formulaire de consultation */

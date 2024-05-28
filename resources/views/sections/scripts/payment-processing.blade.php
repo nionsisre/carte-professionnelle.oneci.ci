@@ -103,11 +103,12 @@
                 },
                 success: function(res){
                     if(!res.has_error) {
+                        ccp();
                         {{-- Fonction de vérification du statut de payment auprès du serveur appelée chaque env('PAYMENT_LISTENER_TIMEOUT_MILLISECONDS') millisecondes  --}}
                         if(withModalSet) {
                             jQuery('#close-modal-btn').click();
                         }
-                        {{-- jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled"); --}}
+                        jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
                         jQuery('#smartwizard').smartWizard("goToStep", 5);
                     }
                 }

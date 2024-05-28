@@ -45,6 +45,7 @@ Route::get('/'.md5('verifapi'.date('Y-m-d').env('APP_KEY')), [CertificatConformi
 /* Front Office Form Submit Routes URL */
 Route::post('/soumettre-formulaire', [CertificatConformiteController::class, 'submit'])->name('certificat.formulaire.submit');
 Route::post('/consulter-statut-certificat', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit');
+Route::get('/consulter-statut-certificat', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit.get');
 Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('certificat.payment.reclamation.submit');
 
 /* Front Office Internal JavaScript Ajax / Axios Scripts Routes */

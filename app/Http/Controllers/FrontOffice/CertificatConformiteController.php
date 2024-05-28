@@ -275,8 +275,9 @@ class CertificatConformiteController extends Controller {
             'lieu_decision' => $request->input("lieu-delivrance"),
             'cni' => $cni ?? "",
             'decision_judiciaire' => $decision_judiciaire,
-            'statut' => $request->input('selfie_img_txt'),
-            'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').$numero_dossier)
+            'statut' => 1,
+            'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
+            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name')))
         ]);
 
         /* Obtention des informations sur le client enregistré et sa juridiction */
@@ -309,57 +310,23 @@ class CertificatConformiteController extends Controller {
                     redirect()->route('certificat.consultation')->with((new GoogleRecaptchaV3())->verify($request));
             }
             /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
-            $search_with_msisdn = $request->input('tsch');
-            if ($search_with_msisdn == '0') {
-                request()->validate([
-                    'form-number' => ['required', 'numeric', 'digits:10'],
-                ]);
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes.numero_dossier', '=', $request->input('form-number'))
-                    ->get();
-            } else {
-                request()->validate([
-                    'msisdn' => ['required', 'string', 'min:14', 'max:14'],
-                    'first-name' => ['required', 'string', 'min:2', 'max:150'],
-                    'birth-date' => ['required', 'string', 'min:10', 'max:10'],
-                ]);
-                $abonne_numeros = DB::table('abonnes_numeros')
-                    ->select('*')
-                    ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                    ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                    ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                    ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                    ->where('abonnes_numeros.numero_de_telephone', '=', str_replace(' ', '', $request->input('msisdn')))
-                    ->whereRaw('UCASE(abonnes.nom) = (?)', [strtoupper($request->input('first-name'))])
-                    ->where('abonnes.date_de_naissance', '=', $request->input('birth-date'))
-                    ->get();
-            }
+            request()->validate([
+                'form-number' => ['required', 'numeric', 'digits:10'],
+            ]);
+            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->get();
             /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
-            if(sizeof($abonne_numeros) !== 0) {
-                return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
+            if(sizeof($client) !== 0) {
+                return redirect()->route('certificat.consultation')->with('client', $client[0]);
             } else {
                 return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
             (numéro de dossier <f> + token d'authentification <t>) */
-            $abonne_numeros = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes.numero_dossier', '=', $request->get('f'))
-                ->get();
-            if(sizeof($abonne_numeros) !== 0) {
-                if ($abonne_numeros[0]->uniqid === $request->get('t')) {
-                    /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-                    return (new GeneratedTokensOrIDs())->applyCertificatedTokenToEachMSISDNs($abonne_numeros);
+            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->get();
+            if(sizeof($client) !== 0) {
+                if ($client[0]->uniqid === $request->get('t')) {
+                    return redirect()->route('certificat.consultation')->with('client', $client[0]);
                 }
             } else {
                 return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
@@ -440,17 +407,21 @@ class CertificatConformiteController extends Controller {
         if($request->input('t') !== md5(sha1('s@lty'.$request->input('fn').'s@lt'))) {
             return response([
                 'has_error' => true,
-                'message' => 'Payment in progress...'
+                'message' => 'Unauthorized...'
             ], Response::HTTP_UNAUTHORIZED);
         } else {
             /* Vérification de l'ID de transaction chez l'aggrégateur de paiement */
             if(config('services.ngser.enabled')) {
                 $payment_data = (new NGSerAPI())->verify($request->input('ti'), $request->input('pt'));
                 if ($payment_data['has_error']) {
-                    return response([
-                        'has_error' => true,
-                        'message' => 'Paiement en cours...'
-                    ], Response::HTTP_OK);
+                    if(isset($payment_data['code'])) {
+
+                    } else {
+                        return response([
+                            'has_error' => true,
+                            'message' => 'Paiement en cours...'
+                        ], Response::HTTP_OK);
+                    }
                 } else {
                     // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
                     $res_data = (new NGSerAPI())->notify(
