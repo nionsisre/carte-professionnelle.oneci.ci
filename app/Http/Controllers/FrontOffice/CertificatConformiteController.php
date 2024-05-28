@@ -414,8 +414,20 @@ class CertificatConformiteController extends Controller {
             if(config('services.ngser.enabled')) {
                 $payment_data = (new NGSerAPI())->verify($request->input('ti'), $request->input('pt'));
                 if ($payment_data['has_error']) {
-                    if(isset($payment_data['code'])) {
+                    if(isset($payment_data['code'])) { // Cette option if ne doit normalement pas exister
+                        // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
+                        $res_data = (new NGSerAPI())->notify(
+                            $request->replace([
+                                'order_id' => $payment_data["transaction_id"], // ID de transaction
+                                'payment_type' => $request->input('pt'), // Type de paiement effectué
+                            ])
+                        );
 
+                        return response([
+                            'has_error' => $res_data->original['has_error'],
+                            'data' => $res_data->original,
+                            'message' => $res_data->original['message']
+                        ], Response::HTTP_OK);
                     } else {
                         return response([
                             'has_error' => true,
