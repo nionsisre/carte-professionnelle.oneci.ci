@@ -111,19 +111,23 @@
                                                     @if($client->statut==1)
                                                         <i class="fad fa-money-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Paiement non effectué</b>
                                                     @elseif($client->statut==2)
-                                                        <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Document(s) justificatif(s) en attente d'approbation</b>
+                                                        <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Document justificatif en attente d'approbation</b>
                                                     @elseif($client->statut==3)
-                                                        <i class="fad fa-file-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
-                                                    @elseif(session()->get('client')->statut==4)
+                                                        <i class="fad fa-check-double" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
+                                                    @elseif($client->statut==4)
                                                         <i class="fad fa-exclamation-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande refusée</b>
                                                     @endif
                                                 </td>
                                                 <td style="vertical-align: middle;">
                                                     @if(session()->get('client')->statut==1)
-                                                        <a href="javascript:void(0)" class="button" style="margin: 0"><i class="fa fa-money-check text-white"></i> &nbsp; Procéder au paiement</a>
+                                                        <div id="payment-button-container">
+                                                            <div id="payment-link-loader" style="display: none"><center><i class="fa fa-spinner fa-spin"></i></center></div>
+                                                            <a href="javascript:void(0)" class="button" style="margin: 0" onclick="gpl(true)" id="payment-link-btn"><i class="fa fa-money-check text-white"></i> &nbsp; Procéder au paiement</a>
+                                                        </div>
                                                     @elseif(session()->get('client')->statut==2)
                                                         <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
                                                     @elseif(session()->get('client')->statut==3)
+                                                        <a href="{{ route('certificat.download.pdf').'?n='.session()->get('client')->certificat }}" class="button" style="margin: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Télécharger votre certificat de conformité</a>
                                                     @elseif(session()->get('client')->statut==4)
                                                         {{-- Si le numéro est identifié, que le paiement est effectué et que la date de validité du paiement n'excède pas 1 an --}}
                                                         @if(session()->get('client')->cinetpay_data_status==='ACCEPTED' && !empty(session()->get('client')->cinetpay_data_payment_date) &&

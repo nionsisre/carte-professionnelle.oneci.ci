@@ -6,11 +6,13 @@
     | GESTION DU PROCESSUS DE PAIEMENT NIVEAU FRONTEND
     |--------------------------------------------------------------------------
     --}}
-    @if(session()->has('client'))
+    @if(session()->has('client') && session()->get('client')->statut == 1)
         {{-- Récupérer le lien de paiement + activer le listener de paiement Javascript dès que la page est chargée --}}
+        @if(Route::is('certificat.formulaire'))
         jQuery(document).ready(function () {
             gpl();
         });
+        @endif
         {{-- Initiliatisation des variables utiles --}}
         var ti = 0;
         var animatedTimer;
@@ -35,6 +37,10 @@
                 beforeSend: function () {
                     {{-- Afficher un spinner pendant la récupération du lien au niveau du serveur --}}
                     jQuery('#payment-section').html('<center><i class="fa fa-spinner fa-spin fa-3x"></i></center>');
+                    if(withModal) {
+                        jQuery('#payment-link-btn').hide();
+                        jQuery('#payment-link-loader').show();
+                    }
                 },
                 success: function (data) {
                     {{-- En cas de récupération réussie du lien depuis le serveur, appeler la fonction de vérification du statut de paiement périodiquement --}}
@@ -117,6 +123,10 @@
         {{-- Fonction de fermeture ou d'arrêt de la vérification du statut de paiement --}}
         function ccp() {
             clearInterval(animatedTimer);
+            if(withModalSet) {
+                jQuery('#payment-link-loader').hide();
+                jQuery('#payment-link-btn').show();
+            }
             jQuery("#certificate-get-payment-link-loader").hide();
             jQuery("#cptch-sbmt-btn").show();
         }

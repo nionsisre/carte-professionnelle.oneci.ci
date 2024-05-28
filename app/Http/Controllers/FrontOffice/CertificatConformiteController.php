@@ -418,7 +418,7 @@ class CertificatConformiteController extends Controller {
                         // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
                         $res_data = (new NGSerAPI())->notify(
                             $request->replace([
-                                'order_id' => $payment_data["transaction_id"], // ID de transaction
+                                'order_id' => $request->input('ti'), // ID de transaction
                                 'payment_type' => $request->input('pt'), // Type de paiement effectué
                             ])
                         );
@@ -438,7 +438,7 @@ class CertificatConformiteController extends Controller {
                     // Retrouver le numéro de dossier et le numéro de téléphone à actualiser à partir du numéro de transaction
                     $res_data = (new NGSerAPI())->notify(
                         $request->replace([
-                            'order_id' => $payment_data["transaction_id"], // ID de transaction
+                            'order_id' => $request->input('ti'), // ID de transaction
                             'payment_type' => $request->input('pt'), // Type de paiement effectué
                         ])
                     );
@@ -502,7 +502,7 @@ class CertificatConformiteController extends Controller {
                 /* PDF Download document generation */
                 $data = [
                     'title' => 'Reçu d\'identification',
-                    'qrcode' => (new QrCode())->generateQrBase64(route('certificat.recu.check.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->uniqid),
+                    'qrcode' => (new QrCode())->generateQrBase64(route('certificat.recu.check.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->certificat),
                     'numero_dossier' => $identification_resultats->numero_dossier,
                     'uniqid' => $identification_resultats->uniqid,
                     'msisdn_list' => $msisdn,
@@ -523,7 +523,7 @@ class CertificatConformiteController extends Controller {
         /* Retourner vue resultat */
         return redirect()->route('certificat.consultation.submit')->with([
             'error' => true,
-            'error_message' => 'Erreur est survenue lors du téléchargement du reçu d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+            'error_message' => 'Une erreur est survenue lors du téléchargement du reçu d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
     }
 
@@ -534,46 +534,40 @@ class CertificatConformiteController extends Controller {
      * @param Request $request <p>Client Request object.</p>
      */
     public function downloadCertificateIdentificationPDF(Request $request) {
+
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
-            $identification_resultats = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
-                ->first();
-            if (!empty($identification_resultats)) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+            $client = Client::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
+            if (!empty($client)) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->integrator_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
-                        'numero_dossier' => $identification_resultats->numero_dossier,
-                        'uniqid' => $identification_resultats->uniqid,
-                        'msisdn' => $identification_resultats->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date))),
-                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                        'prenoms' => $identification_resultats->prenoms,
-                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
-                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
-                        'lieu_de_residence' => $identification_resultats->domicile,
-                        'nationalite' => $identification_resultats->nationalite,
-                        'profession' => $identification_resultats->profession,
-                        'email' => $identification_resultats->email,
-                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
-                        'document_justificatif' => $identification_resultats->libelle_piece,
-                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
+                        'numero_dossier' => $client->numero_dossier,
+                        'uniqid' => $client->uniqid,
+                        'msisdn' => $client->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($client->cinetpay_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date))),
+                        'nom' => $client->nom . ((!empty($client->nom_epouse)) ? ' epse ' . $client->nom_epouse : ''),
+                        'prenoms' => $client->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($client->date_de_naissance)),
+                        'lieu_de_naissance' => $client->lieu_de_naissance,
+                        'lieu_de_residence' => $client->domicile,
+                        'nationalite' => $client->nationalite,
+                        'profession' => $client->profession,
+                        'email' => $client->email,
+                        'id_operateur' => $client->abonnes_operateur_id,
+                        'document_justificatif' => $client->libelle_piece,
+                        'numero_document_justificatif' => $client->numero_document,
                     ];
-                    $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
+                    $filename = 'identification-' . $client->nom . '-' . $client->numero_dossier . '.pdf';
                     $pdf_certificat_identification = Pdf::loadView('layouts.certificat-identification', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
-                    /*if (!empty($identification_resultats->email)) {
+                    /*if (!empty($client->email)) {
                         (new MailONECI())->sendMailTemplate('layouts.certificat-identification', $data, "À propos de votre identification d'abonné mobile ONECI");
                     }*/
                     return $pdf_certificat_identification->download($filename);
@@ -583,7 +577,7 @@ class CertificatConformiteController extends Controller {
         /* Retourner vue resultat */
         return redirect()->route('certificat.consultation')->with([
             'error' => true,
-            'error_message' => 'Erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
+            'error_message' => 'Une erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
     }
 
@@ -597,38 +591,31 @@ class CertificatConformiteController extends Controller {
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
-            $identification_resultats = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes_numeros.certificate_download_link', '=', $certificate_download_link)
-                ->first();
-            if (!empty($identification_resultats)) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date)) );
+            $client = Client::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            if (!empty($client)) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $identification_resultats->certificate_download_link, 183, 1),
-                        'numero_dossier' => $identification_resultats->numero_dossier,
-                        'uniqid' => $identification_resultats->uniqid,
-                        'msisdn' => $identification_resultats->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($identification_resultats->cinetpay_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($identification_resultats->cinetpay_data_payment_date))),
-                        'nom' => $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                        'prenoms' => $identification_resultats->prenoms,
-                        'date_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)),
-                        'lieu_de_naissance' => $identification_resultats->lieu_de_naissance,
-                        'lieu_de_residence' => $identification_resultats->domicile,
-                        'nationalite' => $identification_resultats->nationalite,
-                        'profession' => $identification_resultats->profession,
-                        'email' => $identification_resultats->email,
-                        'id_operateur' => $identification_resultats->abonnes_operateur_id,
-                        'document_justificatif' => $identification_resultats->libelle_piece,
-                        'numero_document_justificatif' => $identification_resultats->numero_document,
+                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
+                        'numero_dossier' => $client->numero_dossier,
+                        'uniqid' => $client->uniqid,
+                        'msisdn' => $client->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($client->cinetpay_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date))),
+                        'nom' => $client->nom . ((!empty($client->nom_epouse)) ? ' epse ' . $client->nom_epouse : ''),
+                        'prenoms' => $client->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($client->date_de_naissance)),
+                        'lieu_de_naissance' => $client->lieu_de_naissance,
+                        'lieu_de_residence' => $client->domicile,
+                        'nationalite' => $client->nationalite,
+                        'profession' => $client->profession,
+                        'email' => $client->email,
+                        'id_operateur' => $client->abonnes_operateur_id,
+                        'document_justificatif' => $client->libelle_piece,
+                        'numero_document_justificatif' => $client->numero_document,
                     ]);
                 }
             }

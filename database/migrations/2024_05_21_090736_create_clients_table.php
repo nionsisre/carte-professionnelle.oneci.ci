@@ -48,7 +48,7 @@ class CreateClientsTable extends Migration
             $table->string('integrator_data_metadata')->nullable();
             $table->string('integrator_data_operator_id')->nullable();
             $table->string('integrator_data_payment_date')->nullable();
-            $table->string('enroll_download_link')->nullable();
+            $table->string('certificate_download_link')->nullable();
             $table->timestamps();
         });
     }
