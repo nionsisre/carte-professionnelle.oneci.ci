@@ -1,0 +1,90 @@
+/**
+ * @package FalconEyes
+ * @author Patrick Angel N'dri <patrickangel.ndri@gmail.com>
+ * @copyright 2018
+ * @version: 1.0
+ * NOTE: This code is MIT licensed
+ */
+
+.glow-user-tr:hover {
+    background-color: #BBDEFB;
+}
+.glow-user-group-tr:hover {
+    background-color: #EFEBE9;
+}
+.glow-stats-user-tr:hover {
+    background-color: #dcedc8;
+}
+.bg-brown {
+    background-color: #6D4C41 !important;
+}
+.glyphicon-no-border {
+    font-size: 1em !important;
+    padding : 1px !important; 
+    border: none !important;
+}
+
+table.scroll {
+    width: 100%;
+    border-spacing: 0;
+}
+
+table.scroll th,
+table.scroll td,
+table.scroll tr,
+table.scroll thead,
+table.scroll tbody { display: block; }
+
+table.scroll thead tr {
+    /* fallback */
+    width: 100%;
+    /* minus scroll bar width */
+    width: -webkit-calc(100% - 16px);
+    width:    -moz-calc(100% - 16px);
+    width:         calc(100% - 16px);
+}
+
+table.scroll tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+table.scroll tbody {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+table.scroll tbody td,
+table.scroll thead th {
+    width: 20%;
+    float: left;
+    height: 3.5em;
+}
+
+thead tr th { 
+    height: 40px;
+    line-height: 30px;
+    /*text-align: left;*/
+}
+
+tbody { border-top: 2px solid black; }
+
+tbody td:last-child, thead th:last-child {
+    border-right: none !important;
+}
+
+.table-custom-col-1 {
+    width: 15% !important;
+}
+.table-custom-col-2 {
+    width: 51% !important;
+}
+.table-custom-col-3 {
+    width: 34% !important;
+}
+.table-custom-col-4 {
+    width: 36% !important;
+}
