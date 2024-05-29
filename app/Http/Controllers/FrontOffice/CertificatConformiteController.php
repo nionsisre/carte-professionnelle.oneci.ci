@@ -28,7 +28,7 @@ use App\Rules\Base64Image;
 
 /**
  * (PHP 5, PHP 7, PHP 8+)<br/>
- * @package    identification-abonnes-mobile
+ * @package    certificat-conformite
  * @subpackage Controller
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev
@@ -204,7 +204,7 @@ class CertificatConformiteController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Soumission du formulaire d'identification par l'abonné<br/><br/>
+     * Soumission du formulaire de demande du certificat de conformité par l'utilisateur<br/><br/>
      * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
@@ -295,14 +295,14 @@ class CertificatConformiteController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Cette méthode donne l'accès à l'espace de consultation de statut d'identification à l'abonné<br/><br/>
+     * Cette méthode donne l'accès à l'espace de consultation de statut de la demande du certificat de conformité<br/><br/>
      * <b>RedirectResponse</b> search(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function search(Request $request) {
         /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
-        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après l'identification)" */
+        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après la demande du certficat de conformité)" */
         if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
@@ -321,7 +321,7 @@ class CertificatConformiteController extends Controller {
                 return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
-            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu d'identification
+            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande du certificat de conformité
             (numéro de dossier <f> + token d'authentification <t>) */
             $client = Client::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->get();
             if(sizeof($client) !== 0) {
@@ -338,7 +338,7 @@ class CertificatConformiteController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Cette méthode permet d'obtenir un lien de paiement du certificat d'identification auprès du service de
+     * Cette méthode permet d'obtenir un lien de paiement du certificat de conformité auprès du service de
      * l'intégrateur de paiement<br/><br/>
      * <b>RedirectResponse</b> getCertificatePaymentLink(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
@@ -477,100 +477,42 @@ class CertificatConformiteController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Téléchargement du reçu d'identification au format PDF<br/><br/>
-     * <b>RedirectResponse</b> downloadRecuIdentificationPDF(<b>Request</b> $request)<br/>
+     * Téléchargement du certificat de conformité au format PDF<br/><br/>
+     * <b>RedirectResponse</b> downloadCertificateConformitePDF(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      */
-    public function downloadRecuIdentificationPDF(Request $request) {
-        /*$numero_dossier = $request->session()->get('numero_dossier');*/
-        if(!empty($request->get('n'))) {
-            /* Print PDF ticket according form-number */
-            $numero_dossier = $request->get('n');
-            $identification_resultats = DB::table('abonnes_numeros')
-                ->select('*')
-                ->join('abonnes_operateurs', 'abonnes_operateurs.id', '=', 'abonnes_numeros.abonnes_operateur_id')
-                ->join('abonnes_statuts', 'abonnes_statuts.id', '=', 'abonnes_numeros.abonnes_statut_id')
-                ->join('abonnes', 'abonnes.id', '=', 'abonnes_numeros.abonne_id')
-                ->join('abonnes_type_pieces', 'abonnes_type_pieces.id', '=', 'abonnes.abonnes_type_piece_id')
-                ->where('abonnes.numero_dossier', '=', $numero_dossier)
-                ->get();
-            if (!empty($identification_resultats[0])) {
-                for ($i = 0; $i < sizeof($identification_resultats); $i++) {
-                    $msisdn[] = $identification_resultats[$i]->numero_de_telephone . ' (' . $identification_resultats[$i]->libelle_operateur . ') | ';
-                }
-                $identification_resultats = $identification_resultats[0];
-                /* PDF Download document generation */
-                $data = [
-                    'title' => 'Reçu d\'identification',
-                    'qrcode' => (new QrCode())->generateQrBase64(route('certificat.recu.check.url') . '?f=' . $identification_resultats->numero_dossier . '&t=' . $identification_resultats->certificat),
-                    'numero_dossier' => $identification_resultats->numero_dossier,
-                    'uniqid' => $identification_resultats->uniqid,
-                    'msisdn_list' => $msisdn,
-                    'nom_complet' => $identification_resultats->prenoms . ' ' . $identification_resultats->nom . ((!empty($identification_resultats->nom_epouse)) ? ' epse ' . $identification_resultats->nom_epouse : ''),
-                    'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($identification_resultats->date_de_naissance)) . ' à ' . $identification_resultats->lieu_de_naissance,
-                    'lieu_de_residence' => $identification_resultats->domicile,
-                    'nationalite' => $identification_resultats->nationalite,
-                    'profession' => $identification_resultats->profession,
-                    'email' => $identification_resultats->email,
-                    'document_justificatif' => $identification_resultats->libelle_piece . ' (' . $identification_resultats->numero_document . ')',
-                ];
-                $filename = 'identification-' . $identification_resultats->nom . '-' . $identification_resultats->numero_dossier . '.pdf';
-                $pdf_recu_identification = Pdf::loadView('layouts.recu-identification', $data);
-                /*$request->session()->remove('numero_dossier');*/
-                return $pdf_recu_identification->download($filename);
-            }
-        }
-        /* Retourner vue resultat */
-        return redirect()->route('certificat.consultation.submit')->with([
-            'error' => true,
-            'error_message' => 'Une erreur est survenue lors du téléchargement du reçu d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
-        ]);
-    }
-
-    /**
-     * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Téléchargement du certificat d'identification au format PDF<br/><br/>
-     * <b>RedirectResponse</b> downloadCertificateIdentificationPDF(<b>Request</b> $request)<br/>
-     * @param Request $request <p>Client Request object.</p>
-     */
-    public function downloadCertificateIdentificationPDF(Request $request) {
+    public function downloadCertificateConformitePDF(Request $request) {
 
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
             $client = Client::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
-            if (!empty($client)) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->integrator_data_payment_date)) );
+            if ($client) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->updated_at->format('Y-m-d'))) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
-                        'title' => 'Certificat d\'identification',
+                        'title' => 'Certificat de conformité',
                         'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
-                        'numero_dossier' => $client->numero_dossier,
-                        'uniqid' => $client->uniqid,
-                        'msisdn' => $client->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($client->cinetpay_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date))),
-                        'nom' => $client->nom . ((!empty($client->nom_epouse)) ? ' epse ' . $client->nom_epouse : ''),
-                        'prenoms' => $client->prenoms,
-                        'date_de_naissance' => date('d/m/Y', strtotime($client->date_de_naissance)),
-                        'lieu_de_naissance' => $client->lieu_de_naissance,
-                        'lieu_de_residence' => $client->domicile,
-                        'nationalite' => $client->nationalite,
-                        'profession' => $client->profession,
-                        'email' => $client->email,
-                        'id_operateur' => $client->abonnes_operateur_id,
-                        'document_justificatif' => $client->libelle_piece,
-                        'numero_document_justificatif' => $client->numero_document,
+                        'directeur_general' => "Ago Christian KODIA",
+                        'nom_complet' => $client->prenom." ".$client->nom,
+                        'nni' => $client->nni,
+                        'numero_cni' => $client->numero_cni,
+                        'nom_complet_decision' => $client->prenom_decision." ".$client->nom_decision,
+                        'numero_decision' => $client->numero_decision,
+                        'date_decision' => date('d/m/Y', strtotime($client->date_decision)),
+                        'lieu_decision' => $client->juridiction->libelle.", ".$client->juridiction->region,
+                        'lieu_certificat' => "ABIDJAN",
+                        'date_certificat' => $client->updated_at->format('d/m/Y')
                     ];
-                    $filename = 'identification-' . $client->nom . '-' . $client->numero_dossier . '.pdf';
-                    $pdf_certificat_identification = Pdf::loadView('layouts.certificat-identification', $data)->setPaper([0, -10, 445, 617.5]);
+                    $filename = 'certificat-conformite-'.$client->numero_dossier.'.pdf';
+                    $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
-                    /*if (!empty($client->email)) {
-                        (new MailONECI())->sendMailTemplate('layouts.certificat-identification', $data, "À propos de votre identification d'abonné mobile ONECI");
-                    }*/
-                    return $pdf_certificat_identification->download($filename);
+                    /*if (!empty($client->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de certficat de conformité ONECI") ;}*/
+
+                    //return view('layouts.certificat-conformite', $data);
+                    return $pdf_certificat_conformite->download($filename);
                 }
             }
         }
@@ -592,7 +534,7 @@ class CertificatConformiteController extends Controller {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
             $client = Client::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
-            if (!empty($client)) {
+            if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {

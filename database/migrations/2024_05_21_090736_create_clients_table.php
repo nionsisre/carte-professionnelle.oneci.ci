@@ -33,6 +33,7 @@ class CreateClientsTable extends Migration
             $table->string('lieu_decision')->nullable();
             $table->string('cni')->nullable();
             $table->string('decision_judiciaire')->nullable();
+            $table->string('code_lieu_retrait')->nullable();
             $table->string('statut')->nullable();
             $table->string('certificat')->nullable();
             $table->string('uniqid')->nullable();
