@@ -495,10 +495,14 @@ class CertificatConformiteController extends Controller {
                     $data = [
                         'title' => 'Certificat de conformité',
                         'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
-                        'directeur_general' => DirecteurGeneral::where('statut','=','1')->latest()->first() ?? "",
+                        'directeur_general' => "Ago Christian KODIA", //DirecteurGeneral::where('statut','=','1')->latest()->first() ?? "",
+                        'nom' => $client->nom,
+                        'prenom' => $client->prenom,
                         'nom_complet' => $client->prenom." ".$client->nom,
                         'nni' => $client->nni,
                         'numero_cni' => $client->numero_cni,
+                        'nom_decision' => $client->nom_decision,
+                        'prenom_decision' => $client->prenom_decision,
                         'nom_complet_decision' => $client->prenom_decision." ".$client->nom_decision,
                         'numero_decision' => $client->numero_decision,
                         'date_decision' => date('d/m/Y', strtotime($client->date_decision)),
@@ -506,6 +510,8 @@ class CertificatConformiteController extends Controller {
                         'lieu_certificat' => "ABIDJAN",
                         'date_certificat' => $client->updated_at->format('d/m/Y')
                     ];
+                    $data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
+                    //$data['qrcode'] = (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1);
                     $filename = 'certificat-conformite-'.$client->numero_dossier.'.pdf';
                     $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
@@ -521,6 +527,7 @@ class CertificatConformiteController extends Controller {
             'error' => true,
             'error_message' => 'Une erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
+
     }
 
     /**

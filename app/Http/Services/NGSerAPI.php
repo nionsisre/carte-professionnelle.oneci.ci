@@ -255,6 +255,7 @@ class NGSerAPI {
                     d'un dossier à celui d'une autre personne */
                     if (!empty($form_number)) {
                         Client::where('numero_dossier', '=', $form_number)->first()->update([
+                            'statut' => 2,
                             'transaction_id' => $request->input('order_id'),
                             'integrator_api_response_id' => $payment_data['data']['code'],
                             'integrator_code' => $payment_data['data']['description'],

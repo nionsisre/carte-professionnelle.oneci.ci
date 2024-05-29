@@ -114,7 +114,7 @@
             <span class="unselectable-text" style="position: absolute;top: 48.8%;left: 22%;font-size: 0.7rem;font-family: berlin-sans,serif;opacity: 0.72;width: 18em;">{{ $lieu_decision }}</span>
             <span class="unselectable-text" style="position: absolute;top: 65.7%;left: 56%;font-size: 0.7rem;font-family: berlin-sans,serif;opacity: 0.72;width: 18em;">{{ $lieu_certificat }}</span>
             <span class="unselectable-text" style="position: absolute;top: 65.7%;left: 80%;font-size: 0.7rem;font-family: berlin-sans,serif;opacity: 0.72;width: 18em;">{{ $date_certificat }}</span>
-            <span class="unselectable-text" style="position: absolute;top: 70.6%;left: 64%;"><img alt="" src="{{ $qrcode }}" style="width: 94px;"/></span>
+            <span class="unselectable-text" style="position: absolute;top: 71.1%;left: 70%;"><img alt="" src="{{ $qrcode }}" style="width: 83px;"/></span>
 
         </div>
         <div class="pi" data-data='{"ctm":[1.000000,0.000000,0.000000,1.000000,0.000000,0.000000]}'></div></div>
