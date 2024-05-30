@@ -125,21 +125,21 @@
                             jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                             return false;
                         }
-                        {{-- Assign values and Disable All fields if NNI OK --}}
-                        jQuery('#last-name-input').val(nni_data.LAST_NAME).prop('disabled', true);
-                        jQuery('#first-name-input').val(nni_data.FIRST_NAME).prop('disabled', true);
-                        jQuery('#birth-date-input').val(nni_data.BIRTH_DATE).prop('disabled', true);
-                        jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME).prop('disabled', true);
-                        jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME).prop('disabled', true);
+                        {{-- Assign values and Disable All fields if NNI OK ".prop('disabled', true)" --}}
+                        jQuery('#last-name-input').val(nni_data.LAST_NAME);
+                        jQuery('#first-name-input').val(nni_data.FIRST_NAME);
+                        jQuery('#birth-date-input').val(nni_data.BIRTH_DATE);
+                        jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME);
+                        jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME);
                         jQuery("#npdl-container").hide();
                         {{-- Enable next button --}}
                     } else if(jQuery('#possession-nni-non').is(':checked')) {
-                        {{-- Empty and Enable All fields --}}
-                        jQuery('#last-name-input').val("").prop('disabled', false);
-                        jQuery('#first-name-input').val("").prop('disabled', false);
-                        jQuery('#birth-date-input').val("").prop('disabled', false);
-                        jQuery('#mother-last-name-input').val("").prop('disabled', false);
-                        jQuery('#mother-first-name-input').val("").prop('disabled', false);
+                        {{-- Empty and Enable All fields ".prop('disabled', false)" --}}
+                        jQuery('#last-name-input').val("");
+                        jQuery('#first-name-input').val("");
+                        jQuery('#birth-date-input').val("");
+                        jQuery('#mother-last-name-input').val("");
+                        jQuery('#mother-first-name-input').val("");
                         jQuery("#npdl-container").show();
                         {{-- Disable next button --}}
                     }
