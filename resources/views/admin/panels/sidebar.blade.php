@@ -7,8 +7,8 @@
                 <i class="fa fa-home"></i> <span>Accueil</span>
             </a>
         </li>
-        <li @if(\Route::is('ostatplus') || \Route::is('ostatplus.reports.get')) class="active" @endif>
-            <a href="{{ route('ostatplus') }}">
+        <li @if(\Route::is('admin.certificat') || \Route::is('admin.certificat.get')) class="active" @endif>
+            <a href="{{ route('admin.certificat') }}">
                 <i class="fa fa-tasks"></i> <span>Traiter les demandes de certificat de conformité</span>
             </a>
         </li>

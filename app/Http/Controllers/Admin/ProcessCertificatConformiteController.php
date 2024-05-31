@@ -35,8 +35,14 @@ class ProcessCertificatConformiteController extends Controller {
      */
     public function show() {
 
+        $username = auth()->user()->last_name.' '.auth()->user()->first_name;
+        $max_chars = 35;
+        $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
         /* Retourner vue Traitement des demandes de certificat de conformité */
-        return view('admin.pages.certificat-conformite.index', []);
+        return view('admin.pages.certificat-conformite.index', [
+            'username' => $username,
+            'role_name' => auth()->user()->usersRole->user_role_label,
+        ]);
 
     }
 

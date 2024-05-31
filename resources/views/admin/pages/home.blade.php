@@ -256,7 +256,7 @@
                                 <i class="fa fa-check"></i>
                             </div>
                             <div class="col-xs-8">
-                                <small class="stat-label">Demandes traitées</small>
+                                <small class="stat-label">Demandes validées</small>
                                 <h1>2</h1>
                             </div>
                         </div><!-- row -->
@@ -266,12 +266,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>7.80</h4>
+                                <h4>7</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>76</h4>
+                                <h4>7</h4>
                             </div>
                         </div><!-- row -->
                     </div><!-- stat -->
@@ -291,7 +291,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Demandes refusées</small>
-                                <h1>54.40</h1>
+                                <h1>5</h1>
                             </div>
                         </div><!-- row -->
 
@@ -300,12 +300,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>7.80</h4>
+                                <h4>3</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>76</h4>
+                                <h4>5</h4>
                             </div>
                         </div><!-- row -->
 
@@ -355,7 +355,7 @@
     <div class="row">
         <!-- Ostat Plus Web -->
         <div class=" col-sm d-flex" style="text-align: center;margin-left: 15%;margin-right: 15%;margin-top: 3%">
-            <a href="{{ route('ostatplus') }}" style="text-decoration: none;">
+            <a href="{{ route('admin.certificat') }}" style="text-decoration: none;">
                 <div class="col-lg-3 d-flex align-items-stretch" style="object-fit: cover;">
                     <div class="hover-highlight-19 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','19')" onmouseleave="highlightHover('unset', '19')">
                         <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">

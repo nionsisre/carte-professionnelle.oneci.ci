@@ -85,9 +85,9 @@ Route::prefix('oneciwebadmin')->group(function () {
         // Business Logic
         // ------------------
         // Validation Statut
-        Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus');
-        Route::post('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus.reports.get');
-        Route::post(md5('/traitement-demandes-certificat-conformite' . date('Y-m-d').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus.reports.submit');
+        Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat');
+        Route::post('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat.get');
+        Route::post(md5('/traitement-demandes-certificat-conformite' . date('Y-m-d').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat.submit');
     });
 
 });
