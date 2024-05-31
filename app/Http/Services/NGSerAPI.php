@@ -153,9 +153,17 @@ class NGSerAPI {
                             'transaction_id' => $transaction_id,
                             'payment_type' => $payment_type
                         ];
+                    } else if ($ngser_api_result['code'] == "3") {
+                        return [
+                            'has_error' => false,
+                            'message' => 'En attente de la finalisation du paiement',
+                            'data' => $ngser_api_result,
+                            'transaction_id' => $transaction_id,
+                            'payment_type' => $payment_type
+                        ];
                     } else {
                         return [
-                            'has_error' => true,
+                            'has_error' => false,
                             'message' => 'Payment failed',
                             'data' => $ngser_api_result,
                             'transaction_id' => $transaction_id,
@@ -246,35 +254,43 @@ class NGSerAPI {
                 }
 
                 // Convertir la chaîne en objet DateTime
-                $date = DateTime::createFromFormat('d/m/Y H:i', $payment_data['data']['data']['transaction_date']);
+                //$date = DateTime::createFromFormat('d/m/Y H:i', $payment_data['data']['transaction_date']);
                 // Formater la date dans le format requis
-                $transaction_date = $date->format('Y-m-d H:i:s');
+                //$transaction_date = $date->format('Y-m-d H:i:s');
+                $transaction_date = date('Y-m-d H:i:s');
 
                 if($payment_type === env('PAYMENT_TYPE')) {
                     /* Vérification de la correspondance des numéros de validation pour éviter d'affecter le coupon de paiement
                     d'un dossier à celui d'une autre personne */
                     if (!empty($form_number)) {
-                        Client::where('numero_dossier', '=', $form_number)->first()->update([
-                            'statut' => 2,
-                            'transaction_id' => $request->input('order_id'),
-                            'integrator_api_response_id' => $payment_data['data']['code'],
-                            'integrator_code' => $payment_data['data']['description'],
-                            'integrator_message' => "SUCCES", //$payment_data['data']['message'],
-                            'integrator_data_amount' => $payment_data['data']['data']['paid_transaction_amount'],
-                            'integrator_data_currency' => $payment_data['data']['data']['currency'],
-                            'integrator_data_status' => "ACCEPTED", //$payment_data['data']['data']['status'],
-                            'integrator_data_payment_method' => $payment_data['data']['data']['wallet'],
-                            'integrator_data_description' => env('PAYMENT_TYPE'),
-                            'integrator_data_metadata' => $form_number, //$payment_data['data']['data']['metadata'],
-                            'integrator_data_operator_id' => $payment_data['data']['data']['transaction_id'],
-                            'integrator_data_payment_date' => $transaction_date,
-                            'enroll_download_link' => md5($form_number . $request->input('order_id') . $payment_data['data']['data']['transaction_id'])
-                        ]);
+                        if(isset($payment_data['data']) && $payment_data['data']['code'] == "1") {
+                            Client::where('numero_dossier', '=', $form_number)->first()->update([
+                                'statut' => 2,
+                                'transaction_id' => $request->input('order_id'),
+                                'integrator_api_response_id' => $payment_data['data']['code'],
+                                'integrator_code' => $payment_data['data']['description'],
+                                'integrator_message' => "SUCCES", //$payment_data['data']['message'],
+                                'integrator_data_amount' => $payment_data['data']['data']['paid_transaction_amount'],
+                                'integrator_data_currency' => $payment_data['data']['data']['currency'],
+                                'integrator_data_status' => "ACCEPTED", //$payment_data['data']['data']['status'],
+                                'integrator_data_payment_method' => $payment_data['data']['data']['wallet'],
+                                'integrator_data_description' => env('PAYMENT_TYPE'),
+                                'integrator_data_metadata' => $form_number, //$payment_data['data']['data']['metadata'],
+                                'integrator_data_operator_id' => $payment_data['data']['data']['transaction_id'],
+                                'integrator_data_payment_date' => $transaction_date,
+                                'certificate_download_link' => md5($form_number . $request->input('order_id') . $payment_data['data']['data']['transaction_id'])
+                            ]);
 
-                        return response([
-                            'has_error' => false,
-                            'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte et est désormais disponible pour le téléchargement.'
-                        ], Response::HTTP_OK);
+                            return response([
+                                'has_error' => false,
+                                'message' => 'Synchronisation effectuée ! Le paiement du certificat a été pris en compte avec succès !'
+                            ], Response::HTTP_OK);
+                        } else {
+                            return response([
+                                'has_error' => true,
+                                'message' => 'Ok, le paiement n\'a pas encore été effectué'
+                            ], Response::HTTP_OK);
+                        }
                     }
                 } else {
                     return response([
