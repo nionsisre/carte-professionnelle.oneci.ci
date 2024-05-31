@@ -223,7 +223,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Nombre total de demandes</small>
-                                <h1>3</h1>
+                                <h1>{{ $nombre_demandes }}</h1>
                             </div>
                         </div><!-- row -->
 
@@ -232,12 +232,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>2</h4>
+                                <h4>{{ $nombre_demandes_daily }}</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>1</h4>
+                                <h4>{{ $nombre_demandes_monthly }}</h4>
                             </div>
                         </div><!-- row -->
 
@@ -257,7 +257,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Demandes validées</small>
-                                <h1>2</h1>
+                                <h1>{{ $nombre_demandes_validees }}</h1>
                             </div>
                         </div><!-- row -->
 
@@ -266,12 +266,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>7</h4>
+                                <h4>{{ $nombre_demandes_validees_daily }}</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>7</h4>
+                                <h4>{{ $nombre_demandes_validees_monthly }}</h4>
                             </div>
                         </div><!-- row -->
                     </div><!-- stat -->
@@ -291,7 +291,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Demandes refusées</small>
-                                <h1>5</h1>
+                                <h1>{{ $nombre_demandes_refusees }}</h1>
                             </div>
                         </div><!-- row -->
 
@@ -300,12 +300,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>3</h4>
+                                <h4>{{ $nombre_demandes_refusees_daily }}</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>5</h4>
+                                <h4>{{ $nombre_demandes_refusees_monthly }}</h4>
                             </div>
                         </div><!-- row -->
 
@@ -326,7 +326,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Taux de demandes traitées</small>
-                                <h1>99%</h1>
+                                <h1>{{ $taux_demandes_traitees }}%</h1>
                             </div>
                         </div><!-- row -->
 
@@ -335,12 +335,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>100%</h4>
+                                <h4>{{ $taux_demandes_traitees_daily }}%</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>99%</h4>
+                                <h4>{{ $taux_demandes_traitees_monthly }}%</h4>
                             </div>
                         </div><!-- row -->
 
@@ -360,7 +360,7 @@
                     <div class="hover-highlight-19 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','19')" onmouseleave="highlightHover('unset', '19')">
                         <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">
                             <i class="fad fa-tasks" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; font-size: 4.5em;"></i>
-                            <h5 class="today" onselectstart="return false" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Traiter les demandes de certificat de conformité</h5>
+                            <h5 class="today" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Traiter les demandes de certificat de conformité</h5>
                         </div>
                     </div><!-- panel -->
                 </div>

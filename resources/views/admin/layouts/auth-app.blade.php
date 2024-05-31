@@ -28,7 +28,7 @@
     <meta name="msapplication-wide310x150logo" content="mstile-310x150.png" />
     <meta name="msapplication-square310x310logo" content="mstile-310x310.png" />
 
-    <title>ONECI OSTAT+</title>
+    <title>ONECI | Back Office Certificat Conformité</title>
 
     <!--<link href="{{ URL::asset('back-office/assets/css/style.default.css') }}" rel="stylesheet">-->
     <link href="{{ URL::asset('back-office/assets/css/style.1.0.0.css') }}" rel="stylesheet">
