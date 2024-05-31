@@ -31,7 +31,7 @@ class HomeController extends Controller
         $max_chars = 35;
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
-        return view('pages.home', [
+        return view('admin.pages.home', [
             'username' => $username,
             'role_name' => auth()->user()->usersRole->user_role_label
         ]);

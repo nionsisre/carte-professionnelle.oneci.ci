@@ -76,13 +76,13 @@
             <div class="logopanel">
                 <h1><span><a href="{{ route('admin.home') }}">@hasSection('logo') @yield('logo') @else <img src="{{ URL::asset('back-office/assets/images/oneci_logo.svg') }}" style="width: 2.5em; padding: 0.2em 0.2em" alt="" /> @endif</a></span></h1>
             </div><!-- logopanel -->
-            @include('panels.sidebar')
+            @include('admin.panels.sidebar')
         </div><!-- leftpanel -->
         <!--
         background-size: 11em
         -->
         <div class="mainpanel" @hasSection('background') @yield('background') @else style="background-image: url('{{ URL::asset("back-office/assets/images/background-patterns/boxed/hexa-vertical.png") }}');" @endif>
-            @include('panels.navbar')
+            @include('admin.panels.navbar')
             @yield('page-title-tab')
             <div class="contentpanel">
                 @yield('content')
@@ -100,16 +100,16 @@
     <script src="{{ URL::asset('back-office/assets/js/toggles.min.js') }}"></script>
     {{--<script src="{{ URL::asset('back-office/assets/js/retina.min.js') }}"></script>--}}
     <script src="{{ URL::asset('back-office/assets/js/jquery.cookies.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/jquery.autogrow-textarea.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/bootstrap-timepicker.min.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/jquery.mask.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/jquery.tagsinput.min.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/jquery.mousewheel.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/select2.min.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/select2_search.min.js') }}" type='text/javascript'></script>
-    <script src="{{ URL::asset('admin/assets/js/dropzone.min.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/colorpicker.js') }}"></script>
-    <script src="{{ URL::asset('admin/assets/js/custom.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/jquery.autogrow-textarea.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/bootstrap-timepicker.min.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/jquery.mask.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/jquery.tagsinput.min.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/jquery.mousewheel.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/select2.min.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/select2_search.min.js') }}" type='text/javascript'></script>
+    <script src="{{ URL::asset('back-office/assets/js/dropzone.min.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/colorpicker.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/custom.js') }}"></script>
     <script>
         /* highlight on hover */
         function highlightHover(type, classId) {

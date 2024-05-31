@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('page-title-tab')
     <div class="pageheader">
@@ -212,27 +212,155 @@
 
 @section('content')
     <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-dark panel-stat">
+                <div class="panel-heading">
+
+                    <div class="stat">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <i class="fa fa-hand-receiving"></i>
+                            </div>
+                            <div class="col-xs-8">
+                                <small class="stat-label">Nombre total de demandes</small>
+                                <h1>3</h1>
+                            </div>
+                        </div><!-- row -->
+
+                        <div class="mb15"></div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <small class="stat-label">Aujourd'hui</small>
+                                <h4>2</h4>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <small class="stat-label">Ce mois-ci</small>
+                                <h4>1</h4>
+                            </div>
+                        </div><!-- row -->
+
+                    </div><!-- stat -->
+
+                </div><!-- panel-heading -->
+            </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-success panel-stat">
+                <div class="panel-heading">
+
+                    <div class="stat">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div class="col-xs-8">
+                                <small class="stat-label">Demandes traitées</small>
+                                <h1>2</h1>
+                            </div>
+                        </div><!-- row -->
+
+                        <div class="mb15"></div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <small class="stat-label">Aujourd'hui</small>
+                                <h4>7.80</h4>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <small class="stat-label">Ce mois-ci</small>
+                                <h4>76</h4>
+                            </div>
+                        </div><!-- row -->
+                    </div><!-- stat -->
+
+                </div><!-- panel-heading -->
+            </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-danger panel-stat">
+                <div class="panel-heading">
+
+                    <div class="stat">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <i class="fa fa-times"></i>
+                            </div>
+                            <div class="col-xs-8">
+                                <small class="stat-label">Demandes refusées</small>
+                                <h1>54.40</h1>
+                            </div>
+                        </div><!-- row -->
+
+                        <div class="mb15"></div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <small class="stat-label">Aujourd'hui</small>
+                                <h4>7.80</h4>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <small class="stat-label">Ce mois-ci</small>
+                                <h4>76</h4>
+                            </div>
+                        </div><!-- row -->
+
+                    </div><!-- stat -->
+
+                </div><!-- panel-heading -->
+            </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+
+        <div class="col-sm-6 col-md-3">
+            <div class="panel panel-primary panel-stat">
+                <div class="panel-heading">
+
+                    <div class="stat">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <i class="fa fa-file-certificate"></i>
+                            </div>
+                            <div class="col-xs-8">
+                                <small class="stat-label">Taux de demandes traitées</small>
+                                <h1>99%</h1>
+                            </div>
+                        </div><!-- row -->
+
+                        <div class="mb15"></div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <small class="stat-label">Aujourd'hui</small>
+                                <h4>100%</h4>
+                            </div>
+
+                            <div class="col-xs-6">
+                                <small class="stat-label">Ce mois-ci</small>
+                                <h4>99%</h4>
+                            </div>
+                        </div><!-- row -->
+
+                    </div><!-- stat -->
+
+                </div><!-- panel-heading -->
+            </div><!-- panel -->
+        </div><!-- col-sm-6 -->
+
+
+    </div><hr style="border-top: 1px solid #212121" />
+    <div class="row">
         <!-- Ostat Plus Web -->
         <div class=" col-sm d-flex" style="text-align: center;margin-left: 15%;margin-right: 15%;margin-top: 3%">
             <a href="{{ route('ostatplus') }}" style="text-decoration: none;">
                 <div class="col-lg-3 d-flex align-items-stretch" style="object-fit: cover;">
                     <div class="hover-highlight-19 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','19')" onmouseleave="highlightHover('unset', '19')">
                         <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">
-                            <img src="{{ URL::asset('back-office/assets/images/ostatplus_icon.svg') }}" alt="" style="width: 5em;"/>
-                            <h5 class="today" onselectstart="return false" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">OStat Plus<br/>Web</h5>
-                        </div>
-                    </div><!-- panel -->
-                </div>
-            </a>
-        </div>
-        <!-- Télécharger OStat Plus -->
-        <div class=" col-sm d-flex" style="text-align: center;margin-left: 15%;margin-right: 15%;margin-top: 3%">
-            <a href="https://www.oneci.ci/telecharger-ostatplus" style="text-decoration: none;">
-                <div class="col-lg-3 d-flex align-items-stretch" style="object-fit: cover;">
-                    <div class="hover-highlight-2 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','2')" onmouseleave="highlightHover('unset', '2')">
-                        <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">
-                            <img src="{{ URL::asset('back-office/assets/images/android_robot.svg') }}" alt="" style="width: 4em;"/>
-                            <h5 class="today" onselectstart="return false" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Télécharger APK <br/>OStat+ Android <br/><em>(version actuelle : 2.0.0)</em></h5>
+                            <i class="fad fa-tasks" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; font-size: 4.5em;"></i>
+                            <h5 class="today" onselectstart="return false" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Traiter les demandes de certificat de conformité</h5>
                         </div>
                     </div><!-- panel -->
                 </div>

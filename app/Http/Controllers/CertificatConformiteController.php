@@ -350,9 +350,9 @@ class CertificatConformiteController extends Controller {
         if($client->exists()) {
             /* Obtention du lien de paiement via l'API Aggrégateur */
             if(config('services.ngser.enabled')) {
-                $payment_link_obtained = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT_TEMP'), true);
+                $payment_link_obtained = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
             } else if(config('services.cinetpay.enabled')) {
-                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('CINETPAY_SERVICE_AMOUNT_TEMP'), true);
+                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('CINETPAY_SERVICE_AMOUNT'), true);
             }
             if ($payment_link_obtained['has_error']) {
                 return response([

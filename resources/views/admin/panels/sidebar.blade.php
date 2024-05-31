@@ -9,7 +9,7 @@
         </li>
         <li @if(\Route::is('ostatplus') || \Route::is('ostatplus.reports.get')) class="active" @endif>
             <a href="{{ route('ostatplus') }}">
-                <i class="fa fa-globe-africa"></i> <span>Ostat+ Web</span>
+                <i class="fa fa-tasks"></i> <span>Traiter les demandes de certificat de conformité</span>
             </a>
         </li>
     </ul>

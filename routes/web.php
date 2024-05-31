@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthenticationController;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\ProcessCertificatConformiteController;
 use App\Http\Controllers\CertificatConformiteController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\ReclamationController;
@@ -84,9 +85,9 @@ Route::prefix('oneciwebadmin')->group(function () {
         // Business Logic
         // ------------------
         // Validation Statut
-        Route::get('/ostatplus-web', [OStatPlusController::class, 'show'])->name('ostatplus');
-        Route::post('/ostatplus-web', [OStatPlusController::class, 'show'])->name('ostatplus.reports.get');
-        Route::post(md5('/ostatplus-web' . date('Y-m-d')), [OStatPlusController::class, 'show'])->name('ostatplus.reports.submit');
+        Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus');
+        Route::post('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus.reports.get');
+        Route::post(md5('/traitement-demandes-certificat-conformite' . date('Y-m-d').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'show'])->name('ostatplus.reports.submit');
     });
 
 });

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
@@ -25,13 +27,11 @@ class AppServiceProvider extends ServiceProvider {
      */
     public function boot() {
         Schema::defaultStringLength(191);
+
         if (App::environment(['staging', 'production'])) {
             URL::forceScheme('https');
         }
-        /*if ($this->app->environment('production')) {
-            !isset($_SERVER['HTTPS']) ?? http_redirect(env('APP_URL') . $_SERVER['REQUEST_URI']);
-            URL::forceScheme('https');
-        }*/
+
     }
 
 }

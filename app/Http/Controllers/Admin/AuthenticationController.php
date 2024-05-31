@@ -111,14 +111,14 @@ class AuthenticationController extends Controller
     if (Auth::attempt($credentials, $remember)) {
         if(auth()->user()->status_id === 0) {
             Auth::check() ?? Auth::logout();
-            return back()->withInput()->withErrors(__('admin.auth.locked'));
+            return back()->withInput()->withErrors(__('auth.locked'));
         }
       // Successfully authenticated
       return redirect()->route('admin.home');
     } else {
       // Authentication failed
-      // return back()->withInput()->withErrors(__('admin.auth.failed'));
-      throw ValidationException::withMessages(['username_or_email' => __('admin.auth.failed')]);
+      // return back()->withInput()->withErrors(__('auth.failed'));
+      throw ValidationException::withMessages(['username_or_email' => __('auth.failed')]);
     }
   }
 
@@ -146,7 +146,7 @@ class AuthenticationController extends Controller
               function ($attribute, $value, $fail) {
                   if (!(new Utils())->validateDomain($value, false)) {
                       list(, $domain) = explode('@', $value);
-                      $fail(__('admin.auth.email_excluded_domain', ['domain' => $domain]));
+                      $fail(__('auth.email_excluded_domain', ['domain' => $domain]));
                   }
               }
           ],
@@ -214,7 +214,7 @@ class AuthenticationController extends Controller
             function ($attribute, $value, $fail) {
                 if (!(new Utils())->validateDomain($value, true)) {
                     list(, $domain) = explode('@', $value);
-                    $fail(__('admin.auth.email_excluded_domain', ['domain' => $domain]));
+                    $fail(__('auth.email_excluded_domain', ['domain' => $domain]));
                 }
             }
         ],
@@ -300,7 +300,7 @@ class AuthenticationController extends Controller
               function ($attribute, $value, $fail) {
                   if (!(new Utils())->validateDomain($value, false)) {
                       list(, $domain) = explode('@', $value);
-                      $fail(__('admin.auth.email_excluded_domain', ['domain' => $domain]));
+                      $fail(__('auth.email_excluded_domain', ['domain' => $domain]));
                   }
               }
           ],
@@ -380,10 +380,10 @@ class AuthenticationController extends Controller
             'email' => $user->email,
         ], __("admin.auth.email_reset_password_subject", ['platform_name' => env("APP_NAME")]));
         /* Redirection sur vue d'envoi avec succès */
-        return back()->with(['error' => false, 'success_message' => __('admin.auth.page_forgot_password_content_8', ['platform_name' => env("APP_NAME")])]);
+        return back()->with(['error' => false, 'success_message' => __('auth.page_forgot_password_content_8', ['platform_name' => env("APP_NAME")])]);
     }
     /* Redirection sur vue d'envoi avec message d'erreur */
-    return back()->withInput()->with(['error' => true, 'error_message' => __('admin.auth.page_forgot_password_content_9')]);
+    return back()->withInput()->with(['error' => true, 'error_message' => __('auth.page_forgot_password_content_9')]);
   }
 
   public function submitResetPassword(Request $request) {
@@ -411,12 +411,12 @@ class AuthenticationController extends Controller
             /* Retourner vue modification effectuée */
             return back()->with([
                 'error' => false,
-                'success_message' => __('admin.auth.page_reset_password_content_9')
+                'success_message' => __('auth.page_reset_password_content_9')
             ]);
         }
     }
     /* Retourner un message d'erreur */
-    return back()->withInput()->with(['error' => true, 'error_message' => __('admin.auth.page_forgot_password_content_9')]);
+    return back()->withInput()->with(['error' => true, 'error_message' => __('auth.page_forgot_password_content_9')]);
   }
 
   public function submitPasswordConfirm(Request $request) {
