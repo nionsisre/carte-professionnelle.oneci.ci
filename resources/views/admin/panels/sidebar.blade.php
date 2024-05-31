@@ -9,7 +9,7 @@
         </li>
         <li @if(\Route::is('admin.certificat') || \Route::is('admin.certificat.get')) class="active" @endif>
             <a href="{{ route('admin.certificat') }}">
-                <i class="fa fa-tasks"></i> <span>Traiter les demandes de certificat de conformité</span>
+                <i class="fa fa-tasks"></i> <span>Traiter les demandes de certificat de conformité @if(\Route::is('admin.home') && $nombre_demandes_non_traitees != 0)<span class="pull-right badge badge-danger">{{ $nombre_demandes_non_traitees }}</span>@endif</span>
             </a>
         </li>
     </ul>

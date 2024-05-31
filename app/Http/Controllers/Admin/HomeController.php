@@ -33,6 +33,7 @@ class HomeController extends Controller
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
         $nombre_demandes = Client::where('statut','>=','2')->count();
+        $nombre_demandes_non_traitees = Client::where('statut','=','2')->count();
         $nombre_demandes_daily = Client::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
         $nombre_demandes_monthly = Client::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m").'%')->count();
         $nombre_demandes_validees = Client::where('statut','=','3')->count();
@@ -49,6 +50,7 @@ class HomeController extends Controller
             'username' => $username,
             'role_name' => auth()->user()->usersRole->user_role_label,
             'nombre_demandes' => $nombre_demandes,
+            'nombre_demandes_non_traitees' => $nombre_demandes_non_traitees,
             'nombre_demandes_daily' => $nombre_demandes_daily,
             'nombre_demandes_monthly' => $nombre_demandes_monthly,
             'nombre_demandes_validees' => $nombre_demandes_validees,
