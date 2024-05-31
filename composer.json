@@ -19,7 +19,8 @@
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
         "realrashid/sweet-alert": "^6.0",
-        "stechstudio/laravel-zipstream": "^4.13"
+        "stechstudio/laravel-zipstream": "^4.13",
+        "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -21,7 +21,7 @@
         </div>
     </div>
 </div>
-<div class="table-responsive" style="width: 100%;margin-bottom: 15px;overflow-x: auto;-ms-overflow-style: -ms-autohiding-scrollbar;border: 1px solid #ddd;">
+<div class="table-responsive">
     <table class="table table-dark col-xs-12 col-sm-12 col-md-12 col-lg-12 mb30" >
         <thead>
         <tr>
@@ -29,12 +29,9 @@
             <th>Numéro de la demande</th>
             <th>Numéro NNI / CNI</th>
             <th>Nom complet</th>
-            <th>Date de naissance</th>
             <th>Nom complet de la mère</th>
             <th>Nom complet sur la décision</th>
-            <th>Date de naissance sur la décision</th>
             <th>Numéro décision</th>
-            <th>Date de décision</th>
             <th>Lieu de décision</th>
             <th>Statut de la demande</th>
             <th>Date de la demande</th>
@@ -46,20 +43,17 @@
         <tbody id="users_list">
         <tr class="glow-user-tr">
             <td>1</td>
-            <td>Numéro de la demande</td>
-            <td>Numéro NNI / CNI</td>
-            <td>Nom complet</td>
-            <td>Date de naissance</td>
-            <td>Nom complet de la mère</td>
-            <td>Nom complet sur la décision</td>
-            <td>Date de naissance sur la décision</td>
-            <td>Numéro décision</td>
-            <td>Date de décision</td>
-            <td>Lieu de décision</td>
-            <td>Statut de la demande</td>
-            <td>Date de la demande</td>
-            <td>Documents Justificatifs</td>
-            <td>Observation(s)</td>
+            <td>1189769878</td>
+            <td>C0098361983</td>
+            <td>TEST Testera (30/01/1999)</td>
+            <td>CAM Teakser</td>
+            <td>TEST Amar (30/01/1999)</td>
+            <td>N°123 du 01/05/2024</td>
+            <td>Plateau</td>
+            <td>Documents en attente de validation</td>
+            <td>31/05/2024</td>
+            <td>CNI + Décision de justice</td>
+            <td></td>
             <td class="table-action col-sm-2">
                 <button title="Editer le compte" onclick="" data-placement="bottom" data-toggle="modal" data-target="#edit-user" class="btn btn-sm btn-primary tooltips modal-pop" type="button">
                     <i class="fa fa-user-edit"></i>

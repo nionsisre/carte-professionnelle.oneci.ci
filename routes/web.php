@@ -66,9 +66,9 @@ Route::post('/cinetpay/cancel', [CinetPayAPI::class, 'cancel'])->name('cinetpay.
 
 Route::prefix('oneciwebadmin')->group(function () {
 
-    // -----------------------
-    // Authentication Routes
-    // -----------------------
+    // ------------------------------------------
+    // Authentication Routes via compte Kernel
+    // ------------------------------------------
     Route::get('/login', [AuthenticationController::class, 'showLogin'])->name('admin.auth.login');
     Route::post('/sign-in', [AuthenticationController::class, 'submitLogin'])->name('admin.auth.login.submit');
     Route::get('/forgot-password', [AuthenticationController::class, 'showForgotPassword'])->name('admin.auth.password.forgot');
@@ -84,7 +84,7 @@ Route::prefix('oneciwebadmin')->group(function () {
         // ------------------
         // Business Logic
         // ------------------
-        // Validation Statut
+        // Traitement des demandes de certificat de conformité
         Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat');
         Route::post('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat.get');
         Route::post(md5('/traitement-demandes-certificat-conformite' . date('Y-m-d').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat.submit');
