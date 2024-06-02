@@ -42,9 +42,9 @@ class HomeController extends Controller
         $nombre_demandes_refusees = Client::where('statut','=','4')->count();
         $nombre_demandes_refusees_daily = Client::where('statut','=','4')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
         $nombre_demandes_refusees_monthly = Client::where('statut','=','4')->where('updated_at','LIKE',date("Y-m").'%')->count();
-        $taux_demandes_traitees = ((intval($nombre_demandes_validees)+intval($nombre_demandes_refusees))*100) / $nombre_demandes;
-        $taux_demandes_traitees_daily = ((intval($nombre_demandes_validees_daily)+intval($nombre_demandes_refusees_daily))*100) / $nombre_demandes_daily;
-        $taux_demandes_traitees_monthly = ((intval($nombre_demandes_validees_monthly)+intval($nombre_demandes_refusees_monthly))*100) / $nombre_demandes_monthly;
+        $taux_demandes_traitees = ($nombre_demandes != 0) ? ((intval($nombre_demandes_validees)+intval($nombre_demandes_refusees))*100) / intval($nombre_demandes) : 0;
+        $taux_demandes_traitees_daily = ($nombre_demandes_daily != 0) ? ((intval($nombre_demandes_validees_daily)+intval($nombre_demandes_refusees_daily))*100) / intval($nombre_demandes_daily) : 0;
+        $taux_demandes_traitees_monthly = ($nombre_demandes_monthly != 0) ? ((intval($nombre_demandes_validees_monthly)+intval($nombre_demandes_refusees_monthly))*100) / intval($nombre_demandes_monthly) : 0;
 
         return view('admin.pages.home', [
             'username' => $username,
