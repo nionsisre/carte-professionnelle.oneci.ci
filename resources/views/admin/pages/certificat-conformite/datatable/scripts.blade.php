@@ -27,6 +27,10 @@
             initComplete: function(settings, json) {
                 {{-- Code JavaScript à exécuter après le chargement initial des données--}}
                 jQuery('.mainpanel').height( $(".contentpanel").height() + 150 );
+                {{--Mise à jour du nombre total d'enregistrements--}}
+                let info = myDatatable.page.info();
+                {{--$('#total-rows').text(json.recordsTotal);--}}
+                $('#total-rows').text(info.recordsDisplay);
             },
             createdRow: function(row, data, dataIndex) {
                 {{-- Ajouter une classe à la ligne entière--}}
@@ -84,6 +88,11 @@
                 $('#loader').hide();
                 jQuery('.my-datatable').show();
                 jQuery('.mainpanel').height( $(".contentpanel").height() + 150 );
+                {{--Mise à jour du nombre total d'enregistrements--}}
+                let info = myDatatable.page.info();
+                {{--$('#total-rows').text(json.recordsTotal);--}}
+                $('#total-rows').text(info.recordsDisplay);
+                console.log(info);
             }
         });
 

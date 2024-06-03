@@ -16,7 +16,10 @@
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
         <div class="form-group">
-            <select class="good-select form-control" id="lieux-livraison" style="width: 100%;">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="margin-top: 0.8em;">
+                <span id="total-rows" class="label label-default">0</span>
+            </div>
+            <select class="good-select form-control col-xs-10 col-sm-10 col-md-10 col-lg-10" id="lieux-livraison">
                 <option value="">Tous les lieux de livraison</option>
                 @foreach($centres as $centre)
                     <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
