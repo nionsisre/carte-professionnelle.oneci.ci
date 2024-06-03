@@ -24,21 +24,30 @@
                     "_token": "{{ csrf_token() }}"
                 }
             },
+            initComplete: function(settings, json) {
+                // Code JavaScript à exécuter après le chargement initial des données
+                $('.mainpanel').height( $(".contentpanel").height() + 150 );
+            },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'lieu_livraison', name: 'lieu_livraison'},
+                {data: 'numero_dossier', name: 'numero_demande'},
+                {data: 'numero_cni_nni', name: 'numero_cni_nni'},
+                {data: 'nom_complet', name: 'nom_complet'},
+                {data: 'nom_complet_mere', name: 'nom_complet_mere'},
+                {data: 'nom_complet_decision', name: 'nom_complet_decision'},
+                {data: 'numero_date_decision', name: 'numero_date_decision'},
+                {data: 'lieu_decision', name: 'lieu_decision'},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
                 @foreach($columns as $column)
                     @if ($column !== 'id' && $column !== 'created_at')
                     {!! "{data: '".$column."', name: '".$column."', searchable: true, visible: false}," !!}
@@ -93,7 +102,18 @@
             --}}
             order : [[ 3, 'asc' ]],
         });
+
+        myDatatable.on('processing.dt', function(e, settings, processing) {
+            if (processing) {
+                $('#loader').show();
+            } else {
+                $('#loader').hide();
+            }
+        });
+
+
     });
+
     {{-- myDatatable Search --}}
     $('#btn-table-search').on( 'keyup click', function () {
         myDatatable.search($('#table-search-text').val()).draw();

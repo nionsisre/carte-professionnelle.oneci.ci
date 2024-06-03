@@ -64,6 +64,45 @@ class ProcessCertificatConformiteController extends Controller {
             $data = Client::with('juridiction')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('lieu_livraison', function($row){
+                    if(!empty($row->code_lieu_retrait)) {
+                        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$row->code_lieu_retrait)->first();
+                        return ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
+                    } else {
+                        return "";
+                    }
+                })
+                ->addColumn('numero_cni_nni', function($row){
+                    if(!empty($row->nni)) {
+                        return $row->nni;
+                    } else if(!empty($row->numero_cni)) {
+                        return $row->numero_cni;
+                    } else {
+                        return "";
+                    }
+                })
+                ->addColumn('nom_complet', function($row){
+                    return ucwords(strtolower($row->prenom)).' '.strtoupper($row->nom).' ('.date('d/m/Y', strtotime($row->date_naissance)).') ';
+                })
+                ->addColumn('nom_complet_mere', function($row){
+                    return ucwords(strtolower($row->prenom_mere)).' '.strtoupper($row->nom_mere);
+                })
+                ->addColumn('nom_complet_decision', function($row){
+                    return ucwords(strtolower($row->prenom_decision)).' '.strtoupper($row->nom_decision).' ('.date('d/m/Y', strtotime($row->date_naissance_decision)).') ';
+                })
+                ->addColumn('numero_date_decision', function($row){
+                    return 'N°'.$row->numero_decision.' du '.date('d/m/Y', strtotime($row->date_decision));
+                })
+                ->addColumn('lieu_decision', function($row){
+                    return $row->juridiction->libelle;
+                })
+                ->addColumn('action', function($row){
+                    $actionBtn = '
+                            dlkjf
+                    ';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 

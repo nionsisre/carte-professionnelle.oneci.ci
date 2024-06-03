@@ -31,7 +31,8 @@
         </div>
     </div>
 </div>
-<div class="table-responsive">
+<div class="table-responsive" style="width: 100%;margin-bottom: 15px;overflow-x: auto;overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;-ms-overflow-style: -ms-autohiding-scrollbar;border: 1px solid #ddd;">
     <table class="table table-dark my-datatable col-xs-12 col-sm-12 col-md-12 col-lg-12 mb30" >
         <thead>
             <tr>
@@ -76,5 +77,7 @@
         --}}
         </tbody>
     </table>
-    <div id="loader_here"></div>
+    <div id="loader" style="display:none;" align="center">
+        <br/><br/><i class="fa fa-2x fa-spinner fa-spin"></i><br/><br/><br/>
+    </div>
 </div>
