@@ -28,20 +28,30 @@
                 // Code JavaScript à exécuter après le chargement initial des données
                 $('.mainpanel').height( $(".contentpanel").height() + 150 );
             },
+            createdRow: function(row, data, dataIndex) {
+                // Ajouter une classe à la ligne entière
+                $(row).addClass('glow-user-tr');
+            },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'lieu_livraison', name: 'lieu_livraison'},
                 {data: 'numero_dossier', name: 'numero_demande'},
+                    {{--{
+                        data: 'numero_cni_nni', name: 'numero_cni_nni',
+                        render: function (data, type, row, meta) {
+                            return '<i class="fa fa-barcode mr10"></i>'+data;
+                        }
+                    },--}}
                 {data: 'numero_cni_nni', name: 'numero_cni_nni'},
                 {data: 'nom_complet', name: 'nom_complet'},
                 {data: 'nom_complet_mere', name: 'nom_complet_mere'},
                 {data: 'nom_complet_decision', name: 'nom_complet_decision'},
                 {data: 'numero_date_decision', name: 'numero_date_decision'},
                 {data: 'lieu_decision', name: 'lieu_decision'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'statut_demande', name: 'statut_demande'},
+                {data: 'date_demande', name: 'date_demande'},
+                {data: 'documents_justificatifs', name: 'documents_justificatifs'},
+                {data: 'observations', name: 'observations'},
                 {
                     data: 'action',
                     name: 'action',

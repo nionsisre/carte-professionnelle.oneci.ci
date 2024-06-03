@@ -52,29 +52,7 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody id="users_list">
-        {{--
-        <tr class="glow-user-tr">
-            <td>1</td>
-            <td>Lieu</td>
-            <td>1189769878</td>
-            <td>C0098361983</td>
-            <td>TEST Testera (30/01/1999)</td>
-            <td>CAM Teakser</td>
-            <td>TEST Amar (30/01/1999)</td>
-            <td>N°123 du 01/05/2024</td>
-            <td>Plateau</td>
-            <td>Documents en attente de validation</td>
-            <td>31/05/2024</td>
-            <td>CNI + Décision de justice</td>
-            <td></td>
-            <td class="table-action col-sm-2">
-                <button title="Editer le compte" onclick="" data-placement="bottom" data-toggle="modal" data-target="#edit-user" class="btn btn-sm btn-primary tooltips modal-pop" type="button">
-                    <i class="fa fa-user-edit"></i>
-                </button>
-            </td>
-        </tr>
-        --}}
+        <tbody>
         </tbody>
     </table>
     <div id="loader" style="display:none;" align="center">

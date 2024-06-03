@@ -96,13 +96,26 @@ class ProcessCertificatConformiteController extends Controller {
                 ->addColumn('lieu_decision', function($row){
                     return $row->juridiction->libelle;
                 })
+                ->addColumn('statut_demande', function($row){
+                    return $row->statut;
+                })
+                ->addColumn('date_demande', function($row){
+                    return date('d/m/Y H:i:s', strtotime($row->created_at));
+                })
+                ->addColumn('documents_justificatifs', function($row){
+                    return '<button class="btn btn-primary btn-xs"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
+                })
+                ->addColumn('observations', function($row){
+                    return '';
+                })
                 ->addColumn('action', function($row){
                     $actionBtn = '
-                            dlkjf
+                        <button class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider</button><br/>
+                        <button class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser</button>
                     ';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['documents_justificatifs','action'])
                 ->make(true);
         }
 
