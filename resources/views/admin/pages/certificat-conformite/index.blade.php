@@ -7,8 +7,7 @@
 @endsection
 
 @section('page-styles')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    {{--<link rel="stylesheet" href="{{ URL::asset('back-office/assets/css/jquery.datatables.css') }}" />--}}
+    <link rel="stylesheet" href="{{ asset('back-office/assets/css/jquery.datatables.css') }}" />
 @endsection
 
 @section('vendor-scripts')

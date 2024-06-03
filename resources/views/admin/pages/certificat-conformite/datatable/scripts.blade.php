@@ -1,6 +1,4 @@
-{{-- <script src="{{asset('back-office/assets/js/datatables/datatable.js')}}"></script>
-<script src="{{asset('vendors/datatables.net/js/jquery.dataTables.js')}}"></script> --}}
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script src="{{asset('back-office/assets/js/datatables/jquery.dataTables.js')}}"></script>
 <script type="text/javascript">
     {{-- Datatable Initialization --}}
     var myDatatable;
@@ -92,7 +90,6 @@
                 let info = myDatatable.page.info();
                 {{--$('#total-rows').text(json.recordsTotal);--}}
                 $('#total-rows').text(info.recordsDisplay);
-                console.log(info);
             }
         });
 
