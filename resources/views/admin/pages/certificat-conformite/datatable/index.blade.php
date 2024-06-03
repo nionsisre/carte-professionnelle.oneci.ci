@@ -8,15 +8,16 @@
                 <option value="0">Toutes les demandes</option>
                 <option value="1">Demandes inachevées (non-payées)</option>
                 <option value="2">Documents en attente de vérification</option>
-                <option value="3">Demandes validées</option>
-                <option value="4">Demandes refusées</option>
+                <option value="3">Documents acceptés (en attente de signature)</option>
+                <option value="4">Documents refusés</option>
+                <option value="5">Certificat disponible dans le centre</option>
             </select>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
         <div class="form-group">
             <select class="good-select form-control" id="lieux-livraison" style="width: 100%;">
-                <option value="0">Tous les lieux de livraison</option>
+                <option value="">Tous les lieux de livraison</option>
                 @foreach($centres as $centre)
                     <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
                 @endforeach

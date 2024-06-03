@@ -13,7 +13,7 @@
             autoFill: true,
             responsive : true,
             pageLength: 10,
-            dom: 'rtp', /* default 'lfrtip' */
+            dom: 'rtp', {{-- default 'lfrtip' --}}
             language : {
                 url : "{{ route('datatables.french.json') }}"
             },
@@ -25,23 +25,32 @@
                 }
             },
             initComplete: function(settings, json) {
-                // Code JavaScript à exécuter après le chargement initial des données
-                $('.mainpanel').height( $(".contentpanel").height() + 150 );
+                {{-- Code JavaScript à exécuter après le chargement initial des données--}}
+                jQuery('.mainpanel').height( $(".contentpanel").height() + 150 );
             },
             createdRow: function(row, data, dataIndex) {
-                // Ajouter une classe à la ligne entière
-                $(row).addClass('glow-user-tr');
+                {{-- Ajouter une classe à la ligne entière--}}
+                jQuery(row).addClass('glow-user-tr');
+                jQuery(row).find('td').css('vertical-align', 'middle');
             },
+            columnDefs: [
+                    {
+                        targets: 9,
+                    createdCell: function(td, cellData, rowData, row, col) {
+                        jQuery(td).css('text-align', 'center');
+                    }
+                }
+            ],
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'lieu_livraison', name: 'lieu_livraison'},
                 {data: 'numero_dossier', name: 'numero_demande'},
-                    {{--{
-                        data: 'numero_cni_nni', name: 'numero_cni_nni',
-                        render: function (data, type, row, meta) {
-                            return '<i class="fa fa-barcode mr10"></i>'+data;
-                        }
-                    },--}}
+                {{--{
+                    data: 'numero_cni_nni', name: 'numero_cni_nni',
+                    render: function (data, type, row, meta) {
+                        return '<i class="fa fa-barcode mr10"></i>'+data;
+                    }
+                },--}}
                 {data: 'numero_cni_nni', name: 'numero_cni_nni'},
                 {data: 'nom_complet', name: 'nom_complet'},
                 {data: 'nom_complet_mere', name: 'nom_complet_mere'},
@@ -63,54 +72,8 @@
                     {!! "{data: '".$column."', name: '".$column."', searchable: true, visible: false}," !!}
                     @endif
                 @endforeach
-            ],
-            {{--
-
-
-
-
-            {
-                    data: 'id', name: 'photo',
-                    render: function (data, type, row, meta) {
-                        try {
-                            if (row.photos.photo !== "") {
-                                return '<img src="data:image/png;base64,'+row.photos.photo+'" alt="Photo" width="150" />';
-                            } else {
-                                return "Aucune photo";
-                            }
-                        } catch(e) { return "Aucune photo"; }
-                    }
-                },
-                {
-                    data: 'id', name: 'signature',
-                    render: function (data, type, row, meta) {
-                        try {
-                            if (row.signatures.signature !== "") {
-                                return '<img src="data:image/png;base64,'+row.signatures.signature+'" alt="Photo" width="100" />';
-                            } else {
-                                return "Aucune signature";
-                            }
-                        } catch(e) { return "Aucune signature"; }
-                    }
-                },
-                @foreach($columns as $column)
-                    @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at' /* && $column !== 'code_ville'
-                && $column !== 'code_grade'  && $column !== 'code_emploi'  && $column !== 'code_structure'
-                && $column !== 'code_sexe'  && $column !== 'code_ville_naissance'  && $column !== 'code_civilite'*/)
-                    {!! "{data: '".$column."', name: '".$column."', searchable: true}," !!}
-                    @endif
-                @endforeach
-
-
-
-
-
-            select : {
-                style :    'os',
-                selector : 'td:first-child'
-            },
-            --}}
-            order : [[ 3, 'asc' ]],
+            ]
+            {{--order : [[ 3, 'asc' ]],--}}
         });
 
         myDatatable.on('processing.dt', function(e, settings, processing) {

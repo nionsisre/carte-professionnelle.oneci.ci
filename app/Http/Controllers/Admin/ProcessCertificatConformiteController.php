@@ -97,13 +97,24 @@ class ProcessCertificatConformiteController extends Controller {
                     return $row->juridiction->libelle;
                 })
                 ->addColumn('statut_demande', function($row){
-                    return $row->statut;
+                    switch ($row->statut) {
+                        case 1:
+                            return '<span class="label label-warning">Demande inachevée (non-payée)</span>';
+                        case 2:
+                            return '<span class="label label-default">Documents en attente de vérification</span>';
+                        case 3:
+                            return '<span class="label label-primary">Documents acceptés (en attente de signature)</span>';
+                        case 4:
+                            return '<span class="label label-danger">Documents refusés</span>';
+                        case 5:
+                            return '<span class="label label-success">Certificat disponible dans le centre</span>';
+                    }
                 })
                 ->addColumn('date_demande', function($row){
                     return date('d/m/Y H:i:s', strtotime($row->created_at));
                 })
                 ->addColumn('documents_justificatifs', function($row){
-                    return '<button class="btn btn-primary btn-xs"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
+                    return '<button class="btn btn-darkblue btn-sm"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
                 })
                 ->addColumn('observations', function($row){
                     return '';
@@ -115,7 +126,7 @@ class ProcessCertificatConformiteController extends Controller {
                     ';
                     return $actionBtn;
                 })
-                ->rawColumns(['documents_justificatifs','action'])
+                ->rawColumns(['statut_demande','documents_justificatifs','action'])
                 ->make(true);
         }
 
