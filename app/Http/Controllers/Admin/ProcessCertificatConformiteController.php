@@ -42,11 +42,14 @@ class ProcessCertificatConformiteController extends Controller {
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
         $data_columns = Schema::getColumnListing((new Client())->getTable());
+        $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
+
         /* Retourner vue Traitement des demandes de certificat de conformité */
         return view('admin.pages.certificat-conformite.index', [
             'username' => $username,
             'role_name' => auth()->user()->usersRole->user_role_label,
-            'columns' => $data_columns
+            'columns' => $data_columns,
+            'centres' => $centres
         ]);
 
     }
@@ -58,7 +61,7 @@ class ProcessCertificatConformiteController extends Controller {
     public function getClient(Request $request) {
 
         if ($request->ajax()) {
-            $data = Client::with('usersRole')->get();
+            $data = Client::with('juridiction')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->make(true);

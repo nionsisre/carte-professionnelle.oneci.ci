@@ -1,10 +1,12 @@
-<script src="{{asset('back-office/assets/datatables/datatable.js')}}"></script>
+{{-- <script src="{{asset('back-office/assets/js/datatables/datatable.js')}}"></script>
+<script src="{{asset('vendors/datatables.net/js/jquery.dataTables.js')}}"></script> --}}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <script type="text/javascript">
     {{-- Datatable Initialization --}}
     var myDatatable;
     jQuery(document).ready(function() {
         "use strict";
-        myDatatable = $('.my-datatable').DataTable({
+        myDatatable = jQuery('.my-datatable').DataTable({
             processing: true,
             serverSide: true,
             sPaginationType : "full_numbers",
@@ -24,7 +26,31 @@
             },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                @foreach($columns as $column)
+                    @if ($column !== 'id' && $column !== 'created_at')
+                    {!! "{data: '".$column."', name: '".$column."', searchable: true, visible: false}," !!}
+                    @endif
+                @endforeach
+            ],
+            {{--
+
+
+
+
+            {
                     data: 'id', name: 'photo',
                     render: function (data, type, row, meta) {
                         try {
@@ -54,9 +80,12 @@
                 && $column !== 'code_sexe'  && $column !== 'code_ville_naissance'  && $column !== 'code_civilite'*/)
                     {!! "{data: '".$column."', name: '".$column."', searchable: true}," !!}
                     @endif
-                    @endforeach
-            ],
-            {{--
+                @endforeach
+
+
+
+
+
             select : {
                 style :    'os',
                 selector : 'td:first-child'

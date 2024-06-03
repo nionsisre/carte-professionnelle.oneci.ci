@@ -226,6 +226,7 @@ class CertificatConformiteController extends Controller {
             'numero-decision' => ['required', 'string', 'max:25'],
             'decision-date' => ['required', 'string', 'max:20'],
             'lieu-delivrance' => ['required', 'string', 'max:150'],
+            'lieu-retrait' => ['required', 'string', 'max:150'],
             'cni-doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
             'pdf-doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
         ]);
@@ -269,6 +270,7 @@ class CertificatConformiteController extends Controller {
             'lieu_decision' => $request->input("lieu-delivrance"),
             'cni' => $cni ?? "",
             'decision_judiciaire' => $decision_judiciaire,
+            'code_lieu_retrait' => $request->input("lieu-retrait"),
             'statut' => 1,
             'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
             'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name')))
