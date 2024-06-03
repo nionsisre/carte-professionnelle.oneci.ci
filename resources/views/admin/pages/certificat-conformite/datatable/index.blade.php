@@ -5,7 +5,7 @@
         </div>
         <div class="form-group col-xs-9 col-sm-9 col-md-9 col-lg-9">
             <select class="good-select form-control" id="statut-demande" style="width: 100%;">
-                <option value="0">Toutes les demandes</option>
+                <option value="">Toutes les demandes</option>
                 <option value="1">Demandes inachevées (non-payées)</option>
                 <option value="2">Documents en attente de vérification</option>
                 <option value="3">Documents acceptés (en attente de signature)</option>

@@ -79,12 +79,16 @@
         myDatatable.on('processing.dt', function(e, settings, processing) {
             if (processing) {
                 $('#loader').show();
+                jQuery('.my-datatable').hide();
             } else {
                 $('#loader').hide();
+                jQuery('.my-datatable').show();
+                jQuery('.mainpanel').height( $(".contentpanel").height() + 150 );
             }
         });
 
-
+        {{-- Set documents en attente de vérification --}}
+        jQuery('#statut-demande').val("2").trigger('change');
     });
 
     {{-- myDatatable Search --}}
@@ -98,5 +102,15 @@
         if(e.keyCode == 13) {
             $(this).trigger("enterKey");
         }
+    });
+    {{-- Status Filter --}}
+    $('#statut-demande').change(function() {
+        var selectedStatut = $(this).val();
+        myDatatable.column('statut:name').search(selectedStatut).draw();
+    });
+    {{-- Lieu Livraison Filter --}}
+    $('#lieux-livraison').change(function() {
+        var selectedLieuLivraison = $(this).val();
+        myDatatable.column('code_lieu_retrait:name').search(selectedLieuLivraison).draw();
     });
 </script>
