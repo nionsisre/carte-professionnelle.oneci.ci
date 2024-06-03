@@ -60,13 +60,13 @@
                 {data: 'statut_demande', name: 'statut_demande'},
                 {data: 'date_demande', name: 'date_demande'},
                 {data: 'documents_justificatifs', name: 'documents_justificatifs'},
-                {data: 'observations', name: 'observations'},
                 {
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false
                 },
+                {data: 'observations', name: 'observations', orderable: false, searchable: false},
                 @foreach($columns as $column)
                     @if ($column !== 'id' && $column !== 'created_at')
                     {!! "{data: '".$column."', name: '".$column."', searchable: true, visible: false}," !!}

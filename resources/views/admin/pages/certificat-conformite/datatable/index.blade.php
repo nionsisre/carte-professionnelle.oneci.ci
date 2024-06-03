@@ -49,8 +49,8 @@
                 <th>Statut de la demande</th>
                 <th>Date de la demande</th>
                 <th>Documents Justificatifs</th>
-                <th>Observation(s)</th>
                 <th></th>
+                <th>Observation(s)</th>
             </tr>
         </thead>
         <tbody>
