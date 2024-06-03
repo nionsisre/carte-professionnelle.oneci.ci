@@ -121,8 +121,8 @@ class ProcessCertificatConformiteController extends Controller {
                 })
                 ->addColumn('action', function($row){
                     $actionBtn = '
-                        <button class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider</button><br/>
-                        <button class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser</button>
+                        <button class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider les documents</button><br/>
+                        <button class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser les documents</button>
                     ';
                     return $actionBtn;
                 })
