@@ -60,6 +60,7 @@
                         }
                     } else {
                         nniorcni = client.nni;
+                        jQuery('.check-documents-modal-cni').html('');
                     }
                     {{-- Décision Judiciaire --}}
                     if(client.decision_judiciaire !== "") {
@@ -71,6 +72,8 @@
                         } else {
                             jQuery('.check-documents-modal-decision').html('<h4><i class="fa fa-balance-scale mr10"></i>Décision Judiciaire chargée par le client : </h4><div><p>Type de fichier non pris en charge</p></div>');
                         }
+                    } else {
+                        jQuery('.check-documents-modal-decision').html('');
                     }
                     jQuery('.check-documents-modal-nd').text(client.numero_dossier);
                     jQuery('.check-documents-modal-nni-or-cni').text(nniorcni);
