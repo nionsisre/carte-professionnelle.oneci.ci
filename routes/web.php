@@ -88,6 +88,7 @@ Route::prefix('oneciwebadmin')->group(function () {
         Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat');
         Route::get('/datatables/french', [ProcessCertificatConformiteController::class, 'showDatatablesFrench'])->name('datatables.french.json');
         Route::post(sha1('/traitement-demandes-certificat-conformite'.date('Ymd').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'getClient'])->name('admin.certificat.datatable');
+        Route::post('/data/client/{numero_dossier}', [ProcessCertificatConformiteController::class, 'getClientByNumeroDossier'])->name('admin.certificat.client.get');
     });
 
 });

@@ -114,15 +114,15 @@ class ProcessCertificatConformiteController extends Controller {
                     return date('d/m/Y H:i:s', strtotime($row->created_at));
                 })
                 ->addColumn('documents_justificatifs', function($row){
-                    return '<button class="btn btn-darkblue btn-sm"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
+                    return '<button data-placement="bottom" data-toggle="modal" data-target="#check-documents-modal" class="btn btn-darkblue btn-sm" onclick="checkDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
                 })
                 ->addColumn('observations', function($row){
                     return '';
                 })
                 ->addColumn('action', function($row){
                     $actionBtn = '
-                        <button class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider les documents</button><br/>
-                        <button class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser les documents</button>
+                        <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider les documents</button><br/>
+                        <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser les documents</button>
                     ';
                     return $actionBtn;
                 })
@@ -130,6 +130,23 @@ class ProcessCertificatConformiteController extends Controller {
                 ->make(true);
         }
 
+    }
+
+    public function getClientByNumeroDossier(Request $request, $numero_dossier) {
+        request()->validate([
+            'cli' => ['required', 'string', 'max:150'],
+            'c' => ['required', 'string', 'max:150'],
+            't' => ['required', 'string', 'max:150']
+        ]);
+        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        if(
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
+        ) {
+            return json_encode($client);
+        }
+        return false;
     }
 
 }

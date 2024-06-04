@@ -47,6 +47,7 @@
         });
     </script>
     @include('admin.pages.certificat-conformite.datatable.scripts')
+    @include('admin.pages.certificat-conformite.documents.scripts')
 @endsection
 
 {{--
@@ -70,6 +71,8 @@
                     @include('admin.pages.certificat-conformite.datatable.index')
                 </div>
             </div><!-- panel -->
+
+            @include('admin.pages.certificat-conformite.documents.modal')
 
         </div><!-- col-sm-12 -->
 
