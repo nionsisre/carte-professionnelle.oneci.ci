@@ -14,17 +14,10 @@
                     </p>
                 </div>
                 <div class="panel-body editable-list-group">
-                    <div>
-                        <h4>Carte Nationale d'Identité : </h4>
-                        <div class="check-documents-modal-cni">
-                        </div>
+                    <div class="check-documents-modal-cni">
                     </div><br/>
-                    <div>
-                        <h4>Décision Judiciaire : </h4>
-                        <div class="check-documents-modal-decision">
-
-                        </div>
-                    </div>
+                    <div class="check-documents-modal-decision">
+                    </div><br/><br/>
                 </div>
                 <div class="panel-footer text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Retour</button>
