@@ -108,6 +108,8 @@ class ProcessCertificatConformiteController extends Controller {
                             return '<span class="label label-danger">Documents refusés</span>';
                         case 5:
                             return '<span class="label label-success">Certificat disponible dans le centre</span>';
+                        case 6:
+                            return '<span class="label label-info">Certificat retiré par le client</span>';
                     }
                 })
                 ->addColumn('date_demande', function($row){
@@ -137,21 +139,21 @@ class ProcessCertificatConformiteController extends Controller {
                         $actionBtn = '<a href="'.route('certificat.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
                     } else if($row->statut == 2) { // Documents en attente de vérification
                         $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
-                            <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'3').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
                         ';
                     } else if($row->statut == 3) { // Documents acceptés (en attente de signature)
                         /*$actionBtn = '
                             <a href="'.route('certificat.download.pdf').'?n='.$row->certificat.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';*/
                         $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#set-signed-documents-modal" class="btn btn-success"  onclick="setSignedDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';
                     } else if($row->statut == 4) { // Documents refusés
                         $actionBtn = "Demande refusée";
                     } else if($row->statut == 5) { // Certificat disponible dans le centre
-                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer certificat comme retiré par le client</button>';
+                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#set-withdrawn-documents-modal" class="btn btn-success"  onclick="setWithdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer certificat comme retiré par le client</button>';
                     } else if($row->statut == 6) { // Certificat retiré par le client
                         $actionBtn = 'Certificat retiré par le client';
                     }
@@ -175,6 +177,44 @@ class ProcessCertificatConformiteController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
+            return json_encode($client);
+        }
+        return false;
+    }
+
+    public function approveClientByNumeroDossier(Request $request, $numero_dossier) {
+        request()->validate([
+            'cli' => ['required', 'string', 'max:150'],
+            'c' => ['required', 'string', 'max:150'],
+            't' => ['required', 'string', 'max:150']
+        ]);
+        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        if(
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
+        ) {
+            $client->statut = 3;
+            $client->save();
+            return json_encode($client);
+        }
+        return false;
+    }
+
+    public function setSignedClientByNumeroDossier(Request $request, $numero_dossier) {
+        request()->validate([
+            'cli' => ['required', 'string', 'max:150'],
+            'c' => ['required', 'string', 'max:150'],
+            't' => ['required', 'string', 'max:150']
+        ]);
+        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        if(
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
+        ) {
+            $client->statut = 5;
+            $client->save();
             return json_encode($client);
         }
         return false;

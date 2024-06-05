@@ -11,6 +11,7 @@
                 <option value="3">Documents acceptés (en attente de signature)</option>
                 <option value="4">Documents refusés</option>
                 <option value="5">Certificat disponible dans le centre</option>
+                <option value="6">Certificat retiré par le client</option>
             </select>
         </div>
     </div>

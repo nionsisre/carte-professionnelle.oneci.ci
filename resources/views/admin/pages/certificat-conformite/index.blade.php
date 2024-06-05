@@ -50,6 +50,7 @@
     @include('admin.pages.certificat-conformite.documents.scripts')
     @include('admin.pages.certificat-conformite.approve.scripts')
     @include('admin.pages.certificat-conformite.deny.scripts')
+    @include('admin.pages.certificat-conformite.signed.scripts')
 @endsection
 
 {{--
@@ -77,6 +78,7 @@
             @include('admin.pages.certificat-conformite.documents.modal')
             @include('admin.pages.certificat-conformite.approve.modal')
             @include('admin.pages.certificat-conformite.deny.modal')
+            @include('admin.pages.certificat-conformite.signed.modal')
 
         </div><!-- col-sm-12 -->
 

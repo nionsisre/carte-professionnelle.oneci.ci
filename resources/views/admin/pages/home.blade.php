@@ -326,7 +326,7 @@
                             </div>
                             <div class="col-xs-8">
                                 <small class="stat-label">Taux de demandes traitées</small>
-                                <h1>{{ $taux_demandes_traitees }}%</h1>
+                                <h1>{{ intval($taux_demandes_traitees) }}%</h1>
                             </div>
                         </div><!-- row -->
 
@@ -335,12 +335,12 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stat-label">Aujourd'hui</small>
-                                <h4>{{ $taux_demandes_traitees_daily }}%</h4>
+                                <h4>{{ intval($taux_demandes_traitees_daily) }}%</h4>
                             </div>
 
                             <div class="col-xs-6">
                                 <small class="stat-label">Ce mois-ci</small>
-                                <h4>{{ $taux_demandes_traitees_monthly }}%</h4>
+                                <h4>{{ intval($taux_demandes_traitees_monthly) }}%</h4>
                             </div>
                         </div><!-- row -->
 

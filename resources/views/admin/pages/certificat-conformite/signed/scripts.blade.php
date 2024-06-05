@@ -1,11 +1,15 @@
 <script type="text/javascript">
-    {{-- Refresh Deny Document Content --}}
-    const refreshDenyDocumentsModal = $('#deny-documents-modal');
-    refreshDenyDocumentsModal.on('shown.bs.modal', function () {
-        {{-- Refresh Deny Edit Content here --}}
+    {{-- Refresh Set Signed Document Content --}}
+    const refreshSetSignedDocumentsModal = $('#set-signed-documents-modal');
+    refreshSetSignedDocumentsModal.on('shown.bs.modal', function () {
+        {{-- Refresh Set Signed Edit Content here --}}
     });
-    function denyDocuments(nd, t) {
-        let url = "{!! route('admin.certificat.client.get', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
+    refreshSetSignedDocumentsModal.on('hidden.bs.modal', function () {
+        {{-- Refresh Datatable Content here --}}
+        myDatatable.draw();
+    });
+    function setSignedDocuments(nd, t) {
+        let url = "{!! route('admin.certificat.client.signed', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
             type: 'POST',
@@ -19,6 +23,7 @@
                 jQuery('.modal-loader').show();
                 jQuery('.modal-success').hide();
                 jQuery('.modal-error').hide();
+                jQuery('.set-signed-documents-modal-dl-lnk').attr('href', "javascript:void(0)");
             }, success: function(res){
                 jQuery('.modal-loader').hide();
                 jQuery('.modal-error').hide();
@@ -31,12 +36,13 @@
                     } else {
                         nniorcni = client.nni;
                     }
-                    jQuery('.deny-documents-modal-nd').text(client.numero_dossier);
-                    jQuery('.deny-documents-modal-nni-or-cni').text(nniorcni);
-                    jQuery('.deny-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
-                    jQuery('.deny-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
-                    jQuery('.deny-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
-                    jQuery('.deny-documents-modal-ldec').text(client.juridiction.libelle);
+                    jQuery('.set-signed-documents-modal-nd').text(client.numero_dossier);
+                    jQuery('.set-signed-documents-modal-nni-or-cni').text(nniorcni);
+                    jQuery('.set-signed-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
+                    jQuery('.set-signed-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
+                    jQuery('.set-signed-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
+                    jQuery('.set-signed-documents-modal-ldec').text(client.juridiction.libelle);
+                    jQuery('.set-signed-documents-modal-dl-lnk').attr('href', "{{ route('certificat.download.pdf') }}?n="+client.certificat);
                 }
             }, error: function (data) {
                 let errorMessage = "";
@@ -51,7 +57,7 @@
                 jQuery('.modal-success').hide();
                 jQuery('.modal-error').show();
                 jQuery('.modal-error-message').text(errorMessage);
-                jQuery('.modal-retry-btn').attr('onclick','denyDocuments("'+nd+'", "'+t+'")');
+                jQuery('.modal-retry-btn').attr('onclick','setSignedDocuments("'+nd+'", "'+t+'")');
             }
         });
     }
