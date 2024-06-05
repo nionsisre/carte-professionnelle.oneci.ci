@@ -114,16 +114,47 @@ class ProcessCertificatConformiteController extends Controller {
                     return date('d/m/Y H:i:s', strtotime($row->created_at));
                 })
                 ->addColumn('documents_justificatifs', function($row){
-                    return '<button data-placement="bottom" data-toggle="modal" data-target="#check-documents-modal" class="btn btn-darkblue btn-sm" onclick="checkDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
+                    if($row->statut == 1 || $row->statut == 2 || $row->statut == 4) {
+                        $actionBtn = '<button data-placement="bottom" data-toggle="modal" data-target="#check-documents-modal" class="btn btn-darkblue btn-sm" onclick="checkDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-paperclip mr10"></i>Voir les documents</button>';
+                    } else { // Certificat retiré par le client
+                        if(!empty($row->nni)) {
+                            $actionBtn = '<i class="fa fa-balance-scale mr10"></i>Décision de justice';
+                        } else {
+                            $actionBtn = '<i class="fa fa-id-card mr10"></i>Carte Nationale d\'Identité + <i class="fa fa-balance-scale mr10"></i>Décision de justice';
+                        }
+                    }
+                    return $actionBtn;
                 })
-                ->addColumn('observations', function($row){
+                ->addColumn('observations', function($row) {
+                    if(!empty($row->observation)) {
+                        return $row->observation;
+                    }
                     return '';
                 })
                 ->addColumn('action', function($row){
-                    $actionBtn = '
-                        <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
-                        <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
-                    ';
+                    $actionBtn = "";
+                    if($row->statut == 1) { // Demandes inachevées (non-payées)
+                        $actionBtn = '<a href="'.route('certificat.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
+                    } else if($row->statut == 2) { // Documents en attente de vérification
+                        $actionBtn = '
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
+                        ';
+                    } else if($row->statut == 3) { // Documents acceptés (en attente de signature)
+                        /*$actionBtn = '
+                            <a href="'.route('certificat.download.pdf').'?n='.$row->certificat.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
+                        ';*/
+                        $actionBtn = '
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
+                        ';
+                    } else if($row->statut == 4) { // Documents refusés
+                        $actionBtn = "Demande refusée";
+                    } else if($row->statut == 5) { // Certificat disponible dans le centre
+                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer certificat comme retiré par le client</button>';
+                    } else if($row->statut == 6) { // Certificat retiré par le client
+                        $actionBtn = 'Certificat retiré par le client';
+                    }
                     return $actionBtn;
                 })
                 ->rawColumns(['statut_demande','documents_justificatifs','action'])

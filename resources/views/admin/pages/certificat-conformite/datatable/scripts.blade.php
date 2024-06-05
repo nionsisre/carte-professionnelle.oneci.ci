@@ -36,11 +36,19 @@
                 jQuery(row).find('td').css('vertical-align', 'middle');
             },
             columnDefs: [
-                    {
-                        targets: 9,
+                {
+                    targets: 9,
                     createdCell: function(td, cellData, rowData, row, col) {
                         jQuery(td).css('text-align', 'center');
-                    }
+                    },
+
+                },
+                {
+                    targets: 12,
+                    createdCell: function(td, cellData, rowData, row, col) {
+                        jQuery(td).css('text-align', 'center');
+                    },
+
                 }
             ],
             columns: [
