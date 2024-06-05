@@ -135,11 +135,17 @@ class ProcessCertificatConformiteController extends Controller {
                 })
                 ->addColumn('action', function($row){
                     $actionBtn = "";
+                    $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$row->code_lieu_retrait)->first();
+                    if($centre) {
+                        $lieu_livraison = ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
+                    } else {
+                        $lieu_livraison = 'Non-renseigné';
+                    }
                     if($row->statut == 1) { // Demandes inachevées (non-payées)
                         $actionBtn = '<a href="'.route('certificat.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
                     } else if($row->statut == 2) { // Documents en attente de vérification
                         $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
                             <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'3').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
                         ';
                     } else if($row->statut == 3) { // Documents acceptés (en attente de signature)
@@ -147,12 +153,6 @@ class ProcessCertificatConformiteController extends Controller {
                             <a href="'.route('certificat.download.pdf').'?n='.$row->certificat.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
                             <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';*/
-                        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$row->code_lieu_retrait)->first();
-                        if($centre) {
-                            $lieu_livraison = ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
-                        } else {
-                            $lieu_livraison = 'Non-renseigné';
-                        }
                         $actionBtn = '
                             <button data-placement="bottom" data-toggle="modal" data-target="#set-signed-documents-modal" class="btn btn-success"  onclick="setSignedDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';
