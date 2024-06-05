@@ -18,12 +18,7 @@
                         Lieu de la décision : <b><span class="set-signed-documents-modal-ldec">XXXXXXXXXX</span></b><br/>
                     </p><br/>
                     {{--<em>NB : Un SMS a été envoyé au client afin de le notifier de la validation de sa demande. <br/><br/></em>
-                    <br/>--}}
-                    Veuillez cliquer sur le bouton ci-dessous afin de télécharger le certificat de conformité à acheminer à la signature :<br/><br/>
-                    <a href="javascript:void(0)" class="btn btn-success set-signed-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i>Télécharger le certificat de conformité de la demande N°<span class="set-signed-documents-modal-nd">XXXXXXXXXX</span></a>
-                    <br/>
-                    <div class="set-signed-documents-modal-decision">
-                    </div><br/><br/>
+                    <br/>--}}<br/><br/>
                 </div>
                 <div class="panel-footer text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Terminer</button>
