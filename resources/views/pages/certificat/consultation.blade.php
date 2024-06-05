@@ -241,7 +241,7 @@
                                 <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
-                                        Entrez le numéro de validation reçu lors après remplissage du formulaire<span style="color: #d9534f">*</span> :
+                                        Entrez le numéro de validation reçu après remplissage du formulaire de demande du certificat de conformité<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
                                         <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="10" minlength="10" style="width: 23.4em; text-align: center" value="{{ old('form-number') }}" autocomplete="off" required="required"/>

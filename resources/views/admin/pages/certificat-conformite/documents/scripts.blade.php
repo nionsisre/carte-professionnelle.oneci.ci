@@ -1,7 +1,7 @@
 <script type="text/javascript">
     {{-- Refresh Check Document Content --}}
-    const refreshUserEditContent = $('#check-documents-modal');
-    refreshUserEditContent.on('shown.bs.modal', function () {
+    const refreshCheckDocumentsModal = $('#check-documents-modal');
+    refreshCheckDocumentsModal.on('shown.bs.modal', function () {
         {{-- Refresh User Edit Content here --}}
     });
     function convertDate(dateString) {
@@ -83,10 +83,18 @@
                     jQuery('.check-documents-modal-ldec').text(client.juridiction.libelle);
                 }
             }, error: function (data) {
+                let errorMessage = "";
+                if(data.status === 0) {
+                    errorMessage = 'Erreur : '+data.status+' (Pas de connexion internet)';
+                } else if (data.status === 419) {
+                    errorMessage = 'Erreur : '+data.status+' (Session expirée, veuillez actualiser la page et réessayer)';
+                } else {
+                    errorMessage = 'Erreur : '+data.status+' ('+data.statusText+')';
+                }
                 jQuery('.modal-loader').hide();
                 jQuery('.modal-success').hide();
                 jQuery('.modal-error').show();
-                jQuery('.modal-error-message').text('Code d\'erreur : '+data.status);
+                jQuery('.modal-error-message').text(errorMessage);
                 jQuery('.modal-retry-btn').attr('onclick','checkDocuments("'+nd+'", "'+t+'")');
             }
         });

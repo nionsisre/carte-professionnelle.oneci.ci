@@ -48,6 +48,8 @@
     </script>
     @include('admin.pages.certificat-conformite.datatable.scripts')
     @include('admin.pages.certificat-conformite.documents.scripts')
+    @include('admin.pages.certificat-conformite.approve.scripts')
+    @include('admin.pages.certificat-conformite.deny.scripts')
 @endsection
 
 {{--
@@ -73,6 +75,8 @@
             </div><!-- panel -->
 
             @include('admin.pages.certificat-conformite.documents.modal')
+            @include('admin.pages.certificat-conformite.approve.modal')
+            @include('admin.pages.certificat-conformite.deny.modal')
 
         </div><!-- col-sm-12 -->
 

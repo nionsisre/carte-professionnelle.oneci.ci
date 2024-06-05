@@ -121,8 +121,8 @@ class ProcessCertificatConformiteController extends Controller {
                 })
                 ->addColumn('action', function($row){
                     $actionBtn = '
-                        <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"><i class="fa fa-check mr10"></i> Valider les documents</button><br/>
-                        <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs"><i class="fa fa-times mr10"></i> Refuser les documents</button>
+                        <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
+                        <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'1').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
                     ';
                     return $actionBtn;
                 })
