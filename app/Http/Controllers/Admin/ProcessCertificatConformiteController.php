@@ -154,12 +154,12 @@ class ProcessCertificatConformiteController extends Controller {
                             <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';*/
                         $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#set-signed-documents-modal" class="btn btn-success"  onclick="setSignedDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#set-signed-documents-modal" class="btn btn-success"  onclick="setSignedDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-truck-loading mr10"></i>Marquer le certificat comme disponible dans le centre de retrait</button>
                         ';
                     } else if($row->statut == 4) { // Documents refusés
                         $actionBtn = "Demande refusée";
                     } else if($row->statut == 5) { // Certificat disponible dans le centre
-                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#set-withdrawn-documents-modal" class="btn btn-success"  onclick="setWithdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer certificat comme retiré par le client</button>';
+                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#set-withdrawn-documents-modal" class="btn btn-success"  onclick="setWithdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer le certificat comme retiré par le client</button>';
                     } else if($row->statut == 6) { // Certificat retiré par le client
                         $actionBtn = 'Certificat retiré par le client';
                     }
