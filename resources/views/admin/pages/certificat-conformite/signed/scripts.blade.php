@@ -8,7 +8,7 @@
         {{-- Refresh Datatable Content here --}}
         myDatatable.draw();
     });
-    function setSignedDocuments(nd, t) {
+    function setSignedDocuments(nd, t, lr) {
         let url = "{!! route('admin.certificat.client.signed', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
@@ -42,6 +42,7 @@
                     jQuery('.set-signed-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
                     jQuery('.set-signed-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
                     jQuery('.set-signed-documents-modal-ldec').text(client.juridiction.libelle);
+                    jQuery('.set-signed-documents-modal-lr').text(lr);
                     jQuery('.set-signed-documents-modal-dl-lnk').attr('href', "{{ route('certificat.download.pdf') }}?n="+client.certificat);
                 }
             }, error: function (data) {

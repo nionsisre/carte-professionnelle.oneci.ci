@@ -3,12 +3,12 @@
         <div class="modal-content">
             <div class="panel panel-success panel-alt modal-success">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-map-marker-alt mr10"></i>Certificat disponible au centre de retrait</h3>
+                    <h3 class="panel-title"><i class="fa fa-truck-loading mr10"></i>Certificat disponible au centre de retrait</h3>
                 </div>
                 <div class="panel-body editable-list-group text-center">
                     <br/><i class="fa fa-3x fa-check-circle"></i><br/><br/>
                     Le certificat de conformité de la demande N°<b><span class="set-signed-documents-modal-nd">XXXXXXXXXX</span></b> a été signé et acheminé avec succès dans le lieu de la livraison suivant :
-                    <b><span class="set-signed-documents-modal-lr">XXXXXXXXXX</span></b>
+                    <br/><br/><b><i class="fa fa-map-marker-alt mr10"></i><span class="set-signed-documents-modal-lr">XXXXXXXXXX</span></b>
                     <br/><br/>
                     <p>
                         Numéro NNI ou CNI : <b><span class="set-signed-documents-modal-nni-or-cni">XXXXXXXXXX</span></b><br/>
@@ -17,16 +17,16 @@
                         Numéro décision : <b><span class="set-signed-documents-modal-ndec">XXXXXXXXXX</span></b><br/>
                         Lieu de la décision : <b><span class="set-signed-documents-modal-ldec">XXXXXXXXXX</span></b><br/>
                     </p><br/>
-                    {{--<em>NB : Un SMS a été envoyé au client afin de le notifier de la validation de sa demande. <br/><br/></em>
-                    <br/>--}}<br/><br/>
+                    <em>NB : Un SMS a été envoyé au client afin de le notifier de la disponibilité de son certificat de conformité dans le lieu de retrait. <br/><br/></em>
+                    <br/>
                 </div>
                 <div class="panel-footer text-center">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Terminer</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
                 </div>
             </div>
             <div class="modal-loader text-center" style="display: none">
                 <br/><br/>
-                Validation de la demande en cours...<br/><br/>
+                Traitement en cours...<br/><br/>
                 <i class="fa fa-2x fa-spinner fa-spin"></i>
                 <br/><br/><br/>
             </div>
