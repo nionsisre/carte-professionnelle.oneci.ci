@@ -65,7 +65,7 @@
         let nd = jQuery('.deny-documents-modal-nd').html();
         let t = jQuery('.deny-documents-modal-t').text();
         let obs = jQuery('#deny-documents-modal-observations').val();
-        let url = "{!! route('admin.certificat.client.get', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
+        let url = "{!! route('admin.certificat.client.deny', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
             type: 'POST',

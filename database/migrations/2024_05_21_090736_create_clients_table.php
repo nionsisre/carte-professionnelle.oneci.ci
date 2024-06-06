@@ -31,11 +31,13 @@ class CreateClientsTable extends Migration
             $table->string('numero_decision')->nullable();
             $table->string('date_decision')->nullable();
             $table->string('lieu_decision')->nullable();
+            $table->string('msisdn', 30)->nullable();
             $table->string('cni')->nullable();
             $table->string('decision_judiciaire')->nullable();
             $table->string('code_lieu_retrait', 30)->nullable();
             $table->string('statut')->nullable();
             $table->string('observation', 150)->nullable();
+            $table->string('doer_uid', 150)->nullable();
             $table->string('certificat')->nullable();
             $table->string('uniqid')->nullable();
             $table->string('transaction_id')->nullable();
