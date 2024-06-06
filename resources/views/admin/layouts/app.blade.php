@@ -109,6 +109,7 @@
     <script src="{{ URL::asset('back-office/assets/js/select2_search.min.js') }}" type='text/javascript'></script>
     <script src="{{ URL::asset('back-office/assets/js/dropzone.min.js') }}"></script>
     <script src="{{ URL::asset('back-office/assets/js/colorpicker.js') }}"></script>
+    <script src="{{ URL::asset('back-office/assets/js/jquery.gritter.min.js') }}"></script>
     <script src="{{ URL::asset('back-office/assets/js/custom.js') }}"></script>
     <script>
         /* highlight on hover */

@@ -6,6 +6,7 @@
                     <h3 class="panel-title"><i class="fa fa-file-times mr10"></i>Refuser les documents de la demande N°<b><span class="deny-documents-modal-nd">XXXXXXXXXX</span></b></h3>
                 </div>
                 <div class="panel-body editable-list-group text-center">
+                    <span class="deny-documents-modal-t hidden"></span>
                     <br/><i class="fa fa-3x fa-file-times"></i><br/><br/>
                     <p>
                         Numéro NNI ou CNI : <b><span class="deny-documents-modal-nni-or-cni">XXXXXXXXXX</span></b><br/>
@@ -18,10 +19,10 @@
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="text" id="deny-documents-modal-observations" class="form-control" placeholder="Motif / Observations..." maxlength="150" name="observations" style="width: 100%;text-align: center" />
                     </div><br/>&nbsp;<br/>
-                    <button type="button" class="btn btn-danger"><i class="fa fa-check mr10"></i>Confirmer le refus de la demande N°<span class="deny-documents-modal-nd">XXXXXXXXXX</span></button>
+                    <button type="button" class="btn btn-danger deny-documents-modal-btn"><i class="fa fa-check mr10"></i>Confirmer le refus de la demande</button>
+                    <br/><br/><br/>
+                    <em>NB : Un SMS sera envoyé au client afin de le notifier du refus de sa demande avec le motif mentionné.<br/><br/></em>
                     <br/>
-                    <div class="deny-documents-modal-decision">
-                    </div><br/><br/>
                 </div>
                 <div class="panel-footer text-center">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo mr10"></i>Annuler</button>

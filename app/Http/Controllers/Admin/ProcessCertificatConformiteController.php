@@ -207,6 +207,27 @@ class ProcessCertificatConformiteController extends Controller {
         return false;
     }
 
+    public function denyClientByNumeroDossier(Request $request, $numero_dossier) {
+        request()->validate([
+            'cli' => ['required', 'string', 'max:150'],
+            'c' => ['required', 'string', 'max:150'],
+            'obs' => ['required', 'string', 'max:150'],
+            't' => ['required', 'string', 'max:150']
+        ]);
+        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        if(
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
+        ) {
+            $client->statut = 4;
+            $client->observation = $request->input('obs');
+            $client->save();
+            return json_encode($client);
+        }
+        return false;
+    }
+
     public function setSignedClientByNumeroDossier(Request $request, $numero_dossier) {
         request()->validate([
             'cli' => ['required', 'string', 'max:150'],
