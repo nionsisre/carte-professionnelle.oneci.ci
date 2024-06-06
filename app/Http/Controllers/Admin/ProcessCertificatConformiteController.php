@@ -203,10 +203,17 @@ class ProcessCertificatConformiteController extends Controller {
         ) {
             if(!empty($client->code_lieu_retrait)) {
                 $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)),
-                );
+                if($centre) {
+                    (new SMS)->sendSMS(
+                        $client->msisdn,
+                        "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)),
+                    );
+                } else {
+                    (new SMS)->sendSMS(
+                        $client->msisdn,
+                        "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement dans votre centre de retrait.",
+                    );
+                }
             } else {
                 (new SMS)->sendSMS(
                     $client->msisdn,
