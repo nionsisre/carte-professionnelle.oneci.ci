@@ -50,6 +50,7 @@
                 <th>Nom complet sur la décision</th>
                 <th>Numéro décision</th>
                 <th>Lieu de décision</th>
+                <th>Numéro de téléphone</th>
                 <th>Statut de la demande</th>
                 <th>Date de la demande</th>
                 <th>Documents Justificatifs</th>

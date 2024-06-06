@@ -67,6 +67,7 @@
                 {data: 'nom_complet_decision', name: 'nom_complet_decision'},
                 {data: 'numero_date_decision', name: 'numero_date_decision'},
                 {data: 'lieu_decision', name: 'lieu_decision'},
+                {data: 'msisdn', name: 'msisdn'},
                 {data: 'statut_demande', name: 'statut_demande'},
                 {data: 'date_demande', name: 'date_demande'},
                 {data: 'documents_justificatifs', name: 'documents_justificatifs'},

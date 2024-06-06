@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
+use App\Http\Services\SMS;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
 use App\Models\Client;
@@ -200,6 +201,18 @@ class ProcessCertificatConformiteController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
+            if(!empty($client->code_lieu_retrait)) {
+                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", vos documents justificatifs ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)),
+                );
+            } else {
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", vos documents justificatifs ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement dans votre centre de retrait.",
+                );
+            }
             $client->statut = 3;
             $client->save();
             return json_encode($client);
@@ -220,6 +233,17 @@ class ProcessCertificatConformiteController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
+            if(!empty(request()->input('obs'))) {
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", votre demande de certificat de conformité a été rejetée pour le motif suivant : ".$request->input('obs'),
+                );
+            } else {
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", votre demande de certificat de conformité a été rejetée par l'ONECI",
+                );
+            }
             $client->statut = 4;
             $client->observation = $request->input('obs');
             $client->save();
@@ -240,6 +264,18 @@ class ProcessCertificatConformiteController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
+            if(!empty($client->code_lieu_retrait)) {
+                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", votre certificat de conformité est actuellement disponible à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)).". Veuillez-vous y rendre muni de votre pièce d'identité et de votre décision de justice, l'ONECI vous remercie.",
+                );
+            } else {
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", votre certificat de conformité est actuellement disponible dans votre centre de retrait. Veuillez-vous y rendre muni de votre pièce d'identité et de votre décision de justice, l'ONECI vous remercie.",
+                );
+            }
             $client->statut = 5;
             $client->save();
             return json_encode($client);
@@ -259,7 +295,19 @@ class ProcessCertificatConformiteController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
-            $client->statut = 5;
+            if(!empty($client->code_lieu_retrait)) {
+                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", le retrait de votre certificat de conformité à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label))." a bien été confirmé avec succès, l'ONECI vous remercie.",
+                );
+            } else {
+                (new SMS)->sendSMS(
+                    $client->msisdn,
+                    "M(Mme) ".$client->nom.", le retrait de votre certificat de conformité a bien été confirmé avec succès, l'ONECI vous remercie.",
+                );
+            }
+            $client->statut = 6;
             $client->save();
             return json_encode($client);
         }

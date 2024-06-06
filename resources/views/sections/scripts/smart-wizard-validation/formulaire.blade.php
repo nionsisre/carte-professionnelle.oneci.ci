@@ -54,7 +54,7 @@
         decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
         numero_decision = "", decision_date = "", lieu_delivrance = "", lieu_retrait = "",
         cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="", nni="",
-        email="";
+        email="", msisdn="";
 
     {{-- Declenchement la detection de la taille de la CNI a charger --}}
     $('#cni-doc-input').on('change', function () {
@@ -160,6 +160,7 @@
                     decision_date = document.querySelectorAll('[name="decision-date"]');
                     lieu_delivrance = document.querySelectorAll('[name="lieu-delivrance"]');
                     lieu_retrait = document.querySelectorAll('[name="lieu-retrait"]');
+                    msisdn = document.querySelectorAll('[name="msisdn"]');
                     {{-- email = jQuery(document.querySelectorAll('[name="email"]')).val(); --}}
                     {{-- first_name --}}
                     if (!jQuery(first_name).val()) {
@@ -397,6 +398,40 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
+                    {{-- msisdn --}}
+                    if (!jQuery(msisdn).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner votre numéro de téléphone SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    } else if (jQuery(msisdn).val().length !== 14 ||
+                        (jQuery(msisdn).val().length === 14 && jQuery(msisdn).val().substring(0, 2) !== "01" && jQuery(msisdn).val().substring(0, 2) !== "05" && jQuery(msisdn).val().substring(0, 2) !== "07")) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner un numéro de téléphone valide SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- nni or cni_number --}}
                     if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery('#cni-number-container').show();
                         {{--
@@ -566,6 +601,7 @@
                     jQuery('#recap-decision-date').text(jQuery(decision_date).val().toUpperCase());
                     jQuery('#recap-lieu-delivrance').text(jQuery(lieu_delivrance).select2('data')[0].text);
                     jQuery('#recap-lieu-retrait').text(jQuery(lieu_retrait).select2('data')[0].text);
+                    jQuery('#recap-msisdn').text(jQuery(msisdn).val());
                     if(jQuery('#possession-nni-non').is(':checked')) {
                         jQuery('#recap-nni').text("");
                         jQuery('#recap-nni-container').hide();

@@ -227,6 +227,7 @@ class CertificatConformiteController extends Controller {
             'decision-date' => ['required', 'string', 'max:20'],
             'lieu-delivrance' => ['required', 'string', 'max:150'],
             'lieu-retrait' => ['required', 'string', 'max:150'],
+            'msisdn' => ['required', 'string', 'max:20'],
             'cni-doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
             'pdf-doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
         ]);
@@ -253,25 +254,28 @@ class CertificatConformiteController extends Controller {
 
         $client = Client::create([
             'numero_dossier' => $numero_dossier,
-            'nni' => strtoupper($request->input('nni')),
-            'numero_cni' => strtoupper($request->input('cni-number')),
+            'nni' => $request->input('nni'),
+            'numero_cni' => $request->input('cni-number'),
             'nom' => strtoupper($request->input('last-name')),
-            'prenom' => $request->input('first-name'),
+            'prenom' => strtoupper($request->input('first-name')),
             'date_naissance' => $request->input('birth-date'),
             'lieu_naissance' => "",
             'nom_mere' => strtoupper($request->input('mother-last-name')),
             'prenom_mere' => strtoupper($request->input('mother-first-name')),
-            'nom_decision' => $request->input('decision-last-name'),
-            'prenom_decision' => $request->input('decision-first-name'),
+            'nom_decision' => strtoupper($request->input('decision-last-name')),
+            'prenom_decision' => strtoupper($request->input('decision-first-name')),
             'date_naissance_decision' => $request->input('decision-birth-date'),
-            'lieu_naissance_decision' => $request->input('decision-lieu-naissance'),
+            'lieu_naissance_decision' => strtoupper($request->input('decision-lieu-naissance')),
             'numero_decision' => $request->input('numero-decision'),
             'date_decision' => $request->input('decision-date'),
             'lieu_decision' => $request->input("lieu-delivrance"),
+            'msisdn' => str_replace(" ", "", $request->input("msisdn")),
             'cni' => $cni ?? "",
             'decision_judiciaire' => $decision_judiciaire,
             'code_lieu_retrait' => $request->input("lieu-retrait"),
             'statut' => 1,
+            'observation' => "",
+            'doer_uid' => "",
             'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
             'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name')))
         ]);

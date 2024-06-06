@@ -346,7 +346,7 @@
                                                             Numéro de la décision<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="numero-decision-input" name="numero-decision" value="{{ old('numero-decision') }}"
+                                                            <input type="number" id="numero-decision-input" name="numero-decision" value="{{ old('numero-decision') }}"
                                                                    placeholder="Numéro de la décision..." maxlength="25"
                                                                    required="required"
                                                                    autocomplete="off"
@@ -364,11 +364,11 @@
                                                                    max="{{ date('Y-m-d') }}"
                                                                    style="width: 10.5em; text-align: center"/>
                                                         </div>
-                                                        <br/>
                                                     </div>
                                                 </div>
                                                 <div class="container clearfix">
                                                     <div class="form-group one-half column-last" id="lieu-delivrance-field">
+                                                        <br/>
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de délivrance<span style="color: #d9534f">*</span> :
                                                         </label>
@@ -385,6 +385,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group one-half column-last" id="lieu-retrait-field">
+                                                        <br/>
                                                         <label class="col-sm-2 control-label">
                                                             Lieu de retrait du certificat de conformité<span style="color: #d9534f">*</span> :
                                                         </label>
@@ -400,7 +401,25 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div><br/><br/><br/>
+                                                </div><br/><br/>
+                                                <div>
+                                                    <div class="form-group column-last" id="msisdn-field">
+                                                        <div class="col-sm-12">
+                                                            <label class="col-sm-2 control-label">
+                                                                Numéro de téléphone<span
+                                                                    style="color: #d9534f">*</span> :
+                                                            </label>
+                                                            <span style="display: none" id="err-toast"></span>
+                                                            <div class="col-sm-10"><span style="width: 2em">+ 225</span>
+                                                                &nbsp;
+                                                                <input type="text" class="form-control msisdn"
+                                                                       id="msisdn-input" name="msisdn"
+                                                                       placeholder="__ __ __ __ __" maxlength="14"
+                                                                       style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
+                                                                       required="required" autocomplete="off" /></div>
+                                                        </div>
+                                                    </div>
+                                                </div><br/><br/>
                                             </div>
                                             <div id="etape-3" class="tab-pane" role="tabpanel">
                                                 <div id="cni-number-container">
@@ -497,7 +516,7 @@
                                                         Lieu de naissance : &nbsp; <b><span id="recap-decision-birth-place"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Numéro de la décision : &nbsp; <b><span id="recap-numero-decision"></span></b>
+                                                        Numéro de la décision : <b><span id="recap-numero-decision"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
                                                         Date de la décision : <b><span id="recap-decision-date"></span></b>
@@ -506,7 +525,10 @@
                                                         Lieu de délivrance : <b><span id="recap-lieu-delivrance"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">
-                                                        Lieu de retrait du certificat de conformité : <b><i class="fa fa-map-marker-alt"></i> &nbsp; <span id="recap-lieu-retrait"></span></b>
+                                                        Lieu de retrait du certificat de conformité :  &nbsp; <b><i class="fa fa-map-marker-alt"></i> &nbsp; <span id="recap-lieu-retrait"></span></b>
+                                                    </label><br/>
+                                                    <label class="col-sm-2 control-label">
+                                                        Numéro de téléphone :  &nbsp; <b><i class="fa fa-sim-card"></i> &nbsp; <span id="recap-msisdn"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label" id="recap-cni-doc-container">
                                                         Carte Nationale d'Identité : &nbsp; <b><i class="fa fa-id-card"></i> &nbsp; <span id="recap-cni-doc"></span></b>

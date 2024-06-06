@@ -92,6 +92,7 @@ Route::prefix('oneciwebadmin')->group(function () {
         Route::post(sha1('/data/client/approved'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'approveClientByNumeroDossier'])->name('admin.certificat.client.approve');
         Route::post(sha1('/data/client/denied'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'denyClientByNumeroDossier'])->name('admin.certificat.client.deny');
         Route::post(sha1('/data/client/signed'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'setSignedClientByNumeroDossier'])->name('admin.certificat.client.signed');
+        Route::post(sha1('/data/client/withdrawn'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'setWithdrawnClientByNumeroDossier'])->name('admin.certificat.client.withdrawn');
     });
 
 });
