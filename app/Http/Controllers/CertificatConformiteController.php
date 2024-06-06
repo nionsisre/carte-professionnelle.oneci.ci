@@ -7,8 +7,7 @@ use App\Helpers\QrCode;
 use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
-use App\Models\AbonnesOperateur;
-use App\Models\AbonnesTypePiece;
+use App\Http\Services\SMS;
 use App\Models\Client;
 use App\Models\DirecteurGeneral;
 use App\Models\Juridiction;
@@ -284,6 +283,11 @@ class CertificatConformiteController extends Controller {
         $client = Client::with('juridiction')->find($client->id);
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
         //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
+
+        (new SMS)->sendSMS(
+            $client->msisdn,
+            "M(Mme) ".$client->nom.", les documents justificatifs de votre demande de certificat de conformité N°".$client->numero_dossier." sont actuellement en cours de vérification, l'ONECI vous remercie.",
+        );
 
         /* Retourner vue resultat */
         return redirect()->route('certificat.formulaire')->with([
