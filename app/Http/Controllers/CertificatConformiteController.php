@@ -289,10 +289,18 @@ class CertificatConformiteController extends Controller {
             "M(Mme) ".$client->nom.", les documents justificatifs de votre demande de certificat de conformité N°".$client->numero_dossier." sont actuellement en cours de vérification, l'ONECI vous remercie.",
         );
 
+        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$request->input("lieu-retrait"))->first();
+        if($centre) {
+            $lieu_livraison = ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
+        } else {
+            $lieu_livraison = 'Non-renseigné';
+        }
+
         /* Retourner vue resultat */
         return redirect()->route('certificat.formulaire')->with([
             'client' => $client,
             'centres' => $centres,
+            'lieu_livraison' => $lieu_livraison
             //'payment_data' => $payment_data
         ]);
     }
@@ -317,20 +325,20 @@ class CertificatConformiteController extends Controller {
             request()->validate([
                 'form-number' => ['required', 'numeric', 'digits:10'],
             ]);
-            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->get();
+            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->first();
             /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
-            if(sizeof($client) !== 0) {
-                return redirect()->route('certificat.consultation')->with('client', $client[0]);
+            if($client) {
+                return $this->prepareAndRedirectClientToConsultation($client);
             } else {
                 return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande du certificat de conformité
             (numéro de dossier <f> + token d'authentification <t>) */
-            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->get();
-            if(sizeof($client) !== 0) {
-                if ($client[0]->uniqid === $request->get('t')) {
-                    return redirect()->route('certificat.consultation')->with('client', $client[0]);
+            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->first();
+            if($client) {
+                if ($client->uniqid === $request->get('t')) {
+                    return $this->prepareAndRedirectClientToConsultation($client);
                 }
             } else {
                 return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
@@ -587,6 +595,24 @@ class CertificatConformiteController extends Controller {
         return redirect()->route('certificat.consultation')->with([
             'error' => true,
             'error_message' => 'Certificat incorrect !'
+        ]);
+    }
+
+    /**
+     * @param $client
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function prepareAndRedirectClientToConsultation($client): \Illuminate\Http\RedirectResponse
+    {
+        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre', '=', $client->code_lieu_retrait)->first();
+        if ($centre) {
+            $lieu_livraison = ucwords(strtolower($centre->location_label . ', ' . $centre->area_label . ', ' . $centre->department_label));
+        } else {
+            $lieu_livraison = 'Non-renseigné';
+        }
+        return redirect()->route('certificat.consultation')->with([
+            'client' => $client,
+            'lieu_livraison' => $lieu_livraison
         ]);
     }
 

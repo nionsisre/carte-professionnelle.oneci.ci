@@ -55,7 +55,7 @@
                                             <span class="arrowbox-title-arrow-back"></span>
                                             <span class="arrowbox-title-arrow-front"></span>
                                         </h2>
-                                        <p>Téléchargez et imprimez votre certificat de conformité</p>
+                                        <p>Récupérez votre certificat de conformité dans lieu de retrait si disponible</p>
                                     </div>
                                 </div>
                                 <div class="clear"></div>
@@ -113,9 +113,13 @@
                                                     @elseif($client->statut==2)
                                                         <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Document justificatif en attente d'approbation</b>
                                                     @elseif($client->statut==3)
-                                                        <i class="fad fa-check-double" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
+                                                        <i class="fad fa-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
                                                     @elseif($client->statut==4)
-                                                        <i class="fad fa-exclamation-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande refusée</b>
+                                                        <i class="fad fa-times-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande refusée</b>
+                                                    @elseif($client->statut==5)
+                                                        <i class="fad fa-file-certificate" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité disponible</b>
+                                                    @elseif($client->statut==6)
+                                                        <i class="fad fa-hand-receiving" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité retiré</b>
                                                     @endif
                                                 </td>
                                                 <td style="vertical-align: middle;">
@@ -127,68 +131,29 @@
                                                     @elseif(session()->get('client')->statut==2)
                                                         <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
                                                     @elseif(session()->get('client')->statut==3)
-                                                        <a href="{{ route('certificat.download.pdf').'?n='.session()->get('client')->certificat }}" class="button" style="margin: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Télécharger votre certificat de conformité</a>
+                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Le certificat de conformité est en attente de signature par le Directeur Général
                                                     @elseif(session()->get('client')->statut==4)
-                                                        {{-- Si le numéro est identifié, que le paiement est effectué et que la date de validité du paiement n'excède pas 1 an --}}
-                                                        @if(session()->get('client')->cinetpay_data_status==='ACCEPTED' && !empty(session()->get('client')->cinetpay_data_payment_date) &&
-                                                            date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('client')->cinetpay_data_payment_date))))
-                                                            {{-- Si le jour du paiement n'est pas encore passé l'otp est inactif --}}
-                                                            @if(date('Y-m-d', time()) === date('Y-m-d', strtotime(session()->get('client')->cinetpay_data_payment_date)) || session()->get('client')->cinetpay_data_operator_id === "00000000.0000.000000")
-                                                                <a href="{{ route('certificat.download.pdf').'?n='.session()->get('client')->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
-                                                            @else
-                                                                {{-- Sinon activation de l'otp avant chaque téléchargement --}}
-                                                                <a id="cert-dl-link" href="javascript:void(0);" class="button otp-send-link" style="margin-bottom: 0"><i class="fa fa-award text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
-                                                                <div id="otp-container" style="display: none">
-                                                                    <center>
-                                                                        <div class="notification-box notification-box-success">
-                                                                            <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('front_office.scripts.otp_code.verify') }}">
-                                                                                {{ csrf_field() }}
-                                                                                <input type="hidden" name="cli" value="{{ url()->current() }}">
-                                                                                <input type="hidden" name="fn" value="{{ session()->get('client')->numero_dossier }}">
-                                                                                <div class="form-group" id="otp-code-field" style="display: block; margin-bottom: 1em">
-                                                                                    <div><i class="fa fa-envelope-open"></i> &nbsp; Un SMS a été envoyé au numéro <b><span id="otp-sms-msisdn">{{ session()->get('client')->numero_de_telephone }}</span></b> !<br/><br/></div>
-                                                                                    <label class="col-sm-2 control-label" for="otp-code">
-                                                                                        Entrez le code de vérification reçu, puis validez afin de télécharger le certificat :<br/><br/>
-                                                                                    </label>
-                                                                                    <div class="col-sm-10">
-                                                                                        <div id="otp-send-link-container" style="display: inline-block; margin-bottom: 1em">
-                                                                                            <span id="otp-send-counter" style="margin-right: 1em">0:00</span>
-                                                                                            <a id="otp-send-link" href="javascript:void(0);" class="button blue otp-send-link" style="display: none; margin-bottom: 0"><i class="fa fa-sync text-white"></i> &nbsp; Renvoyer le sms</a>
-                                                                                        </div>
-                                                                                        <input type="text" id="otp-code" name="otp-code" class="otp-code" placeholder="______" maxlength="6" required="required" style="width: 6em; text-align: center; margin-bottom: 0"/>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="column-last">
-                                                                                    <button class="button" type="submit" value="Submit" id="cptch-sbmt-btn" style="margin-bottom: 0">
-                                                                                        <i class="fa fa-download text-white"></i> &nbsp; Télécharger le certificat d'identification ONECI</a>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </form>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #eeeeee;border-color: #bdbdbd;"><i class="fa fa-times"></i> &nbsp; Fermer</a>
-                                                                        </div>
-                                                                    </center>
-                                                                </div>
-                                                                <div id="otp-container-error" style="display: none"></div>
-                                                                <div id="modalError" style="display: none"></div>
-                                                            @endif
+                                                        @if(!empty(session()->get('client')->observation))
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée pour le motif suivant : {{ session()->get('client')->observation }}
                                                         @else
-                                                            <div id="certificate-get-payment-link-container" style="display: block;">
-                                                                <span id="certificate-get-payment-link-loader" style="display: none"><i class="fa fa-spinner fa-spin fa-2x"></i></span>
-                                                                <a id="certificate-get-payment-link" href="javascript:void(0);" class="button blue certificate-get-payment-link" style="margin-bottom: 0"><i class="fa fa-file-certificate text-white"></i> &nbsp; Obtenir un certificat pour ce numéro de téléphone</a>
-                                                            </div>
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée par l'ONECI.
                                                         @endif
-                                                    @elseif(session()->get('client')->code_statut==='IDR')
-                                                        <i class="fa fa-times-circle"></i> &nbsp; Document refusé par l'ONECI<br/><b>Motif : {{ (!empty(session()->get('client')->observation)) ? session()->get('client')->observation : "..." }}</b>
+                                                    @elseif(session()->get('client')->statut==5)
+                                                        @if(session()->has('lieu_livraison') && !empty(session()->get('lieu_livraison')))
+                                                            <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
+                                                        @else
+                                                            <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait.
+                                                        @endif
+                                                    @elseif(session()->get('client')->statut==6)
+                                                        <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre certificat de conformité a bien été effectué avec succès, l'ONECI vous remercie.
                                                     @endif
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <br/><br/>
-                                    L'ONECI vous remercie !
                                     <br/>
+                                    L'ONECI vous remercie !
+                                    <br/><br/>
                                 </p>
                             </div>
                             <a href="{{ route('certificat.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
