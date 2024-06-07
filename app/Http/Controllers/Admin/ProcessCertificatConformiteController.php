@@ -231,7 +231,7 @@ class ProcessCertificatConformiteController extends Controller {
         request()->validate([
             'cli' => ['required', 'string', 'max:150'],
             'c' => ['required', 'string', 'max:150'],
-            'obs' => ['required', 'string', 'max:150'],
+            'obs' => ['nullable', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
         $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
