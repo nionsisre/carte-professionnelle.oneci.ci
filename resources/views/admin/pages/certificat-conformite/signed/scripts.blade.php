@@ -43,7 +43,6 @@
                     jQuery('.set-signed-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
                     jQuery('.set-signed-documents-modal-ldec').text(client.juridiction.libelle);
                     jQuery('.set-signed-documents-modal-lr').text(lr);
-                    jQuery('.set-signed-documents-modal-dl-lnk').attr('href', "{{ route('certificat.download.pdf') }}?n="+client.certificat);
                 }
             }, error: function (data) {
                 let errorMessage = "";

@@ -160,7 +160,7 @@ class ProcessCertificatConformiteController extends Controller {
                     } else if($row->statut == 4) { // Documents refusés
                         $actionBtn = "Demande refusée";
                     } else if($row->statut == 5) { // Certificat disponible dans le centre
-                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#set-withdrawn-documents-modal" class="btn btn-success"  onclick="setWithdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer le certificat comme retiré par le client</button>';
+                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#withdrawn-documents-modal" class="btn btn-success" onclick="withdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer le certificat comme retiré par le client</button>';
                     } else if($row->statut == 6) { // Certificat retiré par le client
                         $actionBtn = 'Certificat retiré par le client';
                     }

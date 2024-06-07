@@ -1,15 +1,15 @@
 <script type="text/javascript">
-    {{-- Refresh Approve Document Content --}}
-    const refreshApproveDocumentsModal = $('#approve-documents-modal');
-    refreshApproveDocumentsModal.on('shown.bs.modal', function () {
-        {{-- Refresh Approve Edit Content here --}}
+    {{-- Refresh Withdrawn Document Content --}}
+    const refreshWithdrawnDocumentsModal = $('#withdrawn-documents-modal');
+    refreshWithdrawnDocumentsModal.on('shown.bs.modal', function () {
+        {{-- Refresh Withdrawn Edit Content here --}}
     });
-    refreshApproveDocumentsModal.on('hidden.bs.modal', function () {
+    refreshWithdrawnDocumentsModal.on('hidden.bs.modal', function () {
         {{-- Refresh Datatable Content here --}}
         myDatatable.draw();
     });
-    function approveDocuments(nd, t) {
-        let url = "{!! route('admin.certificat.client.approve', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
+    function withdrawnDocuments(nd, t) {
+        let url = "{!! route('admin.certificat.client.withdrawn', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
             type: 'POST',
@@ -23,7 +23,7 @@
                 jQuery('.modal-loader').show();
                 jQuery('.modal-success').hide();
                 jQuery('.modal-error').hide();
-                jQuery('.approve-documents-modal-dl-lnk').attr('href', "javascript:void(0)");
+                jQuery('.withdrawn-documents-modal-dl-lnk').attr('href', "javascript:void(0)");
             }, success: function(res){
                 jQuery('.modal-loader').hide();
                 jQuery('.modal-error').hide();
@@ -36,13 +36,12 @@
                     } else {
                         nniorcni = client.nni;
                     }
-                    jQuery('.approve-documents-modal-nd').text(client.numero_dossier);
-                    jQuery('.approve-documents-modal-nni-or-cni').text(nniorcni);
-                    jQuery('.approve-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
-                    jQuery('.approve-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
-                    jQuery('.approve-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
-                    jQuery('.approve-documents-modal-ldec').text(client.juridiction.libelle);
-                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('certificat.download.pdf') }}?n="+client.certificat);
+                    jQuery('.withdrawn-documents-modal-nd').text(client.numero_dossier);
+                    jQuery('.withdrawn-documents-modal-nni-or-cni').text(nniorcni);
+                    jQuery('.withdrawn-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
+                    jQuery('.withdrawn-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
+                    jQuery('.withdrawn-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
+                    jQuery('.withdrawn-documents-modal-ldec').text(client.juridiction.libelle);
                 }
             }, error: function (data) {
                 let errorMessage = "";
@@ -57,7 +56,7 @@
                 jQuery('.modal-success').hide();
                 jQuery('.modal-error').show();
                 jQuery('.modal-error-message').text(errorMessage);
-                jQuery('.modal-retry-btn').attr('onclick','approveDocuments("'+nd+'", "'+t+'")');
+                jQuery('.modal-retry-btn').attr('onclick','withdrawnDocuments("'+nd+'", "'+t+'")');
             }
         });
     }
