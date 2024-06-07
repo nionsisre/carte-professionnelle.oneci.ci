@@ -23,7 +23,9 @@
             <select class="good-select form-control col-xs-10 col-sm-10 col-md-10 col-lg-10" id="lieux-livraison">
                 <option value="">Tous les lieux de livraison</option>
                 @foreach($centres as $centre)
-                    <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
+                    @if($centre->code_unique_centre !== "AB0301030102")
+                        <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>

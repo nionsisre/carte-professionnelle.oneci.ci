@@ -396,7 +396,9 @@
                                                                     style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Lieu de retrait</option>
                                                                 @foreach($centres as $centre)
-                                                                    <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
+                                                                    @if($centre->code_unique_centre !== "AB0301030102")
+                                                                        <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
+                                                                    @endif
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -497,10 +499,10 @@
                                                     <label class="col-sm-2 control-label">
                                                         Né(e) le : <b><span id="recap-birth-date"></span></b>
                                                     </label>
-                                                    <label class="col-sm-2 control-label">
+                                                    <label class="col-sm-2 control-label" style="display: none">
                                                         Nom de la mère : <b><span id="recap-mother-last-name"></span></b>
                                                     </label>
-                                                    <label class="col-sm-2 control-label">
+                                                    <label class="col-sm-2 control-label" style="display: none">
                                                         Prénom(s) de la mère : <b><span id="recap-mother-first-name"></span></b>
                                                     </label><br/>
                                                     <label class="col-sm-2 control-label">

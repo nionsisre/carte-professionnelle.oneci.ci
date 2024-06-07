@@ -284,11 +284,6 @@ class CertificatConformiteController extends Controller {
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
         //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
 
-        (new SMS)->sendSMS(
-            $client->msisdn,
-            "M(Mme) ".$client->nom.", les documents justificatifs de votre demande de certificat de conformité N°".$client->numero_dossier." sont actuellement en cours de vérification, l'ONECI vous remercie.",
-        );
-
         $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$request->input("lieu-retrait"))->first();
         if($centre) {
             $lieu_livraison = ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
@@ -483,6 +478,7 @@ class CertificatConformiteController extends Controller {
                             'cpm_designation' => $request->input('msisdn'), // Numero de telephone a actualiser
                         ])
                     );
+
                     return response([
                         'has_error' => $res_data->original['has_error'],
                         'data' => $res_data->original,
