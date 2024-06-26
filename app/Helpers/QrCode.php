@@ -71,8 +71,8 @@ class QrCode {
                             'Authorization' => 'Bearer '.$api_bearer_token['bearerToken']
                         ],
                         'query' => [
-                            'use_case_id' => 'FFFF',
-                            'use_case_version' => '42',
+                            'use_case_id' => '0100',
+                            'use_case_version' => '04',
                             'format' => 'DataMatrix',
                             'datamatrix_size' => 'SIZE_21',
                             '2d_code_magnification_factor' => 4.54,
