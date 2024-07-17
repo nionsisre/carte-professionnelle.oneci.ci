@@ -2,15 +2,16 @@
 
 namespace App\Helpers;
 
+/**
+ * Utilities class with various helper methods.
+ */
 class Utils
 {
     /**
-     * (PHP 4, PHP 5, PHP 7+)<br/>
-     * This function is used to replace the accented characters with their accent-less equivalents<br/><br/>
-     * <b>string</b> removeAccentedChars(<b>string</b> $str)<br/>
-     * @param string $str <p>
-     * </p>
-     * @return string result
+     * Remove accented characters from a string.
+     *
+     * @param string $str The input string.
+     * @return string The input string with accented characters removed.
      */
     function removeAccentedChars($str) {
         $search = explode(",","ç,æ,œ,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u");
@@ -21,11 +22,10 @@ class Utils
 
     /**
      * (PHP 4, PHP 5, PHP 7+)<br/>
-     * This function is used to remove the invisible BOM (Byte Order Mark) UTF-8 on a given JSON String<br/><br/>
+     * This function is used to remove invisible characters and BOM (Byte Order Mark) from a JSON string.<br/><br/>
      * <b>string</b> removeInvisibleBOMContentsOnJSONString(<b>string</b> $json_string)<br/>
-     * @param string $json_string <p>
-     * </p>
-     * @return string result
+     * @param string $json_string <p>The input JSON string</p>
+     * @return string The cleaned JSON string
      */
     function removeInvisibleBOMContentsOnJSONString($json_string) {
         // Nettoyage des caractères invisibles
@@ -37,6 +37,13 @@ class Utils
         return $json_string;
     }
 
+    /**
+     * Validate if a domain is authorized or not based on the provided email.
+     *
+     * @param string $email The email address to validate.
+     * @param bool $professional_email_only Determines if only professional email domains are allowed.
+     * @return bool Returns true if the domain is authorized, false otherwise.
+     */
     function validateDomain($email, $professional_email_only) {
         // Récupération du domaine de l'adresse e-mail
         list(, $domain) = explode('@', $email);
@@ -55,29 +62,21 @@ class Utils
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
-     * This function creates signature of users password<br/><br/>
-     * <b>string</b> signature(<b>string</b> $user_password)<br/>
-     * @param string $user_password <p>
-     * Received password via post
-     * </p>
-     * @return string Value of password signature
+     * Generate a unique signature for a user's password.
+     *
+     * @param string $user_password The user's password.
+     * @return string A unique signature for the user's password.
      */
     function signature($user_password){
         return md5(sha1("\$@lty".$user_password."\$@lt"));
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7)<br/>
-     * This function is like date() but in French<br/><br/>
-     * <b>string</b> date_fr(<b>string</b> $format[, <b>string</b> $timestamp])<br/>
-     * @param string $format <p>
-     * PHP date() like format
-     * </p>
-     * @param string $timestamp <p>
-     * Timestamp or mktime()
-     * </p>
-     * @return string $result in "Lundi 01 janvier 1970" format
+     * Convert a date to French format.
+     *
+     * @param string $format The format of the output date.
+     * @param int|false $timestamp The timestamp to use for the conversion. If false, the current timestamp will be used.
+     * @return string The date in French format.
      */
     function date_fr($format, $timestamp=false) {
         // Check timestamp value

@@ -13,10 +13,12 @@ class GeneratedTokensOrIDs {
 
     /**
      * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
-     * This function is useful to generate unique number ID<br/><br/>
-     * <b>array</b> generateUniqueNumberID()<br/>
+     * This function generates a unique number ID based on the current time.<br/><br/>
+     * <b>int</b> generateUniqueNumberID(<b>string</b> $type)<br/>
+     * @param string $type <p>
+     * The type of unique number ID to generate
      * </p>
-     * @return numeric Unique Number ID
+     * @return int A unique number ID
      */
     public function generateUniqueNumberID($type) {
         $unique_number_id = time();
@@ -30,12 +32,12 @@ class GeneratedTokensOrIDs {
 
     /**
      * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
-     * This function is useful to generate Token<br/><br/>
+     * This function creates a unique token<br/><br/>
      * <b>array</b> createToken(<b>int</b> $expireTime)<br/>
      * @param int $expireTime <p>
-     * Received token via post. <br/>Use <b>0</b> or <b>negative int</b> to infinite expiry date.
+     * Expiration time of the token in seconds
      * </p>
-     * @return array Value of result
+     * @return array The generated token
      */
     public function createToken($expireTime) {
         $token['value'] = sha1(md5("\$@lty".uniqid(rand(), TRUE)."\$@lt"));
@@ -45,16 +47,14 @@ class GeneratedTokensOrIDs {
     }
 
     /**
-     * (PHP 4, PHP 5, PHP 7, PHP 8+)<br/>
-     * This function checks generated token<br/><br/>
-     * <b>bool</b> checkToken(<b>string</b> $token_received, <b>array</b> $token_session)<br/>
-     * @param string $token_received <p>
-     * Received token via post
-     * </p>
-     * @param array $token_session <p>
-     * Session token variable
-     * </p>
-     * @return bool Value of result
+     * Check if the received token is valid.
+     *
+     * @param string $token_received The token received from the client
+     * @param array $token_session The token stored in the session
+     * @return bool                     Returns TRUE if the token is valid, otherwise FALSE
+     *
+     * @throws NotFoundExceptionInterface    If the session token_time key does not exist
+     * @throws ContainerExceptionInterface     If an error occurs while retrieving the session value
      */
     public function checkToken($token_received, $token_session){
         try {

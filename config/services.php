@@ -51,4 +51,8 @@ return [
         'enabled' => env("VERIF_API_ENABLED", false)
     ],
 
+    'cev' => [
+        'enabled' => env("CEV_API_ENABLED", false)
+    ],
+
 ];

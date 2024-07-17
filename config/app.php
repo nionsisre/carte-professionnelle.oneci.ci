@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Certificat Conformité'),
+    'name' => env('APP_NAME', 'Carte Professionnelle'),
 
     /*
     |--------------------------------------------------------------------------
