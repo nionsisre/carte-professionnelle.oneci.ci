@@ -43,7 +43,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li>Certificat Conformité &rsaquo; </li>
+                    <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
                     <li><a href="{{ route('certificat.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Formulaire</li>
                 </ul>
@@ -57,7 +57,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-file-certificate text-black mr10"></i> &nbsp; Obtention du certificat de conformité
+                <h2><i class="fa fa-file-music text-black mr10"></i> &nbsp; Obtention de la fiche de Pré-enrôlement DJ
                 </h2>
                 @if(session()->has('client'))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">

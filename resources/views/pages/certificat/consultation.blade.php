@@ -17,7 +17,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li>Certificat Conformité &rsaquo; </li>
+                    <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
                     <li><a href="{{ route('certificat.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Consultation</li>
                 </ul>
