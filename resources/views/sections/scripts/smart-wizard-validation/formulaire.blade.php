@@ -106,47 +106,6 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
-                    nni = document.querySelectorAll('#nni-input');
-                    if(jQuery('#possession-nni-oui').is(':checked')) {
-                        {{-- check_nni --}}
-                        if(!jQuery(nni).val()) {
-                            jQuery('#modalError').html(
-                                '<center> <div class="notification-box notification-box-error">\n\
-                                <div class="modal-header"><i class="fa fa-2x fa-barcode"></i><br/><br/><h3>Veuillez correctement renseigner votre numéro NNI SVP</h3></div>\n\
-                                </div><div class="modal-footer">\n\
-                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                            );
-                            jQuery('#modalError').modal({
-                                escapeClose: false,
-                                clickClose: false,
-                                showClose: false
-                            });
-                            jQuery('.blocker').css('z-index','2');
-                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                            return false;
-                        }
-                        {{-- Assign values and Disable All fields if NNI OK ".prop('disabled', true)" --}}
-                        jQuery('#last-name-input').val(nni_data.LAST_NAME);
-                        jQuery('#first-name-input').val(nni_data.FIRST_NAME);
-                        jQuery('#birth-date-input').val(nni_data.BIRTH_DATE);
-                        jQuery('#mother-last-name-input').val(nni_data.MOTHER_LAST_NAME);
-                        jQuery('#mother-first-name-input').val(nni_data.MOTHER_FIRST_NAME);
-                        jQuery("#npdl-container").hide();
-                        {{-- Enable next button --}}
-                    } else if(jQuery('#possession-nni-non').is(':checked')) {
-                        {{-- Empty and Enable All fields ".prop('disabled', false)" --}}
-                        jQuery('#last-name-input').val("");
-                        jQuery('#first-name-input').val("");
-                        jQuery('#birth-date-input').val("");
-                        jQuery('#mother-last-name-input').val("");
-                        jQuery('#mother-first-name-input').val("");
-                        jQuery("#npdl-container").show();
-                        {{-- Disable next button --}}
-                    }
-                    jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
-                    break;
-                {{-- Step 2 --}}
-                case 1:
                     first_name = document.querySelectorAll('[name="first-name"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
                     birth_date = document.querySelectorAll('[name="birth-date"]');
@@ -475,8 +434,8 @@
                     }
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
-                {{-- Step 3 --}}
-                case 2:
+                {{-- Step 2 --}}
+                case 1:
                     cni_number = document.querySelectorAll('[name="cni-number"]');
                     cni_doc = document.querySelectorAll('#cni-doc-input');
                     pdf_doc = document.querySelectorAll('#pdf-doc-input');
@@ -638,26 +597,6 @@
                         }
                     });
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
-                    break;
-            }
-        } else if (stepDirection === 'backward') {
-            switch (currentStepIdx) {
-                {{-- Back to Step 1 --}}
-                case 1:
-                    if(jQuery('#possession-nni-oui').is(':checked')) {
-                        jQuery("#nni-field").show();
-                        jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
-                        if(nni_data.FIRST_NAME !== undefined) {
-                            jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
-                        }
-                        jQuery("#npdl-container").hide();
-                        {{-- $('button.sw-btn-next').hasClass('disabled'); --}}
-                    } else if(jQuery('#possession-nni-non').is(':checked')) {
-                        jQuery("#nni-input").val("");
-                        jQuery("#nni-field").hide();
-                        jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");
-                        jQuery("#npdl-container").show();
-                    }
                     break;
             }
         }

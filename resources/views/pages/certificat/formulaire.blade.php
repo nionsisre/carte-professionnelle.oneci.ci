@@ -150,7 +150,7 @@
                             </div>
                         </center>
                     @endif
-                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre certificat de conformité<br/></h5>
+                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre fiche de pré-enrôlement<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
                             <div>
@@ -162,268 +162,88 @@
                                     <div id="modalSnp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="smartwizard" class="mb-3">
                                         <ul class="nav">
-                                            <li><a class="nav-link" href="#etape-1"><i class="fa fa-barcode text-white"></i>
-                                                    &nbsp; Etape 1 : Possession NNI</a></li>
-                                            <li><a class="nav-link" href="#etape-2"><i
-                                                        class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
+                                            <li><a class="nav-link" href="#etape-1"><i
+                                                        class="fa fa-info-circle text-white"></i> &nbsp; Etape 1 :
                                                     Informations</a></li>
-                                            <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
-                                                    &nbsp; Etape 3 : Documents justificatifs</a></li>
-                                            <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
-                                                    &nbsp; Etape 4 : Récapitulatif</a></li>
-                                            <li><a class="nav-link" href="#etape-5"><i class="fa fa-money-check text-white"></i>
-                                                    &nbsp; Etape 5 : Paiement</a></li>
-                                            <li><a class="nav-link" href="#etape-6"><i class="fa fa-check text-white"></i>
-                                                    &nbsp; Etape 6 : Terminé</a></li>
+                                            <li><a class="nav-link" href="#etape-2"><i class="fa fa-id-card text-white"></i>
+                                                    &nbsp; Etape 2 : Documents justificatifs</a></li>
+                                            <li><a class="nav-link" href="#etape-3"><i class="fa fa-eye text-white"></i>
+                                                    &nbsp; Etape 3 : Récapitulatif</a></li>
+                                            <li><a class="nav-link" href="#etape-4"><i class="fa fa-money-check text-white"></i>
+                                                    &nbsp; Etape 4 : Paiement</a></li>
+                                            <li><a class="nav-link" href="#etape-5"><i class="fa fa-check text-white"></i>
+                                                    &nbsp; Etape 5 : Terminé</a></li>
                                         </ul>
                                         <div class="tab-content">
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
-                                                <br/><br/>
-                                                <h2>Avez-vous un numéro NNI ?</h2>
-                                                <div class="form-group column-last" id="possession-nni-field">
-                                                    <div class="form-group">
-                                                        <div class="col-sm-12 container clearfix">
-                                                            <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
-                                                                <input type="radio" name="possession_nni" id="possession-nni-oui" value="O" style="width: auto; box-shadow:none" checked/>
-                                                                <label for="possession-nni-oui" style="display: inline-block; padding-right: 2em" class="col-sm-5"><b> &nbsp; Oui</b></label>
-                                                            </div>
-                                                            <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">
-                                                                <input type="radio" name="possession_nni" id="possession-nni-non" value="N" style="width: auto; box-shadow:none" />
-                                                                <label for="possession-nni-non" style="display: inline-block;" class="col-sm-5 pl-2"><b> &nbsp; Non</b></label>
-                                                            </div>
-                                                            <br/>
-                                                        </div>
-                                                    </div><br/>
-                                                </div>
-                                                <div class="form-group column-last" id="nni-field">
-                                                    <label class="col-sm-2 control-label" id="nni-label">
-                                                        Numéro NNI<span style="color: #d9534f">*</span> :
-                                                    </label>
-                                                    <div class="col-sm-10">
-                                                        <input type="text" id="nni-input" class="nni" name="nni"
-                                                               placeholder="___________" maxlength="11"
-                                                               style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                    </div>
-                                                    <br/>
-                                                </div>
-                                                <div id="nni-check-spinner" style="display: none"><i class="fa fa-spinner fa-spin"></i></div>
-                                                <div id="nni-check-result"></div>
-                                                <br/>
-                                            </div>
-                                            <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <div id="npdl-container">
                                                     <br/><br/>
-                                                    <h2>Informations sur l'usager :</h2>
+                                                    <h2>Informations sur le DJ :</h2>
                                                     <br/>
-                                                        <div class="container clearfix">
-                                                            <div class="form-group one-third column-last" id="last-name-field">
-                                                                <label class="col-sm-2 control-label">
-                                                                    NOM<span style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="last-name-input" name="last-name" value="{{ old('last-name') }}"
-                                                                           placeholder="NOM..." maxlength="70"
-                                                                           autocomplete="off"
-                                                                           required="required"
-                                                                           style="text-transform: uppercase; width: 16em; text-align: center"/>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                            <div class="form-group one-third column-last" id="first-name-field">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Prénom(s)<span style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="first-name-input" name="first-name" value="{{ old('first-name') }}"
-                                                                           placeholder="Prénom(s)" maxlength="150"
-                                                                           required="required"
-                                                                           autocomplete="off"
-                                                                           style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                            <div class="form-group one-third column-last" id="birth-date-field">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Né(e) le<span style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="date" id="birth-date-input" name="birth-date" value="{{ old('birth-date') }}"
-                                                                           placeholder="Date de Naissance" required="required"
-                                                                           max="{{ date('Y-m-d', strtotime('-10 years')) }}"
-                                                                           style="width: 10.5em; text-align: center"/>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="container clearfix">
-                                                            <div class="form-group one-half column-last" id="mother-last-name-field">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Nom de la mère<span style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="mother-last-name-input" name="mother-last-name" value="{{ old('mother-last-name') }}"
-                                                                           placeholder="NOM de la mère..." maxlength="70"
-                                                                           autocomplete="off"
-                                                                           required="required"
-                                                                           style="text-transform: uppercase; width: 16em; text-align: center"/>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                            <div class="form-group one-half column-last" id="mother-first-name-field">
-                                                                <label class="col-sm-2 control-label">
-                                                                    Prénom(s) de la mère<span style="color: #d9534f">*</span> :
-                                                                </label>
-                                                                <div class="col-sm-10">
-                                                                    <input type="text" id="mother-first-name-input" name="mother-first-name" value="{{ old('mother-first-name') }}"
-                                                                           placeholder="Prénom(s) de la mère..." maxlength="150"
-                                                                           required="required"
-                                                                           autocomplete="off"
-                                                                           style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                                </div>
-                                                                <br/>
-                                                            </div>
-                                                        </div>
+                                                    <div class="container clearfix">
+                                                        <x-input-radio title="Genre" name="possession_nni"
+                                                            :options="[
+                                                                ['id' => 'gender-male-input', 'value' => 'M', 'label' => 'Homme', 'checked' => true, 'icon' => 'fa fa-mars'],
+                                                                ['id' => 'gender-female-input', 'value' => 'F', 'label' => 'Femme', 'checked' => false, 'icon' => 'fa fa-venus']
+                                                            ]"
+                                                            required="true"
+                                                        /><br/>
+                                                    </div>
+                                                    <div class="container clearfix">
+                                                        <x-input-text id="pseudo-input" name="pseudo" label="Pseudonyme" placeholder="Nom d'artiste..." maxlength="150" required="true" width="16em" column="" />
+                                                    </div>
+                                                    <div class="container clearfix">
+                                                        {{--
+                                                        @component('components.input-text', [
+                                                            'id' => 'last-name-input',
+                                                            'name' => 'last-name',
+                                                            'label' => 'NOM',
+                                                            'placeholder' => 'NOM...',
+                                                            'maxlength' => 70,
+                                                            'required' => true,
+                                                            'width' => '16em',
+                                                            'column' => 'one-third'
+                                                        ])
+                                                        @endcomponent
+                                                        --}}
+                                                        <x-input-text id="last-name-input" name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="13em" column="one-third" />
+                                                        <x-input-text id="first-name-input" name="first-name" label="Prénom(s)" placeholder="Prénom(s)..." maxlength="150" required="true" width="13.4em" column="one-third" />
+                                                        <x-input-text id="spouse-name-input" name="spouse-name" label="Nom de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
+                                                    </div>
+                                                    <div class="container clearfix">
+                                                        <x-input-date id="birth-date-input" name="birth-date" label="Né(e) le" placeholder="Date de naissance..." required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
+                                                        <x-input-text id="birth-place-input" name="birth-place" label="Lieu de naissance" placeholder="Lieu de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                    </div>
+                                                    <div class="container clearfix">
+                                                        <x-input-text id="birth-country-input" name="birth-country" label="Pays de naissance" placeholder="Pays de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                        <x-input-text id="nationality-input" name="nationality" label="Nationalité" placeholder="Nationalité..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                    </div>
+                                                    <div class="container clearfix">
+                                                        <x-input-select2 :options="[
+                                                                ['value' => '0', 'label' => 'Célibataire'],['value' => '1', 'label' => 'Marié(e)'],['value' => '2', 'label' => 'Divorcé(e)'],['value' => '3', 'label' => 'Veuf / veuve']
+                                                            ]" id="civil-status-field" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
+                                                        />
+                                                        <x-input-number id="number-of-children-input" name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." maxlength="70" width="13.4em" column="one-third" />
+                                                        <x-input-text id="other-activities-input" name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
+                                                    </div>
                                                 </div>
                                                 <br/><br/>
-                                                <h2>Informations modifiées sur la décision de justice :</h2>
+                                                <h2>Situation Géographique</h2>
                                                 <br/>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-third column-last" id="decision-last-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            NOM sur la décision <br/>de justice<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="decision-last-name-input" name="decision-last-name" value="{{ old('decision-last-name') }}"
-                                                                   placeholder="NOM sur décision..." maxlength="70"
-                                                                   autocomplete="off"
-                                                                   required="required"
-                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="decision-first-name-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Prénom(s) sur la décision de justice<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="decision-first-name-input" name="decision-first-name" value="{{ old('decision-first-name') }}"
-                                                                   placeholder="Prénom(s) sur décision..." maxlength="150"
-                                                                   required="required"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="decision-birth-date-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Date de Naissance sur la décision<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="date" id="decision-birth-date-input" name="decision-birth-date" value="{{ old('decision-birth-date') }}"
-                                                                   placeholder="Date de Naissance sur la décision..." required="required"
-                                                                   max="{{ date('Y-m-d', strtotime('-10 years')) }}"
-                                                                   style="width: 10.5em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
+                                                    <x-input-text id="other-activities-input" name="other-activities" label="Ville" placeholder="Ville..." maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text id="other-activities-input" name="other-activities" label="Commune" placeholder="Commune..." maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text id="other-activities-input" name="other-activities" label="Quartier" placeholder="Quartier..." maxlength="100" width="13em" column="one-third" />
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-third column-last" id="decision-lieu-naissance-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Lieu de naissance<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="decision-lieu-naissance-input" name="decision-lieu-naissance" value="{{ old('decision-lieu-naissance') }}"
-                                                                   placeholder="Lieu de naissance..." maxlength="150"
-                                                                   autocomplete="off"
-                                                                   required="required"
-                                                                   style="text-transform: uppercase; width: 16em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="numero-decision-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Numéro de la décision<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="number" id="numero-decision-input" name="numero-decision" value="{{ old('numero-decision') }}"
-                                                                   placeholder="Numéro de la décision..." maxlength="25"
-                                                                   required="required"
-                                                                   autocomplete="off"
-                                                                   style="text-transform: uppercase; width: 13.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group one-third column-last" id="decision-date-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Date de la décision<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="date" id="decision-date-input" name="decision-date" value="{{ old('decision-date-date') }}"
-                                                                   placeholder="Date la décision..." required="required"
-                                                                   max="{{ date('Y-m-d') }}"
-                                                                   style="width: 10.5em; text-align: center"/>
-                                                        </div>
-                                                    </div>
+                                                    <x-input-text id="address-input" name="address" label="Adresse" placeholder="Adresse..." maxlength="100" width="13em" column="one-half" />
+                                                    <x-input-text id="workplace-input" name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." maxlength="100" width="13em" column="one-half" />
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <div class="form-group one-half column-last" id="lieu-delivrance-field">
-                                                        <br/>
-                                                        <label class="col-sm-2 control-label">
-                                                            Lieu de délivrance<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control good-select"
-                                                                    id="lieu-delivrance" name="lieu-delivrance" required="required"
-                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Lieu de délivrance</option>
-                                                                @foreach($juridictions as $juridiction)
-                                                                    <option value="{{ $juridiction->id }}">{{ $juridiction->libelle.", ".$juridiction->region }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group one-half column-last" id="lieu-retrait-field">
-                                                        <br/>
-                                                        <label class="col-sm-2 control-label">
-                                                            Lieu de retrait du certificat de conformité<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control good-select"
-                                                                    id="lieu-retrait" name="lieu-retrait" required="required"
-                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Lieu de retrait</option>
-                                                                @foreach($centres as $centre)
-                                                                    @if($centre->code_unique_centre !== "AB0301030102")
-                                                                        <option value="{{ $centre->code_unique_centre }}">{{ ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)) }}</option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div><br/><br/>
-                                                <div>
-                                                    <div class="form-group column-last" id="msisdn-field">
-                                                        <div class="col-sm-12">
-                                                            <label class="col-sm-2 control-label">
-                                                                Numéro de téléphone<span
-                                                                    style="color: #d9534f">*</span> :
-                                                            </label>
-                                                            <span style="display: none" id="err-toast"></span>
-                                                            <div class="col-sm-10"><span style="width: 2em">+ 225</span>
-                                                                &nbsp;
-                                                                <input type="text" class="form-control msisdn"
-                                                                       id="msisdn-input" name="msisdn"
-                                                                       placeholder="__ __ __ __ __" maxlength="14"
-                                                                       style="width: 13.9em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;"
-                                                                       required="required" autocomplete="off" /></div>
-                                                        </div>
-                                                    </div>
+                                                    <x-input-tel-ci id="msisdn-input" name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" maxlength="100" width="13em" column="" />
                                                 </div><br/><br/>
                                             </div>
-                                            <div id="etape-3" class="tab-pane" role="tabpanel">
+                                            <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <div id="cni-number-container">
                                                     <br/><br/>
                                                     <h2><i class="fa fa-id-card"></i> &nbsp; Pièce d'identité :</h2>
@@ -480,7 +300,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="etape-4" class="tab-pane" role="tabpanel">
+                                            <div id="etape-3" class="tab-pane" role="tabpanel">
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
