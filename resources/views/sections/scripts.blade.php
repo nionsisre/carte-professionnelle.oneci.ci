@@ -1,7 +1,7 @@
 <script src="{{ URL::asset('assets/js/select2.min.js') }}" type='text/javascript'></script>
 <script src="{{ URL::asset('assets/js/countrySelect.js') }}" type='text/javascript'></script>
 <script>
-    jQuery("#country-input").countrySelect({
+    jQuery(".country-select").countrySelect({
         defaultCountry: 'ci',
         preferredCountries: ['ci','fr', 'us', 'cn', 'ru', 'ca', 'gb', 'de']
     });

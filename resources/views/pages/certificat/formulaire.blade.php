@@ -215,7 +215,7 @@
                                                         <x-input-text id="birth-place-input" name="birth-place" label="Lieu de naissance" placeholder="Lieu de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-text id="birth-country-input" name="birth-country" label="Pays de naissance" placeholder="Pays de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                        <x-input-select-country id="birth-country-input" name="birth-country" label="Pays de naissance" placeholder="Pays de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
                                                         <x-input-text id="nationality-input" name="nationality" label="Nationalité" placeholder="Nationalité..." required="true" maxlength="70" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
