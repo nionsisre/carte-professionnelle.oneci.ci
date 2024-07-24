@@ -223,7 +223,7 @@
                                                                 ['value' => '0', 'label' => 'Célibataire'],['value' => '1', 'label' => 'Marié(e)'],['value' => '2', 'label' => 'Divorcé(e)'],['value' => '3', 'label' => 'Veuf / veuve']
                                                             ]" id="civil-status-field" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
                                                         />
-                                                        <x-input-number id="number-of-children-input" name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." maxlength="70" width="13.4em" column="one-third" />
+                                                        <x-input-number id="number-of-children-input" name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="13.4em" column="one-third" />
                                                         <x-input-text id="other-activities-input" name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
                                                     </div>
                                                 </div>
@@ -231,16 +231,16 @@
                                                 <h2>Situation Géographique</h2>
                                                 <br/>
                                                 <div class="container clearfix">
-                                                    <x-input-text id="other-activities-input" name="other-activities" label="Ville" placeholder="Ville..." maxlength="100" width="13em" column="one-third" />
-                                                    <x-input-text id="other-activities-input" name="other-activities" label="Commune" placeholder="Commune..." maxlength="100" width="13em" column="one-third" />
-                                                    <x-input-text id="other-activities-input" name="other-activities" label="Quartier" placeholder="Quartier..." maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text id="city-input" name="city" label="Ville" placeholder="Ville..." required="true" maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text id="town-input" name="town" label="Commune" placeholder="Commune..." required="true" maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text id="street-input" name="street" label="Quartier" placeholder="Quartier..." required="true" maxlength="100" width="13em" column="one-third" />
                                                 </div>
                                                 <div class="container clearfix">
                                                     <x-input-text id="address-input" name="address" label="Adresse" placeholder="Adresse..." maxlength="100" width="13em" column="one-half" />
-                                                    <x-input-text id="workplace-input" name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." maxlength="100" width="13em" column="one-half" />
+                                                    <x-input-text id="workplace-input" name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." required="true" maxlength="100" width="13em" column="one-half" />
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <x-input-tel-ci id="msisdn-input" name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" maxlength="100" width="13em" column="" />
+                                                    <x-input-tel-ci id="msisdn-input" name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" required="true" maxlength="100" width="13em" column="" />
                                                 </div><br/><br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
