@@ -1,5 +1,5 @@
 <div class="form-group">
-    {!! (isset($title)) ? $title.' : <br/><br/>' : "" !!}
+    {!! (isset($title)) ? $title : "" !!}{!! ($required && $required == "true") ? '<span style="color:#d9534f">*</span> :' : '' !!} <br/><br/>
     <div class="col-sm-12 container clearfix">
         @foreach ($options as $option)
             <div class="col-sm-6 ckbox ckbox-success form-group one-half column-last">

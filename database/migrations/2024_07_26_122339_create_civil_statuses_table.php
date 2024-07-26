@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJuridictionsTable extends Migration
+class CreateCivilStatusesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateJuridictionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('juridictions', function (Blueprint $table) {
+        Schema::create('civil_statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->nullable();
-            $table->string('region')->nullable();
-            $table->string('libelle')->nullable();
+            $table->string('code_statut')->nullable();
+            $table->string('libelle_statut')->nullable();
+            $table->string('icone')->nullable();
         });
     }
 
@@ -28,6 +28,6 @@ class CreateJuridictionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('juridictions');
+        Schema::dropIfExists('civil_statuses');
     }
 }

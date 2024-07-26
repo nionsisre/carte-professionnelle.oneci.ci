@@ -46,7 +46,7 @@ class InputSelectCountry extends Component {
      */
     public function render()
     {
-        return view('components.input-select-country');
+        return view('components.inputs.input-select-country');
     }
 
 }

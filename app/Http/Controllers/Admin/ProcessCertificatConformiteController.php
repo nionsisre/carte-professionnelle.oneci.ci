@@ -11,7 +11,7 @@ use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
-use App\Models\Client;
+use App\Models\Artiste;
 use App\Models\DirecteurGeneral;
 use App\Models\Juridiction;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -42,7 +42,7 @@ class ProcessCertificatConformiteController extends Controller {
         $max_chars = 35;
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
-        $data_columns = Schema::getColumnListing((new Client())->getTable());
+        $data_columns = Schema::getColumnListing((new Artiste())->getTable());
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
         /* Retourner vue Traitement des demandes de certificat de conformité */
@@ -62,7 +62,7 @@ class ProcessCertificatConformiteController extends Controller {
     public function getClient(Request $request) {
 
         if ($request->ajax()) {
-            $data = Client::with('juridiction')->get();
+            $data = Artiste::with('juridiction')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('lieu_livraison', function($row){
@@ -178,7 +178,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -195,7 +195,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -234,7 +234,7 @@ class ProcessCertificatConformiteController extends Controller {
             'obs' => ['nullable', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -265,7 +265,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -296,7 +296,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Client::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||

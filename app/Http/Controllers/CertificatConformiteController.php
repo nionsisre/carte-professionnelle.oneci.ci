@@ -8,9 +8,8 @@ use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
-use App\Models\Client;
+use App\Models\Artiste;
 use App\Models\DirecteurGeneral;
-use App\Models\Juridiction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -48,7 +47,6 @@ class CertificatConformiteController extends Controller {
     public function showFormulaire() {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
-        $juridictions = Juridiction::all();
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
         /*// Implémentation paynah
@@ -79,7 +77,6 @@ class CertificatConformiteController extends Controller {
 
         return view('pages.certificat.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
-            'juridictions' => $juridictions,
             'centres' => $centres
         ]);
     }
@@ -251,7 +248,7 @@ class CertificatConformiteController extends Controller {
             }
         }
 
-        $client = Client::create([
+        $client = Artiste::create([
             'numero_dossier' => $numero_dossier,
             'nni' => $request->input('nni'),
             'numero_cni' => $request->input('cni-number'),
@@ -280,7 +277,7 @@ class CertificatConformiteController extends Controller {
         ]);
 
         /* Obtention des informations sur le client enregistré et sa juridiction */
-        $client = Client::with('juridiction')->find($client->id);
+        $client = Artiste::with('juridiction')->find($client->id);
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
         //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
 
@@ -320,7 +317,7 @@ class CertificatConformiteController extends Controller {
             request()->validate([
                 'form-number' => ['required', 'numeric', 'digits:10'],
             ]);
-            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->first();
+            $client = Artiste::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->first();
             /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
             if($client) {
                 return $this->prepareAndRedirectClientToConsultation($client);
@@ -330,7 +327,7 @@ class CertificatConformiteController extends Controller {
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande du certificat de conformité
             (numéro de dossier <f> + token d'authentification <t>) */
-            $client = Client::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->first();
+            $client = Artiste::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->first();
             if($client) {
                 if ($client->uniqid === $request->get('t')) {
                     return $this->prepareAndRedirectClientToConsultation($client);
@@ -359,7 +356,7 @@ class CertificatConformiteController extends Controller {
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
         ]);
         /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-        $client = Client::where('numero_dossier', '=', $request->input('fn'))->first();
+        $client = Artiste::where('numero_dossier', '=', $request->input('fn'))->first();
         if($client->exists()) {
             /* Obtention du lien de paiement via l'API Aggrégateur */
             if(config('services.ngser.enabled')) {
@@ -500,7 +497,7 @@ class CertificatConformiteController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
-            $client = Client::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
+            $client = Artiste::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->updated_at->format('Y-m-d'))) );
                 $date_du_jour = date('Y-m-d', time());
@@ -554,7 +551,7 @@ class CertificatConformiteController extends Controller {
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
-            $client = Client::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            $client = Artiste::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());

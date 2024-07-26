@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 
 use App\Helpers\GeneratedTokensOrIDs;
-use App\Models\Client;
+use App\Models\Artiste;
 use DateTime;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
@@ -97,7 +97,7 @@ class NGSerAPI {
             $metadata = explode(env("NGSER_SERVICE_SALT"), $transaction_id);
             $form_number = $metadata[0];
             $payment_type = env('PAYMENT_TYPE');
-            $client = Client::where('numero_dossier', '=', $form_number)
+            $client = Artiste::where('numero_dossier', '=', $form_number)
                 ->where('integrator_data_status', '=', "ACCEPTED")
                 ->first();
             if(!empty($client)) {
@@ -264,7 +264,7 @@ class NGSerAPI {
                     d'un dossier à celui d'une autre personne */
                     if (!empty($form_number)) {
                         if(isset($payment_data['data']) && $payment_data['data']['code'] == "1") {
-                            $client = Client::where('numero_dossier', '=', $form_number)->first();
+                            $client = Artiste::where('numero_dossier', '=', $form_number)->first();
                             if($client) {
                                 if($client->integrator_data_status != "ACCEPTED") {
                                     (new SMS)->sendSMS(

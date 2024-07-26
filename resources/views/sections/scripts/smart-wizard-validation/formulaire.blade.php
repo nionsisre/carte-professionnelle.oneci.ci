@@ -5,11 +5,20 @@
     |--------------------------------------------------------------------------
     --}}
 
+    {{-- Variables --}}
+    var isBusy = false,
+        nni_data="", gender="", nickname="", last_name = "", first_name = "", spouse_name = "",
+        birth_date = "", birth_place = "", birth_country = "", nationality = "",
+        civil_status = "", number_of_children = "", other_activities = "", city = "",
+        town = "", street = "", address = "", workplace = "", msisdn = "",
+        attached_doc_number="", attached_doc="", attached_doc_size="", attached_doc_fsize="";
+
     {{-- Fonction pour valider l'adresse email --}}
     function isEmail(email) {
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         return regex.test(email);
     }
+
     {{-- Fonction Ajax pour checker le NNI --}}
     function checkNNI(){
         @if(config('services.verifapi.enabled'))
@@ -47,24 +56,10 @@
         });
         @endif
     }
-    {{-- Variables --}}
-    var isBusy = false,
-        nni_data="",
-        first_name = "", last_name = "", birth_date = "", mother_first_name = "", mother_last_name = "",
-        decision_first_name = "", decision_last_name = "", decision_birth_date = "", decision_lieu_naissance = "",
-        numero_decision = "", decision_date = "", lieu_delivrance = "", lieu_retrait = "",
-        cni_number="", cni_doc="", cni_doc_size="", cni_fsize="", pdf_doc="", pdf_doc_size="", fSize="", nni="",
-        email="", msisdn="";
 
-    {{-- Declenchement la detection de la taille de la CNI a charger --}}
-    $('#cni-doc-input').on('change', function () {
-        cni_doc_size = this.files[0].size;
-        {{-- console.log(cni_doc_size); --}}
-    });
     {{-- Declenchement la detection de la taille du document a charger --}}
-    $('#pdf-doc-input').on('change', function () {
-        pdf_doc_size = this.files[0].size;
-        {{-- console.log(pdf_doc_size); --}}
+    $('#attached-doc-input').on('change', function () {
+        attached_doc_size = this.files[0].size;
     });
 
     {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
@@ -85,20 +80,29 @@
             jQuery("#npdl-container").show();
         }
     });
-    {{-- Checker le NNI au remplissage de l'input ou au copier coller du NNI --}}
-    jQuery("#nni-field").bind("paste", function(e){
-        {{-- access the clipboard using the api --}}
-        let pastedData = e.originalEvent.clipboardData.getData('text');
-        if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
-            checkNNI();
+
+    {{-- Afficher masquer le champ nni selon que l'utilisateur en possède un ou non --}}
+    jQuery('input[name="gender"]').click(function() {
+        if(jQuery('#gender-male-input').is(':checked')) {
+            spouse_name = "";
+            jQuery("#spouse-name-input").val("");
+            jQuery("#spouse-name-container").hide();
+            jQuery("#last-name-container").removeClass("one-third");
+            jQuery("#first-name-container").removeClass("one-third");
+            jQuery("#last-name-container").addClass("one-half");
+            jQuery("#first-name-container").addClass("one-half");
+        } else if(jQuery('#gender-female-input').is(':checked')) {
+            spouse_name = "";
+            jQuery("#spouse-name-input").val("");
+            jQuery("#spouse-name-container").show();
+            jQuery("#last-name-container").removeClass("one-half");
+            jQuery("#first-name-container").removeClass("one-half");
+            jQuery("#last-name-container").addClass("one-third");
+            jQuery("#first-name-container").addClass("one-third");
         }
-    }).keyup(function() {
-        if(jQuery("#nni-input").val().length >= 11 && (!isBusy)) {
-            checkNNI();
-        } else {
-            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
-        }
-    })
+    });
+
+
     {{-- L'evenement "leaveStep" est utilise pour valider le formulaire --}}
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
         {{-- Validation uniquement que quand le sens de l'etape est suivant --}}
@@ -106,26 +110,50 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
-                    first_name = document.querySelectorAll('[name="first-name"]');
+                    gender = document.querySelectorAll('[name="gender"]:checked');
+                    nickname = document.querySelectorAll('[name="nickname"]');
                     last_name = document.querySelectorAll('[name="last-name"]');
+                    first_name = document.querySelectorAll('[name="first-name"]');
+                    spouse_name = document.querySelectorAll('[name="spouse-name"]');
                     birth_date = document.querySelectorAll('[name="birth-date"]');
-                    mother_first_name = document.querySelectorAll('[name="mother-first-name"]');
-                    mother_last_name = document.querySelectorAll('[name="mother-last-name"]');
-                    decision_first_name = document.querySelectorAll('[name="decision-first-name"]');
-                    decision_last_name = document.querySelectorAll('[name="decision-last-name"]');
-                    decision_birth_date = document.querySelectorAll('[name="decision-birth-date"]');
-                    decision_lieu_naissance = document.querySelectorAll('[name="decision-lieu-naissance"]');
-                    numero_decision = document.querySelectorAll('[name="numero-decision"]');
-                    decision_date = document.querySelectorAll('[name="decision-date"]');
-                    lieu_delivrance = document.querySelectorAll('[name="lieu-delivrance"]');
-                    lieu_retrait = document.querySelectorAll('[name="lieu-retrait"]');
+                    birth_place = document.querySelectorAll('[name="birth-place"]');
+                    birth_country = document.querySelectorAll('[name="birth-country"]');
+                    nationality = document.querySelectorAll('[name="nationality"]');
+                    civil_status = document.querySelectorAll('[name="civil-status"]');
+                    number_of_children = document.querySelectorAll('[name="number-of-children"]');
+                    other_activities = document.querySelectorAll('[name="other-activities"]');
+                    city = document.querySelectorAll('[name="city"]');
+                    town = document.querySelectorAll('[name="town"]');
+                    street = document.querySelectorAll('[name="street"]');
+                    address = document.querySelectorAll('[name="address"]');
+                    workplace = document.querySelectorAll('[name="workplace"]');
                     msisdn = document.querySelectorAll('[name="msisdn"]');
-                    {{-- email = jQuery(document.querySelectorAll('[name="email"]')).val(); --}}
-                    {{-- first_name --}}
-                    if (!jQuery(first_name).val()) {
+
+                    {{-- gender --}}
+                    if(!jQuery('#gender-male-input').is(':checked') && !jQuery('#gender-female-input').is(':checked')) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-venus-mars"></i><br/><br/><h3>Veuillez correctement renseigner votre genre SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index','2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    if (jQuery(gender).val().toUpperCase() === 'M') {
+                        jQuery(spouse_name).val('');
+                    }
+                    {{-- nickname --}}
+                    if (!jQuery(nickname).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre pseudonyme SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -143,6 +171,23 @@
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
                             <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
+                            </div><div class="modal-footer">\n\
+                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                        );
+                        jQuery('#modalError').modal({
+                            escapeClose: false,
+                            clickClose: false,
+                            showClose: false
+                        });
+                        jQuery('.blocker').css('z-index', '2');
+                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                        return false;
+                    }
+                    {{-- first_name --}}
+                    if (!jQuery(first_name).val()) {
+                        jQuery('#modalError').html(
+                            '<center> <div class="notification-box notification-box-error">\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -177,11 +222,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- mother_first_name --}}
-                    if (!jQuery(mother_first_name).val()) {
+                    {{-- birth_place --}}
+                    if (!jQuery(birth_place).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le/les prénom(s) de votre mère SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de naissance SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -194,11 +239,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- mother_last_name --}}
-                    if (!jQuery(mother_last_name).val()) {
+                    {{-- birth_country --}}
+                    if (!jQuery(birth_country).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le nom de votre mère SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner le pays de naissance SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -211,11 +256,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- decision_first_name --}}
-                    if (!jQuery(decision_first_name).val()) {
+                    {{-- nationality --}}
+                    if (!jQuery(nationality).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) sur la décision de justice SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-globe-africa"></i><br/><br/><h3>Veuillez correctement renseigner votre nationalité SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -228,11 +273,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- decision_last_name --}}
-                    if (!jQuery(decision_last_name).val()) {
+                    {{-- civil_status --}}
+                    if (!jQuery(civil_status).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom sur la décision de justice SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-rings-wedding"></i><br/><br/><h3>Veuillez correctement renseigner votre situation matrimoniale SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -245,16 +290,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- decision_birth_date --}}
-                    var decisionBirthdateFormatted = new Date(jQuery(decision_birth_date).val());
-                    var decisionMaxdate = new Date();
-                    var decisionMindate = new Date();
-                    decisionMaxdate.setFullYear(decisionMaxdate.getFullYear() - 10);
-                    decisionMindate.setFullYear(decisionMindate.getFullYear() - 140);
-                    if (!jQuery(decision_birth_date).val() || decisionBirthdateFormatted.getTime() < decisionMindate.getTime() || decisionBirthdateFormatted.getTime() > decisionMaxdate.getTime()) {
+                    {{-- number_of_children --}}
+                    if (!jQuery(number_of_children).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner votre date de naissance sur la décision de justice</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-baby"></i><br/><br/><h3>Veuillez correctement renseigner le nombre de vos enfants SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -267,11 +307,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- decision_lieu_naissance --}}
-                    if (!jQuery(decision_lieu_naissance).val()) {
+                    {{-- city --}}
+                    if (!jQuery(city).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de naissance sur la décision de justice SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre ville de résidence SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -284,11 +324,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- lieu_retrait --}}
-                    if (!jQuery(lieu_retrait).val()) {
+                    {{-- town --}}
+                    if (!jQuery(town).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-file-certificate"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de retrait de votre certificat de conformité SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre commune de résidence SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -301,11 +341,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- numero_decision --}}
-                    if (!jQuery(numero_decision).val()) {
+                    {{-- street --}}
+                    if (!jQuery(street).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-barcode"></i><br/><br/><h3>Veuillez correctement renseigner le numéro de la décision SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre quartier de résidence SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -318,33 +358,11 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- decision_date --}}
-                    var decisionDateFormatted = new Date(jQuery(decision_date).val());
-                    var decisionDateMaxdate = new Date();
-                    var decisionDateMindate = new Date();
-                    decisionDateMaxdate.setFullYear(decisionDateMaxdate.getFullYear());
-                    decisionDateMindate.setFullYear(decisionDateMindate.getFullYear() - 140);
-                    if (!jQuery(decision_date).val() || decisionDateFormatted.getTime() < decisionDateMindate.getTime() || decisionDateFormatted.getTime() > decisionDateMaxdate.getTime()) {
+                    {{-- workplace --}}
+                    if (!jQuery(workplace).val()) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-calendar-day"></i><br/><br/><h3>Veuillez correctement renseigner la date de la décision</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- lieu_delivrance --}}
-                    if (!jQuery(lieu_delivrance).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner le lieu de délivrance SVP</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de travail SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );
@@ -390,48 +408,7 @@
                         jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
                         return false;
                     }
-                    {{-- nni or cni_number --}}
-                    if(jQuery('#possession-nni-non').is(':checked')) {
-                        jQuery('#cni-number-container').show();
-                        {{--
-                        jQuery('#cni-number-container').html('<br/><br/>\n\
-                            <h2><i class="fa fa-id-card"></i> &nbsp; Pièce d\'identité :</h2>\n\
-                            <div class="form-group column-last" id="cni-number-field">\n\
-                                <label class="col-sm-2 control-label" id="cni-number-label">\n\
-                                Numéro de la Carte Nationale d\'Identité<span style="color: #d9534f">*</span> :\n\
-                                </label>\n\
-                                <div class="col-sm-10">\n\
-                                    <input type="text" id="cni-number-input" name="cni-number"\n\
-                                           placeholder="___________" maxlength="11" required="required"\n\
-                                           style="text-transform: uppercase; width: 17.4em; text-align: center"/>\n\
-                                </div>\n\
-                                <br/>\n\
-                            </div>\n\
-                            <div class="form-group" id="cni-doc-field">\n\
-                                <div class="col-sm-10">\n\
-                                    <div class="box">\n\
-                                        <input type="file" name="pdf_doc" id="cni-doc-input"\n\
-                                            class="inputfile" accept="application/pdf, image/jpeg, image/png"\n\
-                                            style="display: none">\n\
-                                        <label for="cni-doc-input" class="atcl-inv hoverable"\n\
-                                            style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i\n\
-                                            class="fad fa-id-card fa-3x mr10"\n\
-                                            style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger la CNI…</span></label>\n\
-                                    </div>\n\
-                                </div><br/>\n\
-                                <label for="cni-doc-input" class="col-sm-2 control-label">\n\
-                                    Le document à charger doit être un scan <b>recto verso</b> de la Carte Nationale d\'Identité <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,\n\
-                                    avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.\n\
-                                </label>\n\
-                                <br/>\n\
-                            </div>');
-                            --}}
-                    } else if(jQuery('#possession-nni-oui').is(':checked')) {
-                        jQuery('#cni-number-container').hide();
-                        {{--
-                        jQuery('#cni-number-container').html('');
-                        --}}
-                    }
+
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;
                 {{-- Step 2 --}}

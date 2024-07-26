@@ -17,7 +17,7 @@
         --}}
         jQuery(document).ready(function () {
             {{-- Désactive le bouton suivant du wizard --}}
-            jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
+            {{-- jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true); --}}
             {{--jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");--}}
             @if(session()->has('client'))
                 {{-- Désactive les étapes pré-paiement du wizard --}}
@@ -70,7 +70,7 @@
                                                 class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
                                             Informations</a></li>
                                     <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
-                                            &nbsp; Etape 3 : Documents justificatifs</a></li>
+                                            &nbsp; Etape 3 : Titre d'Identité</a></li>
                                     <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
                                             &nbsp; Etape 4 : Récapitulatif</a></li>
                                     <li><a class="nav-link" href="#etape-5"><i class="fa fa-money-check text-white"></i>
@@ -166,7 +166,7 @@
                                                         class="fa fa-info-circle text-white"></i> &nbsp; Etape 1 :
                                                     Informations</a></li>
                                             <li><a class="nav-link" href="#etape-2"><i class="fa fa-id-card text-white"></i>
-                                                    &nbsp; Etape 2 : Documents justificatifs</a></li>
+                                                    &nbsp; Etape 2 : Titre d'Identité</a></li>
                                             <li><a class="nav-link" href="#etape-3"><i class="fa fa-eye text-white"></i>
                                                     &nbsp; Etape 3 : Récapitulatif</a></li>
                                             <li><a class="nav-link" href="#etape-4"><i class="fa fa-money-check text-white"></i>
@@ -178,19 +178,19 @@
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
                                                 <div id="npdl-container">
                                                     <br/><br/>
-                                                    <h2>Informations sur le DJ :</h2>
+                                                    <h2><i class="fa fa-info-circle"></i> &nbsp; Informations sur le DJ :</h2>
                                                     <br/>
                                                     <div class="container clearfix">
-                                                        <x-input-radio title="Genre" name="possession_nni"
+                                                        <x-input-radio title="Genre" name="gender"
                                                             :options="[
-                                                                ['id' => 'gender-male-input', 'value' => 'M', 'label' => 'Homme', 'checked' => true, 'icon' => 'fa fa-mars'],
+                                                                ['id' => 'gender-male-input', 'value' => 'M', 'label' => 'Homme', 'checked' => false, 'icon' => 'fa fa-mars'],
                                                                 ['id' => 'gender-female-input', 'value' => 'F', 'label' => 'Femme', 'checked' => false, 'icon' => 'fa fa-venus']
                                                             ]"
                                                             required="true"
                                                         /><br/>
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-text id="pseudo-input" name="pseudo" label="Pseudonyme" placeholder="Nom d'artiste..." maxlength="150" required="true" width="16em" column="" />
+                                                        <x-input-text id="nickname-input" name="nickname" label="Pseudonyme" placeholder="Nom d'artiste..." maxlength="150" required="true" width="16em" column="" />
                                                     </div>
                                                     <div class="container clearfix">
                                                         {{--
@@ -208,7 +208,7 @@
                                                         --}}
                                                         <x-input-text id="last-name-input" name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="13em" column="one-third" />
                                                         <x-input-text id="first-name-input" name="first-name" label="Prénom(s)" placeholder="Prénom(s)..." maxlength="150" required="true" width="13.4em" column="one-third" />
-                                                        <x-input-text id="spouse-name-input" name="spouse-name" label="Nom de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
+                                                        <x-input-text id="spouse-name-input" name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
                                                     </div>
                                                     <div class="container clearfix">
                                                         <x-input-date id="birth-date-input" name="birth-date" label="Né(e) le" placeholder="Date de naissance..." required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
@@ -228,7 +228,7 @@
                                                     </div>
                                                 </div>
                                                 <br/><br/>
-                                                <h2>Situation Géographique</h2>
+                                                <h2><i class="fa fa-map-marker-alt"></i> &nbsp; Situation Géographique</h2>
                                                 <br/>
                                                 <div class="container clearfix">
                                                     <x-input-text id="city-input" name="city" label="Ville" placeholder="Ville..." required="true" maxlength="100" width="13em" column="one-third" />
@@ -244,43 +244,87 @@
                                                 </div><br/><br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
-                                                <div id="cni-number-container">
+                                                <div id="doc-container">
+
                                                     <br/><br/>
-                                                    <h2><i class="fa fa-id-card"></i> &nbsp; Pièce d'identité :</h2>
-                                                    <div class="form-group column-last" id="cni-number-field">
-                                                        <label class="col-sm-2 control-label" id="cni-number-label">
-                                                            Numéro de la Carte Nationale d'Identité<span style="color: #d9534f">*</span> :
+                                                    <h2><i class="fa fa-id-card"></i> &nbsp; Titre d'identité :</h2>
+                                                    <div class="form-group col-sm-12 column-last" id="doc-type-field">
+                                                        <label class="col-sm-2 control-label">
+                                                            Type de pièce d'identité<span style="color: #d9534f">*</span> :
+                                                        </label>
+                                                        <span style="display: none" id="err-toast"></span>
+                                                        <div class="col-sm-10">
+                                                            <select class="form-control good-select"
+                                                                    id="doc-type" name="doc-type" required="required"
+                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
+                                                                <option value="" selected disabled>Type de pièce d'identité</option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div><br/>
+                                                    <div class="form-group col-sm-12 column-last" id="cni-type-field" style="display: none">
+                                                        <span style="display: none" id="err-toast"></span>
+                                                        <div class="col-sm-10">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-12">
+                                                                    <div class="col-sm-6 ckbox ckbox-success" >
+                                                                        <input type="radio" name="id-card-type" id="old-format-card" value="CNI_2009" style="width: auto; box-shadow:none" />
+                                                                        <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><!--<img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;">--> &nbsp; CNI <em>(ancien format valide)</em></label>
+                                                                    </div>
+                                                                    <div class="col-sm-6 ckbox ckbox-success">
+                                                                        <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" checked="checked" />
+                                                                        <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" alt="icône CNI 2020" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label>
+                                                                    </div>
+                                                                    <br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group column-last" id="document-number-field">
+                                                        <label class="col-sm-2 control-label" id="document-number-label">
+                                                            Numéro NNI<span style="color: #d9534f">*</span> :
                                                         </label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="cni-number-input" name="cni-number"
-                                                                   placeholder="___________" maxlength="11"
+                                                            <input type="text" id="document-number-input" name="document-number"
+                                                                   placeholder="___________" maxlength="11" required="required"
                                                                    style="text-transform: uppercase; width: 17.4em; text-align: center"/>
                                                         </div>
                                                         <br/>
                                                     </div>
-                                                    <div class="form-group" id="cni-doc-field">
+                                                    <div class="form-group column-last" id="document-expiry-field">
+                                                        <label class="col-sm-2 control-label" id="document-expiry-label">
+                                                            <em>Date d'expiration :</em>
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <input type="date" id="document-expiry-input" name="document-expiry" placeholder="__/__/____"
+                                                                   max="{{ date('Y-m-d', strtotime('+20 years')) }}"
+                                                                   min="{{ date('Y-m-d', strtotime('-5 years')) }}" style="width: 17.4em; text-align: center"/>
+                                                        </div>
+                                                    </div><br/>
+                                                    <div class="form-group" id="pdf-doc-field">
                                                         <div class="col-sm-10">
                                                             <div class="box">
-                                                                <input type="file" name="cni-doc" id="cni-doc-input"
+                                                                <input type="file" name="pdf_doc" id="pdf-doc-input"
                                                                        class="inputfile" accept="application/pdf, image/jpeg, image/png"
                                                                        style="display: none">
-                                                                <label for="cni-doc-input" class="atcl-inv hoverable"
+                                                                <label for="pdf-doc-input" class="atcl-inv hoverable"
                                                                        style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i
-                                                                        class="fad fa-id-card fa-3x mr10"
-                                                                        style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger la CNI…</span></label>
+                                                                        class="fad fa-file-pdf fa-3x mr10"
+                                                                        style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
                                                             </div>
                                                         </div><br/>
-                                                        <label for="cni-doc-input" class="col-sm-2 control-label">
-                                                            Le document à charger doit être un scan <b>recto verso</b> de la Carte Nationale d'Identité <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,
-                                                            avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.
+                                                        <label for="pdf-doc-input" class="col-sm-2 control-label">
+                                                            <em>Le document à charger doit être un scan <b>recto verso</b> du document <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,
+                                                                avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.</em>
                                                         </label>
                                                         <br/>
                                                     </div>
-                                                </div>
-                                                <div id="pdf-doc-container">
+                                                    <br/><br/>
+
+
                                                     <br/><br/>
                                                     <h2><i class="fa fa-balance-scale"></i> &nbsp; Décision Judiciaire :</h2>
-                                                    <div class="form-group" id="pdf-doc-field">
+                                                    <div class="form-group" id="doc-field">
                                                         <div class="col-sm-10">
                                                             <div class="box">
                                                                 <input type="file" name="pdf-doc" id="pdf-doc-input"

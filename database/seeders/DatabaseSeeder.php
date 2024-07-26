@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\OstatPlusTypeService;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,6 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
+        $this->call(ArtisteStatutSeeder::class);
+        $this->call(ArtisteTypePieceSeeder::class);
+        $this->call(CivilStatusSeeder::class);
     }
 }

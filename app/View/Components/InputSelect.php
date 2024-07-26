@@ -29,7 +29,7 @@ class InputSelect extends Component {
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
     public function render() {
-        return view('components.input-select');
+        return view('components.inputs.input-select');
     }
 
 }

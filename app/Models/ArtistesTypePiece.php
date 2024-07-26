@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DirecteurGeneral extends Model
-{
+class ArtistesTypePiece extends Model {
+
     use HasFactory;
 
-    protected $table = 'directeur_general';
     public $guarded = [];
+    public $timestamps = false;
+
+    public function artistes() {
+        return $this->hasMany(Artiste::class, 'id');
+    }
+
 }

@@ -31,7 +31,7 @@ class InputRadio extends Component {
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
     public function render() {
-        return view('components.input-radio');
+        return view('components.inputs.input-radio');
     }
 
 }
