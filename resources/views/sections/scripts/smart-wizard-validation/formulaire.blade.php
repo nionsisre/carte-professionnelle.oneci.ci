@@ -484,7 +484,7 @@
                     if (!escape(jQuery(pdf_doc).val())) {
                         jQuery('#modalError').html(
                             '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-balance-scale"></i><br/><br/><h3>Veuillez charger la décision judiciaire</h3></div>\n\
+                            <div class="modal-header"><i class="fa fa-2x fa-id-card"></i><br/><br/><h3>Veuillez charger votre titre d\'identité SVP</h3></div>\n\
                             </div><div class="modal-footer">\n\
                             <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
                         );

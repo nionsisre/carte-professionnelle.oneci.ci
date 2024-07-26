@@ -9,6 +9,7 @@ use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
 use App\Models\Artiste;
+use App\Models\ArtistesTypePiece;
 use App\Models\DirecteurGeneral;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Foundation\Application;
@@ -48,6 +49,7 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
+        $artistes_type_pieces = ArtistesTypePiece::all();
 
         /*// Implémentation paynah
         $data = array(
@@ -77,6 +79,7 @@ class CertificatConformiteController extends Controller {
 
         return view('pages.certificat.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
+            'artistes_type_pieces' => $artistes_type_pieces,
             'centres' => $centres
         ]);
     }

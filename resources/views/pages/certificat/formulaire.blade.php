@@ -258,7 +258,9 @@
                                                                     id="doc-type" name="doc-type" required="required"
                                                                     style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
                                                                 <option value="" selected disabled>Type de pièce d'identité</option>
-
+                                                                @foreach($artistes_type_pieces as $artistes_type_piece)
+                                                                    <option value="{{ $artistes_type_piece->id }}">{{ $artistes_type_piece->libelle_piece }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div><br/>
@@ -320,28 +322,6 @@
                                                         <br/>
                                                     </div>
                                                     <br/><br/>
-
-
-                                                    <br/><br/>
-                                                    <h2><i class="fa fa-balance-scale"></i> &nbsp; Décision Judiciaire :</h2>
-                                                    <div class="form-group" id="doc-field">
-                                                        <div class="col-sm-10">
-                                                            <div class="box">
-                                                                <input type="file" name="pdf-doc" id="pdf-doc-input"
-                                                                       class="inputfile" accept="application/pdf, image/jpeg, image/png"
-                                                                       style="display: none">
-                                                                <label for="pdf-doc-input" class="atcl-inv hoverable"
-                                                                       style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i
-                                                                        class="fad fa-file-pdf fa-3x mr10"
-                                                                        style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
-                                                            </div>
-                                                        </div><br/>
-                                                        <label for="pdf-doc-input" class="col-sm-2 control-label">
-                                                            <em>Le document à charger doit être un scan du document  au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,
-                                                                avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.</em>
-                                                        </label>
-                                                        <br/>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div id="etape-3" class="tab-pane" role="tabpanel">
