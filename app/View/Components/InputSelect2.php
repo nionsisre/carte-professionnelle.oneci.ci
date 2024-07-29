@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 class InputSelect2 extends Component {
 
-    public $id;
     public $title;
     public $name;
     public $label;
@@ -16,12 +15,20 @@ class InputSelect2 extends Component {
     public $column;
 
     /**
-     * Create a new component instance.
+     * Constructor method for the class.
      *
+     * Description: Initializes all the properties of the class.
+     *
+     * @param array $options
+     * @param string $title
+     * @param string $name
+     * @param string $label
+     * @param bool $required
+     * @param string $width
+     * @param string $column
      * @return void
      */
-    public function __construct($options, $id="", $title="", $name="", $label="", $required=false, $width="0", $column="") {
-        $this->id = $id;
+    public function __construct($options, $title="", $name="", $label="", $required=false, $width="0", $column="") {
         $this->title = $title;
         $this->name = $name;
         $this->label = $label;

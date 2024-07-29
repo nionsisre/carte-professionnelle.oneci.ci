@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 class InputSelectCountry extends Component {
 
-    public $id;
     public $name;
     public $label;
     public $placeholder;
@@ -18,7 +17,6 @@ class InputSelectCountry extends Component {
     /**
      * Create a new instance.
      *
-     * @param int $id The identifier of the input.
      * @param string $name The name of the input.
      * @param string $label The label of the input.
      * @param string $placeholder The placeholder content of the input.
@@ -28,8 +26,7 @@ class InputSelectCountry extends Component {
      * @param int $column The column in which the input is placed.
      * @return void
      */
-    public function __construct($id, $name, $label, $placeholder, $maxlength, $required=false, $width="0", $column="") {
-        $this->id = $id;
+    public function __construct($name, $label, $placeholder, $maxlength, $required=false, $width="0", $column="") {
         $this->name = $name;
         $this->label = $label;
         $this->placeholder = $placeholder;

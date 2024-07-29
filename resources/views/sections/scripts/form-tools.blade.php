@@ -78,4 +78,20 @@
             /* ,statusCode: { 500: function (data, textStatus) {} */
         });
     }
+
+    /**
+     * Prend une chaîne de caractères représentant une date au format "YYYY-MM-DD"
+     * et la reformate au format "DD/MM/YYYY".
+     *
+     * @param {string} dateString - La date à reformater, exprimée au format "YYYY-MM-DD".
+     *
+     * @returns {string} - La date reformatée au format "DD/MM/YYYY".
+     */
+    function formatDate(dateString) {
+        // Découpe la chaîne dateString en utilisant le séparateur '-'
+        const parts = dateString.split('-');
+        // Réarrange les parties dans le format souhaité
+        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        return formattedDate;
+    }
 </script>

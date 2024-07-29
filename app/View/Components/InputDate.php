@@ -6,7 +6,6 @@ use Illuminate\View\Component;
 
 class InputDate extends Component {
 
-    public $id;
     public $name;
     public $label;
     public $placeholder;
@@ -19,7 +18,6 @@ class InputDate extends Component {
     /**
      * Constructs a new instance of the class.
      *
-     * @param mixed $id The identifier of the element.
      * @param string $name The name of the element.
      * @param string $label The label for the element.
      * @param string $placeholder The placeholder text for the element.
@@ -28,8 +26,7 @@ class InputDate extends Component {
      * @param int $width The width of the element.
      * @param int $column The column of the element.
      */
-    public function __construct($id, $name, $label, $placeholder, $required=false, $min="", $max="", $width="0", $column="") {
-        $this->id = $id;
+    public function __construct($name, $label, $placeholder, $required=false, $min="", $max="", $width="0", $column="") {
         $this->name = $name;
         $this->label = $label;
         $this->placeholder = $placeholder;

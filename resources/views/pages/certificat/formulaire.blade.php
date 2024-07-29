@@ -7,9 +7,9 @@
     @include('sections.scripts.form-masks')
     @include('sections.scripts.smart-wizard')
     @include('sections.scripts.custom-input-file')
-    @include('sections.scripts.smart-wizard-validation.formulaire')
-    @include('sections.scripts.copy-to-clipboard')
     @include('sections.scripts.form-tools')
+    @include('sections.scripts.copy-to-clipboard')
+    @include('sections.scripts.smart-wizard-validation.formulaire')
     <script>
         {{--jQuery('.sw-btn-next').each(function () {
             jQuery(this).addClass('disabled');
@@ -21,11 +21,11 @@
             {{--jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");--}}
             @if(session()->has('client'))
                 {{-- Désactive les étapes pré-paiement du wizard --}}
-                jQuery('#smartwizard').smartWizard("setState", [0,1,2,3], "disable");
+                jQuery('#smartwizard').smartWizard("setState", [0,1,2], "disable");
                 jQuery('#smartwizard').smartWizard("goToStep", 4);
             @else
                 {{-- Désactive les étapes post-paiement du wizard --}}
-                jQuery('#smartwizard').smartWizard("setState", [4,5], "disable");
+                jQuery('#smartwizard').smartWizard("setState", [3,4], "disable");
             @endif
         });
         function lwsbmt(frm_id) {
@@ -183,8 +183,8 @@
                                                     <div class="container clearfix">
                                                         <x-input-radio title="Genre" name="gender"
                                                             :options="[
-                                                                ['id' => 'gender-male-input', 'value' => 'M', 'label' => 'Homme', 'checked' => false, 'icon' => 'fa fa-mars'],
-                                                                ['id' => 'gender-female-input', 'value' => 'F', 'label' => 'Femme', 'checked' => false, 'icon' => 'fa fa-venus']
+                                                                ['id' => 'gender-male', 'value' => 'M', 'label' => 'Homme', 'checked' => false, 'icon' => 'fa fa-mars'],
+                                                                ['id' => 'gender-female', 'value' => 'F', 'label' => 'Femme', 'checked' => false, 'icon' => 'fa fa-venus']
                                                             ]"
                                                             required="true"
                                                         /><br/>
@@ -241,7 +241,7 @@
                                                 </div>
                                                 <div class="container clearfix">
                                                     <x-input-text id="address-input" name="address" label="Adresse" placeholder="Adresse..." maxlength="100" width="13em" column="one-half" />
-                                                    <x-input-text id="workplace-input" name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." required="true" maxlength="100" width="13em" column="one-half" />
+                                                    <x-input-text name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." required="true" maxlength="100" width="13em" column="one-half" />
                                                 </div>
                                                 <div class="container clearfix">
                                                     <x-input-tel-ci id="msisdn-input" name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" required="true" maxlength="100" width="13em" column="" />
@@ -254,28 +254,10 @@
                                                     <h2><i class="fa fa-id-card"></i> &nbsp; Titre d'identité :</h2>
                                                     <x-input-select2 :options="$artistes_type_pieces->map(function($artistes_type_piece) {
                                                                 return ['value' => $artistes_type_piece->id, 'label' => $artistes_type_piece->libelle_piece];
-                                                            })->toArray()" id="attached-doc-type-field" title="Type de pièce d'identité" name="attached-doc-type" label="Type de pièce d'identité..." required="true" width="17.5em" column="col-sm-12"
-                                                    />
-                                                    <x-input-text id="attached-doc-number-input" name="attached-doc-number" label="Numéro du document" placeholder="____________" required="true" maxlength="30" width="13em" column="" />
-                                                    <x-input-date id="attached-doc-expiry-date-input" name="attached-doc-expiry-date" label="Date d'expiration" placeholder="__/__/____" required="true" min="{{ date('Y-m-d', strtotime('-5 years')) }}" max="{{ date('Y-m-d', strtotime('+20 years')) }}" width="10.5em" column="" /><br/>
-                                                    <div class="form-group" id="pdf-doc-field">
-                                                        <div class="col-sm-10">
-                                                            <div class="box">
-                                                                <input type="file" name="pdf_doc" id="pdf-doc-input"
-                                                                       class="inputfile" accept="application/pdf, image/jpeg, image/png"
-                                                                       style="display: none">
-                                                                <label for="pdf-doc-input" class="atcl-inv hoverable"
-                                                                       style="background-color: #bdbdbd6b;padding: 2em;border: 1px dashed black;border-radius: 1em; width: 20em;"><i
-                                                                        class="fad fa-file-pdf fa-3x mr10"
-                                                                        style="padding: 0.2em 0;--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.2em"></i><br/><i class="fa fa-file-upload"></i> &nbsp; <span>Charger le document…</span></label>
-                                                            </div>
-                                                        </div><br/>
-                                                        <label for="pdf-doc-input" class="col-sm-2 control-label">
-                                                            <em>Le document à charger doit être un scan <b>recto verso</b> du document <b>sur la même face</b> au format <b>*.pdf</b>, <b>*.jpg</b> ou <b>*.png</b>,
-                                                                avoir une résolution minimum de <b>150 dpi</b> et ne doit pas excéder <b>1 Mo</b>.</em>
-                                                        </label>
-                                                        <br/>
-                                                    </div>
+                                                            })->toArray()" name="attached-doc-type" title="Type de pièce d'identité" label="Type de pièce d'identité..." required="true" width="17.5em" column="col-sm-12" />
+                                                    <x-input-text name="attached-doc-number" label="Numéro du document" placeholder="____________" required="true" maxlength="30" width="13em" column="" />
+                                                    <x-input-date name="attached-doc-expiry-date" label="Date d'expiration" placeholder="__/__/____" required="true" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+20 years')) }}" width="10.5em" column="" /><br/>
+                                                    <x-input-file name="attached-doc" icon="id-card" required="true" />
                                                     <br/><br/>
                                                 </div>
                                             </div>
@@ -283,60 +265,69 @@
                                                 <br/><br/>
                                                 <h2>Récapitulatif :</h2>
                                                 <div class="form-group col-sm-12 column-last" id="doc-type-field">
-                                                    <label class="col-sm-2 control-label" id="recap-cni-container">
-                                                        Numéro CNI<br/><b><span id="recap-cni"></span></b>
-                                                    </label>
-                                                    <label class="col-sm-2 control-label" id="recap-nni-container">
-                                                        Numéro NNI<br/><b><span id="recap-nni"></span></b>
-                                                    </label><br/>
+
                                                     <label class="col-sm-2 control-label">
-                                                        Nom : <b><span id="recap-last-name"></span></b>
-                                                    </label>
+                                                        Pseudonyme : <b><span id="recap-nickname"></span></b>
+                                                    </label><br/>
+
                                                     <label class="col-sm-2 control-label">
                                                         Prénom(s) : <b><span id="recap-first-name"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Né(e) le : <b><span id="recap-birth-date"></span></b>
+                                                        Nom : <b><span id="recap-last-name"></span></b>
                                                     </label>
-                                                    <label class="col-sm-2 control-label" style="display: none">
-                                                        Nom de la mère : <b><span id="recap-mother-last-name"></span></b>
+                                                    <label class="col-sm-2 control-label">
+                                                        Genre : <b><span id="recap-gender"></span></b>
                                                     </label>
-                                                    <label class="col-sm-2 control-label" style="display: none">
-                                                        Prénom(s) de la mère : <b><span id="recap-mother-first-name"></span></b>
+                                                    <label class="col-sm-2 control-label">
+                                                        Date de naissance : <b><span id="recap-birth-date"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Lieu de naissance : <b><span id="recap-birth-place"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Pays de naissance : <b><span id="recap-birth-country"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Nationalité : <b><span id="recap-nationality"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Statut matrimonial : <b><span id="recap-civil-status"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Nombre d'enfant(s) : <b><span id="recap-number-of-children"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Autre activité : <b><span id="recap-other-activities"></span></b>
                                                     </label><br/>
+
                                                     <label class="col-sm-2 control-label">
-                                                        Nom sur la décision de justice : <b><span id="recap-decision-last-name"></span></b>
+                                                        Ville : <b><span id="recap-city"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Prénom(s) sur la décision de justice : <b><span id="recap-decision-first-name"></span></b>
+                                                        Commune : <b><span id="recap-town"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Date de Naissance sur la décision : <b><span id="recap-decision-birth-date"></span></b>
+                                                        Quartier : <b><span id="recap-street"></span></b>
                                                     </label>
                                                     <label class="col-sm-2 control-label">
-                                                        Lieu de naissance : &nbsp; <b><span id="recap-decision-birth-place"></span></b>
+                                                        Adresse : <b><span id="recap-address"></span></b>
+                                                    </label>
+                                                    <label class="col-sm-2 control-label">
+                                                        Lieu de travail : <b><span id="recap-workplace"></span></b>
                                                     </label><br/>
-                                                    <label class="col-sm-2 control-label">
-                                                        Numéro de la décision : <b><span id="recap-numero-decision"></span></b>
-                                                    </label>
-                                                    <label class="col-sm-2 control-label">
-                                                        Date de la décision : <b><span id="recap-decision-date"></span></b>
-                                                    </label>
-                                                    <label class="col-sm-2 control-label">
-                                                        Lieu de délivrance : <b><span id="recap-lieu-delivrance"></span></b>
-                                                    </label><br/>
-                                                    <label class="col-sm-2 control-label">
-                                                        Lieu de retrait du certificat de conformité :  &nbsp; <b><i class="fa fa-map-marker-alt"></i> &nbsp; <span id="recap-lieu-retrait"></span></b>
-                                                    </label><br/>
+
                                                     <label class="col-sm-2 control-label">
                                                         Numéro de téléphone :  &nbsp; <b><i class="fa fa-sim-card"></i> &nbsp; <span id="recap-msisdn"></span></b>
                                                     </label><br/>
-                                                    <label class="col-sm-2 control-label" id="recap-cni-doc-container">
-                                                        Carte Nationale d'Identité : &nbsp; <b><i class="fa fa-id-card"></i> &nbsp; <span id="recap-cni-doc"></span></b>
+
+                                                    <label class="col-sm-2 control-label" id="recap-attached-doc-field">
+                                                        Titre d'identité : &nbsp; <b><i class="fa fa-paperclip"></i> &nbsp; <span id="recap-attached-doc"></span></b>
                                                     </label>
-                                                    <label class="col-sm-2 control-label">
-                                                        Décision Judiciaire : &nbsp; <b><i class="fa fa-balance-scale"></i> &nbsp; <span id="recap-pdf-doc"></span></b>
-                                                    </label><br/><br/>
+                                                    <label class="col-sm-2 control-label" id="recap-attached-doc-number-field">
+                                                        Numéro du titre : &nbsp; <b><span id="recap-attached-doc-number"></span></b>
+                                                    </label>
+                                                    <br/><br/>
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
                                                             <div class="col-sm-6 ckbox ckbox-success" style="padding: 1em; border: 1px dashed #333;border-radius: 2em">
@@ -346,6 +337,7 @@
                                                             <br/>
                                                         </div>
                                                     </div>
+
                                                 </div><br/>
                                                 <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                                                 <div class="col-sm-12">
