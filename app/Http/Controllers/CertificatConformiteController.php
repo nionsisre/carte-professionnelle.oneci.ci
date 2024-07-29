@@ -10,6 +10,7 @@ use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
 use App\Models\Artiste;
 use App\Models\ArtistesTypePiece;
+use App\Models\CivilStatus;
 use App\Models\DirecteurGeneral;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Foundation\Application;
@@ -50,35 +51,11 @@ class CertificatConformiteController extends Controller {
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
         $artistes_type_pieces = ArtistesTypePiece::all();
-
-        /*// Implémentation paynah
-        $data = array(
-            "amount" => $price,
-            "transaction_id" => $transaction_id,
-            "description" => "Paiement Frais de Service VIP",
-            "lang" => "fr",
-            "currency" => "XOF",
-            "channel" => "MOBILE_MONEY",
-            "country_code" => "CI",
-            "notif_url" => "https://www.oneci.ci/paynah/notify",
-            "return_url" => "https://www.oneci.ci/paynah/return"
-        );
-        $payload = json_encode($data);
-        $opts = array(
-            "http" => array(
-                "method" => "POST",
-                "header" => "Content-Type: application/json\r\n" .
-                    "x-api-key: NGNjNDRjMmMtNDY4Ni00OTdkLTkxMDMtYmI5NzQzOGI4ZjNj\r\n" .
-                    "x-api-secret: ZXlKaGJHY2lPaUpJVXpJMU5pSjkuWVRZeE5EQmtNV0V0TVdZeU1DMDBOalV6TFRrNU56Y3RNalU1TWpCaFpUQmxPV1l3LlE0dGotVTh3UlJMcjhJWFNHT1g4WThpZWNOaDN6RHFpWk52aXdhTkVNR0k=\r\n".
-                    "Connection: close\r\n",
-                "content" => $payload
-            )
-        );
-        $context = stream_context_create($opts);
-        $response = file_get_contents('https://payin.api-v2.paynah.com/v2/intents', false, $context); */
+        $civil_statuses = CivilStatus::all();
 
         return view('pages.certificat.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
+            'civil_statuses' => $civil_statuses,
             'artistes_type_pieces' => $artistes_type_pieces,
             'centres' => $centres
         ]);
@@ -105,7 +82,7 @@ class CertificatConformiteController extends Controller {
 
         $abonnes_operateurs = AbonnesOperateur::all();
         $civil_status_center = DB::table('civil_status_center')->get();
-        $abonnes_type_pieces = AbonnesTypePiece::all();
+        $abonnes_type_pieces = Artiste::all();
 
         return view('pages.reclamation-paiement', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
@@ -119,7 +96,7 @@ class CertificatConformiteController extends Controller {
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
      * Cette méthode est appelée automatiquement par le listener javascript du navigateur du client
-     * après avoir saisi son NNI afin de pré-remplir les informations de l'utilisateur<br/><br/>
+     * après avoir saisi son NNI afin de préremplir les informations de l'utilisateur<br/><br/>
      * <b>RedirectResponse</b> verifapi(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response

@@ -11,6 +11,7 @@ class InputDate extends Component {
     public $label;
     public $placeholder;
     public $required;
+    public $min;
     public $max;
     public $width;
     public $column;
@@ -27,12 +28,13 @@ class InputDate extends Component {
      * @param int $width The width of the element.
      * @param int $column The column of the element.
      */
-    public function __construct($id, $name, $label, $placeholder, $required=false, $max="100", $width="0", $column="") {
+    public function __construct($id, $name, $label, $placeholder, $required=false, $min="", $max="", $width="0", $column="") {
         $this->id = $id;
         $this->name = $name;
         $this->label = $label;
         $this->placeholder = $placeholder;
         $this->required = $required;
+        $this->min = $min;
         $this->max = $max;
         $this->width = $width;
         $this->column = $column;

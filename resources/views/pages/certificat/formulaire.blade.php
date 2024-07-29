@@ -211,7 +211,7 @@
                                                         <x-input-text id="spouse-name-input" name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-date id="birth-date-input" name="birth-date" label="Né(e) le" placeholder="Date de naissance..." required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
+                                                        <x-input-date id="birth-date-input" name="birth-date" label="Né(e) le" placeholder="__/__/____" required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
                                                         <x-input-text id="birth-place-input" name="birth-place" label="Lieu de naissance" placeholder="Lieu de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
@@ -219,9 +219,13 @@
                                                         <x-input-text id="nationality-input" name="nationality" label="Nationalité" placeholder="Nationalité..." required="true" maxlength="70" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-select2 :options="[
+                                                        {{--<x-input-select2 :options="[
                                                                 ['value' => '0', 'label' => 'Célibataire'],['value' => '1', 'label' => 'Marié(e)'],['value' => '2', 'label' => 'Divorcé(e)'],['value' => '3', 'label' => 'Veuf / veuve']
                                                             ]" id="civil-status-field" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
+                                                        />--}}
+                                                        <x-input-select2 :options="$civil_statuses->map(function($civil_status) {
+                                                                return ['value' => $civil_status->id, 'label' => $civil_status->libelle_statut];
+                                                            })->toArray()" id="civil-status-field" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
                                                         />
                                                         <x-input-number id="number-of-children-input" name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="13.4em" column="one-third" />
                                                         <x-input-text id="other-activities-input" name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
@@ -248,61 +252,12 @@
 
                                                     <br/><br/>
                                                     <h2><i class="fa fa-id-card"></i> &nbsp; Titre d'identité :</h2>
-                                                    <div class="form-group col-sm-12 column-last" id="doc-type-field">
-                                                        <label class="col-sm-2 control-label">
-                                                            Type de pièce d'identité<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10">
-                                                            <select class="form-control good-select"
-                                                                    id="doc-type" name="doc-type" required="required"
-                                                                    style="width: 17.5em; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
-                                                                <option value="" selected disabled>Type de pièce d'identité</option>
-                                                                @foreach($artistes_type_pieces as $artistes_type_piece)
-                                                                    <option value="{{ $artistes_type_piece->id }}">{{ $artistes_type_piece->libelle_piece }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div><br/>
-                                                    <div class="form-group col-sm-12 column-last" id="cni-type-field" style="display: none">
-                                                        <span style="display: none" id="err-toast"></span>
-                                                        <div class="col-sm-10">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-12">
-                                                                    <div class="col-sm-6 ckbox ckbox-success" >
-                                                                        <input type="radio" name="id-card-type" id="old-format-card" value="CNI_2009" style="width: auto; box-shadow:none" />
-                                                                        <label for="old-format-card" style="display: inline-block;" class="col-sm-5"><!--<img src="{{ URL::asset('assets/images/cni_old_example.png') }}" style="position: relative;top: 0.7em;">--> &nbsp; CNI <em>(ancien format valide)</em></label>
-                                                                    </div>
-                                                                    <div class="col-sm-6 ckbox ckbox-success">
-                                                                        <input type="radio" name="id-card-type" id="new-format-card" value="CNI_2019" style="width: auto; box-shadow:none" checked="checked" />
-                                                                        <label for="new-format-card" style="display: inline-block;" class="col-sm-5"><b><img src="{{ URL::asset('assets/images/cni_new_example.png') }}" alt="icône CNI 2020" style="position: relative;top: 0.7em;"> &nbsp; CNI <em>(Nouveau Format)</em></b></label>
-                                                                    </div>
-                                                                    <br/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group column-last" id="document-number-field">
-                                                        <label class="col-sm-2 control-label" id="document-number-label">
-                                                            Numéro NNI<span style="color: #d9534f">*</span> :
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="text" id="document-number-input" name="document-number"
-                                                                   placeholder="___________" maxlength="11" required="required"
-                                                                   style="text-transform: uppercase; width: 17.4em; text-align: center"/>
-                                                        </div>
-                                                        <br/>
-                                                    </div>
-                                                    <div class="form-group column-last" id="document-expiry-field">
-                                                        <label class="col-sm-2 control-label" id="document-expiry-label">
-                                                            <em>Date d'expiration :</em>
-                                                        </label>
-                                                        <div class="col-sm-10">
-                                                            <input type="date" id="document-expiry-input" name="document-expiry" placeholder="__/__/____"
-                                                                   max="{{ date('Y-m-d', strtotime('+20 years')) }}"
-                                                                   min="{{ date('Y-m-d', strtotime('-5 years')) }}" style="width: 17.4em; text-align: center"/>
-                                                        </div>
-                                                    </div><br/>
+                                                    <x-input-select2 :options="$artistes_type_pieces->map(function($artistes_type_piece) {
+                                                                return ['value' => $artistes_type_piece->id, 'label' => $artistes_type_piece->libelle_piece];
+                                                            })->toArray()" id="attached-doc-type-field" title="Type de pièce d'identité" name="attached-doc-type" label="Type de pièce d'identité..." required="true" width="17.5em" column="col-sm-12"
+                                                    />
+                                                    <x-input-text id="attached-doc-number-input" name="attached-doc-number" label="Numéro du document" placeholder="____________" required="true" maxlength="30" width="13em" column="" />
+                                                    <x-input-date id="attached-doc-expiry-date-input" name="attached-doc-expiry-date" label="Date d'expiration" placeholder="__/__/____" required="true" min="{{ date('Y-m-d', strtotime('-5 years')) }}" max="{{ date('Y-m-d', strtotime('+20 years')) }}" width="10.5em" column="" /><br/>
                                                     <div class="form-group" id="pdf-doc-field">
                                                         <div class="col-sm-10">
                                                             <div class="box">

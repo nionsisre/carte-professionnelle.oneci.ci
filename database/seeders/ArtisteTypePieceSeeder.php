@@ -15,10 +15,6 @@ class ArtisteTypePieceSeeder extends Seeder {
      */
     public function run() {
         ArtistesTypePiece::create([
-            'code_type_piece' => 'ATT',
-            'libelle_piece' => 'Attestation d\'identité'
-        ]);
-        ArtistesTypePiece::create([
             'code_type_piece' => 'CNI',
             'libelle_piece' => 'Carte nationale d\'identité'
         ]);
