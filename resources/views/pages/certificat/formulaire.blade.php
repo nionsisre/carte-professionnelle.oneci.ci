@@ -64,26 +64,23 @@
                         <center>
                             <div id="smartwizard" class="mb-3">
                                 <ul class="nav">
-                                    <li><a class="nav-link" href="#etape-1"><i class="fa fa-barcode text-white"></i>
-                                            &nbsp; Etape 1 : Possession NNI</a></li>
-                                    <li><a class="nav-link" href="#etape-2"><i
-                                                class="fa fa-info-circle text-white"></i> &nbsp; Etape 2 :
+                                    <li><a class="nav-link" href="#etape-1"><i
+                                                class="fa fa-info-circle text-white"></i> &nbsp; Etape 1 :
                                             Informations</a></li>
-                                    <li><a class="nav-link" href="#etape-3"><i class="fa fa-id-card text-white"></i>
-                                            &nbsp; Etape 3 : Titre d'Identité</a></li>
-                                    <li><a class="nav-link" href="#etape-4"><i class="fa fa-eye text-white"></i>
-                                            &nbsp; Etape 4 : Récapitulatif</a></li>
-                                    <li><a class="nav-link" href="#etape-5"><i class="fa fa-money-check text-white"></i>
-                                            &nbsp; Etape 5 : Paiement</a></li>
-                                    <li><a class="nav-link" href="#etape-6"><i class="fa fa-check text-white"></i>
-                                            &nbsp; Etape 6 : Terminé</a></li>
+                                    <li><a class="nav-link" href="#etape-2"><i class="fa fa-id-card text-white"></i>
+                                            &nbsp; Etape 2 : Titre d'Identité</a></li>
+                                    <li><a class="nav-link" href="#etape-3"><i class="fa fa-eye text-white"></i>
+                                            &nbsp; Etape 3 : Récapitulatif</a></li>
+                                    <li><a class="nav-link" href="#etape-4"><i class="fa fa-money-check text-white"></i>
+                                            &nbsp; Etape 4 : Paiement</a></li>
+                                    <li><a class="nav-link" href="#etape-5"><i class="fa fa-check text-white"></i>
+                                            &nbsp; Etape 5 : Terminé</a></li>
                                 </ul>
                                 <div class="tab-content">
                                     <div id="etape-1" class="tab-pane" role="tabpanel"></div>
                                     <div id="etape-2" class="tab-pane" role="tabpanel"></div>
                                     <div id="etape-3" class="tab-pane" role="tabpanel"></div>
-                                    <div id="etape-4" class="tab-pane" role="tabpanel"></div>
-                                    <div id="etape-5" class="tab-pane" role="tabpanel">
+                                    <div id="etape-4" class="tab-pane" role="tabpanel">
                                         <br/><br/>
                                         <div id="modalBox" style="display: none"></div>
                                         Veuillez procéder au paiement ci-dessous afin de poursuivre :
@@ -113,7 +110,7 @@
                                         Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
                                         L'ONECI vous remercie !--}}
                                     </div>
-                                    <div id="etape-6" class="tab-pane" role="tabpanel">
+                                    <div id="etape-5" class="tab-pane" role="tabpanel">
                                         <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i><br/>
                                         <div>
                                             <p style="padding: 0 0 3em">
