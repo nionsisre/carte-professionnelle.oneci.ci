@@ -187,7 +187,7 @@
                                                         /><br/>
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-text id="nickname-input" name="nickname" label="Pseudonyme" placeholder="Nom d'artiste..." maxlength="150" required="true" width="16em" column="" />
+                                                        <x-input-text name="nickname" label="Pseudonyme" placeholder="Nom d'artiste..." maxlength="150" required="true" width="16em" column="" />
                                                     </div>
                                                     <div class="container clearfix">
                                                         {{--
@@ -203,17 +203,17 @@
                                                         ])
                                                         @endcomponent
                                                         --}}
-                                                        <x-input-text id="last-name-input" name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="13em" column="one-third" />
-                                                        <x-input-text id="first-name-input" name="first-name" label="Prénom(s)" placeholder="Prénom(s)..." maxlength="150" required="true" width="13.4em" column="one-third" />
-                                                        <x-input-text id="spouse-name-input" name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
+                                                        <x-input-text name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="13em" column="one-third" />
+                                                        <x-input-text name="first-name" label="Prénom(s)" placeholder="Prénom(s)..." maxlength="150" required="true" width="13.4em" column="one-third" />
+                                                        <x-input-text name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-date id="birth-date-input" name="birth-date" label="Né(e) le" placeholder="__/__/____" required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
-                                                        <x-input-text id="birth-place-input" name="birth-place" label="Lieu de naissance" placeholder="Lieu de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                        <x-input-date name="birth-date" label="Né(e) le" placeholder="__/__/____" required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
+                                                        <x-input-text name="birth-place" label="Lieu de naissance" placeholder="Lieu de naissance..." required="true" maxlength="150" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
-                                                        <x-input-select-country id="birth-country-input" name="birth-country" label="Pays de naissance" placeholder="Pays de naissance..." required="true" maxlength="70" width="12em" column="one-half" />
-                                                        <x-input-text id="nationality-input" name="nationality" label="Nationalité" placeholder="Nationalité..." required="true" maxlength="70" width="12em" column="one-half" />
+                                                        <x-input-select-country name="birth-country" label="Pays de naissance" placeholder="Pays de naissance..." required="true" maxlength="150" width="12em" column="one-half" />
+                                                        <x-input-text name="nationality" label="Nationalité" placeholder="Nationalité..." required="true" maxlength="150" width="12em" column="one-half" />
                                                     </div>
                                                     <div class="container clearfix">
                                                         {{--<x-input-select2 :options="[
@@ -222,31 +222,30 @@
                                                         />--}}
                                                         <x-input-select2 :options="$civil_statuses->map(function($civil_status) {
                                                                 return ['value' => $civil_status->id, 'label' => $civil_status->libelle_statut];
-                                                            })->toArray()" id="civil-status-field" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
+                                                            })->toArray()" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
                                                         />
-                                                        <x-input-number id="number-of-children-input" name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="13.4em" column="one-third" />
-                                                        <x-input-text id="other-activities-input" name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
+                                                        <x-input-number name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="13.4em" column="one-third" />
+                                                        <x-input-text name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
                                                     </div>
                                                 </div>
                                                 <br/><br/>
                                                 <h2><i class="fa fa-map-marker-alt"></i> &nbsp; Situation Géographique</h2>
                                                 <br/>
                                                 <div class="container clearfix">
-                                                    <x-input-text id="city-input" name="city" label="Ville" placeholder="Ville..." required="true" maxlength="100" width="13em" column="one-third" />
-                                                    <x-input-text id="town-input" name="town" label="Commune" placeholder="Commune..." required="true" maxlength="100" width="13em" column="one-third" />
-                                                    <x-input-text id="street-input" name="street" label="Quartier" placeholder="Quartier..." required="true" maxlength="100" width="13em" column="one-third" />
+                                                    <x-input-text name="city" label="Ville" placeholder="Ville..." required="true" maxlength="150" width="13em" column="one-third" />
+                                                    <x-input-text name="town" label="Commune" placeholder="Commune..." required="true" maxlength="150" width="13em" column="one-third" />
+                                                    <x-input-text name="street" label="Quartier" placeholder="Quartier..." required="true" maxlength="150" width="13em" column="one-third" />
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <x-input-text id="address-input" name="address" label="Adresse" placeholder="Adresse..." maxlength="100" width="13em" column="one-half" />
-                                                    <x-input-text name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." required="true" maxlength="100" width="13em" column="one-half" />
+                                                    <x-input-text name="address" label="Adresse" placeholder="Adresse..." maxlength="150" width="13em" column="one-half" />
+                                                    <x-input-text name="workplace" label="Lieu de travail" placeholder="Lieu de travail..." required="true" maxlength="150" width="13em" column="one-half" />
                                                 </div>
                                                 <div class="container clearfix">
-                                                    <x-input-tel-ci id="msisdn-input" name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" required="true" maxlength="100" width="13em" column="" />
+                                                    <x-input-tel-ci name="msisdn" label="Téléphone" placeholder="__ __ __ __ __" required="true" maxlength="20" width="13em" column="" />
                                                 </div><br/><br/>
                                             </div>
                                             <div id="etape-2" class="tab-pane" role="tabpanel">
                                                 <div id="doc-container">
-
                                                     <br/><br/>
                                                     <h2><i class="fa fa-id-card"></i> &nbsp; Titre d'identité :</h2>
                                                     <x-input-select2 :options="$artistes_type_pieces->map(function($artistes_type_piece) {

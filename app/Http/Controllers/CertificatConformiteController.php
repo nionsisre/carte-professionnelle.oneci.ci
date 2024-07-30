@@ -187,52 +187,89 @@ class CertificatConformiteController extends Controller {
         }
         /* Valider les variables du formulaire */
         request()->validate([
-            'possession_nni' => ['required', 'string', 'max:10'],
-            'nni' => ['nullable', 'string', 'max:11'],
-            'cni-number' => ['nullable', 'string', 'max:20'],
+            'gender' => ['required', 'string', 'max:1'],
+            'nickname' => ['nullable', 'string', 'max:150'],
             'last-name' => ['required', 'string', 'max:70'],
             'first-name' => ['required', 'string', 'max:150'],
+            'spouse-name' => ['nullable', 'string', 'max:70'],
             'birth-date' => ['required', 'string', 'max:20'],
-            'mother-last-name' => ['required', 'string', 'max:70'],
-            'mother-first-name' => ['required', 'string', 'max:150'],
-            'decision-last-name' => ['nullable', 'string', 'max:70'],
-            'decision-first-name' => ['required', 'string', 'max:150'],
-            'decision-birth-date' => ['required', 'string', 'max:20'],
-            'decision-lieu-naissance' => ['required', 'string', 'max:150'],
-            'numero-decision' => ['required', 'string', 'max:25'],
-            'decision-date' => ['required', 'string', 'max:20'],
-            'lieu-delivrance' => ['required', 'string', 'max:150'],
-            'lieu-retrait' => ['required', 'string', 'max:150'],
+            'birth-place' => ['required', 'string', 'max:150'],
+            'birth-country' => ['required', 'string', 'max:150'],
+            'nationality' => ['required', 'string', 'max:150'],
+            'civil-status' => ['required', 'numeric'],
+            'number-of-children' => ['required', 'numeric', 'min:0', 'max:50'],
+            'other-activities' => ['required', 'string', 'max:100'],
+            'city' => ['required', 'string', 'max:150'],
+            'town' => ['required', 'string', 'max:150'],
+            'street' => ['required', 'string', 'max:150'],
+            'address' => ['nullable', 'string', 'max:150'],
+            'workplace' => ['required', 'string', 'max:150'],
             'msisdn' => ['required', 'string', 'max:20'],
-            'cni-doc' => ['nullable', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
-            'pdf-doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+            'attached-doc-type' => ['required', 'string', 'max:150'],
+            'attached-doc-number' => ['required', 'string', 'max:30'],
+            'attached-doc-expiry-date' => ['required', 'string', 'max:20'],
+            'attached-doc' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
         ]);
+
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
 
+        dd($request);
+
         /* Pièces jointes */
-        // Récupération de la décision judiciaire
-        $decision_judiciaire_filename = 'decision' . '_' . $numero_dossier . '.' . $request->file('pdf-doc')->extension();
+        // Récupération du titre d'identité
+        $titre_identite_filename = 'titre-identite' . '_' . $numero_dossier . '.' . $request->file('attached-doc')->extension();
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
-            $decision_judiciaire = $request->file('pdf-doc')->storeAs('data\\decision', $decision_judiciaire_filename, 'public');
+            $titre_identite = $request->file('attached-doc')->storeAs('data\\titre-identite', $titre_identite_filename, 'public');
         } else { /* If Current server OS is not windows */
-            $decision_judiciaire = $request->file('pdf-doc')->storeAs('data/decision', $decision_judiciaire_filename, 'public');
-        }
-        // Récupération de la cni si existe
-        if($request->input('possession_nni') == "N") {
-            $cni_filename = 'cni' . '_' . $numero_dossier . '.' . $request->file('cni-doc')->extension();
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') { /* If Current server OS is windows */
-                $cni = $request->file('cni-doc')->storeAs('data\\cni', $cni_filename, 'public');
-            } else { /* If Current server OS is not windows */
-                $cni = $request->file('cni-doc')->storeAs('data/cni', $cni_filename, 'public');
-            }
+            $titre_identite = $request->file('attached-doc')->storeAs('data/titre-identite', $titre_identite_filename, 'public');
         }
 
         $client = Artiste::create([
             'numero_dossier' => $numero_dossier,
+            'pseudonyme' => "",
+            'nom' => strtoupper($request->input('last-name')),
+            'nom_epouse' => "",
+            'prenoms' => "",
+            'genre' => "",
+            'date_naissance' => "",
+            'lieu_naissance' => "",
+            'pays_naissance' => "",
+            'nationalite' => "",
+            'civil_status_id' => "",
+            'nombre_enfants' => "",
+            'autre_activite' => "",
+            'ville' => "",
+            'commune' => "",
+            'quartier' => "",
+            'adresse' => "",
+            'lieu_travail' => "",
+            'msisdn' => str_replace(" ", "", $request->input("msisdn")),
+            'email' => "",
+            'artiste_type_piece_id' => "",
+            'type_cni' => "",
+            'numero_document' => "",
+            'document' => $titre_identite,
+            'date_expiration_document' => "",
+            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name'))),
+            'artiste_statut_id' => 1,
+            'transaction_id' => "",
+            'integrator_api_response_id' => "",
+            'integrator_code' => "",
+            'integrator_message' => "",
+            'integrator_data_amount' => "",
+            'integrator_data_currency' => "",
+            'integrator_data_status' => "",
+            'integrator_data_payment_method' => "",
+            'integrator_data_description' => "",
+            'integrator_data_metadata' => "",
+            'integrator_data_operator_id' => "",
+            'integrator_data_payment_date' => "",
+            'certificate_download_link' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
+
+            'numero_dossier' => $numero_dossier,
             'nni' => $request->input('nni'),
             'numero_cni' => $request->input('cni-number'),
-            'nom' => strtoupper($request->input('last-name')),
             'prenom' => strtoupper($request->input('first-name')),
             'date_naissance' => $request->input('birth-date'),
             'lieu_naissance' => "",
@@ -245,15 +282,10 @@ class CertificatConformiteController extends Controller {
             'numero_decision' => $request->input('numero-decision'),
             'date_decision' => $request->input('decision-date'),
             'lieu_decision' => $request->input("lieu-delivrance"),
-            'msisdn' => str_replace(" ", "", $request->input("msisdn")),
             'cni' => $cni ?? "",
-            'decision_judiciaire' => $decision_judiciaire,
-            'code_lieu_retrait' => $request->input("lieu-retrait"),
             'statut' => 1,
             'observation' => "",
             'doer_uid' => "",
-            'certificat' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
-            'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name')))
         ]);
 
         /* Obtention des informations sur le client enregistré et sa juridiction */
