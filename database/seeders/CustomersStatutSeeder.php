@@ -16,7 +16,7 @@ class CustomersStatutSeeder extends Seeder {
     {
         CustomersStatut::create([
             'code_statut' => 'PEI',
-            'libelle_statut' => 'Pré-enrôlement inachevé (non-payées)',
+            'libelle_statut' => 'Pré-enrôlement inachevé (non-payé)',
             'icone' => 'money-check',
         ]);
         CustomersStatut::create([
@@ -35,8 +35,8 @@ class CustomersStatutSeeder extends Seeder {
             'icone' => 'check',
         ]);
         CustomersStatut::create([
-            'code_statut' => 'FPT',
-            'libelle_statut' => 'Fiche de pré-enrôlement téléchargée',
+            'code_statut' => 'FPR',
+            'libelle_statut' => 'Fiche de pré-enrôlement disponible avec déclaration requise',
             'icone' => 'hand-receiving',
         ]);
     }

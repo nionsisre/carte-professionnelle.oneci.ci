@@ -42,6 +42,7 @@ class CreateCustomersTable extends Migration {
             $table->string('date_expiration_document')->nullable();
             $table->string('uniqid')->nullable();
             $table->foreignIdFor(\App\Models\CustomersStatut::class)->nullable();
+            $table->string('observation')->nullable();
             $table->string('transaction_id')->nullable();
             $table->string('integrator_api_response_id')->nullable();
             $table->string('integrator_code')->nullable();

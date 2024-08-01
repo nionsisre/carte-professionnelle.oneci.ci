@@ -64,13 +64,7 @@
                             <br/><div>
                                 <p style="padding: 0em 0em 2em">
                                     Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $customer->numero_dossier }}</b><br/><br/>
-                                    Document justificatif : &nbsp; <br/>
-                                        @if(!empty($customer->cni))
-                                        <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Carte Nationale d'Identité</b><br/>
-                                        @endif
-                                        @if(!empty($customer->decision_judiciaire))
-                                        <b style="font-size: 1rem"><i class="fad fa-balance-scale" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Décision Judiciaire</b><br/>
-                                        @endif
+                                    Titre d'identité : &nbsp; <br/><b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; {{ $customer->customersTypePiece->libelle_piece }}</b><br/>
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
                                         @if(session()->has('success'))
                                             <center>
@@ -108,43 +102,31 @@
                                         <tbody>
                                             <tr>
                                                 <td style="vertical-align: middle;">
-                                                    @if($customer->statut==1)
-                                                        <i class="fad fa-money-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Paiement non effectué</b>
-                                                    @elseif($customer->statut==2)
-                                                        <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Document justificatif en attente d'approbation</b>
-                                                    @elseif($customer->statut==3)
-                                                        <i class="fad fa-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
-                                                    @elseif($customer->statut==4)
-                                                        <i class="fad fa-times-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande refusée</b>
-                                                    @elseif($customer->statut==5)
-                                                        <i class="fad fa-file-certificate" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité disponible</b>
-                                                    @elseif($customer->statut==6)
-                                                        <i class="fad fa-hand-receiving" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité retiré</b>
-                                                    @endif
+                                                    <i class="fad fa-{{ $customer->customersStatut->icone }}" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>{{ $customer->customersStatut->libelle_statut }}</b>
                                                 </td>
                                                 <td style="vertical-align: middle;">
-                                                    @if(session()->get('customer')->statut==1)
+                                                    @if($customer->customersStatut->id == 1)
                                                         <div id="payment-button-container">
                                                             <div id="payment-link-loader" style="display: none"><center><i class="fa fa-spinner fa-spin"></i></center></div>
                                                             <a href="javascript:void(0)" class="button" style="margin: 0" onclick="gpl(true)" id="payment-link-btn"><i class="fa fa-money-check text-white"></i> &nbsp; Procéder au paiement</a>
                                                         </div>
-                                                    @elseif(session()->get('customer')->statut==2)
-                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
-                                                    @elseif(session()->get('customer')->statut==3)
-                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Le certificat de conformité est en attente de signature par le Directeur Général
-                                                    @elseif(session()->get('customer')->statut==4)
-                                                        @if(!empty(session()->get('customer')->observation))
+                                                    @elseif($customer->customersStatut->id == 2)
+                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif fourni par l'ONECI
+                                                    @elseif($customer->customersStatut->id == 3)
+                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Votre demande de pré-identification a été rejetée par l'ONECI.
+                                                    @elseif($customer->customersStatut->id == 4)
+                                                        @if(!empty($customer->observation))
                                                             <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée pour le motif suivant : {{ session()->get('customer')->observation }}
                                                         @else
                                                             <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée par l'ONECI.
                                                         @endif
-                                                    @elseif(session()->get('customer')->statut==5)
+                                                    @elseif($customer->customersStatut->id==5)
                                                         @if(session()->has('lieu_livraison') && !empty(session()->get('lieu_livraison')))
                                                             <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
                                                         @else
                                                             <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait.
                                                         @endif
-                                                    @elseif(session()->get('customer')->statut==6)
+                                                    @elseif(session()->get('customer')->customersStatut->id==6)
                                                         <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre certificat de conformité a bien été effectué avec succès, l'ONECI vous remercie.
                                                     @endif
                                                 </td>
