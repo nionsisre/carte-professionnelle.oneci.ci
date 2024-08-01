@@ -484,7 +484,7 @@ class PreIdentificationController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
-            $client = Customer::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
+            $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->updated_at->format('Y-m-d'))) );
                 $date_du_jour = date('Y-m-d', time());
@@ -504,13 +504,13 @@ class PreIdentificationController extends Controller {
                         'nom_complet_decision' => $client->prenom_decision." ".$client->nom_decision,
                         'numero_decision' => $client->numero_decision,
                         'date_decision' => date('d/m/Y', strtotime($client->date_decision)),
-                        'lieu_decision' => $client->juridiction->libelle.", ".$client->juridiction->region,
+                        'lieu_decision' => '',
                         'lieu_certificat' => "ABIDJAN",
                         'date_certificat' => $client->updated_at->format('d/m/Y')
                     ];
                     $data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
                     //$data['qrcode'] = (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1);
-                    $filename = 'certificat-conformite-'.$client->numero_dossier.'.pdf';
+                    $filename = 'fiche-pre-enrolement-'.$client->numero_dossier.'.pdf';
                     $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
                     /*if (!empty($client->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de fiche de pré-enrolement ONECI") ;}*/
@@ -538,7 +538,7 @@ class PreIdentificationController extends Controller {
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
-            $client = Customer::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
