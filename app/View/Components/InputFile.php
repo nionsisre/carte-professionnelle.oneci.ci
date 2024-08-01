@@ -27,7 +27,7 @@ class InputFile extends Component {
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
     public function render() {
-        return view('components.inputs.input-file');
+        return view('components.input-file');
     }
 
 }

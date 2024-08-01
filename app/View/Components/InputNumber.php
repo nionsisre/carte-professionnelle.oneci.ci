@@ -43,6 +43,6 @@ class InputNumber extends Component {
      */
     public function render()
     {
-        return view('components.inputs.input-number');
+        return view('components.input-number');
     }
 }

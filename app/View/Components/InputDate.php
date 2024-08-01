@@ -43,6 +43,6 @@ class InputDate extends Component {
      * @return \Illuminate\Contracts\View\View
      */
     public function render() {
-        return view('components.inputs.input-date');
+        return view('components.input-date');
     }
 }

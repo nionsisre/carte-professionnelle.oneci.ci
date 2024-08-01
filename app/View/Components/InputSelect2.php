@@ -44,7 +44,7 @@ class InputSelect2 extends Component {
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
     public function render() {
-        return view('components.inputs.input-select2');
+        return view('components.input-select2');
     }
 
 }

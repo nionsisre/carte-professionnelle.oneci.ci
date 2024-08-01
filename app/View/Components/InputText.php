@@ -43,7 +43,7 @@ class InputText extends Component
      * @return \Illuminate\View\View
      */
     public function render() {
-        return view('components.inputs.input-text');
+        return view('components.input-text');
     }
 
 }

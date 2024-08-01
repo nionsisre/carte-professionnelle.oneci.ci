@@ -43,6 +43,6 @@ class InputTelCI extends Component
      */
     public function render()
     {
-        return view('components.inputs.input-tel-ci');
+        return view('components.input-tel-ci');
     }
 }
