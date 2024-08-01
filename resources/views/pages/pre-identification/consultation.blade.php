@@ -113,21 +113,19 @@
                                                     @elseif($customer->customersStatut->id == 2)
                                                         <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif fourni par l'ONECI
                                                     @elseif($customer->customersStatut->id == 3)
-                                                        <i class="fa fa-spinner fa-spin"></i> &nbsp; Votre demande de pré-identification a été rejetée par l'ONECI.
-                                                    @elseif($customer->customersStatut->id == 4)
                                                         @if(!empty($customer->observation))
-                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée pour le motif suivant : {{ session()->get('customer')->observation }}
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de pré-identification a été rejetée pour le motif suivant : {{ session()->get('customer')->observation }}
                                                         @else
-                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée par l'ONECI.
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de pré-identification a été rejetée par l'ONECI.
                                                         @endif
-                                                    @elseif($customer->customersStatut->id==5)
+                                                    @elseif($customer->customersStatut->id==4)
                                                         @if(session()->has('lieu_livraison') && !empty(session()->get('lieu_livraison')))
-                                                            <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
+                                                            <i class="fa fa-check"></i> &nbsp; La fiche de Pré-enrôlement est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
                                                         @else
-                                                            <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait.
+                                                            <i class="fa fa-check"></i> &nbsp; La fiche de Pré-enrôlement est signé et disponible dans votre lieu de retrait.
                                                         @endif
-                                                    @elseif(session()->get('customer')->customersStatut->id==6)
-                                                        <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre certificat de conformité a bien été effectué avec succès, l'ONECI vous remercie.
+                                                    @elseif(session()->get('customer')->customersStatut->id==5)
+                                                        <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre fiche de Pré-enrôlement a bien été effectué avec succès, l'ONECI vous remercie.
                                                     @endif
                                                 </td>
                                             </tr>
@@ -150,7 +148,7 @@
                                     <p style="padding: 0em 0em 4em">
                                         <i class="fad fa-file-certificate" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0em 0.2em;"></i>
                                         <p style="padding: 0em 0em 2em">
-                                            Aucune demande de certificat de conformité n'a été effectuée pour ce numéro...<br/><br/>
+                                            Aucune demande de fiche de Pré-enrôlement n'a été effectuée pour ce numéro...<br/><br/>
                                             L'ONECI vous remercie !
                                         </p>
                                     </p>
@@ -160,7 +158,7 @@
                         </div>
                     @endif
                 @else
-                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre demande de certificat de conformité<br/></h5>
+                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre demande de fiche de Pré-enrôlement<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         @if(session()->has('error') && session()->get('error'))
                             <center>
@@ -188,7 +186,7 @@
                                 <!-- With Document Number -->
                                 <div class="form-group" id="form-number-field">
                                     <label class="col-sm-2 control-label">
-                                        Entrez le numéro de validation reçu après remplissage du formulaire de demande du certificat de conformité<span style="color: #d9534f">*</span> :
+                                        Entrez le numéro de validation reçu après remplissage du formulaire de demande de fiche de Pré-enrôlement<span style="color: #d9534f">*</span> :
                                     </label>
                                     <div class="col-sm-10">
                                         <input type="text" id="form-number-input" name="form-number" placeholder="__________" maxlength="10" minlength="10" style="width: 23.4em; text-align: center" value="{{ old('form-number') }}" autocomplete="off" required="required"/>
