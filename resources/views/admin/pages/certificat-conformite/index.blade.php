@@ -2,7 +2,7 @@
 
 @section('page-title-tab')
     <div class="pageheader">
-        <h2><i class="fa fa-tasks"></i> &nbsp; Traitement des demandes de certificat de conformité</h2>
+        <h2><i class="fa fa-tasks"></i> &nbsp; Traitement des demandes de fiche de pré-enrôlement {{ env('APP_NAME') }}</h2>
     </div>
 @endsection
 
@@ -68,8 +68,8 @@
 
             <div class="panel panel-dark">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-tasks mr10"></i>Traitement des demandes de certificat de conformité</h3><br/>
-                    Cette rubrique permet de traiter les demandes de certificat de conformité en vérifiant l'authenticité des documents justificatifs fournis par le client.
+                    <h3 class="panel-title"><i class="fa fa-tasks mr10"></i>Traitement des demandes de  fiche de pré-enrôlement {{ env('APP_NAME') }}</h3><br/>
+                    Cette rubrique permet de traiter les demandes de  fiche de pré-enrôlement {{ env('APP_NAME') }} en vérifiant l'authenticité des documents justificatifs fournis par le client.
                 </div>
                 <div class="panel-body">
                     @include('admin.pages.certificat-conformite.datatable.index')

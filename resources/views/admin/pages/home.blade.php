@@ -360,7 +360,7 @@
                     <div class="hover-highlight-19 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','19')" onmouseleave="highlightHover('unset', '19')">
                         <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">
                             <i class="fad fa-tasks" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; font-size: 4.5em;"></i>
-                            <h5 class="today" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Traiter les demandes de certificat de conformité</h5>
+                            <h5 class="today" style="width: 115%;margin-left: -7%;height: 4em;padding-top: 4.5em;font-size:90%;font-weight: bold;margin-top: -2.6em;font-family: 'RobotoRegular', Helvetica, sans-serif !important;">Traiter les demandes de fiche de pré-enrôlement {{ env('APP_NAME') }}</h5>
                         </div>
                     </div><!-- panel -->
                 </div>
