@@ -26,6 +26,7 @@
             @else
                 {{-- Désactive les étapes post-paiement du wizard --}}
                 jQuery('#smartwizard').smartWizard("setState", [3,4], "disable");
+                jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true);
             @endif
         });
         function lwsbmt(frm_id) {
