@@ -121,12 +121,20 @@
                                                     @elseif($customer->customersStatut->id==4)
                                                         @if(session()->get('customer')->integrator_data_status==='ACCEPTED' && !empty(session()->get('customer')->integrator_data_payment_date) &&
                                                             date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('customer')->integrator_data_payment_date))))
-                                                            <a href="{{ route('certificat.download.pdf').'?n='.session()->get('customer')->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger la fiche de pré-enrôlement {{ env('APP_NAME') }} ONECI</a>
+                                                            <a href="{{ route('pre-identification.download.pdf').'?n='.session()->get('customer')->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger la fiche de pré-enrôlement {{ env('APP_NAME') }} ONECI</a>
                                                         @else
-                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; La date de validité de la fiche de pré-enrôlement est dépassée veuillez reprendre une nouveau pré-enrôlement SVP.
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Le lien de téléchargement de votre fiche de pré-enrôlement est n'est pas ou plus valide.<br/>Veuillez reprendre une nouveau pré-enrôlement SVP.<br/>L'ONECI vous remercie...
                                                         @endif
                                                     @elseif(session()->get('customer')->customersStatut->id==5)
-                                                        <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre fiche de Pré-enrôlement a bien été effectué avec succès, l'ONECI vous remercie.
+                                                        @if(session()->get('customer')->integrator_data_status==='ACCEPTED' && !empty(session()->get('customer')->integrator_data_payment_date) &&
+                                                            date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('customer')->integrator_data_payment_date))))
+                                                            <br/>
+                                                            <em>Votre fiche de pré-enrôlement est disponible pour le téléchargement via le bouton ci-dessous : </em><br/><br/>
+                                                            <a href="{{ route('pre-identification.download.pdf').'?n='.session()->get('customer')->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger la fiche de pré-enrôlement {{ env('APP_NAME') }} ONECI</a><br/><br/>
+                                                            <em>Avant d'effectuer votre enrôlement, veuillez aller vous déclarer à votre structure en charge.<br/>L'ONECI vous remercie...</em><br/><br/>
+                                                        @else
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Le lien de téléchargement de votre fiche de pré-enrôlement est n'est pas ou plus valide.<br/>Veuillez reprendre une nouveau pré-enrôlement SVP.<br/>L'ONECI vous remercie...
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
