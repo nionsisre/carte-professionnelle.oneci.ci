@@ -270,7 +270,7 @@ class PreIdentificationController extends Controller {
         /* Obtention des informations sur le client enregistré et sa juridiction */
         $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->find($customer->id);
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
-        //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
+        //$payment_data = (new NGSerAPI())->getPaymentLink($customer, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
 
         /* Retourner vue resultat */
         return redirect()->route('pre-identification.formulaire')->with([
@@ -343,13 +343,13 @@ class PreIdentificationController extends Controller {
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
         ]);
         /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-        $client = Customer::where('numero_dossier', '=', $request->input('fn'))->first();
-        if($client->exists()) {
+        $customer = Customer::where('numero_dossier', '=', $request->input('fn'))->first();
+        if($customer->exists()) {
             /* Obtention du lien de paiement via l'API Aggrégateur */
             if(config('services.ngser.enabled')) {
-                $payment_link_obtained = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
+                $payment_link_obtained = (new NGSerAPI())->getPaymentLink($customer, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
             } else if(config('services.cinetpay.enabled')) {
-                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('CINETPAY_SERVICE_AMOUNT'), true);
+                $payment_link_obtained = (new CinetPayAPI())->getPaymentLink($customer, env('PAYMENT_TYPE'), env('CINETPAY_SERVICE_AMOUNT'), true);
             }
             if ($payment_link_obtained['has_error']) {
                 return response([
@@ -484,36 +484,36 @@ class PreIdentificationController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
-            $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
-            if ($client) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->updated_at->format('Y-m-d'))) );
+            $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            if ($customer) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($customer->updated_at->format('Y-m-d'))) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Certificat de conformité',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $customer->certificate_download_link, 183, 1),
                         'directeur_general' => "Ago Christian KODIA", //DirecteurGeneral::where('statut','=','1')->latest()->first() ?? "",
-                        'nom' => $client->nom,
-                        'prenom' => $client->prenom,
-                        'nom_complet' => $client->prenom." ".$client->nom,
-                        'nni' => $client->nni,
-                        'numero_cni' => $client->numero_cni,
-                        'nom_decision' => $client->nom_decision,
-                        'prenom_decision' => $client->prenom_decision,
-                        'nom_complet_decision' => $client->prenom_decision." ".$client->nom_decision,
-                        'numero_decision' => $client->numero_decision,
-                        'date_decision' => date('d/m/Y', strtotime($client->date_decision)),
+                        'nom' => $customer->nom,
+                        'prenom' => $customer->prenom,
+                        'nom_complet' => $customer->prenom." ".$customer->nom,
+                        'nni' => $customer->nni,
+                        'numero_cni' => $customer->numero_cni,
+                        'nom_decision' => $customer->nom_decision,
+                        'prenom_decision' => $customer->prenom_decision,
+                        'nom_complet_decision' => $customer->prenom_decision." ".$customer->nom_decision,
+                        'numero_decision' => $customer->numero_decision,
+                        'date_decision' => date('d/m/Y', strtotime($customer->date_decision)),
                         'lieu_decision' => '',
                         'lieu_certificat' => "ABIDJAN",
-                        'date_certificat' => $client->updated_at->format('d/m/Y')
+                        'date_certificat' => $customer->updated_at->format('d/m/Y')
                     ];
                     $data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
-                    //$data['qrcode'] = (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1);
-                    $filename = 'fiche-pre-enrolement-'.$client->numero_dossier.'.pdf';
+                    //$data['qrcode'] = (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $customer->certificate_download_link, 183, 1);
+                    $filename = 'fiche-pre-enrolement-'.$customer->numero_dossier.'.pdf';
                     $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
-                    /*if (!empty($client->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de fiche de pré-enrolement ONECI") ;}*/
+                    /*if (!empty($customer->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de fiche de pré-enrolement ONECI") ;}*/
 
                     //return view('layouts.certificat-conformite', $data);
                     return $pdf_certificat_conformite->download($filename);
@@ -538,31 +538,31 @@ class PreIdentificationController extends Controller {
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
-            $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
-            if ($client) {
-                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
+            $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            if ($customer) {
+                $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($customer->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
-                        'numero_dossier' => $client->numero_dossier,
-                        'uniqid' => $client->uniqid,
-                        'msisdn' => $client->numero_de_telephone,
-                        'date_emission' => date('d/m/Y', strtotime($client->cinetpay_data_payment_date)),
-                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date))),
-                        'nom' => $client->nom . ((!empty($client->nom_epouse)) ? ' epse ' . $client->nom_epouse : ''),
-                        'prenoms' => $client->prenoms,
-                        'date_de_naissance' => date('d/m/Y', strtotime($client->date_de_naissance)),
-                        'lieu_de_naissance' => $client->lieu_de_naissance,
-                        'lieu_de_residence' => $client->domicile,
-                        'nationalite' => $client->nationalite,
-                        'profession' => $client->profession,
-                        'email' => $client->email,
-                        'id_operateur' => $client->abonnes_operateur_id,
-                        'document_justificatif' => $client->libelle_piece,
-                        'numero_document_justificatif' => $client->numero_document,
+                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $customer->certificate_download_link, 183, 1),
+                        'numero_dossier' => $customer->numero_dossier,
+                        'uniqid' => $customer->uniqid,
+                        'msisdn' => $customer->numero_de_telephone,
+                        'date_emission' => date('d/m/Y', strtotime($customer->cinetpay_data_payment_date)),
+                        'date_expiration' => date('d/m/Y', strtotime('+1 year', strtotime($customer->cinetpay_data_payment_date))),
+                        'nom' => $customer->nom . ((!empty($customer->nom_epouse)) ? ' epse ' . $customer->nom_epouse : ''),
+                        'prenoms' => $customer->prenoms,
+                        'date_de_naissance' => date('d/m/Y', strtotime($customer->date_de_naissance)),
+                        'lieu_de_naissance' => $customer->lieu_de_naissance,
+                        'lieu_de_residence' => $customer->domicile,
+                        'nationalite' => $customer->nationalite,
+                        'profession' => $customer->profession,
+                        'email' => $customer->email,
+                        'id_operateur' => $customer->abonnes_operateur_id,
+                        'document_justificatif' => $customer->libelle_piece,
+                        'numero_document_justificatif' => $customer->numero_document,
                     ]);
                 }
             }
