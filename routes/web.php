@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Admin\AuthenticationController;
 use App\Http\Controllers\Admin\HomeController;
-use App\Http\Controllers\Admin\ProcessCertificatConformiteController;
-use App\Http\Controllers\CertificatConformiteController;
+use App\Http\Controllers\Admin\ProcessPreIdentificationController;
+use App\Http\Controllers\PreIdentificationController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\ReclamationController;
 use App\Http\Services\CinetPayAPI;
@@ -29,27 +29,27 @@ use Illuminate\Support\Facades\Route;
 
 /* --- Home --- */
 Route::get('/', [MainController::class, 'index'])->name('home');
-/* --- Certificat Conformite --- */
-Route::get('/menu-certificat', [CertificatConformiteController::class, 'showMenu'])->name('certificat.menu');
-Route::get('/formulaire', [CertificatConformiteController::class, 'showFormulaire'])->name('certificat.formulaire');
-Route::get('/consultation', [CertificatConformiteController::class, 'showConsultation'])->name('certificat.consultation');
-//Route::get('/reclamation-paiement', [CertificatConformiteController::class, 'showReclamationPaiement'])->name('certificat.reclamation_paiement');
+/* --- Pré-identification --- */
+Route::get('/menu-pre-identification', [PreIdentificationController::class, 'showMenu'])->name('pre-identification.menu');
+Route::get('/formulaire', [PreIdentificationController::class, 'showFormulaire'])->name('pre-identification.formulaire');
+Route::get('/consultation', [PreIdentificationController::class, 'showConsultation'])->name('pre-identification.consultation');
+//Route::get('/reclamation-paiement', [PreIdentificationController::class, 'showReclamationPaiement'])->name('pre-identification.reclamation_paiement');
 /* NNI Verif API Gateway */
-Route::get('/'.md5('verifapi'.date('Y-m-d').env('APP_KEY')), [CertificatConformiteController::class, 'verifapi'])->name('verifapi.nni');
+Route::get('/'.md5('verifapi'.date('Y-m-d').env('APP_KEY')), [PreIdentificationController::class, 'verifapi'])->name('verifapi.nni');
 /* Form Submit Routes URL */
-Route::post('/soumettre-formulaire', [CertificatConformiteController::class, 'submit'])->name('certificat.formulaire.submit');
-Route::post('/consulter-statut-certificat', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit');
-Route::get('/consulter-statut-certificat', [CertificatConformiteController::class, 'search'])->name('certificat.consultation.submit.get');
-Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('certificat.payment.reclamation.submit');
+Route::post('/soumettre-formulaire', [PreIdentificationController::class, 'submit'])->name('pre-identification.formulaire.submit');
+Route::post('/consulter-statut-pre-identification', [PreIdentificationController::class, 'search'])->name('pre-identification.consultation.submit');
+Route::get('/consulter-statut-pre-identification', [PreIdentificationController::class, 'search'])->name('pre-identification.consultation.submit.get');
+Route::post('/soumettre-reclamation-paiement', [ReclamationController::class, 'submit'])->name('pre-identification.payment.reclamation.submit');
 /* Internal JavaScript Ajax / Axios Scripts Routes */
-Route::post('/'.md5('gcpl'.date('m').env('APP_KEY')), [CertificatConformiteController::class, 'getCertificatePaymentLink'])->name('certificat.payment.get');
-Route::post('/'.md5('avipid'.date('m').env('APP_KEY')), [CertificatConformiteController::class, 'autoVerifyIfPaymentIsDone'])->name('certificat.payment.verify');
-Route::get('/'.md5('get-pi'.date('m').env('APP_KEY')), [CertificatConformiteController::class, 'search'])->name('certificat.payment.done');
+Route::post('/'.md5('gcpl'.date('m').env('APP_KEY')), [PreIdentificationController::class, 'getCertificatePaymentLink'])->name('pre-identification.payment.get');
+Route::post('/'.md5('avipid'.date('m').env('APP_KEY')), [PreIdentificationController::class, 'autoVerifyIfPaymentIsDone'])->name('pre-identification.payment.verify');
+Route::get('/'.md5('get-pi'.date('m').env('APP_KEY')), [PreIdentificationController::class, 'search'])->name('pre-identification.payment.done');
 /* Front Office URLs on readable QR Code Routes */
-Route::get('/get', [CertificatConformiteController::class, 'search'])->name('certificat.recu.check.url');
-Route::get('/check-certificat-conformite', [CertificatConformiteController::class, 'checkCertificate'])->name('certificat.check.url');
+Route::get('/get', [PreIdentificationController::class, 'search'])->name('pre-identification.recu.check.url');
+Route::get('/check-certificat-pre-identification', [PreIdentificationController::class, 'checkCertificate'])->name('pre-identification.check.url');
 /* File Downloads Routes */
-Route::get('/telecharger-certificat-conformite-pdf', [CertificatConformiteController::class, 'downloadCertificateConformitePDF'])->name('certificat.download.pdf');
+Route::get('/telecharger-certificat-pre-identification-pdf', [PreIdentificationController::class, 'downloadCertificateConformitePDF'])->name('pre-identification.download.pdf');
 /* NGSer routes */
 Route::post('/check-status-payment', [NGSerAPI::class, 'notify'])->name('ngser.notify');
 Route::get('/notification-post-payment', [NGSerAPI::class, 'return'])->name('ngser.return');
@@ -85,14 +85,14 @@ Route::prefix('oneciwebadmin')->group(function () {
         // Business Logic
         // ------------------
         // Traitement des demandes de certificat de conformité
-        Route::get('/traitement-demandes-certificat-conformite', [ProcessCertificatConformiteController::class, 'show'])->name('admin.certificat');
-        Route::get('/datatables/french', [ProcessCertificatConformiteController::class, 'showDatatablesFrench'])->name('datatables.french.json');
-        Route::post(sha1('/traitement-demandes-certificat-conformite'.date('Ymd').env('APP_KEY')), [ProcessCertificatConformiteController::class, 'getClient'])->name('admin.certificat.datatable');
-        Route::post('/data/client/{numero_dossier}', [ProcessCertificatConformiteController::class, 'getClientByNumeroDossier'])->name('admin.certificat.client.get');
-        Route::post(sha1('/data/client/approved'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'approveClientByNumeroDossier'])->name('admin.certificat.client.approve');
-        Route::post(sha1('/data/client/denied'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'denyClientByNumeroDossier'])->name('admin.certificat.client.deny');
-        Route::post(sha1('/data/client/signed'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'setSignedClientByNumeroDossier'])->name('admin.certificat.client.signed');
-        Route::post(sha1('/data/client/withdrawn'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessCertificatConformiteController::class, 'setWithdrawnClientByNumeroDossier'])->name('admin.certificat.client.withdrawn');
+        Route::get('/traitement-demandes-certificat-pre-identification', [ProcessPreIdentificationController::class, 'show'])->name('admin.certificat');
+        Route::get('/datatables/french', [ProcessPreIdentificationController::class, 'showDatatablesFrench'])->name('datatables.french.json');
+        Route::post(sha1('/traitement-demandes-certificat-pre-identification'.date('Ymd').env('APP_KEY')), [ProcessPreIdentificationController::class, 'getClient'])->name('admin.pre-identification.datatable');
+        Route::post('/data/customer/{numero_dossier}', [ProcessPreIdentificationController::class, 'getClientByNumeroDossier'])->name('admin.pre-identification.client.get');
+        Route::post(sha1('/data/customer/approved'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessPreIdentificationController::class, 'approveClientByNumeroDossier'])->name('admin.pre-identification.client.approve');
+        Route::post(sha1('/data/customer/denied'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessPreIdentificationController::class, 'denyClientByNumeroDossier'])->name('admin.pre-identification.client.deny');
+        Route::post(sha1('/data/customer/signed'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessPreIdentificationController::class, 'setSignedClientByNumeroDossier'])->name('admin.pre-identification.client.signed');
+        Route::post(sha1('/data/customer/withdrawn'.date('Ymd').env('APP_KEY')).'/{numero_dossier}', [ProcessPreIdentificationController::class, 'setWithdrawnClientByNumeroDossier'])->name('admin.pre-identification.client.withdrawn');
     });
 
 });

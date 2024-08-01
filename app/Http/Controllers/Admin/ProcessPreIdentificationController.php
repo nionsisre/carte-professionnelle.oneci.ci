@@ -11,7 +11,7 @@ use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
 use App\Models\AbonnesOperateur;
 use App\Models\AbonnesTypePiece;
-use App\Models\Artiste;
+use App\Models\Customer;
 use App\Models\DirecteurGeneral;
 use App\Models\Juridiction;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -31,7 +31,7 @@ use Yajra\DataTables\DataTables;
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev
  */
-class ProcessCertificatConformiteController extends Controller {
+class ProcessPreIdentificationController extends Controller {
 
     /**
      * @return Application|Factory|View
@@ -42,7 +42,7 @@ class ProcessCertificatConformiteController extends Controller {
         $max_chars = 35;
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
-        $data_columns = Schema::getColumnListing((new Artiste())->getTable());
+        $data_columns = Schema::getColumnListing((new Customer())->getTable());
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
         /* Retourner vue Traitement des demandes de certificat de conformité */
@@ -62,7 +62,7 @@ class ProcessCertificatConformiteController extends Controller {
     public function getClient(Request $request) {
 
         if ($request->ajax()) {
-            $data = Artiste::with('juridiction')->get();
+            $data = Customer::with('juridiction')->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('lieu_livraison', function($row){
@@ -143,7 +143,7 @@ class ProcessCertificatConformiteController extends Controller {
                         $lieu_livraison = 'Non-renseigné';
                     }
                     if($row->statut == 1) { // Demandes inachevées (non-payées)
-                        $actionBtn = '<a href="'.route('certificat.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
+                        $actionBtn = '<a href="'.route('pre-identification.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
                     } else if($row->statut == 2) { // Documents en attente de vérification
                         $actionBtn = '
                             <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
@@ -151,7 +151,7 @@ class ProcessCertificatConformiteController extends Controller {
                         ';
                     } else if($row->statut == 3) { // Documents acceptés (en attente de signature)
                         /*$actionBtn = '
-                            <a href="'.route('certificat.download.pdf').'?n='.$row->certificat.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
+                            <a href="'.route('pre-identification.download.pdf').'?n='.$row->pre-identification.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
                             <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
                         ';*/
                         $actionBtn = '
@@ -178,7 +178,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Customer::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -195,7 +195,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Customer::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -234,7 +234,7 @@ class ProcessCertificatConformiteController extends Controller {
             'obs' => ['nullable', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Customer::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -265,7 +265,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Customer::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -296,7 +296,7 @@ class ProcessCertificatConformiteController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Artiste::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
+        $client = Customer::with('juridiction')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||

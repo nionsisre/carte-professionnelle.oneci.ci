@@ -8,8 +8,8 @@ use App\Http\Services\CinetPayAPI;
 use App\Http\Services\GoogleRecaptchaV3;
 use App\Http\Services\NGSerAPI;
 use App\Http\Services\SMS;
-use App\Models\Artiste;
-use App\Models\ArtistesTypePiece;
+use App\Models\Customer;
+use App\Models\CustomersTypePiece;
 use App\Models\CivilStatus;
 use App\Models\DirecteurGeneral;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev
  */
-class CertificatConformiteController extends Controller {
+class PreIdentificationController extends Controller {
 
     /**
      * @return Application|Factory|View
@@ -37,7 +37,7 @@ class CertificatConformiteController extends Controller {
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
         /* Retourner vue resultat */
-        return view('pages.certificat.menu', [
+        return view('pages.pre-identification.menu', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
 
@@ -50,15 +50,16 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
-        $artistes_type_pieces = ArtistesTypePiece::all();
+        $customers_type_pieces = CustomersTypePiece::all();
         $civil_statuses = CivilStatus::all();
 
-        return view('pages.certificat.formulaire', [
+        return view('pages.pre-identification.formulaire', [
             'mobile_header_enabled' => $mobile_header_enabled,
             'civil_statuses' => $civil_statuses,
-            'artistes_type_pieces' => $artistes_type_pieces,
+            'customers_type_pieces' => $customers_type_pieces,
             'centres' => $centres
         ]);
+
     }
 
     /**
@@ -68,9 +69,10 @@ class CertificatConformiteController extends Controller {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        return view('pages.certificat.consultation', [
+        return view('pages.pre-identification.consultation', [
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
+
     }
 
     /**
@@ -82,7 +84,7 @@ class CertificatConformiteController extends Controller {
 
         $abonnes_operateurs = AbonnesOperateur::all();
         $civil_status_center = DB::table('civil_status_center')->get();
-        $abonnes_type_pieces = Artiste::all();
+        $abonnes_type_pieces = Customer::all();
 
         return view('pages.reclamation-paiement', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
@@ -183,7 +185,7 @@ class CertificatConformiteController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('certificat.formulaire')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('pre-identification.formulaire')->with((new GoogleRecaptchaV3())->verify($request));
         }
         /* Valider les variables du formulaire */
         request()->validate([
@@ -214,8 +216,6 @@ class CertificatConformiteController extends Controller {
         /* Stocker variables en base */
         $numero_dossier = (new GeneratedTokensOrIDs())->generateUniqueNumberID('numero_dossier');
 
-        dd($request);
-
         /* Pièces jointes */
         // Récupération du titre d'identité
         $titre_identite_filename = 'titre-identite' . '_' . $numero_dossier . '.' . $request->file('attached-doc')->extension();
@@ -225,34 +225,33 @@ class CertificatConformiteController extends Controller {
             $titre_identite = $request->file('attached-doc')->storeAs('data/titre-identite', $titre_identite_filename, 'public');
         }
 
-        $client = Artiste::create([
+        $customer = Customer::create([
             'numero_dossier' => $numero_dossier,
-            'pseudonyme' => "",
+            'pseudonyme' => strtoupper($request->input('nickname')),
             'nom' => strtoupper($request->input('last-name')),
-            'nom_epouse' => "",
-            'prenoms' => "",
-            'genre' => "",
-            'date_naissance' => "",
-            'lieu_naissance' => "",
-            'pays_naissance' => "",
-            'nationalite' => "",
-            'civil_status_id' => "",
-            'nombre_enfants' => "",
-            'autre_activite' => "",
-            'ville' => "",
-            'commune' => "",
-            'quartier' => "",
-            'adresse' => "",
-            'lieu_travail' => "",
+            'nom_epouse' => strtoupper($request->input('spouse-name')),
+            'prenoms' => strtoupper($request->input('first-name')),
+            'genre' => $request->input('gender'),
+            'date_naissance' => $request->input('birth-date'),
+            'lieu_naissance' => strtoupper($request->input('birth-place')),
+            'pays_naissance' => strtoupper($request->input('birth-country')),
+            'nationalite' => strtoupper($request->input('nationality')),
+            'civil_status_id' => $request->input('civil-status'),
+            'nombre_enfants' => $request->input('number-of-children'),
+            'autre_activite' => strtoupper($request->input('other-activities')),
+            'ville' => strtoupper($request->input('city')),
+            'commune' => strtoupper($request->input('town')),
+            'quartier' => strtoupper($request->input('street')),
+            'adresse' => strtoupper($request->input('address')),
+            'lieu_travail' => strtoupper($request->input('workplace')),
             'msisdn' => str_replace(" ", "", $request->input("msisdn")),
             'email' => "",
-            'artiste_type_piece_id' => "",
-            'type_cni' => "",
-            'numero_document' => "",
+            'customers_type_piece_id' => $request->input('attached-doc-type'),
+            'numero_document' => $request->input('attached-doc-number'),
             'document' => $titre_identite,
-            'date_expiration_document' => "",
+            'date_expiration_document' => $request->input('attached-doc-expiry-date'),
             'uniqid' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date').strtoupper($request->input('mother-last-name'))),
-            'artiste_statut_id' => 1,
+            'customers_statut_id' => 1,
             'transaction_id' => "",
             'integrator_api_response_id' => "",
             'integrator_code' => "",
@@ -266,47 +265,19 @@ class CertificatConformiteController extends Controller {
             'integrator_data_operator_id' => "",
             'integrator_data_payment_date' => "",
             'certificate_download_link' => sha1($numero_dossier.strtoupper($request->input('first-name')).$request->input('birth-date')),
-
-            'numero_dossier' => $numero_dossier,
-            'nni' => $request->input('nni'),
-            'numero_cni' => $request->input('cni-number'),
-            'prenom' => strtoupper($request->input('first-name')),
-            'date_naissance' => $request->input('birth-date'),
-            'lieu_naissance' => "",
-            'nom_mere' => strtoupper($request->input('mother-last-name')),
-            'prenom_mere' => strtoupper($request->input('mother-first-name')),
-            'nom_decision' => strtoupper($request->input('decision-last-name')),
-            'prenom_decision' => strtoupper($request->input('decision-first-name')),
-            'date_naissance_decision' => $request->input('decision-birth-date'),
-            'lieu_naissance_decision' => strtoupper($request->input('decision-lieu-naissance')),
-            'numero_decision' => $request->input('numero-decision'),
-            'date_decision' => $request->input('decision-date'),
-            'lieu_decision' => $request->input("lieu-delivrance"),
-            'cni' => $cni ?? "",
-            'statut' => 1,
-            'observation' => "",
-            'doer_uid' => "",
         ]);
 
         /* Obtention des informations sur le client enregistré et sa juridiction */
-        $client = Artiste::with('juridiction')->find($client->id);
+        $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->find($customer->id);
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
         //$payment_data = (new NGSerAPI())->getPaymentLink($client, env('PAYMENT_TYPE'), env('NGSER_SERVICE_AMOUNT'), true);
 
-        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$request->input("lieu-retrait"))->first();
-        if($centre) {
-            $lieu_livraison = ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label));
-        } else {
-            $lieu_livraison = 'Non-renseigné';
-        }
-
         /* Retourner vue resultat */
-        return redirect()->route('certificat.formulaire')->with([
-            'client' => $client,
-            'centres' => $centres,
-            'lieu_livraison' => $lieu_livraison
+        return redirect()->route('pre-identification.formulaire')->with([
+            'customer' => $customer,
             //'payment_data' => $payment_data
         ]);
+
     }
 
     /**
@@ -318,38 +289,42 @@ class CertificatConformiteController extends Controller {
      */
     public function search(Request $request) {
         /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
-        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après la demande du certficat de conformité)" */
+        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après la demande du fiche de pré-enrolement)" */
         if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
                 (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                    redirect()->route('certificat.consultation')->with((new GoogleRecaptchaV3())->verify($request));
+                    redirect()->route('pre-identification.consultation')->with((new GoogleRecaptchaV3())->verify($request));
             }
             /* Verifier si la recherche se fait par numéro de validation ou par numéro de téléphone */
             request()->validate([
                 'form-number' => ['required', 'numeric', 'digits:10'],
             ]);
-            $client = Artiste::with('juridiction')->where('numero_dossier', '=', $request->input('form-number'))->first();
+            $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $request->input('form-number'))->first();
             /* Génération d'un token d'authentification pour chaque numéro de téléphone "Identifié" s'il y'en a, en session */
-            if($client) {
-                return $this->prepareAndRedirectClientToConsultation($client);
+            if($customer) {
+                return redirect()->route('pre-identification.consultation')->with([
+                    'customer' => $customer
+                ]);
             } else {
-                return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('pre-identification.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
             /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande du certificat de conformité
             (numéro de dossier <f> + token d'authentification <t>) */
-            $client = Artiste::with('juridiction')->where('numero_dossier', '=', $request->get('f'))->first();
-            if($client) {
-                if ($client->uniqid === $request->get('t')) {
-                    return $this->prepareAndRedirectClientToConsultation($client);
+            $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $request->get('f'))->first();
+            if($customer) {
+                if ($customer->uniqid === $request->get('t')) {
+                    return redirect()->route('pre-identification.consultation')->with([
+                        'customer' => $customer
+                    ]);
                 }
             } else {
-                return redirect()->route('certificat.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
+                return redirect()->route('pre-identification.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         }
 
-        return redirect()->route('certificat.consultation');
+        return redirect()->route('pre-identification.consultation');
     }
 
     /**
@@ -368,7 +343,7 @@ class CertificatConformiteController extends Controller {
             'fn' => ['required', 'string', 'max:10'], // Numero de dossier de l'abonne
         ]);
         /* Récupération des numéros de telephone de l'abonné à partir du numéro de validation */
-        $client = Artiste::where('numero_dossier', '=', $request->input('fn'))->first();
+        $client = Customer::where('numero_dossier', '=', $request->input('fn'))->first();
         if($client->exists()) {
             /* Obtention du lien de paiement via l'API Aggrégateur */
             if(config('services.ngser.enabled')) {
@@ -509,7 +484,7 @@ class CertificatConformiteController extends Controller {
         if(!empty($request->get('n'))) {
             /* Print PDF ticket according form-number */
             $certificate_download_link = $request->get('n');
-            $client = Artiste::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
+            $client = Customer::with('juridiction')->where('certificat', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->updated_at->format('Y-m-d'))) );
                 $date_du_jour = date('Y-m-d', time());
@@ -517,7 +492,7 @@ class CertificatConformiteController extends Controller {
                     /* PDF Download document generation */
                     $data = [
                         'title' => 'Certificat de conformité',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
                         'directeur_general' => "Ago Christian KODIA", //DirecteurGeneral::where('statut','=','1')->latest()->first() ?? "",
                         'nom' => $client->nom,
                         'prenom' => $client->prenom,
@@ -534,11 +509,11 @@ class CertificatConformiteController extends Controller {
                         'date_certificat' => $client->updated_at->format('d/m/Y')
                     ];
                     $data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
-                    //$data['qrcode'] = (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1);
+                    //$data['qrcode'] = (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1);
                     $filename = 'certificat-conformite-'.$client->numero_dossier.'.pdf';
                     $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
                     /* Envoi de mail */
-                    /*if (!empty($client->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de certficat de conformité ONECI") ;}*/
+                    /*if (!empty($client->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de fiche de pré-enrolement ONECI") ;}*/
 
                     //return view('layouts.certificat-conformite', $data);
                     return $pdf_certificat_conformite->download($filename);
@@ -546,7 +521,7 @@ class CertificatConformiteController extends Controller {
             }
         }
         /* Retourner vue resultat */
-        return redirect()->route('certificat.consultation')->with([
+        return redirect()->route('pre-identification.consultation')->with([
             'error' => true,
             'error_message' => 'Une erreur est survenue lors du téléchargement du certificat d\'identification. Veuillez actualiser la page et/ou réessayer plus tard'
         ]);
@@ -563,7 +538,7 @@ class CertificatConformiteController extends Controller {
     public function checkCertificate(Request $request) {
         if(!empty($request->get('c'))) {
             $certificate_download_link = $request->get('c');
-            $client = Artiste::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
+            $client = Customer::with('juridiction')->where('certificate_download_link', '=', $certificate_download_link)->first();
             if ($client) {
                 $date_expiration = date('Y-m-d', strtotime('+1 year', strtotime($client->cinetpay_data_payment_date)) );
                 $date_du_jour = date('Y-m-d', time());
@@ -571,7 +546,7 @@ class CertificatConformiteController extends Controller {
                     /* PDF Certficate document generation */
                     return view('layouts.certificat-identification', [
                         'title' => 'Certificat d\'identification',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('certificat.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
+                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $client->certificate_download_link, 183, 1),
                         'numero_dossier' => $client->numero_dossier,
                         'uniqid' => $client->uniqid,
                         'msisdn' => $client->numero_de_telephone,
@@ -591,33 +566,15 @@ class CertificatConformiteController extends Controller {
                     ]);
                 }
             }
-            return redirect()->route('certificat.consultation')->with([
+            return redirect()->route('pre-identification.consultation')->with([
                 'error' => true,
                 'error_message' => 'Ce certificat n\'est pas ou plus valide !'
             ]);
         }
         /* Retourner vue resultat */
-        return redirect()->route('certificat.consultation')->with([
+        return redirect()->route('pre-identification.consultation')->with([
             'error' => true,
             'error_message' => 'Certificat incorrect !'
-        ]);
-    }
-
-    /**
-     * @param $client
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function prepareAndRedirectClientToConsultation($client): \Illuminate\Http\RedirectResponse
-    {
-        $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre', '=', $client->code_lieu_retrait)->first();
-        if ($centre) {
-            $lieu_livraison = ucwords(strtolower($centre->location_label . ', ' . $centre->area_label . ', ' . $centre->department_label));
-        } else {
-            $lieu_livraison = 'Non-renseigné';
-        }
-        return redirect()->route('certificat.consultation')->with([
-            'client' => $client,
-            'lieu_livraison' => $lieu_livraison
         ]);
     }
 

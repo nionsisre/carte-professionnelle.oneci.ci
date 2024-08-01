@@ -6,7 +6,7 @@
     @include('sections.scripts.recaptcha')
     @include('sections.scripts.form-masks')
     @include('sections.scripts.toggle-form-number-and-msisdn')
-    @if(session()->has('client'))
+    @if(session()->has('customer'))
         @include('sections.scripts.payment-processing')
     @endif
 @endsection
@@ -18,7 +18,7 @@
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
                     <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
-                    <li><a href="{{ route('certificat.menu') }}">Menu</a> &rsaquo; </li>
+                    <li><a href="{{ route('pre-identification.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Consultation</li>
                 </ul>
             </nav>
@@ -31,11 +31,11 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de votre demande de certificat de conformité
+                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de votre demande de fiche de Pré-enrôlement
                 </h2>
-                @if(session()->has('client'))
-                    @php($client = session()->get('client'))
-                    @if(!empty($client))
+                @if(session()->has('customer'))
+                    @php($customer = session()->get('customer'))
+                    @if(!empty($customer))
                     <div id="modalBox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         <center><br/>
@@ -51,24 +51,24 @@
 
                                 <div class="one-half" style="width: 47%">
                                     <div class="arrowbox">
-                                        <h2 class="arrowbox-title"><i class="fa fa-file-certificate"></i> &nbsp; Obtention du certificat
+                                        <h2 class="arrowbox-title"><i class="fa fa-file-certificate"></i> &nbsp; Téléchargement de la fiche
                                             <span class="arrowbox-title-arrow-back"></span>
                                             <span class="arrowbox-title-arrow-front"></span>
                                         </h2>
-                                        <p>Récupérez votre certificat de conformité dans lieu de retrait si disponible</p>
+                                        <p>Téléchargez votre fiche de pré-enrôlement</p>
                                     </div>
                                 </div>
                                 <div class="clear"></div>
                             </section><br/>
-                            <h4><i class="fa fa-file-certificate fa-3x text-black"></i><br/><br/>Demande de certificat de conformité</h4>
+                            <h4><i class="fa fa-file-certificate fa-3x text-black"></i><br/><br/>Demande de fiche de pré-enrôlement</h4>
                             <br/><div>
                                 <p style="padding: 0em 0em 2em">
-                                    Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $client->numero_dossier }}</b><br/><br/>
+                                    Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $customer->numero_dossier }}</b><br/><br/>
                                     Document justificatif : &nbsp; <br/>
-                                        @if(!empty($client->cni))
+                                        @if(!empty($customer->cni))
                                         <b style="font-size: 1rem"><i class="fad fa-id-card" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Carte Nationale d'Identité</b><br/>
                                         @endif
-                                        @if(!empty($client->decision_judiciaire))
+                                        @if(!empty($customer->decision_judiciaire))
                                         <b style="font-size: 1rem"><i class="fad fa-balance-scale" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; Décision Judiciaire</b><br/>
                                         @endif
                                     <table class="gen-table" style="margin-top: 0; vertical-align: middle;">
@@ -108,43 +108,43 @@
                                         <tbody>
                                             <tr>
                                                 <td style="vertical-align: middle;">
-                                                    @if($client->statut==1)
+                                                    @if($customer->statut==1)
                                                         <i class="fad fa-money-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Paiement non effectué</b>
-                                                    @elseif($client->statut==2)
+                                                    @elseif($customer->statut==2)
                                                         <i class="fad fa-hourglass-half" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Document justificatif en attente d'approbation</b>
-                                                    @elseif($client->statut==3)
+                                                    @elseif($customer->statut==3)
                                                         <i class="fad fa-check" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande approuvée par l'ONECI</b>
-                                                    @elseif($client->statut==4)
+                                                    @elseif($customer->statut==4)
                                                         <i class="fad fa-times-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Demande refusée</b>
-                                                    @elseif($client->statut==5)
+                                                    @elseif($customer->statut==5)
                                                         <i class="fad fa-file-certificate" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité disponible</b>
-                                                    @elseif($client->statut==6)
+                                                    @elseif($customer->statut==6)
                                                         <i class="fad fa-hand-receiving" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9;"></i> &nbsp; <b>Certificat de conformité retiré</b>
                                                     @endif
                                                 </td>
                                                 <td style="vertical-align: middle;">
-                                                    @if(session()->get('client')->statut==1)
+                                                    @if(session()->get('customer')->statut==1)
                                                         <div id="payment-button-container">
                                                             <div id="payment-link-loader" style="display: none"><center><i class="fa fa-spinner fa-spin"></i></center></div>
                                                             <a href="javascript:void(0)" class="button" style="margin: 0" onclick="gpl(true)" id="payment-link-btn"><i class="fa fa-money-check text-white"></i> &nbsp; Procéder au paiement</a>
                                                         </div>
-                                                    @elseif(session()->get('client')->statut==2)
+                                                    @elseif(session()->get('customer')->statut==2)
                                                         <i class="fa fa-spinner fa-spin"></i> &nbsp; Authentification du document justificatif par l'ONECI
-                                                    @elseif(session()->get('client')->statut==3)
+                                                    @elseif(session()->get('customer')->statut==3)
                                                         <i class="fa fa-spinner fa-spin"></i> &nbsp; Le certificat de conformité est en attente de signature par le Directeur Général
-                                                    @elseif(session()->get('client')->statut==4)
-                                                        @if(!empty(session()->get('client')->observation))
-                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée pour le motif suivant : {{ session()->get('client')->observation }}
+                                                    @elseif(session()->get('customer')->statut==4)
+                                                        @if(!empty(session()->get('customer')->observation))
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée pour le motif suivant : {{ session()->get('customer')->observation }}
                                                         @else
                                                             <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de certificat de conformité a été rejetée par l'ONECI.
                                                         @endif
-                                                    @elseif(session()->get('client')->statut==5)
+                                                    @elseif(session()->get('customer')->statut==5)
                                                         @if(session()->has('lieu_livraison') && !empty(session()->get('lieu_livraison')))
                                                             <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
                                                         @else
                                                             <i class="fa fa-check"></i> &nbsp; Le certificat de conformité est signé et disponible dans votre lieu de retrait.
                                                         @endif
-                                                    @elseif(session()->get('client')->statut==6)
+                                                    @elseif(session()->get('customer')->statut==6)
                                                         <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre certificat de conformité a bien été effectué avec succès, l'ONECI vous remercie.
                                                     @endif
                                                 </td>
@@ -156,7 +156,7 @@
                                     <br/><br/>
                                 </p>
                             </div>
-                            <a href="{{ route('certificat.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                            <a href="{{ route('pre-identification.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                         </center>
                     </div>
                     @else
@@ -173,7 +173,7 @@
                                         </p>
                                     </p>
                                 </div>
-                                <a href="{{ route('certificat.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
+                                <a href="{{ route('pre-identification.menu') }}" class="button black"><i class="fa fa-home text-white"></i> &nbsp; Retourner à l'accueil</a>
                             </center>
                         </div>
                     @endif
@@ -198,7 +198,7 @@
                                 </div>
                             </center>
                         @endif
-                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('certificat.consultation.submit') }}">
+                        <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('pre-identification.consultation.submit') }}">
                             {{ csrf_field() }}
                             <input type="hidden" id="tsch-input" name="tsch" value="0"/>
                             <center>

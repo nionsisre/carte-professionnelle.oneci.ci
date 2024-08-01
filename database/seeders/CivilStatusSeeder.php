@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\CivilStatus;
 use Illuminate\Database\Seeder;
 
-class CivilStatusSeeder extends Seeder
-{
+class CivilStatusSeeder extends Seeder {
+
     /**
      * Run the database seeds.
      *
@@ -35,4 +35,5 @@ class CivilStatusSeeder extends Seeder
             'icone' => ''
         ]);
     }
+
 }

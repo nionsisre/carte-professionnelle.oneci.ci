@@ -110,304 +110,306 @@
             switch (currentStepIdx) {
                 {{-- Step 1 --}}
                 case 0:
-                    gender = document.querySelectorAll('[name="gender"]:checked');
-                    nickname = document.querySelectorAll('[name="nickname"]');
-                    last_name = document.querySelectorAll('[name="last-name"]');
-                    first_name = document.querySelectorAll('[name="first-name"]');
-                    spouse_name = document.querySelectorAll('[name="spouse-name"]');
-                    birth_date = document.querySelectorAll('[name="birth-date"]');
-                    birth_place = document.querySelectorAll('[name="birth-place"]');
-                    birth_country = document.querySelectorAll('[name="birth-country"]');
-                    nationality = document.querySelectorAll('[name="nationality"]');
-                    civil_status = document.querySelectorAll('[name="civil-status"]');
-                    number_of_children = document.querySelectorAll('[name="number-of-children"]');
-                    other_activities = document.querySelectorAll('[name="other-activities"]');
-                    city = document.querySelectorAll('[name="city"]');
-                    town = document.querySelectorAll('[name="town"]');
-                    street = document.querySelectorAll('[name="street"]');
-                    address = document.querySelectorAll('[name="address"]');
-                    workplace = document.querySelectorAll('[name="workplace"]');
-                    msisdn = document.querySelectorAll('[name="msisdn"]');
+                    @if(!session()->has('customer'))
+                        gender = document.querySelectorAll('[name="gender"]:checked');
+                        nickname = document.querySelectorAll('[name="nickname"]');
+                        last_name = document.querySelectorAll('[name="last-name"]');
+                        first_name = document.querySelectorAll('[name="first-name"]');
+                        spouse_name = document.querySelectorAll('[name="spouse-name"]');
+                        birth_date = document.querySelectorAll('[name="birth-date"]');
+                        birth_place = document.querySelectorAll('[name="birth-place"]');
+                        birth_country = document.querySelectorAll('[name="birth-country"]');
+                        nationality = document.querySelectorAll('[name="nationality"]');
+                        civil_status = document.querySelectorAll('[name="civil-status"]');
+                        number_of_children = document.querySelectorAll('[name="number-of-children"]');
+                        other_activities = document.querySelectorAll('[name="other-activities"]');
+                        city = document.querySelectorAll('[name="city"]');
+                        town = document.querySelectorAll('[name="town"]');
+                        street = document.querySelectorAll('[name="street"]');
+                        address = document.querySelectorAll('[name="address"]');
+                        workplace = document.querySelectorAll('[name="workplace"]');
+                        msisdn = document.querySelectorAll('[name="msisdn"]');
 
-                    {{-- gender --}}
-                    if(!jQuery('#gender-male-input').is(':checked') && !jQuery('#gender-female-input').is(':checked')) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-venus-mars"></i><br/><br/><h3>Veuillez correctement renseigner votre genre SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index','2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    if (jQuery(gender).val().toUpperCase() === 'M') {
-                        jQuery(spouse_name).val('');
-                    }
-                    {{-- nickname --}}
-                    if (!jQuery(nickname).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre pseudonyme SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- last_name --}}
-                    if (!jQuery(last_name).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- first_name --}}
-                    if (!jQuery(first_name).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- birth_date --}}
-                    var birthDateFormatted = new Date(jQuery(birth_date).val());
-                    var minBirthDate = new Date();
-                    var maxBirthDate = new Date();
-                    minBirthDate.setFullYear(minBirthDate.getFullYear() - 140);
-                    maxBirthDate.setFullYear(maxBirthDate.getFullYear() - 10);
-                    if (!jQuery(birth_date).val() || birthDateFormatted.getTime() < minBirthDate.getTime() || birthDateFormatted.getTime() > maxBirthDate.getTime()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner votre date de naissance</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- birth_place --}}
-                    if (!jQuery(birth_place).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de naissance SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- birth_country --}}
-                    if (!jQuery(birth_country).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner le pays de naissance SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- nationality --}}
-                    if (!jQuery(nationality).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-globe-africa"></i><br/><br/><h3>Veuillez correctement renseigner votre nationalité SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- civil_status --}}
-                    if (!jQuery(civil_status).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-rings-wedding"></i><br/><br/><h3>Veuillez correctement renseigner votre situation matrimoniale SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- number_of_children --}}
-                    if (!jQuery(number_of_children).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-baby"></i><br/><br/><h3>Veuillez correctement renseigner le nombre de vos enfants SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- city --}}
-                    if (!jQuery(city).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre ville de résidence SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- town --}}
-                    if (!jQuery(town).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre commune de résidence SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- street --}}
-                    if (!jQuery(street).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre quartier de résidence SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- workplace --}}
-                    if (!jQuery(workplace).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de travail SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
-                    {{-- msisdn --}}
-                    if (!jQuery(msisdn).val()) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner votre numéro de téléphone SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    } else if (jQuery(msisdn).val().length !== 14 ||
-                        (jQuery(msisdn).val().length === 14 && jQuery(msisdn).val().substring(0, 2) !== "01" && jQuery(msisdn).val().substring(0, 2) !== "05" && jQuery(msisdn).val().substring(0, 2) !== "07")) {
-                        jQuery('#modalError').html(
-                            '<center> <div class="notification-box notification-box-error">\n\
-                            <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner un numéro de téléphone valide SVP</h3></div>\n\
-                            </div><div class="modal-footer">\n\
-                            <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
-                        );
-                        jQuery('#modalError').modal({
-                            escapeClose: false,
-                            clickClose: false,
-                            showClose: false
-                        });
-                        jQuery('.blocker').css('z-index', '2');
-                        jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
-                        return false;
-                    }
+                        {{-- gender --}}
+                        if(!jQuery('#gender-male-input').is(':checked') && !jQuery('#gender-female-input').is(':checked')) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-venus-mars"></i><br/><br/><h3>Veuillez correctement renseigner votre genre SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index','2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        if (jQuery(gender).val().toUpperCase() === 'M') {
+                            jQuery(spouse_name).val('');
+                        }
+                        {{-- nickname --}}
+                        if (!jQuery(nickname).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre pseudonyme SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- last_name --}}
+                        if (!jQuery(last_name).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre nom SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- first_name --}}
+                        if (!jQuery(first_name).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-font-case"></i><br/><br/><h3>Veuillez correctement renseigner votre/vos prénom(s) SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- birth_date --}}
+                        var birthDateFormatted = new Date(jQuery(birth_date).val());
+                        var minBirthDate = new Date();
+                        var maxBirthDate = new Date();
+                        minBirthDate.setFullYear(minBirthDate.getFullYear() - 140);
+                        maxBirthDate.setFullYear(maxBirthDate.getFullYear() - 10);
+                        if (!jQuery(birth_date).val() || birthDateFormatted.getTime() < minBirthDate.getTime() || birthDateFormatted.getTime() > maxBirthDate.getTime()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-birthday-cake"></i><br/><br/><h3>Veuillez correctement renseigner votre date de naissance</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- birth_place --}}
+                        if (!jQuery(birth_place).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de naissance SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- birth_country --}}
+                        if (!jQuery(birth_country).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner le pays de naissance SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- nationality --}}
+                        if (!jQuery(nationality).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-globe-africa"></i><br/><br/><h3>Veuillez correctement renseigner votre nationalité SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- civil_status --}}
+                        if (!jQuery(civil_status).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-rings-wedding"></i><br/><br/><h3>Veuillez correctement renseigner votre situation matrimoniale SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- number_of_children --}}
+                        if (!jQuery(number_of_children).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-baby"></i><br/><br/><h3>Veuillez correctement renseigner le nombre de vos enfants SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- city --}}
+                        if (!jQuery(city).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre ville de résidence SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- town --}}
+                        if (!jQuery(town).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre commune de résidence SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- street --}}
+                        if (!jQuery(street).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre quartier de résidence SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- workplace --}}
+                        if (!jQuery(workplace).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-map-marker-alt"></i><br/><br/><h3>Veuillez correctement renseigner votre lieu de travail SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                        {{-- msisdn --}}
+                        if (!jQuery(msisdn).val()) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner votre numéro de téléphone SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        } else if (jQuery(msisdn).val().length !== 14 ||
+                            (jQuery(msisdn).val().length === 14 && jQuery(msisdn).val().substring(0, 2) !== "01" && jQuery(msisdn).val().substring(0, 2) !== "05" && jQuery(msisdn).val().substring(0, 2) !== "07")) {
+                            jQuery('#modalError').html(
+                                '<center> <div class="notification-box notification-box-error">\n\
+                                <div class="modal-header"><i class="fa fa-2x fa-sim-card"></i><br/><br/><h3>Veuillez renseigner un numéro de téléphone valide SVP</h3></div>\n\
+                                </div><div class="modal-footer">\n\
+                                <a href="#" rel="modal:close" style="color: #000000; text-decoration: none; padding: 0.5em 1.5em; border-radius: 0.6em; border-style: solid; border-width: 1px; background-color: #d7ebf5;border-color: #99c7de;">Ok</a></div></center>'
+                            );
+                            jQuery('#modalError').modal({
+                                escapeClose: false,
+                                clickClose: false,
+                                showClose: false
+                            });
+                            jQuery('.blocker').css('z-index', '2');
+                            jQuery('#smartwizard').smartWizard("setState", [currentStepIdx], 'error');
+                            return false;
+                        }
+                    @endif
 
                     jQuery('#smartwizard').smartWizard("unsetState", [currentStepIdx], 'error');
                     break;

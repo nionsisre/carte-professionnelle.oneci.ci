@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\ArtistesStatut;
+use App\Models\CustomersStatut;
 use Illuminate\Database\Seeder;
 
-class ArtisteStatutSeeder extends Seeder
-{
+class CustomersStatutSeeder extends Seeder {
+
     /**
      * Run the database seeds.
      *
@@ -14,30 +14,31 @@ class ArtisteStatutSeeder extends Seeder
      */
     public function run()
     {
-        ArtistesStatut::create([
+        CustomersStatut::create([
             'code_statut' => 'PEI',
             'libelle_statut' => 'Pré-enrôlement inachevé (non-payées)',
             'icone' => 'money-check',
         ]);
-        ArtistesStatut::create([
+        CustomersStatut::create([
             'code_statut' => 'DAV',
             'libelle_statut' => 'Documents justificatifs en attente de vérification',
             'icone' => 'hourglass-half',
         ]);
-        ArtistesStatut::create([
+        CustomersStatut::create([
             'code_statut' => 'DR',
             'libelle_statut' => 'Documents refusés',
             'icone' => 'times-circle',
         ]);
-        ArtistesStatut::create([
+        CustomersStatut::create([
             'code_statut' => 'FPD',
             'libelle_statut' => 'Fiche de pré-enrôlement disponible',
             'icone' => 'check',
         ]);
-        ArtistesStatut::create([
+        CustomersStatut::create([
             'code_statut' => 'FPT',
             'libelle_statut' => 'Fiche de pré-enrôlement téléchargée',
             'icone' => 'hand-receiving',
         ]);
     }
+
 }

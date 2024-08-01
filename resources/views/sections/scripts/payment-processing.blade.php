@@ -6,9 +6,9 @@
     | GESTION DU PROCESSUS DE PAIEMENT NIVEAU FRONTEND
     |--------------------------------------------------------------------------
     --}}
-    @if(session()->has('client') && session()->get('client')->statut == 1)
+    @if(session()->has('customer') && session()->get('customer')->customers_statut_id == 1)
         {{-- Récupérer le lien de paiement + activer le listener de paiement Javascript dès que la page est chargée --}}
-        @if(Route::is('certificat.formulaire'))
+        @if(Route::is('pre-identification.formulaire'))
         jQuery(document).ready(function () {
             gpl();
         });
@@ -24,9 +24,9 @@
             withModal = withModal || false;
             withModalSet = withModal;
             var cli = "{{ url()->current() }}";
-            var fn = "{{ session()->get('client')->numero_dossier }}";
+            var fn = "{{ session()->get('customer')->numero_dossier }}";
             $.ajax({
-                url: "{{ route('certificat.payment.get') }}",
+                url: "{{ route('pre-identification.payment.get') }}",
                 type: "POST",
                 data: {
                     '_token': "{{ csrf_token() }}",
@@ -92,10 +92,10 @@
         }
         {{-- Fonction de vérification du statut de payment auprès du serveur appelée chaque env('PAYMENT_LISTENER_TIMEOUT_MILLISECONDS') millisecondes  --}}
         function cp() {
-            let url = "{{ route('certificat.payment.verify') }}";
+            let url = "{{ route('pre-identification.payment.verify') }}";
             let cli = "{{ url()->current() }}";
-            let t = "{{ md5(sha1('s@lty'.session()->get('client')->numero_dossier.'s@lt'))}}";
-            let fn = "{{ session()->get('client')->numero_dossier }}";
+            let t = "{{ md5(sha1('s@lty'.session()->get('customer')->numero_dossier.'s@lt'))}}";
+            let fn = "{{ session()->get('customer')->numero_dossier }}";
             $.post({
                 type: 'POST',
                 url: url,

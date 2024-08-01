@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\AbonnesTypePiece;
-use App\Models\ArtistesTypePiece;
+use App\Models\CustomersTypePiece;
 use Illuminate\Database\Seeder;
 
-class ArtisteTypePieceSeeder extends Seeder {
+class CustomersTypePieceSeeder extends Seeder {
 
     /**
      * Run the database seeds.
@@ -14,35 +13,35 @@ class ArtisteTypePieceSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'CNI',
             'libelle_piece' => 'Carte nationale d\'identité'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'CRE',
             'libelle_piece' => 'Carte de résident'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'AEB',
             'libelle_piece' => 'Attestation d\'enrôlement biométrique'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'CRT',
             'libelle_piece' => 'Carte de résident temporaire'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'PSP',
             'libelle_piece' => 'Passeport'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'PCO',
             'libelle_piece' => 'Permis de conduire'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'CCS',
             'libelle_piece' => 'Carte Consulaire'
         ]);
-        ArtistesTypePiece::create([
+        CustomersTypePiece::create([
             'code_type_piece' => 'CMU',
             'libelle_piece' => 'Couverture Maladie Universelle'
         ]);

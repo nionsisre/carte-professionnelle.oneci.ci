@@ -13,7 +13,7 @@ class CivilStatus extends Model {
     public $timestamps = false;
 
     public function artistes() {
-        return $this->hasMany(Artiste::class, 'id');
+        return $this->hasMany(Customer::class, 'id');
     }
 
 }

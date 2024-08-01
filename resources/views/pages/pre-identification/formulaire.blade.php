@@ -19,10 +19,10 @@
             {{-- Désactive le bouton suivant du wizard --}}
             {{-- jQuery(".sw-btn-next").addClass("disabled").prop("disabled", true); --}}
             {{--jQuery(".sw-btn-next").removeClass("disabled").removeAttr("disabled");--}}
-            @if(session()->has('client'))
+            @if(session()->has('customer'))
                 {{-- Désactive les étapes pré-paiement du wizard --}}
                 jQuery('#smartwizard').smartWizard("setState", [0,1,2], "disable");
-                jQuery('#smartwizard').smartWizard("goToStep", 4);
+                jQuery('#smartwizard').smartWizard("goToStep", 3);
             @else
                 {{-- Désactive les étapes post-paiement du wizard --}}
                 jQuery('#smartwizard').smartWizard("setState", [3,4], "disable");
@@ -44,7 +44,7 @@
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
                     <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
-                    <li><a href="{{ route('certificat.menu') }}">Menu</a> &rsaquo; </li>
+                    <li><a href="{{ route('pre-identification.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Formulaire</li>
                 </ul>
             </nav>
@@ -59,7 +59,7 @@
             <div class="column-last">
                 <h2><i class="fa fa-file-music text-black mr10"></i> &nbsp; Obtention de la fiche de Pré-enrôlement DJ
                 </h2>
-                @if(session()->has('client'))
+                @if(session()->has('customer'))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
                             <div id="smartwizard" class="mb-3">
@@ -105,23 +105,23 @@
                                             </div>--}}
                                         </section><br/><br/><br/>
                                         {{--Après avoir procédé au paiement, <br/><br/>
-                                        Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                        Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('customer')->numero_dossier }}</span></b> &nbsp;<br/><br/>
                                         <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                        Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
+                                        Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de fiche de Pré-enrôlement dans la rubrique << <a href="{{ route('pre-identification.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
                                         L'ONECI vous remercie !--}}
                                     </div>
                                     <div id="etape-5" class="tab-pane" role="tabpanel">
                                         <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i><br/>
                                         <div>
                                             <p style="padding: 0 0 3em">
-                                                Votre demande de certificat de conformité a été soumise avec succès !<br/><br/>
-                                                Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('client')->numero_dossier }}</span></b> &nbsp;<br/><br/>
+                                                Votre demande de fiche de Pré-enrôlement a été soumise avec succès !<br/><br/>
+                                                Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('customer')->numero_dossier }}</span></b> &nbsp;<br/><br/>
                                                 <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
-                                                Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de certificat de conformité dans la rubrique << <a href="{{ route('certificat.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
+                                                Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de fiche de Pré-enrôlement dans la rubrique << <a href="{{ route('pre-identification.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
                                                 L'ONECI vous remercie !
                                             </p>
                                         </div>
-                                        <a href="{{ route('certificat.consultation.submit.get').'?f='.session()->get('client')->numero_dossier.'&t='.session()->get('client')->uniqid }}" class="button black"><i class="fa fa-search text-white"></i> &nbsp; Cliquez ici pour consulter l'état d'avancement du dossier N°{{ session()->get('client')->numero_dossier }}</a><br/><br/>
+                                        <a href="{{ route('pre-identification.consultation.submit.get').'?f='.session()->get('customer')->numero_dossier.'&t='.session()->get('customer')->uniqid }}" class="button black"><i class="fa fa-search text-white"></i> &nbsp; Cliquez ici pour consulter l'état d'avancement du dossier N°{{ session()->get('customer')->numero_dossier }}</a><br/><br/>
                                     </div>
                                 </div>
                             </div>
@@ -152,7 +152,7 @@
                         <center>
                             <div>
                                 <form id="ctptch-frm-id" class="content-form" method="post"
-                                      action="{{ route('certificat.formulaire.submit') }}" enctype="multipart/form-data">
+                                      action="{{ route('pre-identification.formulaire.submit') }}" enctype="multipart/form-data">
                                     {{ csrf_field() }}
                                     <div id="modalError" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                                     <div id="modalInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
@@ -248,8 +248,8 @@
                                                 <div id="doc-container">
                                                     <br/><br/>
                                                     <h2><i class="fa fa-id-card"></i> &nbsp; Titre d'identité :</h2>
-                                                    <x-input-select2 :options="$artistes_type_pieces->map(function($artistes_type_piece) {
-                                                                return ['value' => $artistes_type_piece->id, 'label' => $artistes_type_piece->libelle_piece];
+                                                    <x-input-select2 :options="$customers_type_pieces->map(function($customers_type_piece) {
+                                                                return ['value' => $customers_type_piece->id, 'label' => $customers_type_piece->libelle_piece];
                                                             })->toArray()" name="attached-doc-type" title="Type de pièce d'identité" label="Type de pièce d'identité..." required="true" width="17.5em" column="col-sm-12" />
                                                     <x-input-text name="attached-doc-number" label="Numéro du document" placeholder="____________" required="true" maxlength="30" width="13em" column="" />
                                                     <x-input-date name="attached-doc-expiry-date" label="Date d'expiration" placeholder="__/__/____" required="true" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+20 years')) }}" width="10.5em" column="" /><br/>

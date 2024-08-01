@@ -16,7 +16,7 @@
                 url : "{{ route('datatables.french.json') }}"
             },
             ajax: {
-                url: "{{ route('admin.certificat.datatable') }}",
+                url: "{{ route('admin.pre-identification.datatable') }}",
                 type: "POST",
                 data: {
                     "_token": "{{ csrf_token() }}"

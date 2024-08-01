@@ -67,7 +67,7 @@
                             </div>
                         </center>
                     @endif
-                    <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('certificat.payment.reclamation.submit') }}">
+                    <form id="ctptch-frm-id" class="content-form" method="post" action="{{ route('pre-identification.payment.reclamation.submit') }}">
                         {{ csrf_field() }}
                         <center>
                             <br/>

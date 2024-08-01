@@ -9,7 +9,7 @@
         myDatatable.draw();
     });
     function withdrawnDocuments(nd, t) {
-        let url = "{!! route('admin.certificat.client.withdrawn', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
+        let url = "{!! route('admin.pre-identification.client.withdrawn', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
             type: 'POST',

@@ -9,7 +9,7 @@
         myDatatable.draw();
     });
     function approveDocuments(nd, t, lr) {
-        let url = "{!! route('admin.certificat.client.approve', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
+        let url = "{!! route('admin.pre-identification.client.approve', ['numero_dossier' => '__numero_dossier__']) !!}".replace('__numero_dossier__', nd);
         let cli = "{{ url()->current() }}";
         jQuery.ajax({
             type: 'POST',
@@ -43,7 +43,7 @@
                     jQuery('.approve-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
                     jQuery('.approve-documents-modal-ldec').text(client.juridiction.libelle);
                     jQuery('.approve-documents-modal-lr').text(lr);
-                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('certificat.download.pdf') }}?n="+client.certificat);
+                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+client.certificat);
                 }
             }, error: function (data) {
                 let errorMessage = "";

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agent;
 use App\Models\AgentCandidatAdmis;
 use App\Models\AgentPresence;
-use App\Models\Artiste;
+use App\Models\Customer;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -32,19 +32,19 @@ class HomeController extends Controller
         $max_chars = 35;
         $username = (strlen($username) < $max_chars) ? $username : substr($username,0,($max_chars-3))."...";
 
-        $nombre_demandes = Artiste::where('statut','>=','2')->count();
-        $nombre_demandes_non_traitees = Artiste::where('statut','=','2')->count();
-        $nombre_demandes_daily = Artiste::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
-        $nombre_demandes_monthly = Artiste::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m").'%')->count();
-        $nombre_demandes_validees = Artiste::where('statut','=','3')->count();
-        $nombre_demandes_validees_daily = Artiste::where('statut','=','3')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
-        $nombre_demandes_validees_monthly = Artiste::where('statut','=','3')->where('updated_at','LIKE',date("Y-m").'%')->count();
-        $nombre_demandes_refusees = Artiste::where('statut','=','4')->count();
-        $nombre_demandes_refusees_daily = Artiste::where('statut','=','4')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
-        $nombre_demandes_refusees_monthly = Artiste::where('statut','=','4')->where('updated_at','LIKE',date("Y-m").'%')->count();
-        $nombre_demandes_traitees = Artiste::where('statut','>=','3')->count();
-        $nombre_demandes_traitees_daily = Artiste::where('statut','>=','3')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
-        $nombre_demandes_traitees_monthly = Artiste::where('statut','>=','3')->where('updated_at','LIKE',date("Y-m").'%')->count();
+        $nombre_demandes = Customer::where('statut','>=','2')->count();
+        $nombre_demandes_non_traitees = Customer::where('statut','=','2')->count();
+        $nombre_demandes_daily = Customer::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
+        $nombre_demandes_monthly = Customer::where('statut','>=','2')->where('updated_at','LIKE',date("Y-m").'%')->count();
+        $nombre_demandes_validees = Customer::where('statut','=','3')->count();
+        $nombre_demandes_validees_daily = Customer::where('statut','=','3')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
+        $nombre_demandes_validees_monthly = Customer::where('statut','=','3')->where('updated_at','LIKE',date("Y-m").'%')->count();
+        $nombre_demandes_refusees = Customer::where('statut','=','4')->count();
+        $nombre_demandes_refusees_daily = Customer::where('statut','=','4')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
+        $nombre_demandes_refusees_monthly = Customer::where('statut','=','4')->where('updated_at','LIKE',date("Y-m").'%')->count();
+        $nombre_demandes_traitees = Customer::where('statut','>=','3')->count();
+        $nombre_demandes_traitees_daily = Customer::where('statut','>=','3')->where('updated_at','LIKE',date("Y-m-d").'%')->count();
+        $nombre_demandes_traitees_monthly = Customer::where('statut','>=','3')->where('updated_at','LIKE',date("Y-m").'%')->count();
         $taux_demandes_traitees = ($nombre_demandes != 0) ? (intval($nombre_demandes_traitees)*100) / intval($nombre_demandes) : 0;
         $taux_demandes_traitees_daily = ($nombre_demandes_daily != 0) ? (intval($nombre_demandes_traitees_daily)*100) / intval($nombre_demandes_daily) : 0;
         $taux_demandes_traitees_monthly = ($nombre_demandes_monthly != 0) ? (intval($nombre_demandes_traitees_monthly)*100) / intval($nombre_demandes_monthly) : 0;

@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Artiste extends Model
-{
+class Customer extends Model {
+
     use HasFactory;
 
     public $guarded = [];
@@ -15,12 +15,12 @@ class Artiste extends Model
         return $this->belongsTo(CivilStatus::class);
     }
 
-    public function artistesStatut() {
-        return $this->belongsTo(ArtistesStatut::class);
+    public function customersStatut() {
+        return $this->belongsTo(CustomersStatut::class);
     }
 
-    public function artistesTypePiece() {
-        return $this->belongsTo(ArtistesTypePiece::class);
+    public function customersTypePiece() {
+        return $this->belongsTo(CustomersTypePiece::class);
     }
 
 }

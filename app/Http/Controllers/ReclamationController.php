@@ -26,7 +26,7 @@ class ReclamationController extends Controller {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
         if(config('services.recaptcha.enabled')) {
             (new GoogleRecaptchaV3())->verify($request)['error'] ??
-                redirect()->route('certificat.reclamation_paiement')->with((new GoogleRecaptchaV3())->verify($request));
+                redirect()->route('pre-identification.reclamation_paiement')->with((new GoogleRecaptchaV3())->verify($request));
         }
         /* Valider les variables du formulaire */
         request()->validate([
@@ -44,7 +44,7 @@ class ReclamationController extends Controller {
             ])
         );
         /* Retourner vue resultat */
-        return redirect()->route('certificat.reclamation_paiement')->with('response', $res_data->original);
+        return redirect()->route('pre-identification.reclamation_paiement')->with('response', $res_data->original);
     }
 
 }

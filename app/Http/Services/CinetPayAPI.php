@@ -291,11 +291,11 @@ class CinetPayAPI {
                 ->get();
             if (sizeof($abonne_numeros) !== 0) {
                 /* Génération d'un token certificat pour chaque numéro de téléphone < Identifié > en session */
-                return redirect()->route('certificat.consultation')->with('abonne_numeros', $abonne_numeros);
+                return redirect()->route('pre-identification.consultation')->with('abonne_numeros', $abonne_numeros);
             }
         }
         /* Sinon retourner sur le formulaire de consultation */
-        return redirect()->route('certificat.consultation');
+        return redirect()->route('pre-identification.consultation');
     }
 
     /**

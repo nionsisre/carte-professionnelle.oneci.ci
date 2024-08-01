@@ -13,13 +13,13 @@
     <div class="navbar-collapse">
         <ul class="navbar-nav">
             <li>
-                <a href="{{ route('certificat.menu') }}">&nbsp;<br/>Accueil</a>
+                <a href="{{ route('pre-identification.menu') }}">&nbsp;<br/>Accueil</a>
             </li>
             <li>
-                <a href="{{ route('certificat.formulaire') }}">Formulaire <br/>Pré-enrôlement DJ</a>
+                <a href="{{ route('pre-identification.formulaire') }}">Formulaire <br/>Pré-enrôlement DJ</a>
             </li>
             <li>
-                <a href="{{ route('certificat.consultation') }}">Consultation statut<br/>Pré-enrôlement DJ</a>
+                <a href="{{ route('pre-identification.consultation') }}">Consultation statut<br/>Pré-enrôlement DJ</a>
             </li>
         </ul>
     </div>
