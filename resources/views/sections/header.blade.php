@@ -16,10 +16,10 @@
                 <a href="{{ route('pre-identification.menu') }}">&nbsp;<br/>Accueil</a>
             </li>
             <li>
-                <a href="{{ route('pre-identification.formulaire') }}">Formulaire <br/>Pré-enrôlement DJ</a>
+                <a href="{{ route('pre-identification.formulaire') }}">Formulaire de<br/>Pré-enrôlement</a>
             </li>
             <li>
-                <a href="{{ route('pre-identification.consultation') }}">Consultation statut<br/>Pré-enrôlement DJ</a>
+                <a href="{{ route('pre-identification.consultation') }}">Consultation du<br/>statut Pré-enrôlement</a>
             </li>
         </ul>
     </div>

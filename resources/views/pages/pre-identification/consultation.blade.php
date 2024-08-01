@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Consultation statut identification')
+@section('title', 'Consultation statut pré-identification')
 
 @section('scripts')
     @include('sections.scripts.recaptcha')
@@ -17,7 +17,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
+                    <li>Fiche de Pré-enrôlement {{ env('APP_NAME') }} &rsaquo; </li>
                     <li><a href="{{ route('pre-identification.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Consultation</li>
                 </ul>
@@ -31,7 +31,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de votre demande de fiche de Pré-enrôlement
+                <h2><i class="fa fa-search text-black mr10"></i> &nbsp; Consulter le statut de votre demande de fiche de Pré-enrôlement {{ env('APP_NAME') }}
                 </h2>
                 @if(session()->has('customer'))
                     @php($customer = session()->get('customer'))
@@ -55,12 +55,12 @@
                                             <span class="arrowbox-title-arrow-back"></span>
                                             <span class="arrowbox-title-arrow-front"></span>
                                         </h2>
-                                        <p>Téléchargez votre fiche de pré-enrôlement</p>
+                                        <p>Téléchargez votre fiche de pré-enrôlement {{ env('APP_NAME') }}</p>
                                     </div>
                                 </div>
                                 <div class="clear"></div>
                             </section><br/>
-                            <h4><i class="fa fa-file-certificate fa-3x text-black"></i><br/><br/>Demande de fiche de pré-enrôlement</h4>
+                            <h4><i class="fa fa-file-certificate fa-3x text-black"></i><br/><br/>Demande de fiche de pré-enrôlement {{ env('APP_NAME') }}</h4>
                             <br/><div>
                                 <p style="padding: 0em 0em 2em">
                                     Numéro de validation : &nbsp; <br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N° {{ $customer->numero_dossier }}</b><br/><br/>
@@ -119,10 +119,11 @@
                                                             <i class="fa fa-exclamation-triangle"></i> &nbsp; Votre demande de pré-identification a été rejetée par l'ONECI.
                                                         @endif
                                                     @elseif($customer->customersStatut->id==4)
-                                                        @if(session()->has('lieu_livraison') && !empty(session()->get('lieu_livraison')))
-                                                            <i class="fa fa-check"></i> &nbsp; La fiche de Pré-enrôlement est signé et disponible dans votre lieu de retrait suivant : {{ session()->get('lieu_livraison') }}
+                                                        @if(session()->get('customer')->integrator_data_status==='ACCEPTED' && !empty(session()->get('customer')->integrator_data_payment_date) &&
+                                                            date('Y-m-d', time()) <= date('Y-m-d', strtotime('+1 year', strtotime(session()->get('customer')->integrator_data_payment_date))))
+                                                            <a href="{{ route('certificat.download.pdf').'?n='.session()->get('customer')->certificate_download_link }}" class="button" style="margin-bottom: 0"><i class="fa fa-download text-white"></i> &nbsp; Télécharger la fiche de pré-enrôlement {{ env('APP_NAME') }} ONECI</a>
                                                         @else
-                                                            <i class="fa fa-check"></i> &nbsp; La fiche de Pré-enrôlement est signé et disponible dans votre lieu de retrait.
+                                                            <i class="fa fa-exclamation-triangle"></i> &nbsp; La date de validité de la fiche de pré-enrôlement est dépassée veuillez reprendre une nouveau pré-enrôlement SVP.
                                                         @endif
                                                     @elseif(session()->get('customer')->customersStatut->id==5)
                                                         <i class="fa fa-check-double"></i> &nbsp; Le retrait de votre fiche de Pré-enrôlement a bien été effectué avec succès, l'ONECI vous remercie.
@@ -158,7 +159,7 @@
                         </div>
                     @endif
                 @else
-                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre demande de fiche de Pré-enrôlement<br/></h5>
+                    <h5>Veuillez renseigner le formulaire ci-dessous afin de consulter le statut de votre demande de fiche de Pré-enrôlement {{ env('APP_NAME') }}<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0em -2em;">
                         @if(session()->has('error') && session()->get('error'))
                             <center>

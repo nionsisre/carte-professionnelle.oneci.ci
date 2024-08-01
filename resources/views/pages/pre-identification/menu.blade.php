@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Menu Pré-enrolement DJ')
+@section('title', 'Menu Pré-enrolement '.env('APP_NAME'))
 
 @section('content')
     <!-- begin page title -->
@@ -8,7 +8,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
+                    <li>Fiche de Pré-enrôlement {{ env('APP_NAME') }} &rsaquo; </li>
                     <li>Menu</li>
                 </ul>
             </nav>
@@ -20,14 +20,14 @@
     <section id="content" class="container clearfix">
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-file-music text-black mr10"></i> &nbsp; Menu d'obtention de la fiche de pré-enrôlement DJ</h2><br/><br/><br/><br/>
+                <h2><i class="fa fa-file-certificate text-black mr10"></i> &nbsp; Menu d'obtention de la fiche de pré-enrôlement {{ env('APP_NAME') }}</h2><br/><br/><br/><br/>
                 <!-- begin services -->
                 <section class="container">
                     <div class="one-half" style="width: 48%;">
                         <div class="iconbox icon-top atcl" align="center">
                             <a href="{{ route('pre-identification.formulaire') }}" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
-                                <div class="iconbox-icon"><i class="fad fa-file-music fa-4x mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.5em; margin-top: 0.5em"></i></div>
-                                <h2 class="iconbox-title">Obtenir ma fiche de pré-enrôlement DJ</h2>
+                                <div class="iconbox-icon"><i class="fad fa-file-certificate fa-4x mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.5em; margin-top: 0.5em"></i></div>
+                                <h2 class="iconbox-title">Obtenir ma fiche de pré-enrôlement {{ env('APP_NAME') }}</h2>
                                 <div class="arrow-box-hover"></div>
                             </a>
                         </div>
@@ -36,7 +36,7 @@
                         <div class="iconbox icon-top atcl" align="center">
                             <a href="{{ route('pre-identification.consultation') }}" style="box-shadow:0 0 3px rgba(60,72,88,0.15) !important;">
                                 <div class="iconbox-icon"><i class="fad fa-search fa-4x mr10" style="--fa-primary-color: #F78E0C; --fa-secondary-color:#388E3C; --fa-secondary-opacity:0.9; margin-bottom: 0.5em; margin-top: 0.5em"></i></div>
-                                <h2 class="iconbox-title">Consulter le statut de mon pré-enrôlement DJ</h2>
+                                <h2 class="iconbox-title">Consulter le statut de mon pré-enrôlement {{ env('APP_NAME') }}</h2>
                                 <div class="arrow-box-hover"></div>
                             </a>
                         </div>

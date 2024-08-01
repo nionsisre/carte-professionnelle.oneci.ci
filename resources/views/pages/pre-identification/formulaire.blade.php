@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Certificat de Conformité')
+@section('title', 'Formulaire '.env('APP_NAME'))
 
 @section('scripts')
     @include('sections.scripts.recaptcha')
@@ -44,7 +44,7 @@
         <div class="container clearfix">
             <nav id="breadcrumbs" style="float: left !important">
                 <ul>
-                    <li>Fiche de Pré-enrôlement DJ &rsaquo; </li>
+                    <li>Fiche de Pré-enrôlement {{ env('APP_NAME') }} &rsaquo; </li>
                     <li><a href="{{ route('pre-identification.menu') }}">Menu</a> &rsaquo; </li>
                     <li>Formulaire</li>
                 </ul>
@@ -58,7 +58,7 @@
         <!-- begin our company -->
         <section>
             <div class="column-last">
-                <h2><i class="fa fa-file-music text-black mr10"></i> &nbsp; Obtention de la fiche de Pré-enrôlement DJ
+                <h2><i class="fa fa-file-certificate text-black mr10"></i> &nbsp; Obtention de la fiche de Pré-enrôlement {{ env('APP_NAME') }}
                 </h2>
                 @if(session()->has('customer'))
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
@@ -115,7 +115,7 @@
                                         <i class="fad fa-check-circle" style="--fa-primary-color: #388E3C; --fa-secondary-color:#F78E0C; --fa-secondary-opacity:0.9; font-size: 10em;margin: 0.3em 0 0.2em;"></i><br/>
                                         <div>
                                             <p style="padding: 0 0 3em">
-                                                Votre demande de fiche de Pré-enrôlement a été soumise avec succès !<br/><br/>
+                                                Votre demande de fiche de Pré-enrôlement {{ env('APP_NAME') }} a été soumise avec succès !<br/><br/>
                                                 Numéro de validation : <br/><br/><b style="font-size: 1rem"><i class="fa fa-qrcode"></i>  ID N°<span id="numero-dossier">{{ session()->get('customer')->numero_dossier }}</span></b> &nbsp;<br/><br/>
                                                 <a href="javascript:void(0)" onclick="copyToClipboard('#numero-dossier')" id="copy-link" style="border-style: dashed;border-color: #d9d9d9;border-width: 1px;padding: 1em"><i class="fa fa-copy" style="color: #d9d9d9"></i> &nbsp; copier le numéro de dossier</a><br/><br/><br/>
                                                 Cette demande fera l'objet d'une analyse par l'ONECI avant d'être validée. Veuillez conserver soigneusement votre numéro de dossier afin de pouvoir suivre l'évolution de votre demande de fiche de Pré-enrôlement dans la rubrique << <a href="{{ route('pre-identification.consultation') }}"><i class="fa fa-search"></i>&nbsp; Consultation</a> >>...<br/><br/>
@@ -148,7 +148,7 @@
                             </div>
                         </center>
                     @endif
-                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre fiche de pré-enrôlement<br/></h5>
+                    <h5>Veuillez renseigner les champs du formulaire ci-dessous afin d'obtenir votre fiche de pré-enrôlement {{ env('APP_NAME') }}<br/></h5>
                     <div style="background-color: rgba(217, 217, 217, 0.46);padding: 2em; margin: 0 -2em;">
                         <center>
                             <div>
@@ -176,7 +176,7 @@
                                             <div id="etape-1" class="tab-pane" role="tabpanel">
                                                 <div id="npdl-container">
                                                     <br/><br/>
-                                                    <h2><i class="fa fa-info-circle"></i> &nbsp; Informations sur le DJ :</h2>
+                                                    <h2><i class="fa fa-info-circle"></i> &nbsp; Informations :</h2>
                                                     <br/>
                                                     <div class="container clearfix">
                                                         <x-input-radio title="Genre" name="gender"
