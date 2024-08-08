@@ -101,7 +101,25 @@
             jQuery("#first-name-field").addClass("one-third");
         }
     });
-
+    jQuery(document).ready(function () {
+        if(jQuery('#gender-male-input').is(':checked')) {
+            spouse_name = "";
+            jQuery("#spouse-name-input").val("");
+            jQuery("#spouse-name-field").hide();
+            jQuery("#last-name-field").removeClass("one-third");
+            jQuery("#first-name-field").removeClass("one-third");
+            jQuery("#last-name-field").addClass("one-half");
+            jQuery("#first-name-field").addClass("one-half");
+        } else if(jQuery('#gender-female-input').is(':checked')) {
+            spouse_name = "";
+            jQuery("#spouse-name-input").val("");
+            jQuery("#spouse-name-field").show();
+            jQuery("#last-name-field").removeClass("one-half");
+            jQuery("#first-name-field").removeClass("one-half");
+            jQuery("#last-name-field").addClass("one-third");
+            jQuery("#first-name-field").addClass("one-third");
+        }
+    });
 
     {{-- L'evenement "leaveStep" est utilise pour valider le formulaire --}}
     jQuery("#smartwizard").on("leaveStep", function(e, anchorObject, currentStepIdx, nextStepIdx, stepDirection) {
