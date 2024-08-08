@@ -204,9 +204,9 @@
                                                         ])
                                                         @endcomponent
                                                         --}}
-                                                        <x-input-text name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="13em" column="one-third" />
+                                                        <x-input-text name="last-name" label="NOM" placeholder="NOM..." maxlength="70" required="true" width="12em" column="one-third" />
                                                         <x-input-text name="first-name" label="Prénom(s)" placeholder="Prénom(s)..." maxlength="150" required="true" width="13.4em" column="one-third" />
-                                                        <x-input-text name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="13em" column="one-third" />
+                                                        <x-input-text name="spouse-name" label="NOM de l'époux" placeholder="Nom de l'époux..." maxlength="70" width="11em" column="one-third" />
                                                     </div>
                                                     <div class="container clearfix">
                                                         <x-input-date name="birth-date" label="Né(e) le" placeholder="__/__/____" required="true" max="{{ date('Y-m-d', strtotime('-10 years')) }}" width="10.5em" column="one-half" />
@@ -223,10 +223,10 @@
                                                         />--}}
                                                         <x-input-select2 :options="$civil_statuses->map(function($civil_status) {
                                                                 return ['value' => $civil_status->id, 'label' => $civil_status->libelle_statut];
-                                                            })->toArray()" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="15em" column="one-third"
+                                                            })->toArray()" title="Situation matrimoniale" name="civil-status" label="Situation matrimoniale..." required="true" width="13em" column="one-third"
                                                         />
-                                                        <x-input-number name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="13.4em" column="one-third" />
-                                                        <x-input-text name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="13em" column="one-third" />
+                                                        <x-input-number name="number-of-children" label="Nombre d'enfants" placeholder="Nombre d'enfants..." required="true" maxlength="70" width="12.4em" column="one-third" />
+                                                        <x-input-text name="other-activities" label="Autres activités" placeholder="Autres activités..." maxlength="100" width="11em" column="one-third" />
                                                     </div>
                                                 </div>
                                                 <br/><br/>
