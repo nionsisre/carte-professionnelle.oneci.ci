@@ -30,7 +30,10 @@ use Symfony\Component\HttpFoundation\Response;
 class PreIdentificationController extends Controller {
 
     /**
-     * @return Application|Factory|View
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Cette méthode affiche le menu de pré-identification.<br/><br/>
+     * <b>View</b> showMenu()<br/>
+     * @return \Illuminate\Contracts\View\View
      */
     public function showMenu() {
 
@@ -44,7 +47,10 @@ class PreIdentificationController extends Controller {
     }
 
     /**
-     * @return Application|Factory|View
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Affiche le formulaire de pré-identification.<br/>
+     * <b>View</b> showFormulaire()
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function showFormulaire() {
 
@@ -63,7 +69,11 @@ class PreIdentificationController extends Controller {
     }
 
     /**
-     * @return Application|Factory|View
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Cette méthode est utilisée pour afficher la page de consultation.
+     * <br/><br/>
+     * <b>View</b> showConsultation()
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function showConsultation() {
 
@@ -76,19 +86,20 @@ class PreIdentificationController extends Controller {
     }
 
     /**
-     * @return Application|Factory|View
+     * (PHP 5, PHP 7, PHP 8+)<br/>
+     * Affiche la page de réclamation de paiement avec les données nécessaires.<br/><br/>
+     * <b>View</b> showReclamationPaiement()<br/>
+     * @return View <p>La vue 'pages.reclamation-paiement' avec les données nécessaires.</p>
      */
     public function showReclamationPaiement() {
 
         $mobile_header_enabled = isset($_GET['displaymode']) && $_GET['displaymode'] == 'myoneci';
 
-        $abonnes_operateurs = AbonnesOperateur::all();
         $civil_status_center = DB::table('civil_status_center')->get();
         $abonnes_type_pieces = Customer::all();
 
         return view('pages.reclamation-paiement', [
             'abonnes_type_pieces' => $abonnes_type_pieces,
-            'abonnes_operateurs' => $abonnes_operateurs,
             'civil_status_center' => $civil_status_center,
             'mobile_header_enabled' => $mobile_header_enabled,
         ]);
@@ -176,10 +187,11 @@ class PreIdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Soumission du formulaire de demande du certificat de conformité par l'utilisateur<br/><br/>
-     * <b>RedirectResponse</b> print(<b>Request</b> $request)<br/>
+     * Cette méthode est appelée automatiquement lorsque le formulaire est soumis pour la validation<br/><br/>
+     * <b>RedirectResponse</b> submit(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
-     * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
+     *
+     * @return Illuminate\Contracts\Routing\ResponseFactory|Illuminate\Http\RedirectResponse|Illuminate\Http\Response
      */
     public function submit(Request $request) {
         /* Si le service de vérification Google reCAPTCHA v3 est actif */
@@ -200,7 +212,7 @@ class PreIdentificationController extends Controller {
             'nationality' => ['required', 'string', 'max:150'],
             'civil-status' => ['required', 'numeric'],
             'number-of-children' => ['required', 'numeric', 'min:0', 'max:50'],
-            'other-activities' => ['required', 'string', 'max:100'],
+            'other-activities' => ['nullable', 'string', 'max:100'],
             'city' => ['required', 'string', 'max:150'],
             'town' => ['required', 'string', 'max:150'],
             'street' => ['required', 'string', 'max:150'],
@@ -229,7 +241,7 @@ class PreIdentificationController extends Controller {
             'numero_dossier' => $numero_dossier,
             'pseudonyme' => strtoupper($request->input('nickname')),
             'nom' => strtoupper($request->input('last-name')),
-            'nom_epouse' => strtoupper($request->input('spouse-name')),
+            'nom_epouse' => ($request->input('gender') == "F") ? strtoupper($request->input('spouse-name')) : "",
             'prenoms' => strtoupper($request->input('first-name')),
             'genre' => $request->input('gender'),
             'date_naissance' => $request->input('birth-date'),
@@ -282,14 +294,14 @@ class PreIdentificationController extends Controller {
 
     /**
      * (PHP 5, PHP 7, PHP 8+)<br/>
-     * Cette méthode donne l'accès à l'espace de consultation de statut de la demande du certificat de conformité<br/><br/>
+     * Cette méthode donne l'accès à l'espace de consultation de statut de la demande de pré-identification<br/><br/>
      * <b>RedirectResponse</b> search(<b>Request</b> $request)<br/>
      * @param Request $request <p>Client Request object.</p>
      * @return \Illuminate\Http\RedirectResponse Return RedirectResponse to view
      */
     public function search(Request $request) {
         /* Affichage de l'espace de consultation de l'abonné soit par "soumission du formulaire de consultation" ou
-        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après la demande du fiche de pré-enrolement)" */
+        par "url (accès direct ou scan du QR Code présent sur le reçu fourni après la demande de fiche de pré-enrolement)" */
         if(empty($request->get('t')) && empty($request->get('f'))) {
             /* Si le service de vérification Google reCAPTCHA v3 est actif */
             if(config('services.recaptcha.enabled')) {
@@ -310,7 +322,7 @@ class PreIdentificationController extends Controller {
                 return redirect()->route('pre-identification.consultation')->withErrors(['not-found' => 'Numéro de validation Incorrect !']);
             }
         } elseif (!empty($request->get('t')) && !empty($request->get('f'))) {
-            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande du certificat de conformité
+            /* Cas où la recherche se fait par url (accès direct) ou par scan du QR Code présent sur le reçu de la demande de fiche de pré-enrôlement
             (numéro de dossier <f> + token d'authentification <t>) */
             $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $request->get('f'))->first();
             if($customer) {

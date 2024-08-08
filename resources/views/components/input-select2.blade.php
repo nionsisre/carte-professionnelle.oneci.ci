@@ -9,7 +9,9 @@
                 style="width:{{ $width }}; text-align: center; border: 1px solid #d9d9d9;padding: 6px 10px;border-radius: 0;box-shadow: 0 0 5px rgba(0,0,0,0.1) inset;line-height: normal;">
             <option value="" selected disabled>{{ $label }}</option>
             @foreach ($options as $option)
-                <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                <option value="{{ $option['value'] }}" {{ old($name) == $option['value'] ? 'selected' : '' }}>
+                    {{ $option['label'] }}
+                </option>
             @endforeach
         </select>
     </div><br/>
