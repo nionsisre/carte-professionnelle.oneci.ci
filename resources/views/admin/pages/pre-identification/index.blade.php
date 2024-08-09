@@ -46,12 +46,12 @@
             dateFormat: 'dd/mm/yy'
         });
     </script>
-    @include('admin.pages.certificat-conformite.datatable.scripts')
-    @include('admin.pages.certificat-conformite.documents.scripts')
-    @include('admin.pages.certificat-conformite.approve.scripts')
-    @include('admin.pages.certificat-conformite.deny.scripts')
-    @include('admin.pages.certificat-conformite.signed.scripts')
-    @include('admin.pages.certificat-conformite.withdrawn.scripts')
+    @include('admin.pages.pre-identification.datatable.scripts')
+    @include('admin.pages.pre-identification.documents.scripts')
+    @include('admin.pages.pre-identification.approve.scripts')
+    @include('admin.pages.pre-identification.deny.scripts')
+    @include('admin.pages.pre-identification.signed.scripts')
+    @include('admin.pages.pre-identification.withdrawn.scripts')
 @endsection
 
 {{--
@@ -72,15 +72,15 @@
                     Cette rubrique permet de traiter les demandes de  fiche de pré-enrôlement {{ env('APP_NAME') }} en vérifiant l'authenticité des documents justificatifs fournis par le client.
                 </div>
                 <div class="panel-body">
-                    @include('admin.pages.certificat-conformite.datatable.index')
+                    @include('admin.pages.pre-identification.datatable.index')
                 </div>
             </div><!-- panel -->
 
-            @include('admin.pages.certificat-conformite.documents.modal')
-            @include('admin.pages.certificat-conformite.approve.modal')
-            @include('admin.pages.certificat-conformite.deny.modal')
-            @include('admin.pages.certificat-conformite.signed.modal')
-            @include('admin.pages.certificat-conformite.withdrawn.modal')
+            @include('admin.pages.pre-identification.documents.modal')
+            @include('admin.pages.pre-identification.approve.modal')
+            @include('admin.pages.pre-identification.deny.modal')
+            @include('admin.pages.pre-identification.signed.modal')
+            @include('admin.pages.pre-identification.withdrawn.modal')
 
         </div><!-- col-sm-12 -->
 

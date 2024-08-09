@@ -7,8 +7,8 @@
                 <i class="fa fa-home"></i> <span>Accueil</span>
             </a>
         </li>
-        <li @if(\Route::is('admin.certificat')) class="active" @endif>
-            <a href="{{ route('admin.certificat') }}">
+        <li @if(\Route::is('admin.pre-identification')) class="active" @endif>
+            <a href="{{ route('admin.pre-identification') }}">
                 <i class="fa fa-tasks"></i> <span>Traiter les demandes de fiche de pré-enrôlement {{ env('APP_NAME') }} @if(\Route::is('admin.home') && $nombre_demandes_non_traitees != 0)<span class="pull-right badge badge-danger">{{ $nombre_demandes_non_traitees }}</span>@endif</span>
             </a>
         </li>

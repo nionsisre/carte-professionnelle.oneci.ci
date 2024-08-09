@@ -85,7 +85,7 @@ Route::prefix('oneciwebadmin')->group(function () {
         // Business Logic
         // ------------------
         // Traitement des demandes de fiche de conformité
-        Route::get('/traitement-demandes-fiche-pre-identification', [ProcessPreIdentificationController::class, 'show'])->name('admin.certificat');
+        Route::get('/traitement-demandes-fiche-pre-identification', [ProcessPreIdentificationController::class, 'show'])->name('admin.pre-identification');
         Route::get('/datatables/french', [ProcessPreIdentificationController::class, 'showDatatablesFrench'])->name('datatables.french.json');
         Route::post(sha1('/traitement-demandes-fiche-pre-identification'.date('Ymd').env('APP_KEY')), [ProcessPreIdentificationController::class, 'getClient'])->name('admin.pre-identification.datatable');
         Route::post('/data/customer/{numero_dossier}', [ProcessPreIdentificationController::class, 'getClientByNumeroDossier'])->name('admin.pre-identification.client.get');

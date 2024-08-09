@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * (PHP 5, PHP 7, PHP 8+)<br/>
- * @package    certificat-conformite
+ * @package    pre-identification
  * @subpackage Controller
  * @author     ONECI-DEV <info@oneci.ci>
  * @github     https://github.com/oneci-dev

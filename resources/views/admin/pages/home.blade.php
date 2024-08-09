@@ -355,7 +355,7 @@
     <div class="row">
         <!-- Ostat Plus Web -->
         <div class=" col-sm d-flex" style="text-align: center;margin-left: 15%;margin-right: 15%;margin-top: 3%">
-            <a href="{{ route('admin.certificat') }}" style="text-decoration: none;">
+            <a href="{{ route('admin.pre-identification') }}" style="text-decoration: none;">
                 <div class="col-lg-3 d-flex align-items-stretch" style="object-fit: cover;">
                     <div class="hover-highlight-19 panel panel-warning panel-alt widget-today" onmousemove="highlightHover('set','19')" onmouseleave="highlightHover('unset', '19')">
                         <div class=" panel-heading text-center" style="background-color: #ffffff; height: 12.4em; border-radius: 6px">

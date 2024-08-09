@@ -46,7 +46,7 @@ class ProcessPreIdentificationController extends Controller {
         $centres = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->get();
 
         /* Retourner vue Traitement des demandes de certificat de conformité */
-        return view('admin.pages.certificat-conformite.index', [
+        return view('admin.pages.pre-identification.index', [
             'username' => $username,
             'role_name' => auth()->user()->usersRole->user_role_label,
             'columns' => $data_columns,
