@@ -40,7 +40,7 @@ class CinetPayAPI {
                     'description' => $payment_type,
                     'customer_id' => $customer_informations->numero_dossier,
                     'customer_name' => $customer_informations->nom,
-                    'customer_surname' => $customer_informations->prenoms,
+                    'customer_surname' => $customer_informations->prenom,
                     'customer_email' => $customer_informations->email,
                     'customer_phone_number' => $customer_informations->numero_de_telephone,
                     'customer_address' => 'Antananarivo',

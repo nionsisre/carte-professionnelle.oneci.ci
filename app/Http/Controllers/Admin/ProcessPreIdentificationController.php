@@ -83,7 +83,11 @@ class ProcessPreIdentificationController extends Controller {
                     return $row->pseudonyme;
                 })
                 ->addColumn('nom_complet', function($row){
-                    return ucwords(strtolower($row->prenoms)).' '.strtoupper($row->nom);
+                    if(!empty($row->nom_epouse)) {
+                        return ucwords(strtolower($row->prenom)).' '.strtoupper($row->nom).' épouse '.$row->nom_epouse;
+                    } else {
+                        return ucwords(strtolower($row->prenom)).' '.strtoupper($row->nom);
+                    }
                 })
                 ->addColumn('date_lieu_naissance', function($row){
                     return date('d/m/Y', strtotime($row->date_naissance)).' à '.$row->lieu_naissance;

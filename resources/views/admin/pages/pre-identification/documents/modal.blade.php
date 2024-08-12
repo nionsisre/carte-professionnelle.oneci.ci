@@ -5,18 +5,17 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-paperclip mr10"></i>Documents justificatifs de la demande N°<b><span class="check-documents-modal-nd">XXXXXXXXXX</span></b></h3>
                     <p>
-                        Veuillez vous assurer de la conformité des informations des documents ci-dessous avec les informations de la demande de ce client : <br/><br/>
-                        Numéro NNI ou CNI : <b><span class="check-documents-modal-nni-or-cni">XXXXXXXXXX</span></b><br/>
+                        <b><em>Veuillez vous assurer de la conformité entre les informations ci-dessous et celles présentes sur le document justificatif chargé par le client SVP : </em></b><hr/>
+                        Type de document justificatif : <b><span class="check-documents-modal-td">XXXXXXXXXX</span></b><br/>
+                        Numéro du document et date d'expiration : <b><span class="check-documents-modal-ndde">XXXXXXXXXX</span></b><br/>
+                        Genre : <b><span class="check-documents-modal-gndr">XXXXXXXXXX</span></b><br/>
                         Nom complet : <b><span class="check-documents-modal-nc">XXXXXXXXXX</span></b><br/>
-                        Nom complet sur la décision : <b><span class="check-documents-modal-ncd">XXXXXXXXXX</span></b><br/>
-                        Numéro décision : <b><span class="check-documents-modal-ndec">XXXXXXXXXX</span></b><br/>
-                        Lieu de la décision : <b><span class="check-documents-modal-ldec">XXXXXXXXXX</span></b><br/>
+                        Date et Lieu de naissance : <b><span class="check-documents-modal-dln">XXXXXXXXXX</span></b><br/>
+                        Pays de naissance et Nationalité : <b><span class="check-documents-modal-pnn">XXXXXXXXXX</span></b><br/>
                     </p>
                 </div>
                 <div class="panel-body editable-list-group">
-                    <div class="check-documents-modal-cni">
-                    </div><br/>
-                    <div class="check-documents-modal-decision">
+                    <div class="check-documents-modal-justificatif">
                     </div><br/><br/>
                 </div>
                 <div class="panel-footer text-center">

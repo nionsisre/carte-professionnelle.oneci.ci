@@ -19,7 +19,7 @@ class CreateCustomersTable extends Migration {
             $table->string('pseudonyme')->nullable();
             $table->string('nom')->nullable();
             $table->string('nom_epouse')->nullable();
-            $table->string('prenoms')->nullable();
+            $table->string('prenom')->nullable();
             $table->string('genre')->nullable();
             $table->string('date_naissance')->nullable();
             $table->string('lieu_naissance')->nullable();
@@ -38,7 +38,7 @@ class CreateCustomersTable extends Migration {
             $table->foreignIdFor(\App\Models\CustomersTypePiece::class)->nullable();
             $table->string('type_cni')->nullable()->nullable();
             $table->string('numero_document')->nullable();
-            $table->string('document')->nullable();
+            $table->string('document_justificatif')->nullable();
             $table->string('date_expiration_document')->nullable();
             $table->string('uniqid')->nullable();
             $table->foreignIdFor(\App\Models\CustomersStatut::class)->nullable();

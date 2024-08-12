@@ -30,8 +30,8 @@
                 jQuery('.modal-loader').hide();
                 jQuery('.modal-error').hide();
                 jQuery('.modal-success').show();
-                let client = JSON.parse(res);
-                if(client !== null) {
+                let customer = JSON.parse(res);
+                if(customer !== null) {
                     {{-- Fonction pour déterminer le type de fichier en fonction de l'extension --}}
                     function getFileType(fileName) {
                         const extension = fileName.split('.').pop().toLowerCase();
@@ -45,42 +45,36 @@
                         }
                     }
                     {{-- URL de base en fonction de l'environnement --}}
-                    const baseURL = "@if(App::environment(['staging', 'production'])){{ URL::asset('storage')."/" }}@else{{ "https://certificat-conformite.oneci.ci/storage/" }}@endif";
-                    {{-- CNI --}}
-                    let nniorcni = "";
-                    if(client.cni !== "") {
-                        nniorcni = client.numero_cni;
-                        const cniType = getFileType(client.cni);
-                        if (cniType === 'image') {
-                            jQuery('.check-documents-modal-cni').html('<h4><i class="fa fa-id-card mr10"></i>Carte Nationale d\'Identité chargée par le client : </h4><div><img src="' + baseURL + client.cni + '" alt="Scan CNI" style="width: 100%" /></div>');
-                        } else if (cniType === 'pdf') {
-                            jQuery('.check-documents-modal-cni').html('<h4><i class="fa fa-id-card mr10"></i>Carte Nationale d\'Identité chargée par le client : </h4><div><embed src="' + baseURL + client.cni + '" type="application/pdf" width="100%" height="300px" /></div>');
-                        } else {
-                            jQuery('.check-documents-modal-cni').html('<h4><i class="fa fa-id-card mr10"></i>Carte Nationale d\'Identité chargée par le client : </h4><div><p>Type de fichier non pris en charge</p></div>');
-                        }
-                    } else {
-                        nniorcni = client.nni;
-                        jQuery('.check-documents-modal-cni').html('');
-                    }
+                    const baseURL = "@if(App::environment(['staging', 'production'])){{ URL::asset('storage')."/" }}@else{{ env("APP_URL")."/storage/" }}@endif";
+                    console.log(customer);
                     {{-- Décision Judiciaire --}}
-                    if(client.decision_judiciaire !== "") {
-                        const decisionType = getFileType(client.decision_judiciaire);
+                    if(customer.document_justificatif !== "") {
+                        const decisionType = getFileType(customer.document_justificatif);
                         if (decisionType === 'image') {
-                            jQuery('.check-documents-modal-decision').html('<h4><i class="fa fa-balance-scale mr10"></i>Décision Judiciaire chargée par le client : </h4><div><img src="' + baseURL + client.decision_judiciaire + '" alt="Scan Décision Judiciaire" style="width: 100%" /></div>');
+                            jQuery('.check-documents-modal-justificatif').html('<h4><i class="fa fa-id-card mr10"></i>'+customer.customers_type_piece.libelle_piece+' chargée par le client : </h4><hr/><div><img src="' + baseURL + customer.document_justificatif + '" alt="Scan Document justificatif" style="width: 100%" /></div>');
                         } else if (decisionType === 'pdf') {
-                            jQuery('.check-documents-modal-decision').html('<h4><i class="fa fa-balance-scale mr10"></i>Décision Judiciaire chargée par le client : </h4><div><embed src="' + baseURL + client.decision_judiciaire + '" type="application/pdf" width="100%" height="300px" /></div>');
+                            jQuery('.check-documents-modal-justificatif').html('<h4><i class="fa fa-id-card mr10"></i>'+customer.customers_type_piece.libelle_piece+' chargée par le client : </h4><hr/><div><embed src="' + baseURL + customer.document_justificatif + '" type="application/pdf" width="100%" height="300px" /></div>');
                         } else {
-                            jQuery('.check-documents-modal-decision').html('<h4><i class="fa fa-balance-scale mr10"></i>Décision Judiciaire chargée par le client : </h4><div><p>Type de fichier non pris en charge</p></div>');
+                            jQuery('.check-documents-modal-justificatif').html('<h4><i class="fa fa-id-card mr10"></i>'+customer.customers_type_piece.libelle_piece+' chargée par le client : </h4><hr/><div><p>Type de fichier non pris en charge</p></div>');
                         }
                     } else {
-                        jQuery('.check-documents-modal-decision').html('');
+                        jQuery('.check-documents-modal-justificatif').html('');
                     }
-                    jQuery('.check-documents-modal-nd').text(client.numero_dossier);
-                    jQuery('.check-documents-modal-nni-or-cni').text(nniorcni);
-                    jQuery('.check-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
-                    jQuery('.check-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
-                    jQuery('.check-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
-                    jQuery('.check-documents-modal-ldec').text(client.juridiction.libelle);
+                    jQuery('.check-documents-modal-td').html('&nbsp;<i class="fa fa-id-card mr5"></i>'+customer.customers_type_piece.libelle_piece);
+                    jQuery('.check-documents-modal-nd').text(customer.numero_dossier);
+                    jQuery('.check-documents-modal-ndde').html('&nbsp;<i class="fa fa-barcode mr5"></i>'+customer.numero_document+" ("+ convertDate(customer.date_expiration_document) +")");
+                    if(customer.genre === "M") {
+                        jQuery('.check-documents-modal-gndr').html('&nbsp;<i class="fa fa-mars mr5"></i> Masculin'+" ("+customer.civil_status.libelle_statut+")");
+                    } else {
+                        jQuery('.check-documents-modal-gndr').html('&nbsp;<i class="fa fa-venus mr5"></i> Feminin'+" ("+customer.civil_status.libelle_statut+")");
+                    }
+                    if(customer.nom_epouse !== "") {
+                        jQuery('.check-documents-modal-nc').text(customer.prenom+" "+customer.nom+" épouse "+customer.nom_epouse);
+                    } else {
+                        jQuery('.check-documents-modal-nc').text(customer.prenom+" "+customer.nom);
+                    }
+                    jQuery('.check-documents-modal-dln').html('&nbsp;<i class="fa fa-calendar-day mr5"></i>'+convertDate(customer.date_naissance)+" à "+customer.lieu_naissance);
+                    jQuery('.check-documents-modal-pnn').html('&nbsp;<i class="fa fa-map-marker-alt mr5"></i>'+customer.pays_naissance+" ("+customer.nationalite+")");
                 }
             }, error: function (data) {
                 let errorMessage = "";
