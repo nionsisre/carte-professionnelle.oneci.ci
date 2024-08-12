@@ -5,6 +5,7 @@
     jQuery(document).ready(function() {
         "use strict";
         myDatatable = jQuery('.my-datatable').DataTable({
+            fixedHeader: true,
             processing: true,
             serverSide: true,
             sPaginationType : "full_numbers",
