@@ -43,7 +43,7 @@
                     jQuery('.approve-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
                     jQuery('.approve-documents-modal-ldec').text(client.juridiction.libelle);
                     jQuery('.approve-documents-modal-lr').text(lr);
-                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+client.certificat);
+                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+client.certificate_download_link);
                 }
             }, error: function (data) {
                 let errorMessage = "";

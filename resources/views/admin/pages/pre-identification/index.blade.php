@@ -50,8 +50,6 @@
     @include('admin.pages.pre-identification.documents.scripts')
     @include('admin.pages.pre-identification.approve.scripts')
     @include('admin.pages.pre-identification.deny.scripts')
-    @include('admin.pages.pre-identification.signed.scripts')
-    @include('admin.pages.pre-identification.withdrawn.scripts')
 @endsection
 
 {{--
@@ -79,8 +77,6 @@
             @include('admin.pages.pre-identification.documents.modal')
             @include('admin.pages.pre-identification.approve.modal')
             @include('admin.pages.pre-identification.deny.modal')
-            @include('admin.pages.pre-identification.signed.modal')
-            @include('admin.pages.pre-identification.withdrawn.modal')
 
         </div><!-- col-sm-12 -->
 

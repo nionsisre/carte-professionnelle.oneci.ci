@@ -152,20 +152,16 @@ class ProcessPreIdentificationController extends Controller {
                             <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
                             <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'3').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
                         ';
-                    } else if($row->customersStatut->id == 3) { // Documents acceptés (en attente de signature)
-                        /*$actionBtn = '
-                            <a href="'.route('pre-identification.download.pdf').'?n='.$row->pre-identification.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger le certificat de conformité</a><br/>
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-truck-loading mr10"></i>Marquer certificat comme disponible dans le centre de retrait</button>
-                        ';*/
-                        $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#set-signed-documents-modal" class="btn btn-success"  onclick="setSignedDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-truck-loading mr10"></i>Marquer le certificat comme disponible dans le centre de retrait</button>
-                        ';
-                    } else if($row->customersStatut->id == 4) { // Documents refusés
+                    } else if($row->customersStatut->id == 3) { // Demande refusée
                         $actionBtn = "Demande refusée";
-                    } else if($row->customersStatut->id == 5) { // Certificat disponible dans le centre
-                        $actionBtn = ' <button data-placement="bottom" data-toggle="modal" data-target="#withdrawn-documents-modal" class="btn btn-success" onclick="withdrawnDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\')"><i class="fa fa-hand-receiving mr10"></i>Marquer le certificat comme retiré par le client</button>';
-                    } else if($row->customersStatut->id == 6) { // Certificat retiré par le client
-                        $actionBtn = 'Certificat retiré par le client';
+                    } else if($row->customersStatut->id == 4) { // Fiche de pré-enrôlement disponible
+                        $actionBtn = '
+                            <a href="'.route('pre-identification.download.pdf').'?n='.$row->certificate_download_link.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger la fiche de pré-identification '.env('APP_NAME').'</a><br/>
+                        ';
+                    } else if($row->customersStatut->id == 5) { // Fiche de pré-enrôlement disponible avec déclaration requise
+                        $actionBtn = '
+                            <a href="'.route('pre-identification.download.pdf').'?n='.$row->certificate_download_link.'" class="btn btn-default btn-xs mb5 approve-documents-modal-dl-lnk"><i class="fa fa-file-certificate mr10"></i> Re-télécharger la fiche de pré-identification '.env('APP_NAME').'</a><br/>
+                        ';
                     }
                     return $actionBtn;
                 })
@@ -204,27 +200,12 @@ class ProcessPreIdentificationController extends Controller {
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
-            if(!empty($client->code_lieu_retrait)) {
-                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
-                if($centre) {
-                    (new SMS)->sendSMS(
-                        $client->msisdn,
-                        "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)),
-                    );
-                } else {
-                    (new SMS)->sendSMS(
-                        $client->msisdn,
-                        "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement dans votre centre de retrait.",
-                    );
-                }
-            } else {
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." ont été approuvés et votre certificat de conformité est présentement en attente de signature et d'acheminement dans votre centre de retrait.",
-                );
-            }
-            $client->customersStatut->id = 3;
+            $client->customersStatut->id = 4;
             $client->save();
+            (new SMS)->sendSMS(
+                $client->msisdn,
+                "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement à l'adresse suivante : ".route('pre-identification.consultation.submit.get').'?f='.session()->get('customer')->numero_dossier.'&t='.session()->get('customer')->uniqid,
+            );
             return json_encode($client);
         }
         return false;
@@ -254,70 +235,8 @@ class ProcessPreIdentificationController extends Controller {
                     "M(Mme) ".$client->nom.", votre demande de certificat de conformité N°".$client->numero_dossier." a été rejetée par l'ONECI",
                 );
             }
-            $client->customersStatut->id = 4;
+            $client->customersStatut->id = 3;
             $client->observation = $request->input('obs');
-            $client->save();
-            return json_encode($client);
-        }
-        return false;
-    }
-
-    public function setSignedClientByNumeroDossier(Request $request, $numero_dossier) {
-        request()->validate([
-            'cli' => ['required', 'string', 'max:150'],
-            'c' => ['required', 'string', 'max:150'],
-            't' => ['required', 'string', 'max:150']
-        ]);
-        $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
-        if(
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
-        ) {
-            if(!empty($client->code_lieu_retrait)) {
-                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", votre certificat de conformité est actuellement disponible à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label)).". Veuillez-vous y rendre muni de votre pièce d'identité et de votre décision de justice, l'ONECI vous remercie.",
-                );
-            } else {
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", votre certificat de conformité est actuellement disponible dans votre centre de retrait. Veuillez-vous y rendre muni de votre pièce d'identité et de votre décision de justice, l'ONECI vous remercie.",
-                );
-            }
-            $client->customersStatut->id = 5;
-            $client->save();
-            return json_encode($client);
-        }
-        return false;
-    }
-
-    public function setWithdrawnClientByNumeroDossier(Request $request, $numero_dossier) {
-        request()->validate([
-            'cli' => ['required', 'string', 'max:150'],
-            'c' => ['required', 'string', 'max:150'],
-            't' => ['required', 'string', 'max:150']
-        ]);
-        $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
-        if(
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
-            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
-        ) {
-            if(!empty($client->code_lieu_retrait)) {
-                $centre = DB::connection(env('DB_CONNECTION_KERNEL'))->table('centre_unified')->where('code_unique_centre','=',$client->code_lieu_retrait)->first();
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", le retrait de votre certificat de conformité à ".ucwords(strtolower($centre->location_label.', '.$centre->area_label.', '.$centre->department_label))." a bien été confirmé avec succès, l'ONECI vous remercie.",
-                );
-            } else {
-                (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", le retrait de votre certificat de conformité a bien été confirmé avec succès, l'ONECI vous remercie.",
-                );
-            }
-            $client->customersStatut->id = 6;
             $client->save();
             return json_encode($client);
         }

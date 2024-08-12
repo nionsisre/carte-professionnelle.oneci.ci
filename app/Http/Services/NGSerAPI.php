@@ -269,7 +269,7 @@ class NGSerAPI {
                                 if($client->integrator_data_status != "ACCEPTED") {
                                     (new SMS)->sendSMS(
                                         $client->msisdn,
-                                        "M(Mme) ".$client->nom.", les documents justificatifs de votre demande de certificat de conformité N°".$client->numero_dossier." sont actuellement en cours de vérification, l'ONECI vous remercie.",
+                                        "M(Mme) ".$client->nom.", les documents justificatifs de votre demande de pré-enrôlement ".strtolower(env('APP_NAME'))." N°".$client->numero_dossier." sont actuellement en cours de vérification, l'ONECI vous remercie.",
                                     );
                                 }
                                 $client->statut = 2;
