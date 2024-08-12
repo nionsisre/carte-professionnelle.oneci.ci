@@ -41,35 +41,45 @@
                     createdCell: function(td, cellData, rowData, row, col) {
                         jQuery(td).css('text-align', 'center');
                     },
-
                 },
                 {
-                    targets: 12,
+                    targets: 16,
                     createdCell: function(td, cellData, rowData, row, col) {
                         jQuery(td).css('text-align', 'center');
                     },
-
+                },
+                {
+                    targets: 19,
+                    createdCell: function(td, cellData, rowData, row, col) {
+                        jQuery(td).css('text-align', 'center');
+                    },
                 }
             ],
             columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'lieu_livraison', name: 'lieu_livraison'},
-                {data: 'numero_dossier', name: 'numero_demande'},
                 {{--{
                     data: 'numero_cni_nni', name: 'numero_cni_nni',
                     render: function (data, type, row, meta) {
                         return '<i class="fa fa-barcode mr10"></i>'+data;
                     }
                 },--}}
-                {data: 'numero_cni_nni', name: 'numero_cni_nni'},
-                {data: 'nom_complet', name: 'nom_complet'},
-                {data: 'nom_complet_mere', name: 'nom_complet_mere'},
-                {data: 'nom_complet_decision', name: 'nom_complet_decision'},
-                {data: 'numero_date_decision', name: 'numero_date_decision'},
-                {data: 'lieu_decision', name: 'lieu_decision'},
-                {data: 'msisdn', name: 'msisdn'},
-                {data: 'statut_demande', name: 'statut_demande'},
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'numero_dossier', name: 'numero_dossier'},
                 {data: 'date_demande', name: 'date_demande'},
+                {data: 'pseudonyme', name: 'pseudonyme'},
+                {data: 'nom_complet', name: 'nom_complet'},
+                {data: 'date_lieu_naissance', name: 'date_lieu_naissance'},
+                {data: 'pays_naissance', name: 'pays_naissance'},
+                {data: 'nationalite', name: 'nationalite'},
+                {data: 'situation_matrimoniale', name: 'situation_matrimoniale'},
+                {data: 'nombre_enfants', name: 'nombre_enfants'},
+                {data: 'autre_activite', name: 'autre_activite'},
+                {data: 'ville_commune_quartier', name: 'ville_commune_quartier'},
+                {data: 'adresse', name: 'adresse'},
+                {data: 'lieu_travail', name: 'lieu_travail'},
+                {data: 'msisdn', name: 'msisdn'},
+                {data: 'statut_id', name: 'statut_id', visible: false, searchable: true},
+                {data: 'statut_demande', name: 'statut_demande'},
+                {data: 'type_document_justificatif', name: 'type_document_justificatif'},
                 {data: 'documents_justificatifs', name: 'documents_justificatifs'},
                 {
                     data: 'action',
@@ -121,11 +131,6 @@
     {{-- Status Filter --}}
     $('#statut-demande').change(function() {
         var selectedStatut = $(this).val();
-        myDatatable.column('statut:name').search(selectedStatut).draw();
-    });
-    {{-- Lieu Livraison Filter --}}
-    $('#lieux-livraison').change(function() {
-        var selectedLieuLivraison = $(this).val();
-        myDatatable.column('code_lieu_retrait:name').search(selectedLieuLivraison).draw();
+        myDatatable.column('customers_statut_id:name').search(selectedStatut).draw();
     });
 </script>

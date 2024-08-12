@@ -1,21 +1,18 @@
 <div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
         <div class="form-group col-xs-3 col-sm-3 col-md-3 col-lg-3" style="margin: 1em 0">
             <span>Filtrer <i class="fa fa-filter align-middle ml-1"></i></span>
         </div>
         <div class="form-group col-xs-9 col-sm-9 col-md-9 col-lg-9">
             <select class="good-select form-control" id="statut-demande" style="width: 100%;">
                 <option value="">Toutes les demandes</option>
-                <option value="1">Demandes inachevées (non-payées)</option>
-                <option value="2">Documents en attente de vérification</option>
-                <option value="3">Documents acceptés (en attente de signature)</option>
-                <option value="4">Documents refusés</option>
-                <option value="5">Certificat disponible dans le centre</option>
-                <option value="6">Certificat retiré par le client</option>
+                @foreach($statuses as $status)
+                    <option value="{{ $status->id }}">{{ $status->libelle_statut }}</option>
+                @endforeach
             </select>
         </div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+    {{--<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
         <div class="form-group">
             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="margin-top: 0.8em;">
                 <span id="total-rows" class="label label-default">0</span>
@@ -29,7 +26,7 @@
                 @endforeach
             </select>
         </div>
-    </div>
+    </div>--}}
     <div class="form-group col-xs-12 col-sm-12 col-md-4 col-lg-4">
         <!--<label class="col control-label" style="margin-top: 10px;">Rechercher&nbsp;: </label>-->
         <div style="display: inline-flex">
@@ -44,19 +41,25 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Lieu de la livraison</th>
                 <th>Numéro de la demande</th>
-                <th>Numéro NNI / CNI</th>
-                <th>Nom complet</th>
-                <th>Nom complet de la mère</th>
-                <th>Nom complet sur la décision</th>
-                <th>Numéro décision</th>
-                <th>Lieu de décision</th>
-                <th>Numéro de téléphone</th>
-                <th>Statut de la demande</th>
                 <th>Date de la demande</th>
+                <th>Pseudonyme</th>
+                <th>Nom complet</th>
+                <th>Date et lieu de naissance</th>
+                <th>Pays de naissance</th>
+                <th>Nationalité</th>
+                <th>Situation matrimoniale</th>
+                <th>Nombre d'enfants</th>
+                <th>Autres activités</th>
+                <th>Ville, Commune, Quartier</th>
+                <th>Adresse</th>
+                <th>Lieu de travail</th>
+                <th>Numéro de téléphone</th>
+                <th>Statut ID de la demande</th>
+                <th>Statut de la demande</th>
+                <th>Type de document</th>
                 <th>Documents Justificatifs</th>
-                <th></th>
+                <th>Actions</th>
                 <th>Observation(s)</th>
             </tr>
         </thead>
