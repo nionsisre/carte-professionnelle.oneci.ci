@@ -204,7 +204,7 @@ class ProcessPreIdentificationController extends Controller {
             $customer->save();
             (new SMS)->sendSMS(
                 $customer->msisdn,
-                "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement à l'adresse suivante : ".route('pre-identification.consultation.submit.get').'?f='.$customer->numero_dossier.'&t='.$customer->uniqid." L'ONECI vous remercie.",
+                "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement depuis la plateforme de consultation. L'ONECI vous remercie.",
             );
             return json_encode($customer);
         }
