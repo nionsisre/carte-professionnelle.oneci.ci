@@ -30,6 +30,7 @@
                 jQuery('.modal-success').show();
                 let customer = JSON.parse(res);
                 if(customer !== null) {
+                    jQuery('#approve-documents-modal').modal("hide");
                     jQuery('.approve-documents-modal-td').html('&nbsp;<i class="fa fa-id-card mr5"></i>'+customer.customers_type_piece.libelle_piece);
                     jQuery('.approve-documents-modal-nd').text(customer.numero_dossier);
                     jQuery('.approve-documents-modal-ndde').html('&nbsp;<i class="fa fa-barcode mr5"></i>'+customer.numero_document+" ("+ convertDate(customer.date_expiration_document) +")");
@@ -48,6 +49,14 @@
                     jQuery('.approve-documents-modal-lr').text(lr);
                     jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+customer.certificate_download_link);
                     jQuery('.approve-documents-modal-t').text(t);
+                    jQuery.gritter.add({
+                        title: 'Confirmation de la demande N°'+nd,
+                        text: 'La demande N°'+nd+' a été approuvée avec succès',
+                        class_name: 'growl-success',
+                        image: '{{ URL::asset('back-office/assets/images/is-document.png') }}',
+                        sticky: false,
+                        time: '5000'
+                    });
                 }
             }, error: function (data) {
                 let errorMessage = "";
