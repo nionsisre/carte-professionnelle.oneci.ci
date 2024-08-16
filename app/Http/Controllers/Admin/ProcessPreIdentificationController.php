@@ -149,7 +149,8 @@ class ProcessPreIdentificationController extends Controller {
                         $actionBtn = '<a href="'.route('pre-identification.consultation.submit.get').'?f='.$row->numero_dossier.'&t='.$row->uniqid.'" class="btn btn-success approve-documents-modal-dl-lnk"><i class="fa fa-money-check mr10"></i>Payer depuis l\'espace client</a>';
                     } else if($row->customersStatut->id == 2) { // Documents en attente de vérification
                         $actionBtn = '
-                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents</button><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents client connu</button><br/>
+                            <button data-placement="bottom" data-toggle="modal" data-target="#approve-unknown-documents-modal" class="btn btn-success btn-xs mb5"  onclick="approveUnknownDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'2').'\',\''.$lieu_livraison.'\')"><i class="fa fa-file-check mr10"></i>Valider les documents client inconnu</button><br/>
                             <button data-placement="bottom" data-toggle="modal" data-target="#deny-documents-modal" class="btn btn-danger btn-xs" onclick="denyDocuments(\''.$row->numero_dossier.'\',\''.md5(date('Ymd').$row->numero_dossier.env('APP_KEY').'3').'\')"><i class="fa fa-file-times mr10"></i>Refuser les documents</button>
                         ';
                     } else if($row->customersStatut->id == 3) { // Demande refusée
@@ -205,6 +206,29 @@ class ProcessPreIdentificationController extends Controller {
             (new SMS)->sendSMS(
                 $customer->msisdn,
                 "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement depuis la plateforme de consultation. L'ONECI vous remercie.",
+            );
+            return json_encode($customer);
+        }
+        return false;
+    }
+
+    public function approveUnknownClientByNumeroDossier(Request $request, $numero_dossier) {
+        request()->validate([
+            'cli' => ['required', 'string', 'max:150'],
+            'c' => ['required', 'string', 'max:150'],
+            't' => ['required', 'string', 'max:150']
+        ]);
+        $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
+        if(
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
+            ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
+        ) {
+            $customer->customers_statut_id = 5;
+            $customer->save();
+            (new SMS)->sendSMS(
+                $customer->msisdn,
+                "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement depuis la plateforme de consultation. Veuillez cependant vous déclarer dans votre agence avant de procéder à l'enrôlement. L'ONECI vous remercie.",
             );
             return json_encode($customer);
         }

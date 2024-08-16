@@ -49,6 +49,7 @@
     @include('admin.pages.pre-identification.datatable.scripts')
     @include('admin.pages.pre-identification.documents.scripts')
     @include('admin.pages.pre-identification.approve.scripts')
+    @include('admin.pages.pre-identification.approve-unknown.scripts')
     @include('admin.pages.pre-identification.deny.scripts')
 @endsection
 
@@ -75,7 +76,7 @@
             </div><!-- panel -->
 
             @include('admin.pages.pre-identification.documents.modal')
-            @include('admin.pages.pre-identification.approve.modal')
+            @include('admin.pages.pre-identification.approve-unknown.modal')
             @include('admin.pages.pre-identification.deny.modal')
 
         </div><!-- col-sm-12 -->
