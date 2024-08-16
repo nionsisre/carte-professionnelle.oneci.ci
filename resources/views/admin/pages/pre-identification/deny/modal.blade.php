@@ -9,11 +9,12 @@
                     <span class="deny-documents-modal-t hidden"></span>
                     <br/><i class="fa fa-3x fa-file-times"></i><br/><br/>
                     <p>
-                        Numéro NNI ou CNI : <b><span class="deny-documents-modal-nni-or-cni">XXXXXXXXXX</span></b><br/>
+                        Type de document justificatif : <b><span class="deny-documents-modal-td">XXXXXXXXXX</span></b><br/>
+                        Numéro du document et date d'expiration : <b><span class="deny-documents-modal-ndde">XXXXXXXXXX</span></b><br/>
+                        Genre : <b><span class="deny-documents-modal-gndr">XXXXXXXXXX</span></b><br/>
                         Nom complet : <b><span class="deny-documents-modal-nc">XXXXXXXXXX</span></b><br/>
-                        Nom complet sur la décision : <b><span class="deny-documents-modal-ncd">XXXXXXXXXX</span></b><br/>
-                        Numéro décision : <b><span class="deny-documents-modal-ndec">XXXXXXXXXX</span></b><br/>
-                        Lieu de la décision : <b><span class="deny-documents-modal-ldec">XXXXXXXXXX</span></b><br/>
+                        Date et Lieu de naissance : <b><span class="deny-documents-modal-dln">XXXXXXXXXX</span></b><br/>
+                        Pays de naissance et Nationalité : <b><span class="deny-documents-modal-pnn">XXXXXXXXXX</span></b><br/>
                     </p><br/>
                     Veuillez renseigner un motif ou une observation afin de confirmer le refus de la demande N°<b><span class="deny-documents-modal-nd">XXXXXXXXXX</span></b> :<br/><br/>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">

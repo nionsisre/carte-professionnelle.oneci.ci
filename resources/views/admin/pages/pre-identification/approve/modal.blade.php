@@ -10,12 +10,12 @@
                     La demande N°<b><span class="approve-documents-modal-nd">XXXXXXXXXX</span></b> a été approuvée avec succès !
                     <br/><br/>
                     <p>
-                        Lieu de la livraison : <br/><b><i class="fa fa-map-marker-alt mr10"></i><span class="approve-documents-modal-lr">XXXXXXXXXX</span></b><br/><br/>
-                        Numéro NNI ou CNI : <b><span class="approve-documents-modal-nni-or-cni">XXXXXXXXXX</span></b><br/>
+                        Type de document justificatif : <b><span class="approve-documents-modal-td">XXXXXXXXXX</span></b><br/>
+                        Numéro du document et date d'expiration : <b><span class="approve-documents-modal-ndde">XXXXXXXXXX</span></b><br/>
+                        Genre : <b><span class="approve-documents-modal-gndr">XXXXXXXXXX</span></b><br/>
                         Nom complet : <b><span class="approve-documents-modal-nc">XXXXXXXXXX</span></b><br/>
-                        Nom complet sur la décision : <b><span class="approve-documents-modal-ncd">XXXXXXXXXX</span></b><br/>
-                        Numéro décision : <b><span class="approve-documents-modal-ndec">XXXXXXXXXX</span></b><br/>
-                        Lieu de la décision : <b><span class="approve-documents-modal-ldec">XXXXXXXXXX</span></b><br/>
+                        Date et Lieu de naissance : <b><span class="approve-documents-modal-dln">XXXXXXXXXX</span></b><br/>
+                        Pays de naissance et Nationalité : <b><span class="approve-documents-modal-pnn">XXXXXXXXXX</span></b><br/>
                     </p><br/>
                     <em>NB : Un SMS a été envoyé au client afin de le notifier de la validation de sa demande. <br/><br/></em>
                     Veuillez cliquer sur le bouton ci-dessous afin de télécharger le certificat de conformité à acheminer à la signature :<br/><br/>

@@ -28,22 +28,26 @@
                 jQuery('.modal-loader').hide();
                 jQuery('.modal-error').hide();
                 jQuery('.modal-success').show();
-                let client = JSON.parse(res);
-                if(client !== null) {
-                    let nniorcni = "";
-                    if(client.cni !== "") {
-                        nniorcni = client.numero_cni;
+                let customer = JSON.parse(res);
+                if(customer !== null) {
+                    jQuery('.approve-documents-modal-td').html('&nbsp;<i class="fa fa-id-card mr5"></i>'+customer.customers_type_piece.libelle_piece);
+                    jQuery('.approve-documents-modal-nd').text(customer.numero_dossier);
+                    jQuery('.approve-documents-modal-ndde').html('&nbsp;<i class="fa fa-barcode mr5"></i>'+customer.numero_document+" ("+ convertDate(customer.date_expiration_document) +")");
+                    if(customer.genre === "M") {
+                        jQuery('.approve-documents-modal-gndr').html('&nbsp;<i class="fa fa-mars mr5"></i> Masculin'+" ("+customer.civil_status.libelle_statut+")");
                     } else {
-                        nniorcni = client.nni;
+                        jQuery('.approve-documents-modal-gndr').html('&nbsp;<i class="fa fa-venus mr5"></i> Feminin'+" ("+customer.civil_status.libelle_statut+")");
                     }
-                    jQuery('.approve-documents-modal-nd').text(client.numero_dossier);
-                    jQuery('.approve-documents-modal-nni-or-cni').text(nniorcni);
-                    jQuery('.approve-documents-modal-nc').text(client.prenom+" "+client.nom+" ("+convertDate(client.date_naissance)+") ");
-                    jQuery('.approve-documents-modal-ncd').text(client.prenom_decision+" "+client.nom_decision+" ("+convertDate(client.date_naissance_decision)+") ");
-                    jQuery('.approve-documents-modal-ndec').text("N°"+client.numero_decision+" du "+convertDate(client.date_decision));
-                    jQuery('.approve-documents-modal-ldec').text(client.juridiction.libelle);
+                    if(customer.nom_epouse !== "") {
+                        jQuery('.approve-documents-modal-nc').text(customer.prenom+" "+customer.nom+" épouse "+customer.nom_epouse);
+                    } else {
+                        jQuery('.approve-documents-modal-nc').text(customer.prenom+" "+customer.nom);
+                    }
+                    jQuery('.approve-documents-modal-dln').html('&nbsp;<i class="fa fa-calendar-day mr5"></i>'+convertDate(customer.date_naissance)+" à "+customer.lieu_naissance);
+                    jQuery('.approve-documents-modal-pnn').html('&nbsp;<i class="fa fa-map-marker-alt mr5"></i>'+customer.pays_naissance+" ("+customer.nationalite+")");
                     jQuery('.approve-documents-modal-lr').text(lr);
-                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+client.certificate_download_link);
+                    jQuery('.approve-documents-modal-dl-lnk').attr('href', "{{ route('pre-identification.download.pdf') }}?n="+customer.certificate_download_link);
+                    jQuery('.approve-documents-modal-t').text(t);
                 }
             }, error: function (data) {
                 let errorMessage = "";

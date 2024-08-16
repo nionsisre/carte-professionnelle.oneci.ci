@@ -177,13 +177,13 @@ class ProcessPreIdentificationController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
+        $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
-            return json_encode($client);
+            return json_encode($customer);
         }
         return false;
     }
@@ -194,19 +194,19 @@ class ProcessPreIdentificationController extends Controller {
             'c' => ['required', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
+        $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'3'))
         ) {
-            $client->customersStatut->id = 4;
-            $client->save();
+            $customer->customers_statut_id = 4;
+            $customer->save();
             (new SMS)->sendSMS(
-                $client->msisdn,
-                "M(Mme) ".$client->nom.", vos documents justificatifs de votre demande N°".$client->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement à l'adresse suivante : ".route('pre-identification.consultation.submit.get').'?f='.session()->get('customer')->numero_dossier.'&t='.session()->get('customer')->uniqid,
+                $customer->msisdn,
+                "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été approuvés avec succès. Vous pouvez maintenant télécharger votre fiche de pré-enrôlement à l'adresse suivante : ".route('pre-identification.consultation.submit.get').'?f='.$customer->numero_dossier.'&t='.$customer->uniqid." L'ONECI vous remercie.",
             );
-            return json_encode($client);
+            return json_encode($customer);
         }
         return false;
     }
@@ -218,7 +218,7 @@ class ProcessPreIdentificationController extends Controller {
             'obs' => ['nullable', 'string', 'max:150'],
             't' => ['required', 'string', 'max:150']
         ]);
-        $client = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
+        $customer = Customer::with('civilStatus')->with('customersStatut')->with('customersTypePiece')->where('numero_dossier', '=', $numero_dossier)->first();
         if(
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'1')) ||
             ($request->input('t') === md5(date('Ymd').$numero_dossier.env('APP_KEY').'2')) ||
@@ -226,19 +226,19 @@ class ProcessPreIdentificationController extends Controller {
         ) {
             if(!empty(request()->input('obs'))) {
                 (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", votre demande de certificat de conformité N°".$client->numero_dossier." a été rejetée pour le motif suivant : ".$request->input('obs'),
+                    $customer->msisdn,
+                    "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été rejetés pour le motif suivant : ".$request->input('obs').". Veuillez effectuer un nouveau pré-enrôlement. L'ONECI vous remercie.",
                 );
             } else {
                 (new SMS)->sendSMS(
-                    $client->msisdn,
-                    "M(Mme) ".$client->nom.", votre demande de certificat de conformité N°".$client->numero_dossier." a été rejetée par l'ONECI",
+                    $customer->msisdn,
+                    "M(Mme) ".$customer->nom.", vos documents justificatifs de votre demande N°".$customer->numero_dossier." de pré-enrôlement ".strtolower(env('APP_NAME'))." ont été rejetés par l'ONECI. Veuillez effectuer un nouveau pré-enrôlement. L'ONECI vous remercie.",
                 );
             }
-            $client->customersStatut->id = 3;
-            $client->observation = $request->input('obs');
-            $client->save();
-            return json_encode($client);
+            $customer->customers_statut_id = 3;
+            $customer->observation = $request->input('obs');
+            $customer->save();
+            return json_encode($customer);
         }
         return false;
     }
