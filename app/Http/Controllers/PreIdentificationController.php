@@ -503,32 +503,26 @@ class PreIdentificationController extends Controller {
                 if($date_du_jour <= $date_expiration) {
                     /* PDF Download document generation */
                     $data = [
-                        'title' => 'Certificat de conformité',
-                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $customer->certificate_download_link, 183, 1),
-                        'directeur_general' => "Ago Christian KODIA", //DirecteurGeneral::where('statut','=','1')->latest()->first() ?? "",
-                        'nom' => $customer->nom,
-                        'prenom' => $customer->prenom,
-                        'nom_complet' => $customer->prenom." ".$customer->nom,
-                        'nni' => $customer->nni,
-                        'numero_cni' => $customer->numero_cni,
-                        'nom_decision' => $customer->nom_decision,
-                        'prenom_decision' => $customer->prenom_decision,
-                        'nom_complet_decision' => $customer->prenom_decision." ".$customer->nom_decision,
-                        'numero_decision' => $customer->numero_decision,
-                        'date_decision' => date('d/m/Y', strtotime($customer->date_decision)),
-                        'lieu_decision' => '',
-                        'lieu_certificat' => "ABIDJAN",
-                        'date_certificat' => $customer->updated_at->format('d/m/Y')
+                        'title' => 'Reçu de pré-identification '.strtolower(env('APP_NAME')).' ONECI',
+                        'qrcode' => (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?f=' . $customer->numero_dossier . '&t=' . $customer->uniqid),
+                        'numero_dossier' => $customer->numero_dossier,
+                        'uniqid' => $customer->uniqid,
+                        'msisdn_list' => [$customer->msisdn],
+                        'nom_complet' => $customer->prenom." ".$customer->nom . ((!empty($customer->nom_epouse)) ? ' epse ' . $customer->nom_epouse : ''),
+                        'date_et_lieu_de_naissance' => date('d/m/Y', strtotime($customer->date_de_naissance)) . ' à ' . $customer->lieu_naissance,
+                        'lieu_de_residence' => ucwords(strtolower($customer->ville)).', '.ucwords(strtolower($customer->commune)).', '.ucwords(strtolower($customer->quartier)),
+                        'nationalite' => $customer->nationalite." (".$customer->pays_naissance.")",
+                        'profession' => $customer->profession,
+                        'email' => $customer->email,
+                        'document_justificatif' => $customer->libelle_document_justificatif . ' (N° ' . $customer->numero_document . ')'
                     ];
-                    $data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
+                    //$data['qrcode'] = (new QrCode())->generateQrCEVBase64($data);
                     //$data['qrcode'] = (new QrCode())->generateQrBase64(route('pre-identification.check.url') . '?c=' . $customer->certificate_download_link, 183, 1);
                     $filename = 'fiche-pre-enrolement-'.$customer->numero_dossier.'.pdf';
-                    $pdf_certificat_conformite = Pdf::loadView('layouts.certificat-conformite', $data)->setPaper([0, -10, 445, 617.5]);
-                    /* Envoi de mail */
-                    /*if (!empty($customer->email)) {(new MailONECI())->sendMailTemplate('layouts.certificat-conformite', $data, "À propos de votre demande de fiche de pré-enrolement ONECI") ;}*/
+                    $pdf_recu_pre_identification = Pdf::loadView('layouts.recu-pre-identification', $data)->setPaper("A4");
 
-                    //return view('layouts.certificat-conformite', $data);
-                    return $pdf_certificat_conformite->download($filename);
+                    //return view('layouts.recu-pre-identification', $data);
+                    return $pdf_recu_pre_identification->download($filename);
                 }
             }
         }
